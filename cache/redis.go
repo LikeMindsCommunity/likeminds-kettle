@@ -3,9 +3,7 @@ package cache
 import (
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/token"
-	"net/http"
 	"os"
-	"strconv"
 	"time"
 )
 
@@ -26,23 +24,17 @@ func InitRedis() *redis.Client {
 	return client
 }
 
-//TODO
-func FetchLogoutUserID(client *redis.Client, loginTokenMeta *token.LoginTokenMeta) (uint64, error) {
-	userid, err := client.Get(loginTokenMeta.AccessUuid).Result()
-	if err != nil {
-		return 0, err
+//IsTokenBlacklisted checks if token is blacklisted or not => user is logged out or not
+func IsTokenBlacklisted(client *redis.Client, loginTokenMeta *token.LoginTokenMeta) bool {
+	userid, _ := client.Get(loginTokenMeta.AccessUuid).Result()
+	if userid != "" {
+		return true
 	}
-	userID, _ := strconv.ParseUint(userid, 10, 64)
-	return userID, nil
+	return false
 }
 
-// CreateLogoutUserID When logout api is called
-func CreateLogoutUserID(client *redis.Client, r *http.Request) error {
-	ltm, err := token.ExtractLoginTokenMeta(r)
-	if err != nil {
-		return err
-	}
-
+//BlacklistToken Updates user id against uuid in cache when user logs out
+func BlacklistToken(client *redis.Client, ltm *token.LoginTokenMeta) error {
 	at := time.Unix(ltm.AtExpires, 0)
 	now := time.Now()
 
