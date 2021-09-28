@@ -21,7 +21,7 @@ func main() {
 	client = cache.InitRedis()
 	router.Use(ApiMiddleware(client))
 	router.GET("/otp/verify", otp.VerifyOTP)
-	router.POST("/user/login", user.Login)
+	router.POST("/user/login", VTMValidationMiddleware(), user.Login)
 	router.POST("/user/logout", LTMValidationMiddleware(client), user.Logout)
 
 	log.Fatal(router.Run(":8080"))
@@ -31,6 +31,23 @@ func main() {
 func ApiMiddleware(client *redis.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Set("redis_client", client)
+		c.Next()
+	}
+}
+
+func VTMValidationMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		vtm, err := token.ExtractVerifyTokenMeta(c.Request)
+		if vtm == nil {
+			log.Print(err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+				Success:      false,
+				ErrorMessage: "Invalid token!",
+			})
+			return
+		} else {
+			c.Set("vtm", vtm)
+		}
 		c.Next()
 	}
 }

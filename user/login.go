@@ -23,12 +23,11 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
-
-	verifyOTPTokenMeta, err := token.ExtractVerifyTokenMeta(c.Request)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, utils.AuthenticationResponse{
+	vtm, ok := c.MustGet("vtm").(*token.VerifyTokenMeta)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
 			Success:      false,
-			ErrorMessage: "Invalid token!",
+			ErrorMessage: "Something went wrong! Please try after sometime",
 		})
 		return
 	}
@@ -46,7 +45,7 @@ func Login(c *gin.Context) {
 	}
 
 	//Create verify token from the response received in api/verify_otp
-	tokenDetails, err := token.CreateLoginToken(verifyOTPTokenMeta, userID)
+	tokenDetails, err := token.CreateLoginToken(vtm, userID)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, utils.AuthenticationResponse{
 			Success:      false,
