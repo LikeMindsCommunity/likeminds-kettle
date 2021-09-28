@@ -14,9 +14,9 @@ func Logout(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, "Something went wrong! Please try after sometime")
 		return
 	}
-	ltm, err := token.ExtractLoginTokenMeta(c.Request)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, "Unauthorized")
+	ltm, ok := c.MustGet("ltm").(*token.LoginTokenMeta)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, "Something went wrong! Please try after sometime")
 		return
 	}
 
@@ -29,7 +29,7 @@ func Logout(c *gin.Context) {
 	}
 
 	//Blacklist token
-	err = cache.BlacklistToken(client, ltm)
+	err := cache.BlacklistToken(client, ltm)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return

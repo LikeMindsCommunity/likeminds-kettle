@@ -1,6 +1,7 @@
 package token
 
 import (
+	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/myesui/uuid"
@@ -93,7 +94,7 @@ func VerifyToken(r *http.Request) (*jwt.Token, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(os.Getenv("ACCESS_SECRET")), nil
+		return []byte("JWT_SECRET"), nil
 	})
 	if err != nil {
 		return nil, err
@@ -138,23 +139,23 @@ func ExtractLoginTokenMeta(r *http.Request) (*LoginTokenMeta, error) {
 	if ok && token.Valid {
 		accessUuid, ok := claims["access_uuid"].(string)
 		if !ok {
-			return nil, err
+			return nil, errors.New("access_uuid is empty")
 		}
-		atExpires, ok := claims["exp"].(int64)
-		if !ok {
-			return nil, err
+		atExpires := int64(claims["exp"].(float64))
+		if atExpires == 0 {
+			return nil, errors.New("exp is empty")
 		}
 		verifiedMobileNo, ok := claims["verified_mobile_no"].(string)
 		if !ok {
-			return nil, err
+			return nil, errors.New("verified_mobile_no is empty")
 		}
 		countryCode, ok := claims["country_code"].(string)
 		if !ok {
-			return nil, err
+			return nil, errors.New("country_code is empty")
 		}
 		userID, ok := claims["user_id"].(string)
 		if !ok {
-			return nil, err
+			return nil, errors.New("user_id is empty")
 		}
 		return &LoginTokenMeta{
 			AccessUuid:       accessUuid,

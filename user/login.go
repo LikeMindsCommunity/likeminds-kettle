@@ -10,7 +10,7 @@ type LoginRequest struct {
 	UserAcquisitionURL string `json:"user_acquisition_url"`
 	LoginJSON          string `json:"login_json"`
 	GoogleIDToken      string `json:"google_id_token"`
-	LoginType          string `json:"type"`
+	LoginType          string `json:"type" binding:"required"`
 }
 
 func Login(c *gin.Context) {
@@ -29,7 +29,7 @@ func Login(c *gin.Context) {
 	//TODO - call api/user/login and get response by sending mobile no and country code from verifyOTPTokenMeta
 	success := true
 	errorMessage := ""
-	userID := ""
+	userID := "21"
 	if !success {
 		c.JSON(http.StatusInternalServerError, errorMessage)
 		return

@@ -21,7 +21,7 @@ func main() {
 	router.Use(ApiMiddleware(client))
 	router.GET("/otp/verify", otp.VerifyOTP)
 	router.POST("/user/login", user.Login)
-	router.POST("/user/logout", TokenValidationMiddleware(client), user.Logout)
+	router.POST("/user/logout", LTMValidationMiddleware(client), user.Logout)
 
 	log.Fatal(router.Run(":8080"))
 }
@@ -34,16 +34,19 @@ func ApiMiddleware(client *redis.Client) gin.HandlerFunc {
 	}
 }
 
-func TokenValidationMiddleware(client *redis.Client) gin.HandlerFunc {
+func LTMValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ltm, _ := token.ExtractLoginTokenMeta(c.Request)
+		ltm, err := token.ExtractLoginTokenMeta(c.Request)
 		if ltm == nil {
-			c.JSON(http.StatusInternalServerError, "Invalid token!")
+			log.Print(err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, "Invalid token!")
 			return
-		}
-		if cache.IsTokenBlacklisted(client, ltm) {
-			c.JSON(http.StatusInternalServerError, "User logged out! Please login again.")
-			return
+		} else {
+			c.Set("ltm", ltm)
+			if cache.IsTokenBlacklisted(client, ltm) {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, "User logged out! Please login again.")
+				return
+			}
 		}
 		c.Next()
 	}
