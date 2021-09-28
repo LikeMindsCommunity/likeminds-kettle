@@ -19,7 +19,7 @@ func Logout(c *gin.Context) {
 			})
 		return
 	}
-	ltm, ok := c.MustGet("ltm").(*token.LoginTokenMeta)
+	ltm, ok := c.MustGet("access_ltm").(*token.LoginTokenMeta)
 	if !ok {
 		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
 			Success:      false,

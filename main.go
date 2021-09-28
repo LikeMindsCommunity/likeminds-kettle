@@ -22,7 +22,8 @@ func main() {
 	router.Use(ApiMiddleware(client))
 	router.GET("/otp/verify", otp.VerifyOTP)
 	router.POST("/user/login", VTMValidationMiddleware(), user.Login)
-	router.POST("/user/logout", LTMValidationMiddleware(client), user.Logout)
+	router.POST("/user/logout", AccessLTMValidationMiddleware(client), user.Logout)
+	router.POST("/user/refresh", RefreshLTMValidationMiddleware(), user.Refresh)
 
 	log.Fatal(router.Run(":8080"))
 }
@@ -37,10 +38,10 @@ func ApiMiddleware(client *redis.Client) gin.HandlerFunc {
 
 func VTMValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		vtm, err := token.ExtractVerifyTokenMeta(c.Request)
+		vtm, err := token.ExtractVTM(c.Request)
 		if vtm == nil {
 			log.Print(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+			c.AbortWithStatusJSON(http.StatusOK, utils.AuthenticationResponse{
 				Success:      false,
 				ErrorMessage: "Invalid token!",
 			})
@@ -52,18 +53,18 @@ func VTMValidationMiddleware() gin.HandlerFunc {
 	}
 }
 
-func LTMValidationMiddleware(client *redis.Client) gin.HandlerFunc {
+func AccessLTMValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ltm, err := token.ExtractLoginTokenMeta(c.Request)
+		ltm, err := token.ExtractAccessLTM(c.Request)
 		if ltm == nil {
 			log.Print(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+			c.AbortWithStatusJSON(http.StatusOK, utils.AuthenticationResponse{
 				Success:      false,
 				ErrorMessage: "Invalid token!",
 			})
 			return
 		} else {
-			c.Set("ltm", ltm)
+			c.Set("access_ltm", ltm)
 			if cache.IsTokenBlacklisted(client, ltm) {
 				c.AbortWithStatusJSON(http.StatusOK, utils.AuthenticationResponse{
 					Success:      false,
@@ -71,6 +72,23 @@ func LTMValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 				})
 				return
 			}
+		}
+		c.Next()
+	}
+}
+
+func RefreshLTMValidationMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ltm, err := token.ExtractRefreshLTM(c.Request)
+		if ltm == nil {
+			log.Print(err)
+			c.AbortWithStatusJSON(http.StatusOK, utils.AuthenticationResponse{
+				Success:      false,
+				ErrorMessage: "Invalid token!",
+			})
+			return
+		} else {
+			c.Set("refresh_ltm", ltm)
 		}
 		c.Next()
 	}
