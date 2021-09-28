@@ -3,6 +3,7 @@ package otp
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/token"
+	"github.com/nateshr/likeminds-authentication/utils"
 	"net/http"
 )
 
@@ -12,7 +13,10 @@ func VerifyOTP(c *gin.Context) {
 	mobileNo := c.Query("mobile_no")
 	countryCode := c.Query("country_code")
 	if otp == "" || mobileNo == "" || countryCode == "" {
-		c.JSON(http.StatusBadRequest, "Params missing")
+		c.JSON(http.StatusBadRequest, utils.AuthenticationResponse{
+			Success:      false,
+			ErrorMessage: "Query params missing!",
+		})
 		return
 	}
 
@@ -23,7 +27,10 @@ func VerifyOTP(c *gin.Context) {
 
 	//Check api/verify_otp success and response
 	if !success {
-		c.JSON(http.StatusInternalServerError, errorMessage)
+		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+			Success:      false,
+			ErrorMessage: errorMessage,
+		})
 		return
 	}
 	if profileExists {
@@ -41,5 +48,8 @@ func VerifyOTP(c *gin.Context) {
 	token := map[string]string{
 		"access_token": tokenDetails.AccessToken,
 	}
-	c.JSON(http.StatusOK, token)
+	c.JSON(http.StatusOK, utils.AuthenticationResponse{
+		Success:      true,
+		Data:         token,
+	})
 }

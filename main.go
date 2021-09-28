@@ -7,6 +7,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/otp"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/utils"
 	"log"
 	"net/http"
 )
@@ -39,12 +40,18 @@ func LTMValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 		ltm, err := token.ExtractLoginTokenMeta(c.Request)
 		if ltm == nil {
 			log.Print(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, "Invalid token!")
+			c.AbortWithStatusJSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+				Success:      false,
+				ErrorMessage: "Invalid token!",
+			})
 			return
 		} else {
 			c.Set("ltm", ltm)
 			if cache.IsTokenBlacklisted(client, ltm) {
-				c.AbortWithStatusJSON(http.StatusInternalServerError, "User logged out! Please login again.")
+				c.AbortWithStatusJSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+					Success:      false,
+					ErrorMessage: "Device logged out! Please login again",
+				})
 				return
 			}
 		}
