@@ -45,7 +45,7 @@ func Login(c *gin.Context) {
 	}
 
 	//Create verify token from the response received in api/verify_otp
-	tokenDetails, err := token.CreateLoginToken(vtm, userID)
+	ltm, err := token.CreateLoginToken(vtm, userID)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, utils.AuthenticationResponse{
 			Success:      false,
@@ -54,8 +54,7 @@ func Login(c *gin.Context) {
 		return
 	}
 	token := map[string]string{
-		"access_token":  tokenDetails.AccessToken,
-		"refresh_token": tokenDetails.RefreshToken,
+		"access_token": ltm.AToken,
 	}
 	c.JSON(http.StatusOK, utils.AuthenticationResponse{
 		Success: true,

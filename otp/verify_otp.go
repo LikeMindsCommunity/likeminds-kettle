@@ -46,10 +46,10 @@ func VerifyOTP(c *gin.Context) {
 		return
 	}
 	token := map[string]string{
-		"access_token": tokenDetails.AccessToken,
+		"access_token": tokenDetails.AToken,
 	}
 	c.JSON(http.StatusOK, utils.AuthenticationResponse{
-		Success:      true,
-		Data:         token,
+		Success: true,
+		Data:    token,
 	})
 }

@@ -11,54 +11,54 @@ import (
 	"time"
 )
 
-type Details struct {
-	AccessToken  string
-	RefreshToken string
-	AccessUuid   string
-	RefreshUuid  string
-	AtExpires    int64
-	RtExpires    int64
-}
-
 type VerifyTokenMeta struct {
 	AccessUuid       string
 	VerifiedMobileNo string
 	CountryCode      string
+	ATExpires        int64
+	AToken           string
 }
 
 type LoginTokenMeta struct {
 	AccessUuid       string
-	AtExpires        int64
 	VerifiedMobileNo string
 	CountryCode      string
 	UserID           string
+	ATExpires        int64
+	AToken           string
 }
 
-func CreateVerifyOTPToken(verifiedMobileNo string, countryCode string) (*Details, error) {
-	td := &Details{}
-	td.AtExpires = time.Now().Add(time.Minute * 15).Unix()
-	td.AccessUuid = uuid.NewV4().String()
+func CreateVerifyOTPToken(verifiedMobileNo string, countryCode string) (*VerifyTokenMeta, error) {
+	vtm := &VerifyTokenMeta{
+		AccessUuid:       uuid.NewV4().String(),
+		VerifiedMobileNo: verifiedMobileNo,
+		CountryCode:      countryCode,
+		ATExpires:        time.Now().Add(time.Minute * 15).Unix(),
+	}
 
 	var err error
 	//Creating Access Token
 	os.Setenv("ACCESS_SECRET", "JWT_SECRET") //this should be in an env file
 	atClaims := jwt.MapClaims{}
-	atClaims["access_uuid"] = td.AccessUuid
+	atClaims["access_uuid"] = vtm.AccessUuid
 	atClaims["verified_mobile_no"] = verifiedMobileNo
 	atClaims["country_code"] = countryCode
-	atClaims["exp"] = td.AtExpires
+	atClaims["exp"] = vtm.ATExpires
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	td.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
+	vtm.AToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
 	if err != nil {
 		return nil, err
 	}
-	return td, nil
+	return vtm, nil
 }
 
-func CreateLoginToken(meta *VerifyTokenMeta, userID string) (*Details, error) {
-	td := &Details{}
-	td.AtExpires = time.Now().Add(time.Minute * 15).Unix()
-	td.AccessUuid = uuid.NewV4().String()
+func CreateLoginToken(meta *VerifyTokenMeta, userID string) (*LoginTokenMeta, error) {
+	td := &LoginTokenMeta{
+		AccessUuid:       uuid.NewV4().String(),
+		VerifiedMobileNo: meta.VerifiedMobileNo,
+		CountryCode:      meta.CountryCode,
+		ATExpires:        time.Now().Add(time.Minute * 15).Unix(),
+	}
 
 	var err error
 	//Creating Access Token
@@ -68,9 +68,9 @@ func CreateLoginToken(meta *VerifyTokenMeta, userID string) (*Details, error) {
 	atClaims["verified_mobile_no"] = meta.VerifiedMobileNo
 	atClaims["country_code"] = meta.CountryCode
 	atClaims["user_id"] = userID
-	atClaims["exp"] = td.AtExpires
+	atClaims["exp"] = td.ATExpires
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	td.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
+	td.AToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
 	if err != nil {
 		return nil, err
 	}
@@ -159,10 +159,10 @@ func ExtractLoginTokenMeta(r *http.Request) (*LoginTokenMeta, error) {
 		}
 		return &LoginTokenMeta{
 			AccessUuid:       accessUuid,
-			AtExpires:        atExpires,
 			VerifiedMobileNo: verifiedMobileNo,
 			CountryCode:      countryCode,
 			UserID:           userID,
+			ATExpires:        atExpires,
 		}, nil
 	}
 	return nil, err

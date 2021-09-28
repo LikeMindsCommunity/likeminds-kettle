@@ -35,7 +35,7 @@ func IsTokenBlacklisted(client *redis.Client, loginTokenMeta *token.LoginTokenMe
 
 //BlacklistToken Updates user id against uuid in cache when user logs out
 func BlacklistToken(client *redis.Client, ltm *token.LoginTokenMeta) error {
-	at := time.Unix(ltm.AtExpires, 0)
+	at := time.Unix(ltm.ATExpires, 0)
 	now := time.Now()
 
 	errAccess := client.Set(ltm.AccessUuid, ltm.UserID, at.Sub(now)).Err()

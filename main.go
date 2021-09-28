@@ -65,7 +65,7 @@ func LTMValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 		} else {
 			c.Set("ltm", ltm)
 			if cache.IsTokenBlacklisted(client, ltm) {
-				c.AbortWithStatusJSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+				c.AbortWithStatusJSON(http.StatusOK, utils.AuthenticationResponse{
 					Success:      false,
 					ErrorMessage: "Device logged out! Please login again",
 				})
