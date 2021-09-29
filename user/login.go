@@ -14,9 +14,10 @@ type LoginRequest struct {
 	LoginType          string `json:"type" binding:"required"`
 }
 
+//Login used when user is signing up and generate LTM and RTM tokens
 func Login(c *gin.Context) {
-	var loginRequest LoginRequest
-	if err := c.ShouldBindJSON(&loginRequest); err != nil {
+	var lr LoginRequest
+	if err := c.ShouldBindJSON(&lr); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, utils.AuthenticationResponse{
 			Success:      false,
 			ErrorMessage: "Invalid JSON Request!",
@@ -44,8 +45,8 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	//Create login token from the response received in api/user/login
-	ltm, err := token.CreateLTM(vtm.VerifiedMobileNo, vtm.CountryCode, userID)
+	//Create login and refresh token meta from the response received in api/user/login
+	ltm, rtm, err := token.CreateLTMAndRTM(vtm.VerifiedMobileNo, vtm.CountryCode, userID)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, utils.AuthenticationResponse{
 			Success:      false,
@@ -55,7 +56,7 @@ func Login(c *gin.Context) {
 	}
 	token := map[string]string{
 		"access_token":  ltm.AccessToken,
-		"refresh_token": ltm.RefreshToken,
+		"refresh_token": rtm.RefreshToken,
 	}
 	c.JSON(http.StatusOK, utils.AuthenticationResponse{
 		Success: true,
@@ -63,31 +64,3 @@ func Login(c *gin.Context) {
 	})
 }
 
-func Refresh(c *gin.Context) {
-	ltm, ok := c.MustGet("refresh_ltm").(*token.LoginTokenMeta)
-	if !ok {
-		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
-			Success:      false,
-			ErrorMessage: "Something went wrong! Please try after sometime",
-		})
-		return
-	}
-
-	//Create login token from the response received in api/user/login
-	ltm, err := token.CreateLTM(ltm.VerifiedMobileNo, ltm.CountryCode, ltm.UserID)
-	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, utils.AuthenticationResponse{
-			Success:      false,
-			ErrorMessage: err.Error(),
-		})
-		return
-	}
-	token := map[string]string{
-		"access_token":  ltm.AccessToken,
-		"refresh_token": ltm.RefreshToken,
-	}
-	c.JSON(http.StatusOK, utils.AuthenticationResponse{
-		Success: true,
-		Data:    token,
-	})
-}

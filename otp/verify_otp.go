@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// VerifyOTP is used to verify otp and generate VTM Token
 func VerifyOTP(c *gin.Context) {
 	//GET Request params
 	otp := c.Query("otp")
@@ -39,14 +40,14 @@ func VerifyOTP(c *gin.Context) {
 
 	}
 
-	//Create verify token from the response received in api/verify_otp
-	tokenDetails, err := token.CreateVerifyOTPToken(mobileNo, countryCode)
+	//Create verify token meta from the response received in api/verify_otp
+	vtm, err := token.CreateVTM(mobileNo, countryCode)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 	token := map[string]string{
-		"access_token": tokenDetails.AccessToken,
+		"access_token": vtm.AccessToken,
 	}
 	c.JSON(http.StatusOK, utils.AuthenticationResponse{
 		Success: true,

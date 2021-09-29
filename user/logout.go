@@ -9,6 +9,11 @@ import (
 	"net/http"
 )
 
+type LogoutRequest struct {
+	RefreshToken string `json:"refresh_token"`
+}
+
+//Logout is used to blacklist LTM and RTM tokens
 func Logout(c *gin.Context) {
 	client, ok := c.MustGet("redis_client").(*redis.Client)
 	if !ok {
@@ -19,7 +24,15 @@ func Logout(c *gin.Context) {
 			})
 		return
 	}
-	ltm, ok := c.MustGet("access_ltm").(*token.LoginTokenMeta)
+	ltm, ok := c.MustGet("ltm").(*token.LoginTokenMeta)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+			Success:      false,
+			ErrorMessage: "Something went wrong! Please try after sometime",
+		})
+		return
+	}
+	rtm, ok := c.MustGet("rtm").(*token.RefreshTokenMeta)
 	if !ok {
 		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
 			Success:      false,
@@ -40,7 +53,7 @@ func Logout(c *gin.Context) {
 	}
 
 	//Blacklist token
-	err := cache.BlacklistToken(client, ltm)
+	err := cache.BlacklistToken(client, ltm, rtm)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
 			Success:      false,
@@ -49,6 +62,6 @@ func Logout(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, utils.AuthenticationResponse{
-		Success:      true,
+		Success: true,
 	})
 }
