@@ -47,12 +47,12 @@ func CreateVTM(verifiedMobileNo string, countryCode string) (*VerifyTokenMeta, e
 	var err error
 	//Creating Access Token
 	os.Setenv("ACCESS_SECRET", "JWT_SECRET") //this should be in an env file
-	atClaims := jwt.MapClaims{}
-	atClaims["access_uuid"] = vtm.AccessUuid
-	atClaims["verified_mobile_no"] = verifiedMobileNo
-	atClaims["country_code"] = countryCode
-	atClaims["exp"] = vtm.AccessTokenExpires
-	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
+	vtmClaims := jwt.MapClaims{}
+	vtmClaims["access_uuid"] = vtm.AccessUuid
+	vtmClaims["verified_mobile_no"] = verifiedMobileNo
+	vtmClaims["country_code"] = countryCode
+	vtmClaims["exp"] = vtm.AccessTokenExpires
+	at := jwt.NewWithClaims(jwt.SigningMethodHS256, vtmClaims)
 	vtm.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
 	if err != nil {
 		return nil, err

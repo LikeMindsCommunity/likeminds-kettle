@@ -25,6 +25,7 @@ func VerifyOTP(c *gin.Context) {
 	success := true
 	errorMessage := ""
 	profileExists := true
+	userId := "21"
 
 	//Check api/verify_otp success and response
 	if !success {
@@ -35,22 +36,36 @@ func VerifyOTP(c *gin.Context) {
 		return
 	}
 	if profileExists {
-
+		//Create login and refresh token meta from the response received in api/verify_otp
+		ltm, rtm, err := token.CreateLTMAndRTM(mobileNo, countryCode, userId)
+		if err != nil {
+			c.JSON(http.StatusUnprocessableEntity, utils.AuthenticationResponse{
+				Success:      false,
+				ErrorMessage: err.Error(),
+			})
+			return
+		}
+		token := map[string]string{
+			"access_token":  ltm.AccessToken,
+			"refresh_token": rtm.RefreshToken,
+		}
+		c.JSON(http.StatusOK, utils.AuthenticationResponse{
+			Success: true,
+			Data:    token,
+		})
 	} else {
-
+		//Create verify token meta from the response received in api/verify_otp
+		vtm, err := token.CreateVTM(mobileNo, countryCode)
+		if err != nil {
+			c.JSON(http.StatusUnprocessableEntity, err.Error())
+			return
+		}
+		token := map[string]string{
+			"access_token": vtm.AccessToken,
+		}
+		c.JSON(http.StatusOK, utils.AuthenticationResponse{
+			Success: true,
+			Data:    token,
+		})
 	}
-
-	//Create verify token meta from the response received in api/verify_otp
-	vtm, err := token.CreateVTM(mobileNo, countryCode)
-	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, err.Error())
-		return
-	}
-	token := map[string]string{
-		"access_token": vtm.AccessToken,
-	}
-	c.JSON(http.StatusOK, utils.AuthenticationResponse{
-		Success: true,
-		Data:    token,
-	})
 }
