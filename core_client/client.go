@@ -17,7 +17,7 @@ func GetBaseUrl() string {
 	BaseURL := os.Getenv("CORE_BASE_URL")
 
 	if len(BaseURL) == 0 {
-		BaseURL = "https://beta.likeminds.community/"
+		BaseURL = "https://beta.likeminds.community"
 	}
 
 	return BaseURL
