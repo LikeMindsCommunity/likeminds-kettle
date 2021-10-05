@@ -60,7 +60,6 @@ func AddParams(req *http.Request, params map[string]string) {
 }
 
 func (c *Client) sendRequest(req *http.Request, v interface{}) error {
-
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return err
@@ -80,18 +79,19 @@ func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 }
 
 func (c *Client) GetRequest(options *GetRequestOptions) (interface{}, error) {
-
 	req, err := http.NewRequest("GET", options.Url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	if options.Params != nil {
-		AddParams(req, options.Params)
+	params := options.Params
+	if params != nil {
+		AddParams(req, params)
 	}
 
-	if options.Headers != nil {
-		AddHeaders(req, options.Headers)
+	headers := options.Headers
+	if headers != nil {
+		AddHeaders(req, headers)
 	}
 
 	res := make(map[string]interface{})
@@ -104,7 +104,6 @@ func (c *Client) GetRequest(options *GetRequestOptions) (interface{}, error) {
 }
 
 func (c *Client) PostRequest(options *PostRequestOptions) (interface{}, error) {
-
 	jsonData, err := json.Marshal(options.Body)
 	if err != nil {
 		return nil, err
@@ -115,8 +114,9 @@ func (c *Client) PostRequest(options *PostRequestOptions) (interface{}, error) {
 		return nil, err
 	}
 
-	if options.Headers != nil {
-		AddHeaders(req, options.Headers)
+	headers := options.Headers
+	if headers != nil {
+		AddHeaders(req, headers)
 	}
 
 	res := make(map[string]interface{})
