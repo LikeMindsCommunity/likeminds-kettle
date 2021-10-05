@@ -15,15 +15,17 @@ type Client struct {
 }
 
 type GetRequestOptions struct {
-	Url     string
-	Params  map[string]string
-	Headers map[string]string
+	Url           string
+	Params        map[string]string
+	CustomHeaders map[string]string
+	Header        http.Header
 }
 
 type PostRequestOptions struct {
 	Url     string
 	Body    interface{}
 	Headers map[string]string
+	Header  http.Header
 }
 
 func GetBaseUrl() string {
@@ -45,9 +47,12 @@ func NewClient() *Client {
 	}
 }
 
-func AddHeaders(req *http.Request, headers map[string]string) {
+func AddHeaders(req *http.Request, headers map[string]string, header http.Header) {
 	for k, v := range headers {
 		req.Header.Add(k, v)
+	}
+	if header != nil {
+		req.Header = header
 	}
 }
 
@@ -89,9 +94,9 @@ func (c *Client) GetRequest(options *GetRequestOptions) (interface{}, error) {
 		AddParams(req, params)
 	}
 
-	headers := options.Headers
+	headers := options.CustomHeaders
 	if headers != nil {
-		AddHeaders(req, headers)
+		AddHeaders(req, headers, options.Header)
 	}
 
 	res := make(map[string]interface{})
@@ -116,7 +121,7 @@ func (c *Client) PostRequest(options *PostRequestOptions) (interface{}, error) {
 
 	headers := options.Headers
 	if headers != nil {
-		AddHeaders(req, headers)
+		AddHeaders(req, headers, options.Header)
 	}
 
 	res := make(map[string]interface{})

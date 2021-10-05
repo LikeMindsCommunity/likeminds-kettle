@@ -18,7 +18,7 @@ type LoginRequest struct {
 func Login(c *gin.Context) {
 	var lr LoginRequest
 	if err := c.ShouldBindJSON(&lr); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, utils.AuthenticationResponse{
+		c.JSON(http.StatusUnprocessableEntity, utils.Response{
 			Success:      false,
 			ErrorMessage: "Invalid JSON Request!",
 		})
@@ -26,7 +26,7 @@ func Login(c *gin.Context) {
 	}
 	vtm, ok := c.MustGet("vtm").(*token.VerifyTokenMeta)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+		c.JSON(http.StatusInternalServerError, utils.Response{
 			Success:      false,
 			ErrorMessage: "Something went wrong! Please try after sometime",
 		})
@@ -38,7 +38,7 @@ func Login(c *gin.Context) {
 	errorMessage := ""
 	userID := "21"
 	if !success {
-		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+		c.JSON(http.StatusInternalServerError, utils.Response{
 			Success:      false,
 			ErrorMessage: errorMessage,
 		})
@@ -48,7 +48,7 @@ func Login(c *gin.Context) {
 	//Create login and refresh token meta from the response received in api/user/login
 	ltm, rtm, err := token.CreateLTMAndRTM(vtm.VerifiedMobileNo, vtm.CountryCode, userID)
 	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, utils.AuthenticationResponse{
+		c.JSON(http.StatusUnprocessableEntity, utils.Response{
 			Success:      false,
 			ErrorMessage: err.Error(),
 		})
@@ -58,7 +58,7 @@ func Login(c *gin.Context) {
 		"access_token":  ltm.AccessToken,
 		"refresh_token": rtm.RefreshToken,
 	}
-	c.JSON(http.StatusOK, utils.AuthenticationResponse{
+	c.JSON(http.StatusOK, utils.Response{
 		Success: true,
 		Data:    token,
 	})

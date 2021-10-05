@@ -28,7 +28,7 @@ func VerifyOTP(c *gin.Context) {
 	mobileNo := c.Query("mobile_no")
 	countryCode := c.Query("country_code")
 	if otp == "" || mobileNo == "" || countryCode == "" {
-		c.JSON(http.StatusBadRequest, utils.AuthenticationResponse{
+		c.JSON(http.StatusBadRequest, utils.Response{
 			Success:      false,
 			ErrorMessage: "Query params missing!",
 		})
@@ -67,7 +67,7 @@ func VerifyOTP(c *gin.Context) {
 		//Create login and refresh token meta from the response received in api/verify_otp
 		ltm, rtm, err := token.CreateLTMAndRTM(mobileNo, countryCode, resp.User.Id)
 		if err != nil {
-			c.JSON(http.StatusUnprocessableEntity, utils.AuthenticationResponse{
+			c.JSON(http.StatusUnprocessableEntity, utils.Response{
 				Success:      false,
 				ErrorMessage: err.Error(),
 			})
@@ -77,7 +77,7 @@ func VerifyOTP(c *gin.Context) {
 			"access_token":  ltm.AccessToken,
 			"refresh_token": rtm.RefreshToken,
 		}
-		c.JSON(http.StatusOK, utils.AuthenticationResponse{
+		c.JSON(http.StatusOK, utils.Response{
 			Success: true,
 			Data:    token,
 		})
@@ -91,7 +91,7 @@ func VerifyOTP(c *gin.Context) {
 		token := map[string]string{
 			"access_token": vtm.AccessToken,
 		}
-		c.JSON(http.StatusOK, utils.AuthenticationResponse{
+		c.JSON(http.StatusOK, utils.Response{
 			Success: true,
 			Data:    token,
 		})
