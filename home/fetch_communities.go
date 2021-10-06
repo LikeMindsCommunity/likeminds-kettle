@@ -14,9 +14,9 @@ type FetchCommunitiesResponse struct {
 	Subscriptions   interface{} `json:"subscriptions"`
 }
 
-//Fetch is used to blacklist LTM and RTM tokens
-func Fetch(c *gin.Context) {
-	_, ok := c.MustGet("ltm").(*token.LoginTokenMeta)
+//FetchCommunities is used to blacklist LTM and RTM tokens
+func FetchCommunities(c *gin.Context) {
+	ltm, ok := c.MustGet("ltm").(*token.LoginTokenMeta)
 	if !ok {
 		c.JSON(http.StatusInternalServerError, utils.Response{
 			Success:      false,
@@ -29,17 +29,20 @@ func Fetch(c *gin.Context) {
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 	fetchCommunities := FetchCommunitiesResponse{}
+	headers := make(map[string]string)
+	headers["x-member-id"] = ltm.UserID
 
 	go func() {
 		homeCommunities, errHomeCommunities := apiClient.GetRequest(&core_client.GetRequestOptions{
-			Url:    "/api/community_member/home_communities",
-			Header: c.Request.Header,
+			Url:           apiClient.CoreServiceBaseURL + "/api/community_member/home_communities?page=0",
+			CustomHeaders: headers,
 		})
 		if errHomeCommunities != nil {
 			c.JSON(http.StatusInternalServerError, utils.Response{
 				Success:      false,
 				ErrorMessage: errHomeCommunities.Error(),
 			})
+			wg.Done()
 			return
 		}
 		fetchCommunities.HomeCommunities = homeCommunities
@@ -47,20 +50,22 @@ func Fetch(c *gin.Context) {
 	}()
 	go func() {
 		subscriptions, errSubscription := apiClient.GetRequest(&core_client.GetRequestOptions{
-			Url:    "/api/subscription/fetch",
-			Header: c.Request.Header,
+			Url:           apiClient.SubscriptionServiceBaseURL + "/api/subscription/fetch",
+			CustomHeaders: headers,
 		})
 		if errSubscription != nil {
 			c.JSON(http.StatusInternalServerError, utils.Response{
 				Success:      false,
 				ErrorMessage: errSubscription.Error(),
 			})
-			fetchCommunities.Subscriptions = subscriptions
+			wg.Done()
 			return
 		}
+		fetchCommunities.Subscriptions = subscriptions
 		wg.Done()
 	}()
 
+	wg.Wait()
 	c.JSON(http.StatusOK, utils.Response{
 		Success: true,
 		Data:    fetchCommunities,
