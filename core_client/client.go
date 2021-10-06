@@ -10,8 +10,9 @@ import (
 )
 
 type Client struct {
-	BaseURL    string
-	HTTPClient *http.Client
+	CoreServiceBaseURL         string
+	SubscriptionServiceBaseURL string
+	HTTPClient                 *http.Client
 }
 
 type GetRequestOptions struct {
@@ -28,19 +29,30 @@ type PostRequestOptions struct {
 	Header  http.Header
 }
 
-func GetBaseUrl() string {
-	BaseURL := os.Getenv("CORE_BASE_URL")
+func GetCoreServiceBaseUrl() string {
+	CoreServiceBaseURL := os.Getenv("CORE_BASE_URL")
 
-	if len(BaseURL) == 0 {
-		BaseURL = "https://beta.likeminds.community"
+	if len(CoreServiceBaseURL) == 0 {
+		CoreServiceBaseURL = "https://beta.likeminds.community"
 	}
 
-	return BaseURL
+	return CoreServiceBaseURL
+}
+
+func GetSubscriptionServiceBaseUrl() string {
+	SubscriptionServiceBaseURL := os.Getenv("CORE_BASE_URL")
+
+	if len(SubscriptionServiceBaseURL) == 0 {
+		SubscriptionServiceBaseURL = "https://betasubscription.likeminds.community"
+	}
+
+	return SubscriptionServiceBaseURL
 }
 
 func NewClient() *Client {
 	return &Client{
-		BaseURL: GetBaseUrl(),
+		CoreServiceBaseURL:         GetCoreServiceBaseUrl(),
+		SubscriptionServiceBaseURL: GetSubscriptionServiceBaseUrl(),
 		HTTPClient: &http.Client{
 			Timeout: time.Minute,
 		},

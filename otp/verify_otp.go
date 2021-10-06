@@ -21,7 +21,7 @@ func VerifyOTP(c *gin.Context) {
 		})
 		return
 	}
-
+	
 	//Params to be sent in the request
 	params := map[string]string{
 		"country_code": countryCode,
