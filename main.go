@@ -1,6 +1,9 @@
 package main
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/cache"
@@ -8,8 +11,6 @@ import (
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
-	"log"
-	"net/http"
 )
 
 var (
@@ -20,6 +21,7 @@ var (
 func main() {
 	client = cache.InitRedis()
 	router.Use(ApiMiddleware(client))
+	router.GET("/otp/generate", otp.GenerateOTP)
 	router.GET("/otp/verify", otp.VerifyOTP)
 	router.POST("/user/login", VTMValidationMiddleware(), user.Login)
 	router.POST("/user/refresh", RTMValidationMiddleware(), user.Refresh)
