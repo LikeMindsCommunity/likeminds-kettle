@@ -11,7 +11,7 @@ import (
 func Refresh(c *gin.Context) {
 	currentRTM, ok := c.MustGet("rtm").(*token.RefreshTokenMeta)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+		c.JSON(http.StatusInternalServerError, utils.Response{
 			Success:      false,
 			ErrorMessage: "Something went wrong! Please try after sometime",
 		})
@@ -21,7 +21,7 @@ func Refresh(c *gin.Context) {
 	//Create login and refresh token meta from ltm
 	ltm, rtm, err := token.CreateLTMAndRTM(currentRTM.VerifiedMobileNo, currentRTM.CountryCode, currentRTM.UserID)
 	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, utils.AuthenticationResponse{
+		c.JSON(http.StatusUnprocessableEntity, utils.Response{
 			Success:      false,
 			ErrorMessage: err.Error(),
 		})
@@ -31,7 +31,7 @@ func Refresh(c *gin.Context) {
 		"access_token":  ltm.AccessToken,
 		"refresh_token": rtm.RefreshToken,
 	}
-	c.JSON(http.StatusOK, utils.AuthenticationResponse{
+	c.JSON(http.StatusOK, utils.Response{
 		Success: true,
 		Data:    token,
 	})

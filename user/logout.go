@@ -18,7 +18,7 @@ func Logout(c *gin.Context) {
 	client, ok := c.MustGet("redis_client").(*redis.Client)
 	if !ok {
 		c.JSON(http.StatusInternalServerError,
-			utils.AuthenticationResponse{
+			utils.Response{
 				Success:      false,
 				ErrorMessage: "Something went wrong! Please try after sometime",
 			})
@@ -26,7 +26,7 @@ func Logout(c *gin.Context) {
 	}
 	ltm, ok := c.MustGet("ltm").(*token.LoginTokenMeta)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+		c.JSON(http.StatusInternalServerError, utils.Response{
 			Success:      false,
 			ErrorMessage: "Something went wrong! Please try after sometime",
 		})
@@ -34,7 +34,7 @@ func Logout(c *gin.Context) {
 	}
 	rtm, ok := c.MustGet("rtm").(*token.RefreshTokenMeta)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+		c.JSON(http.StatusInternalServerError, utils.Response{
 			Success:      false,
 			ErrorMessage: "Something went wrong! Please try after sometime",
 		})
@@ -45,7 +45,7 @@ func Logout(c *gin.Context) {
 	success := true
 	errorMessage := ""
 	if !success {
-		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+		c.JSON(http.StatusInternalServerError, utils.Response{
 			Success:      false,
 			ErrorMessage: errorMessage,
 		})
@@ -55,13 +55,13 @@ func Logout(c *gin.Context) {
 	//Blacklist token
 	err := cache.BlacklistToken(client, ltm, rtm)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+		c.JSON(http.StatusInternalServerError, utils.Response{
 			Success:      false,
 			ErrorMessage: err.Error(),
 		})
 		return
 	}
-	c.JSON(http.StatusOK, utils.AuthenticationResponse{
+	c.JSON(http.StatusOK, utils.Response{
 		Success: true,
 	})
 }

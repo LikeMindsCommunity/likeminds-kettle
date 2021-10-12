@@ -24,7 +24,7 @@ type LoginTokenMeta struct {
 	AccessTokenExpires int64
 	VerifiedMobileNo   string
 	CountryCode        string
-	UserID             string
+	UserID             float64
 }
 
 type RefreshTokenMeta struct {
@@ -33,7 +33,7 @@ type RefreshTokenMeta struct {
 	RefreshTokenExpires int64
 	VerifiedMobileNo    string
 	CountryCode         string
-	UserID              string
+	UserID              float64
 }
 
 func CreateVTM(verifiedMobileNo string, countryCode string) (*VerifyTokenMeta, error) {
@@ -61,7 +61,7 @@ func CreateVTM(verifiedMobileNo string, countryCode string) (*VerifyTokenMeta, e
 }
 
 //CreateLTMAndRTM is used to create login and refresh token meta
-func CreateLTMAndRTM(verifiedMobileNo string, countryCode string, userID string) (*LoginTokenMeta, *RefreshTokenMeta, error) {
+func CreateLTMAndRTM(verifiedMobileNo string, countryCode string, userID float64) (*LoginTokenMeta, *RefreshTokenMeta, error) {
 	ltm := &LoginTokenMeta{
 		AccessUuid:         uuid.NewV4().String(),
 		VerifiedMobileNo:   verifiedMobileNo,
@@ -186,7 +186,7 @@ func ExtractLTM(bearerToken string) (*LoginTokenMeta, error) {
 		if !ok {
 			return nil, errors.New("country_code is empty")
 		}
-		userID, ok := claims["user_id"].(string)
+		userID, ok := claims["user_id"].(float64)
 		if !ok {
 			return nil, errors.New("user_id is empty")
 		}
@@ -217,7 +217,7 @@ func ExtractRTM(bearerToken string) (*RefreshTokenMeta, error) {
 		if rtExpires == 0 {
 			return nil, errors.New("exp is empty")
 		}
-		userID, ok := claims["user_id"].(string)
+		userID, ok := claims["user_id"].(float64)
 		if !ok {
 			return nil, errors.New("user_id is empty")
 		}
