@@ -66,45 +66,23 @@ func Login(c *gin.Context) {
 		return
 	}
 	//If flow succeeds
-	emailExists := apiCR.Response["email_exists"].(bool)
+	userID := apiCR.Response["user"].(map[string]interface{})["id"].(float64)
 	mobileNo := vtm.VerifiedMobileNo
 	countryCode := vtm.CountryCode
-	if emailExists {
-		//Merge account case
-		//Create verify tokenResponse meta from the response received in VTM
-		vtm, err := token.CreateVTM(mobileNo, countryCode)
-		if err != nil {
-			//If token creation fails
-			utils.SomethingWentWrongError(c)
-			return
-		}
-		//Send response with verify token and api/user/login response
-		dataResponse := apiCR.Response
-		dataResponse["access_token"] = vtm.AccessToken
-		c.JSON(http.StatusOK, utils.Response{
-			Success: true,
-			Data:    dataResponse,
-		})
-		return
-	} else {
-		//New user login case
-		//Get user ID from api/user/login response
-		userID := apiCR.Response["user"].(map[string]interface{})["id"].(float64)
-		//Create login and refresh token
-		ltm, rtm, err := token.CreateLTMAndRTM(mobileNo, countryCode, userID)
-		if err != nil {
-			//If token creation fails
-			utils.SomethingWentWrongError(c)
-			return
-		}
-		//Send response with login, refresh token and api/user/login response
-		dataResponse := apiCR.Response
-		dataResponse["access_token"] = ltm.AccessToken
-		dataResponse["refresh_token"] = rtm.RefreshToken
-		c.JSON(http.StatusOK, utils.Response{
-			Success: true,
-			Data:    dataResponse,
-		})
+	//Create login and refresh token
+	ltm, rtm, err := token.CreateLTMAndRTM(mobileNo, countryCode, userID)
+	if err != nil {
+		//If token creation fails
+		utils.SomethingWentWrongError(c)
 		return
 	}
+	//Send response with login, refresh token and api/user/login response
+	dataResponse := apiCR.Response
+	dataResponse["access_token"] = ltm.AccessToken
+	dataResponse["refresh_token"] = rtm.RefreshToken
+	c.JSON(http.StatusOK, utils.Response{
+		Success: true,
+		Data:    dataResponse,
+	})
+	return
 }
