@@ -1,6 +1,7 @@
 package otp
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -32,7 +33,7 @@ func GenerateOTP(c *gin.Context) {
 		Params:        params,
 		CustomHeaders: nil,
 	}
-	
+
 	//Unmarshaling of response
 	respBytes, err := client.GetRequest(&options)
 	if err != nil {
@@ -58,6 +59,14 @@ func GenerateOTP(c *gin.Context) {
 			ErrorMessage: apiCR.ErrorMessage,
 		})
 		return
+	}
+	var apiCR api_client.APIClientResponse
+	err = json.Unmarshal(respBytes, &apiCR)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, api_client.APIClientResponse{
+			Success:      false,
+			ErrorMessage: "Something went wrong! Please try after sometime",
+		})
 	}
 
 	c.JSON(http.StatusOK, utils.Response{

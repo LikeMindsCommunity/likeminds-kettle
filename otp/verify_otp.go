@@ -15,7 +15,7 @@ func VerifyOTP(c *gin.Context) {
 	mobileNo := c.Query("mobile_no")
 	countryCode := c.Query("country_code")
 	if otp == "" || mobileNo == "" || countryCode == "" {
-		c.JSON(http.StatusBadRequest, utils.Response{
+		c.JSON(http.StatusBadRequest, api_client.APIClientResponse{
 			Success:      false,
 			ErrorMessage: "Query params missing!",
 		})
@@ -49,10 +49,7 @@ func VerifyOTP(c *gin.Context) {
 
 	//Check api/verify_otp success and response
 	if !resp.Success {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: resp.ErrorMessage,
-		})
+		c.JSON(http.StatusInternalServerError, resp)
 		return
 	}
 

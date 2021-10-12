@@ -9,7 +9,7 @@ import (
 	"sync"
 )
 
-type FetchCommunitiesResponse struct {
+type FetchCommunjitiesResponse struct {
 	HomeCommunities interface{} `json:"my_communities"`
 	Subscriptions   interface{} `json:"subscriptions"`
 }
@@ -21,6 +21,15 @@ func FetchCommunities(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, utils.Response{
 			Success:      false,
 			ErrorMessage: "Something went wrong! Please try after sometime",
+		})
+		return
+	}
+	//GET Request params
+	page := c.Query("page")
+	if page == "" {
+		c.JSON(http.StatusBadRequest, utils.Response{
+			Success:      false,
+			ErrorMessage: "Query params missing!",
 		})
 		return
 	}
