@@ -1,15 +1,16 @@
-package core_client
+package api_client
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"time"
 )
 
-type Client struct {
+type APIClient struct {
 	CoreServiceBaseURL         string
 	SubscriptionServiceBaseURL string
 	HTTPClient                 *http.Client
@@ -19,14 +20,12 @@ type GetRequestOptions struct {
 	Url           string
 	Params        map[string]string
 	CustomHeaders map[string]string
-	Header        http.Header
 }
 
 type PostRequestOptions struct {
 	Url     string
-	Body    interface{}
-	Headers map[string]string
-	Header  http.Header
+	Body          interface{}
+	CustomHeaders map[string]string
 }
 
 func GetCoreServiceBaseUrl() string {
@@ -49,8 +48,8 @@ func GetSubscriptionServiceBaseUrl() string {
 	return SubscriptionServiceBaseURL
 }
 
-func NewClient() *Client {
-	return &Client{
+func NewAPIClient() *APIClient {
+	return &APIClient{
 		CoreServiceBaseURL:         GetCoreServiceBaseUrl(),
 		SubscriptionServiceBaseURL: GetSubscriptionServiceBaseUrl(),
 		HTTPClient: &http.Client{
@@ -59,12 +58,9 @@ func NewClient() *Client {
 	}
 }
 
-func AddHeaders(req *http.Request, headers map[string]string, header http.Header) {
+func AddHeaders(req *http.Request, headers map[string]string) {
 	for k, v := range headers {
 		req.Header.Add(k, v)
-	}
-	if header != nil {
-		req.Header = header
 	}
 }
 
@@ -76,13 +72,18 @@ func AddParams(req *http.Request, params map[string]string) {
 	req.URL.RawQuery = q.Encode()
 }
 
-func (c *Client) sendRequest(req *http.Request, v interface{}) error {
+func (c *APIClient) sendRequest(req *http.Request, v interface{}) error {
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return err
 	}
 
-	defer res.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err = Body.Close()
+		if err != nil {
+
+		}
+	}(res.Body)
 
 	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
 		return fmt.Errorf("unknown error, status code: %d", res.StatusCode)
@@ -92,23 +93,26 @@ func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 		return err
 	}
 
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
-func (c *Client) GetRequest(options *GetRequestOptions) (interface{}, error) {
-	req, err := http.NewRequest("GET", options.Url, nil)
+func (c *APIClient) GetRequest(gro *GetRequestOptions) (interface{}, error) {
+	req, err := http.NewRequest("GET", gro.Url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	params := options.Params
+	params := gro.Params
 	if params != nil {
 		AddParams(req, params)
 	}
 
-	headers := options.CustomHeaders
+	headers := gro.CustomHeaders
 	if headers != nil {
-		AddHeaders(req, headers, options.Header)
+		AddHeaders(req, headers)
 	}
 
 	res := make(map[string]interface{})
@@ -120,20 +124,20 @@ func (c *Client) GetRequest(options *GetRequestOptions) (interface{}, error) {
 	return res, nil
 }
 
-func (c *Client) PostRequest(options *PostRequestOptions) (interface{}, error) {
-	jsonData, err := json.Marshal(options.Body)
+func (c *APIClient) PostRequest(pro *PostRequestOptions) (interface{}, error) {
+	jsonData, err := json.Marshal(pro.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", options.Url, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("POST", pro.Url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, err
 	}
 
-	headers := options.Headers
+	headers := pro.CustomHeaders
 	if headers != nil {
-		AddHeaders(req, headers, options.Header)
+		AddHeaders(req, headers)
 	}
 
 	res := make(map[string]interface{})

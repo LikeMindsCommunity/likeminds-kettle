@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/core_client"
+	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -42,11 +42,11 @@ func VerifyOTP(c *gin.Context) {
 		"otp":          otp,
 	}
 	//http client and request options
-	client := core_client.NewClient()
-	options := core_client.GetRequestOptions{
+	client := api_client.NewAPIClient()
+	options := api_client.GetRequestOptions{
 		Url:     client.CoreServiceBaseURL + "/api/verify_otp",
 		Params:  params,
-		Header: nil,
+		CustomHeaders: nil,
 	}
 	res, _ := client.GetRequest(&options)
 

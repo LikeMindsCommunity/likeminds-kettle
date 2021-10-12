@@ -2,7 +2,7 @@ package home
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/core_client"
+	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
 	"net/http"
@@ -25,7 +25,7 @@ func FetchCommunities(c *gin.Context) {
 		return
 	}
 
-	apiClient := core_client.NewClient()
+	apiClient := api_client.NewAPIClient()
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 	fetchCommunities := FetchCommunitiesResponse{}
@@ -33,7 +33,7 @@ func FetchCommunities(c *gin.Context) {
 	headers["x-member-id"] = ltm.UserID
 
 	go func() {
-		homeCommunities, errHomeCommunities := apiClient.GetRequest(&core_client.GetRequestOptions{
+		homeCommunities, errHomeCommunities := apiClient.GetRequest(&api_client.GetRequestOptions{
 			Url:           apiClient.CoreServiceBaseURL + "/api/community_member/home_communities?page=0",
 			CustomHeaders: headers,
 		})
@@ -49,7 +49,7 @@ func FetchCommunities(c *gin.Context) {
 		wg.Done()
 	}()
 	go func() {
-		subscriptions, errSubscription := apiClient.GetRequest(&core_client.GetRequestOptions{
+		subscriptions, errSubscription := apiClient.GetRequest(&api_client.GetRequestOptions{
 			Url:           apiClient.SubscriptionServiceBaseURL + "/api/subscription/fetch",
 			CustomHeaders: headers,
 		})
