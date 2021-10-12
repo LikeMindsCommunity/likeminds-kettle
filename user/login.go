@@ -20,7 +20,7 @@ func Login(c *gin.Context) {
 	//Check if request has valid verify token or not
 	vtm, ok := c.MustGet("vtm").(*token.VerifyTokenMeta)
 	if !ok {
-		//If token is not valid
+		//If token is not available
 		utils.SomethingWentWrongError(c)
 		return
 	}
@@ -47,21 +47,21 @@ func Login(c *gin.Context) {
 	}
 	//Send request
 	respBytes, err := client.GetRequest(&options)
-	//If API fails or any other error
 	if err != nil {
+		//If API fails or any other error
 		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 	//Parse response
 	var apiCR api_client.APIClientResponse
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	//Internal unmarshal error
 	if err != nil {
+		//Internal unmarshal error
 		utils.SomethingWentWrongError(c)
 	}
 
-	//If api/user/login returns success as false
 	if !apiCR.Success {
+		//If api/user/login returns success as false
 		c.JSON(http.StatusInternalServerError, apiCR)
 		return
 	}
@@ -73,8 +73,8 @@ func Login(c *gin.Context) {
 		//Merge account case
 		//Create verify tokenResponse meta from the response received in VTM
 		vtm, err := token.CreateVTM(mobileNo, countryCode)
-		//If token creation fails
 		if err != nil {
+			//If token creation fails
 			utils.SomethingWentWrongError(c)
 			return
 		}
@@ -85,6 +85,7 @@ func Login(c *gin.Context) {
 			Success: true,
 			Data:    dataResponse,
 		})
+		return
 	} else {
 		//New user login case
 		//Get user ID from api/user/login response
@@ -104,6 +105,6 @@ func Login(c *gin.Context) {
 			Success: true,
 			Data:    dataResponse,
 		})
+		return
 	}
-	return
 }

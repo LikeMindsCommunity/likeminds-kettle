@@ -3,6 +3,7 @@ package user
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
+	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/cache"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -13,52 +14,64 @@ type LogoutRequest struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-//Logout is used to blacklist LTM and RTM tokens
+//Logout is used to blacklist login and refresh tokens and logout user
 func Logout(c *gin.Context) {
-	client, ok := c.MustGet("redis_client").(*redis.Client)
-	if !ok {
-		c.JSON(http.StatusInternalServerError,
-			utils.Response{
-				Success:      false,
-				ErrorMessage: "Something went wrong! Please try after sometime",
-			})
-		return
-	}
+	//Check if request has valid login token or not
 	ltm, ok := c.MustGet("ltm").(*token.LoginTokenMeta)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: "Something went wrong! Please try after sometime",
-		})
+		//If token is not available
+		utils.SomethingWentWrongError(c)
 		return
 	}
+	//Check if request has refresh login token or not
 	rtm, ok := c.MustGet("rtm").(*token.RefreshTokenMeta)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: "Something went wrong! Please try after sometime",
-		})
+		//If token is not available
+		utils.SomethingWentWrongError(c)
+		return
+	}
+	//Get redis clients
+	client, ok := c.MustGet("redis_client").(*redis.Client)
+	if !ok {
+		//If redis client is unavailable
+		utils.SomethingWentWrongError(c)
 		return
 	}
 
-	//TODO - call api/user/logout and get response
-	success := true
-	errorMessage := ""
-	if !success {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: errorMessage,
-		})
-		return
-	}
-
-	//Blacklist token
-	err := cache.BlacklistToken(client, ltm, rtm)
+	//Create headers from login token
+	headers := make(map[string]interface{})
+	headers["x-member-id"] = ltm.UserID
+	//Create internal API client
+	apiClient := api_client.NewAPIClient()
+	//Send request
+	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
+		Url:           apiClient.CoreServiceBaseURL + "/api/user/logout",
+		CustomHeaders: headers,
+	})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: err.Error(),
-		})
+		//If API fails or any other error
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+	//Parse response
+	var apiCR api_client.APIClientResponse
+	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
+	if err != nil {
+		//Internal unmarshal error
+		utils.SomethingWentWrongError(c)
+	}
+
+	if !apiCR.Success {
+		//If api/user/logout returns success as false
+		c.JSON(http.StatusInternalServerError, apiCR)
+		return
+	}
+	//If flow succeeds
+	//Blacklist token
+	err = cache.BlacklistToken(client, ltm, rtm)
+	if err != nil {
+		//If token blacklist returns error
+		utils.SomethingWentWrongError(c)
 		return
 	}
 	c.JSON(http.StatusOK, utils.Response{
