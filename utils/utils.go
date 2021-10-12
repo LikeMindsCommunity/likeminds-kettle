@@ -1,6 +1,8 @@
 package utils
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 //RequestParamsToMap Converts a struct to a map while maintaining the json alias as keys
 func RequestParamsToMap(obj interface{}) (newMap map[string]string, err error) {

@@ -13,61 +13,46 @@ func GenerateOTP(c *gin.Context) {
 	mobileNo := c.Query("mobile_no")
 	countryCode := c.Query("country_code")
 	if mobileNo == "" || countryCode == "" {
-		c.JSON(http.StatusBadRequest, utils.Response{
-			Success:      false,
-			ErrorMessage: "Query params missing!",
-		})
+		//If GET params are missing
+		utils.GETQueryParamsMissingError(c)
 		return
 	}
 
-	//Params to be sent in the request
+	//Params to be sent in the api/generate_otp request
 	params := map[string]string{
 		"country_code": countryCode,
 		"mobile_no":    mobileNo,
 	}
-	//http client and request options
+	//Create internal API client
 	client := api_client.NewAPIClient()
 	options := api_client.GetRequestOptions{
 		Url:           client.CoreServiceBaseURL + "/api/generate_otp",
 		Params:        params,
 		CustomHeaders: nil,
 	}
-
-	//Unmarshaling of response
+	//Send request
 	respBytes, err := client.GetRequest(&options)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: err.Error(),
-		})
+		//If API fails or any other error
+		utils.GeneralAPIError(c, err.Error())
 		return
 	}
+	//Parse response
 	var apiCR api_client.APIClientResponse
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: "Something went wrong! Please try after sometime",
-		})
-	}
-
-	//Check api/generate_otp success and response
-	if !apiCR.Success {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: apiCR.ErrorMessage,
-		})
+		//Internal unmarshal error
+		utils.SomethingWentWrongError(c)
 		return
 	}
-	var apiCR api_client.APIClientResponse
-	err = json.Unmarshal(respBytes, &apiCR)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, api_client.APIClientResponse{
-			Success:      false,
-			ErrorMessage: "Something went wrong! Please try after sometime",
-		})
+
+	if !apiCR.Success {
+		//If api/generate_otp returns success as false
+		utils.APIClientError(c, apiCR)
+		return
 	}
 
+	//If flow succeeds
 	c.JSON(http.StatusOK, utils.Response{
 		Success: apiCR.Success,
 	})
