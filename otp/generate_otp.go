@@ -9,18 +9,13 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-type GenerateOTPResponse struct {
-	Success      bool   `json:"success"`
-	ErrorMessage string `json:"error_message"`
-}
-
 // GenerateOTP is used to generate otp
 func GenerateOTP(c *gin.Context) {
 	//GET Request params
 	mobileNo := c.Query("mobile_no")
 	countryCode := c.Query("country_code")
 	if mobileNo == "" || countryCode == "" {
-		c.JSON(http.StatusBadRequest, utils.AuthenticationResponse{
+		c.JSON(http.StatusBadRequest, utils.Response{
 			Success:      false,
 			ErrorMessage: "Query params missing!",
 		})
@@ -35,27 +30,27 @@ func GenerateOTP(c *gin.Context) {
 	//http client and request options
 	client := core_client.NewClient()
 	options := core_client.GetRequestOptions{
-		Url:     client.BaseURL + "/api/generate_otp",
+		Url:     client.CoreServiceBaseURL + "/api/generate_otp",
 		Params:  params,
-		Headers: nil,
+		Header: nil,
 	}
 	res, _ := client.GetRequest(&options)
 
 	// marshaling and unmarshaling of response
-	var resp GenerateOTPResponse
+	var resp utils.Response
 	response, _ := json.Marshal(res)
 	json.Unmarshal(response, &resp)
 
 	//Check api/generate_otp success and response
 	if !resp.Success {
-		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+		c.JSON(http.StatusInternalServerError, utils.Response{
 			Success:      false,
 			ErrorMessage: resp.ErrorMessage,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, utils.AuthenticationResponse{
+	c.JSON(http.StatusOK, utils.Response{
 		Success: true,
 	})
 

@@ -34,7 +34,7 @@ func VerifyOTP(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	//Params to be sent in the request
 	params := map[string]string{
 		"country_code": countryCode,
@@ -44,9 +44,9 @@ func VerifyOTP(c *gin.Context) {
 	//http client and request options
 	client := core_client.NewClient()
 	options := core_client.GetRequestOptions{
-		Url:     client.BaseURL + "/api/verify_otp",
+		Url:     client.CoreServiceBaseURL + "/api/verify_otp",
 		Params:  params,
-		Headers: nil,
+		Header: nil,
 	}
 	res, _ := client.GetRequest(&options)
 
@@ -57,7 +57,7 @@ func VerifyOTP(c *gin.Context) {
 
 	//Check api/verify_otp success and response
 	if !resp.Success {
-		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
+		c.JSON(http.StatusInternalServerError, utils.Response{
 			Success:      false,
 			ErrorMessage: resp.ErrorMessage,
 		})
