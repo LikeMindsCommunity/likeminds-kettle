@@ -37,7 +37,7 @@ func FetchCommunities(c *gin.Context) {
 	apiClient := api_client.NewAPIClient()
 	wg := sync.WaitGroup{}
 	wg.Add(2)
-	headers := make(map[string]string)
+	headers := make(map[string]interface{})
 	headers["x-member-id"] = ltm.UserID
 	resp := utils.Response{}
 

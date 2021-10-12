@@ -36,7 +36,7 @@ func Login(c *gin.Context) {
 	//TODO - call api/user/login and get response by sending mobile no and country code from verifyOTPTokenMeta
 	success := true
 	errorMessage := ""
-	userID := "456"
+	userID := float64(456)
 	if !success {
 		c.JSON(http.StatusInternalServerError, utils.Response{
 			Success:      false,
@@ -63,4 +63,3 @@ func Login(c *gin.Context) {
 		Data:    token,
 	})
 }
-

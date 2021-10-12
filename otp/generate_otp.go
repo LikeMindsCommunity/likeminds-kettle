@@ -53,9 +53,14 @@ func GenerateOTP(c *gin.Context) {
 
 	//Check api/generate_otp success and response
 	if !apiCR.Success {
-		c.JSON(http.StatusInternalServerError, apiCR)
+		c.JSON(http.StatusInternalServerError, utils.Response{
+			Success:      false,
+			ErrorMessage: apiCR.ErrorMessage,
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, apiCR)
+	c.JSON(http.StatusOK, utils.Response{
+		Success: apiCR.Success,
+	})
 }

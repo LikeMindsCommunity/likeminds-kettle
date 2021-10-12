@@ -54,7 +54,7 @@ func VerifyOTP(c *gin.Context) {
 	}
 
 	profileExists := resp.Response["profile_exists"].(bool)
-	userID := resp.Response["user"].(map[string]interface{})["id"].(string)
+	userID := resp.Response["user"].(map[string]interface{})["id"].(float64)
 
 	if profileExists {
 		//Create login and refresh tokenResponse meta from the response received in api/verify_otp

@@ -20,13 +20,13 @@ type APIClient struct {
 type GetRequestOptions struct {
 	Url           string
 	Params        map[string]string
-	CustomHeaders map[string]string
+	CustomHeaders map[string]interface{}
 }
 
 type PostRequestOptions struct {
 	Url           string
 	Body          interface{}
-	CustomHeaders map[string]string
+	CustomHeaders map[string]interface{}
 }
 
 func GetCoreServiceBaseUrl() string {
@@ -59,9 +59,9 @@ func NewAPIClient() *APIClient {
 	}
 }
 
-func AddHeaders(req *http.Request, headers map[string]string) {
+func AddHeaders(req *http.Request, headers map[string]interface{}) {
 	for k, v := range headers {
-		req.Header.Add(k, v)
+		req.Header.Add(k, v.(string))
 	}
 }
 
