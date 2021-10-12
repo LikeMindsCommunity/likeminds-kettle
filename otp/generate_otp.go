@@ -1,7 +1,6 @@
 package otp
 
 import (
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/utils"
