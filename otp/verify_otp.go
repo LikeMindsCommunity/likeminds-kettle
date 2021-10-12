@@ -8,68 +8,64 @@ import (
 	"net/http"
 )
 
-// VerifyOTP is used to verify otp and generate VTM Token
+// VerifyOTP is used to verify otp and generate verify token
 func VerifyOTP(c *gin.Context) {
 	//GET Request params
 	otp := c.Query("otp")
 	mobileNo := c.Query("mobile_no")
 	countryCode := c.Query("country_code")
 	if otp == "" || mobileNo == "" || countryCode == "" {
-		c.JSON(http.StatusBadRequest, api_client.APIClientResponse{
-			Success:      false,
-			ErrorMessage: "Query params missing!",
-		})
+		//If GET params are missing
+		utils.GETQueryParamsMissingError(c)
 		return
 	}
 
-	//Params to be sent in the request
+	//Params to be sent in the api/verify_otp request
 	params := map[string]string{
 		"country_code": countryCode,
 		"mobile_no":    mobileNo,
 		"otp":          otp,
 	}
-	//http client and request options
+	//Create internal API client
 	client := api_client.NewAPIClient()
 	options := api_client.GetRequestOptions{
 		Url:           client.CoreServiceBaseURL + "/api/verify_otp",
 		Params:        params,
 		CustomHeaders: nil,
 	}
-	//Unmarshaling of response
+	//Send request
 	respBytes, err := client.GetRequest(&options)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: err.Error(),
-		})
+		//If API fails or any other error
+		utils.GeneralAPIError(c, err.Error())
 		return
 	}
+	//Parse response
 	var apiCR api_client.APIClientResponse
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: "Something went wrong! Please try after sometime",
-		})
+		//Internal unmarshal error
+		utils.SomethingWentWrongError(c)
 	}
 
-	//Check api/verify_otp success and response
 	if !apiCR.Success {
-		c.JSON(http.StatusInternalServerError, apiCR)
+		//If api/verify_otp success as false
+		utils.APIClientError(c, apiCR)
 		return
 	}
+	//If flow succeeds
 	profileExists := apiCR.Response["profile_exists"].(bool)
 	userID := apiCR.Response["user"].(map[string]interface{})["id"].(float64)
+	//If user exists in our DB, we need to return LTM and RTM
 	if profileExists {
-		//Create login and refresh dataResponse meta from the response received in api/verify_otp
+		//Create login and refresh token
 		ltm, rtm, err := token.CreateLTMAndRTM(mobileNo, countryCode, userID)
 		if err != nil {
-			c.JSON(http.StatusUnprocessableEntity, utils.Response{
-				Success:      false,
-				ErrorMessage: err.Error(),
-			})
+			//If token creation fails
+			utils.SomethingWentWrongError(c)
 			return
 		}
+		//Send response with login, refresh token and api/verify_otp response
 		dataResponse := apiCR.Response
 		dataResponse["access_token"] = ltm.AccessToken
 		dataResponse["refresh_token"] = rtm.RefreshToken
@@ -77,19 +73,22 @@ func VerifyOTP(c *gin.Context) {
 			Success: true,
 			Data:    dataResponse,
 		})
+		return
 	} else {
-		//Create verify tokenResponse meta from the response received in api/verify_otp
+		//Create verify token
 		vtm, err := token.CreateVTM(mobileNo, countryCode)
+		//If token creation fails
 		if err != nil {
-			c.JSON(http.StatusUnprocessableEntity, err.Error())
+			utils.SomethingWentWrongError(c)
 			return
 		}
+		//Send response with verify token
 		dataResponse := apiCR.Response
 		dataResponse["access_token"] = vtm.AccessToken
 		c.JSON(http.StatusOK, utils.Response{
 			Success: true,
 			Data:    dataResponse,
 		})
+		return
 	}
-	return
 }

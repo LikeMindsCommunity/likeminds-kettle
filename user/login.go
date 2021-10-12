@@ -15,73 +15,70 @@ type LoginRequest struct {
 	LoginType          string `json:"type" binding:"required"`
 }
 
-//Login used when user is signing up and generate LTM and RTM tokens
+//Login used when user is signing up and generate login and refresh tokens
 func Login(c *gin.Context) {
+	//Check if request has valid verify token or not
 	vtm, ok := c.MustGet("vtm").(*token.VerifyTokenMeta)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: "Something went wrong! Please try after sometime",
-		})
+		//If token is not valid
+		utils.SomethingWentWrongError(c)
 		return
 	}
+	//POST body params
 	var lr LoginRequest
 	if err := c.ShouldBindJSON(&lr); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, utils.Response{
-			Success:      false,
-			ErrorMessage: "Body params missing!",
-		})
+		//If POST body params are missing
+		utils.POSTBodyParamsMissingError(c)
 		return
 	}
 
-	//Params to be sent in the request
+	//Params to be sent in the api/user/login
 	params, err := utils.RequestParamsToMap(lr)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: "Something went wrong! Please try after sometime",
-		})
+		//If mapping fails
+		utils.SomethingWentWrongError(c)
 	}
-	//http client and request options
+	//Create internal API client
 	client := api_client.NewAPIClient()
 	options := api_client.GetRequestOptions{
 		Url:           client.CoreServiceBaseURL + "/api/user/login",
 		Params:        params,
 		CustomHeaders: nil,
 	}
-	//Unmarshaling of response
+	//Send request
 	respBytes, err := client.GetRequest(&options)
+	//If API fails or any other error
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: err.Error(),
-		})
+		utils.GeneralAPIError(c, err.Error())
 		return
 	}
+	//Parse response
 	var apiCR api_client.APIClientResponse
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
+	//Internal unmarshal error
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: "Something went wrong! Please try after sometime",
-		})
+		utils.SomethingWentWrongError(c)
 	}
 
-	//Check api/user/login success and response
+	//If api/user/login returns success as false
 	if !apiCR.Success {
 		c.JSON(http.StatusInternalServerError, apiCR)
 		return
 	}
+	//If flow succeeds
 	emailExists := apiCR.Response["email_exists"].(bool)
 	mobileNo := vtm.VerifiedMobileNo
 	countryCode := vtm.CountryCode
 	if emailExists {
+		//Merge account case
 		//Create verify tokenResponse meta from the response received in VTM
 		vtm, err := token.CreateVTM(mobileNo, countryCode)
+		//If token creation fails
 		if err != nil {
-			c.JSON(http.StatusUnprocessableEntity, err.Error())
+			utils.SomethingWentWrongError(c)
 			return
 		}
+		//Send response with verify token and api/user/login response
 		dataResponse := apiCR.Response
 		dataResponse["access_token"] = vtm.AccessToken
 		c.JSON(http.StatusOK, utils.Response{
@@ -89,16 +86,17 @@ func Login(c *gin.Context) {
 			Data:    dataResponse,
 		})
 	} else {
+		//New user login case
+		//Get user ID from api/user/login response
 		userID := apiCR.Response["user"].(map[string]interface{})["id"].(float64)
-		//Create login and refresh dataResponse meta from the response received in api/verify_otp
+		//Create login and refresh token
 		ltm, rtm, err := token.CreateLTMAndRTM(mobileNo, countryCode, userID)
 		if err != nil {
-			c.JSON(http.StatusUnprocessableEntity, utils.Response{
-				Success:      false,
-				ErrorMessage: err.Error(),
-			})
+			//If token creation fails
+			utils.SomethingWentWrongError(c)
 			return
 		}
+		//Send response with login, refresh token and api/user/login response
 		dataResponse := apiCR.Response
 		dataResponse["access_token"] = ltm.AccessToken
 		dataResponse["refresh_token"] = rtm.RefreshToken
