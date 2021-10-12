@@ -32,7 +32,7 @@ func GenerateOTP(c *gin.Context) {
 		Params:        params,
 		CustomHeaders: nil,
 	}
-
+	
 	//Unmarshaling of response
 	respBytes, err := client.GetRequest(&options)
 	if err != nil {
