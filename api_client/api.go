@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
@@ -23,7 +24,7 @@ type GetRequestOptions struct {
 }
 
 type PostRequestOptions struct {
-	Url     string
+	Url           string
 	Body          interface{}
 	CustomHeaders map[string]string
 }
@@ -72,10 +73,10 @@ func AddParams(req *http.Request, params map[string]string) {
 	req.URL.RawQuery = q.Encode()
 }
 
-func (c *APIClient) sendRequest(req *http.Request, v interface{}) error {
-	res, err := c.HTTPClient.Do(req)
+func (c *APIClient) sendRequest(req *http.Request) ([]byte, error) {
+	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	defer func(Body io.ReadCloser) {
@@ -83,23 +84,24 @@ func (c *APIClient) sendRequest(req *http.Request, v interface{}) error {
 		if err != nil {
 
 		}
-	}(res.Body)
+	}(resp.Body)
 
-	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
-		return fmt.Errorf("unknown error, status code: %d", res.StatusCode)
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusBadRequest {
+		return nil, fmt.Errorf("unknown error, status code: %d", resp.StatusCode)
 	}
-
-	if err = json.NewDecoder(res.Body).Decode(&v); err != nil {
-		return err
-	}
-
+	//Defer close error
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return respBytes, nil
 }
 
-func (c *APIClient) GetRequest(gro *GetRequestOptions) (interface{}, error) {
+func (c *APIClient) GetRequest(gro *GetRequestOptions) ([]byte, error) {
 	req, err := http.NewRequest("GET", gro.Url, nil)
 	if err != nil {
 		return nil, err
@@ -115,16 +117,15 @@ func (c *APIClient) GetRequest(gro *GetRequestOptions) (interface{}, error) {
 		AddHeaders(req, headers)
 	}
 
-	res := make(map[string]interface{})
-
-	if err := c.sendRequest(req, &res); err != nil {
+	respBytes, err := c.sendRequest(req)
+	if err != nil {
 		return nil, err
 	}
 
-	return res, nil
+	return respBytes, nil
 }
 
-func (c *APIClient) PostRequest(pro *PostRequestOptions) (interface{}, error) {
+func (c *APIClient) PostRequest(pro *PostRequestOptions) ([]byte, error) {
 	jsonData, err := json.Marshal(pro.Body)
 	if err != nil {
 		return nil, err
@@ -140,11 +141,10 @@ func (c *APIClient) PostRequest(pro *PostRequestOptions) (interface{}, error) {
 		AddHeaders(req, headers)
 	}
 
-	res := make(map[string]interface{})
-
-	if err := c.sendRequest(req, &res); err != nil {
+	respBytes, err := c.sendRequest(req)
+	if err != nil {
 		return nil, err
 	}
 
-	return res, nil
+	return respBytes, nil
 }

@@ -1,6 +1,7 @@
 package home
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
@@ -9,7 +10,7 @@ import (
 	"sync"
 )
 
-type FetchCommunitiesResponse struct {
+type FetchCommunjitiesResponse struct {
 	HomeCommunities interface{} `json:"my_communities"`
 	Subscriptions   interface{} `json:"subscriptions"`
 }
@@ -24,50 +25,67 @@ func FetchCommunities(c *gin.Context) {
 		})
 		return
 	}
+	//GET Request params
+	page := c.Query("page")
+	if page == "" {
+		c.JSON(http.StatusBadRequest, utils.Response{
+			Success:      false,
+			ErrorMessage: "Query params missing!",
+		})
+		return
+	}
 
 	apiClient := api_client.NewAPIClient()
 	wg := sync.WaitGroup{}
 	wg.Add(2)
-	fetchCommunities := FetchCommunitiesResponse{}
 	headers := make(map[string]string)
 	headers["x-member-id"] = ltm.UserID
+	resp := utils.Response{}
 
 	go func() {
-		homeCommunities, errHomeCommunities := apiClient.GetRequest(&api_client.GetRequestOptions{
-			Url:           apiClient.CoreServiceBaseURL + "/api/community_member/home_communities?page=0",
+		respBytes, err := apiClient.GetRequest(&api_client.GetRequestOptions{
+			Url:           apiClient.CoreServiceBaseURL + "/api/community_member/home_communities?page=" + page,
 			CustomHeaders: headers,
 		})
-		if errHomeCommunities != nil {
-			c.JSON(http.StatusInternalServerError, utils.Response{
-				Success:      false,
-				ErrorMessage: errHomeCommunities.Error(),
-			})
+		if err != nil {
+			resp.ErrorMessage = err.Error()
 			wg.Done()
 			return
 		}
-		fetchCommunities.HomeCommunities = homeCommunities
+		var apiCR api_client.APIClientResponse
+		err = json.Unmarshal(respBytes, &apiCR)
+		if err != nil {
+			resp.ErrorMessage = "Something went wrong! Please try after sometime"
+			wg.Done()
+		}
+		resp.Data.(map[string]interface{})["my_communities"] = apiCR.Response["my_communities"]
 		wg.Done()
 	}()
 	go func() {
-		subscriptions, errSubscription := apiClient.GetRequest(&api_client.GetRequestOptions{
+		respBytes, err := apiClient.GetRequest(&api_client.GetRequestOptions{
 			Url:           apiClient.SubscriptionServiceBaseURL + "/api/subscription/fetch",
 			CustomHeaders: headers,
 		})
-		if errSubscription != nil {
-			c.JSON(http.StatusInternalServerError, utils.Response{
-				Success:      false,
-				ErrorMessage: errSubscription.Error(),
-			})
+		if err != nil {
+			resp.ErrorMessage = err.Error()
 			wg.Done()
 			return
 		}
-		fetchCommunities.Subscriptions = subscriptions
+		var apiCR api_client.APIClientResponse
+		err = json.Unmarshal(respBytes, &apiCR)
+		if err != nil {
+			resp.ErrorMessage = "Something went wrong! Please try after sometime"
+			wg.Done()
+			return
+		}
+		resp.Data.(map[string]interface{})["subscriptions"] = apiCR.Response["subscriptions"]
 		wg.Done()
 	}()
 
 	wg.Wait()
-	c.JSON(http.StatusOK, utils.Response{
-		Success: true,
-		Data:    fetchCommunities,
-	})
+
+	if resp.ErrorMessage != "" {
+		c.JSON(http.StatusInternalServerError, resp)
+	}
+	c.JSON(http.StatusOK, resp)
 }

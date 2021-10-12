@@ -2,11 +2,10 @@ package otp
 
 import (
 	"encoding/json"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/utils"
+	"net/http"
 )
 
 // GenerateOTP is used to generate otp
@@ -30,28 +29,34 @@ func GenerateOTP(c *gin.Context) {
 	//http client and request options
 	client := api_client.NewAPIClient()
 	options := api_client.GetRequestOptions{
-		Url:     client.CoreServiceBaseURL + "/api/generate_otp",
-		Params:  params,
+		Url:           client.CoreServiceBaseURL + "/api/generate_otp",
+		Params:        params,
 		CustomHeaders: nil,
 	}
-	res, _ := client.GetRequest(&options)
 
-	// marshaling and unmarshaling of response
-	var resp utils.Response
-	response, _ := json.Marshal(res)
-	json.Unmarshal(response, &resp)
-
-	//Check api/generate_otp success and response
-	if !resp.Success {
+	//Unmarshaling of response
+	respBytes, err := client.GetRequest(&options)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.Response{
 			Success:      false,
-			ErrorMessage: resp.ErrorMessage,
+			ErrorMessage: err.Error(),
 		})
 		return
 	}
+	var apiCR api_client.APIClientResponse
+	err = json.Unmarshal(respBytes, &apiCR)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, api_client.APIClientResponse{
+			Success:      false,
+			ErrorMessage: "Something went wrong! Please try after sometime",
+		})
+	}
 
-	c.JSON(http.StatusOK, utils.Response{
-		Success: true,
-	})
+	//Check api/generate_otp success and response
+	if !apiCR.Success {
+		c.JSON(http.StatusInternalServerError, apiCR)
+		return
+	}
 
+	c.JSON(http.StatusOK, apiCR)
 }
