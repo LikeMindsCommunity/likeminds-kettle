@@ -1,7 +1,6 @@
 package home
 
 import (
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
@@ -53,7 +52,7 @@ func FetchCommunities(c *gin.Context) {
 			return
 		}
 		var apiCR api_client.APIClientResponse
-		err = json.Unmarshal(respBytes, &apiCR)
+		err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 		if err != nil {
 			resp.ErrorMessage = "Something went wrong! Please try after sometime"
 			wg.Done()
@@ -72,7 +71,7 @@ func FetchCommunities(c *gin.Context) {
 			return
 		}
 		var apiCR api_client.APIClientResponse
-		err = json.Unmarshal(respBytes, &apiCR)
+		err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 		if err != nil {
 			resp.ErrorMessage = "Something went wrong! Please try after sometime"
 			wg.Done()
