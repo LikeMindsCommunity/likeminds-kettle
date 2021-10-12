@@ -35,11 +35,17 @@ func VerifyOTP(c *gin.Context) {
 		Params:        params,
 		CustomHeaders: nil,
 	}
-
 	//Unmarshaling of response
-	respBytes, _ := client.GetRequest(&options)
-	var resp api_client.APIClientResponse
-	err := api_client.UnmarshalAPIClientResponse(respBytes, &resp)
+	respBytes, err := client.GetRequest(&options)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Response{
+			Success:      false,
+			ErrorMessage: err.Error(),
+		})
+		return
+	}
+	var apiCR api_client.APIClientResponse
+	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.Response{
 			Success:      false,
@@ -48,16 +54,14 @@ func VerifyOTP(c *gin.Context) {
 	}
 
 	//Check api/verify_otp success and response
-	if !resp.Success {
-		c.JSON(http.StatusInternalServerError, resp)
+	if !apiCR.Success {
+		c.JSON(http.StatusInternalServerError, apiCR)
 		return
 	}
-
-	profileExists := resp.Response["profile_exists"].(bool)
-	userID := resp.Response["user"].(map[string]interface{})["id"].(float64)
-
+	profileExists := apiCR.Response["profile_exists"].(bool)
+	userID := apiCR.Response["user"].(map[string]interface{})["id"].(float64)
 	if profileExists {
-		//Create login and refresh tokenResponse meta from the response received in api/verify_otp
+		//Create login and refresh dataResponse meta from the response received in api/verify_otp
 		ltm, rtm, err := token.CreateLTMAndRTM(mobileNo, countryCode, userID)
 		if err != nil {
 			c.JSON(http.StatusUnprocessableEntity, utils.Response{
@@ -66,13 +70,12 @@ func VerifyOTP(c *gin.Context) {
 			})
 			return
 		}
-		tokenResponse := map[string]string{
-			"access_token":  ltm.AccessToken,
-			"refresh_token": rtm.RefreshToken,
-		}
+		dataResponse := apiCR.Response
+		dataResponse["access_token"] = ltm.AccessToken
+		dataResponse["refresh_token"] = rtm.RefreshToken
 		c.JSON(http.StatusOK, utils.Response{
 			Success: true,
-			Data:    tokenResponse,
+			Data:    dataResponse,
 		})
 	} else {
 		//Create verify tokenResponse meta from the response received in api/verify_otp
@@ -81,12 +84,12 @@ func VerifyOTP(c *gin.Context) {
 			c.JSON(http.StatusUnprocessableEntity, err.Error())
 			return
 		}
-		tokenResponse := map[string]string{
-			"access_token": vtm.AccessToken,
-		}
+		dataResponse := apiCR.Response
+		dataResponse["access_token"] = vtm.AccessToken
 		c.JSON(http.StatusOK, utils.Response{
 			Success: true,
-			Data:    tokenResponse,
+			Data:    dataResponse,
 		})
 	}
+	return
 }
