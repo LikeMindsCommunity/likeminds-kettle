@@ -1,11 +1,25 @@
 package otp
 
 import (
+	"encoding/json"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/core_client"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
-	"net/http"
 )
+
+type User struct {
+	Id string `json:"id"`
+}
+
+type VerifyOTPResponse struct {
+	Success       bool   `json:"success"`
+	ErrorMessage  string `json:"error_message"`
+	ProfileExists bool   `json:"profile_exists"`
+	User          User   `json:"user"`
+}
 
 // VerifyOTP is used to verify otp and generate VTM Token
 func VerifyOTP(c *gin.Context) {
@@ -21,23 +35,37 @@ func VerifyOTP(c *gin.Context) {
 		return
 	}
 
-	//TODO - call api/verify_otp and get response
-	success := true
-	errorMessage := ""
-	profileExists := true
-	userId := "21"
+	//Params to be sent in the request
+	params := map[string]string{
+		"country_code": countryCode,
+		"mobile_no":    mobileNo,
+		"otp":          otp,
+	}
+	//http client and request options
+	client := core_client.NewClient()
+	options := core_client.GetRequestOptions{
+		Url:     client.BaseURL + "/api/verify_otp",
+		Params:  params,
+		Headers: nil,
+	}
+	res, _ := client.GetRequest(&options)
+
+	// marshaling and unmarshaling of response
+	var resp VerifyOTPResponse
+	response, _ := json.Marshal(res)
+	json.Unmarshal(response, &resp)
 
 	//Check api/verify_otp success and response
-	if !success {
+	if !resp.Success {
 		c.JSON(http.StatusInternalServerError, utils.AuthenticationResponse{
 			Success:      false,
-			ErrorMessage: errorMessage,
+			ErrorMessage: resp.ErrorMessage,
 		})
 		return
 	}
-	if profileExists {
+	if resp.ProfileExists {
 		//Create login and refresh token meta from the response received in api/verify_otp
-		ltm, rtm, err := token.CreateLTMAndRTM(mobileNo, countryCode, userId)
+		ltm, rtm, err := token.CreateLTMAndRTM(mobileNo, countryCode, resp.User.Id)
 		if err != nil {
 			c.JSON(http.StatusUnprocessableEntity, utils.AuthenticationResponse{
 				Success:      false,
