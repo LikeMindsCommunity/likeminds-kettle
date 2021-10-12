@@ -74,6 +74,7 @@ func Logout(c *gin.Context) {
 		utils.SomethingWentWrongError(c)
 		return
 	}
+	//Send response with success as true
 	c.JSON(http.StatusOK, utils.Response{
 		Success: true,
 	})

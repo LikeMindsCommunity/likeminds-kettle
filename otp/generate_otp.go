@@ -53,6 +53,7 @@ func GenerateOTP(c *gin.Context) {
 	}
 
 	//If flow succeeds
+	//Send response with success as true
 	c.JSON(http.StatusOK, utils.Response{
 		Success: apiCR.Success,
 	})
