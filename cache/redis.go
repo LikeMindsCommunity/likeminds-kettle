@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+const ParamRedisClient = "redis_client"
+
 func InitRedis() *redis.Client {
 	//Initializing Redis
 	dsn := os.Getenv("REDIS_DSN")

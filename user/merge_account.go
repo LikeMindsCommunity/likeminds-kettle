@@ -8,17 +8,14 @@ import (
 	"net/http"
 )
 
+const MergeAccountEndPoint = "/api/merge_account"
+const ParamMobileNo = "mobile_no"
+const ParamCountryCode = "country_code"
+
 //MergeAccount used when user wants to merge account and generate login and refresh tokens
 func MergeAccount(c *gin.Context) {
 	//Check if request has valid login token or not
-	ltm, ok := c.MustGet("ltm").(*token.LoginTokenMeta)
-	if !ok {
-		//If token is not available
-		utils.SomethingWentWrongError(c)
-		return
-	}
-	//Check if request has refresh login token or not
-	_, ok = c.MustGet("rtm").(*token.RefreshTokenMeta)
+	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
 		//If token is not available
 		utils.SomethingWentWrongError(c)
@@ -27,17 +24,17 @@ func MergeAccount(c *gin.Context) {
 
 	//Create headers from login token
 	headers := make(map[string]interface{})
-	headers["x-member-id"] = ltm.UserID
+	headers[utils.HeadersMemberId] = ltm.UserID
 	//Params to be sent in the api/merge_account request
 	params := map[string]string{
-		"country_code": ltm.CountryCode,
-		"mobile_no":    ltm.VerifiedMobileNo,
+		ParamCountryCode: ltm.CountryCode,
+		ParamMobileNo:    ltm.VerifiedMobileNo,
 	}
 	//Create internal API client
 	apiClient := api_client.NewAPIClient()
 	//Send request
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
-		Url:           apiClient.CoreServiceBaseURL + "/api/merge_account",
+		Url:           apiClient.CoreServiceBaseURL + MergeAccountEndPoint,
 		CustomHeaders: headers,
 		Body:          params,
 	})

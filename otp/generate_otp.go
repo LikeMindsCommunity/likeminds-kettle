@@ -7,11 +7,15 @@ import (
 	"net/http"
 )
 
+const GenerateOTPEndPoint = "/api/generate_otp"
+const ParamMobileNo = "mobile_no"
+const ParamCountryCode = "country_code"
+
 // GenerateOTP is used to generate otp
 func GenerateOTP(c *gin.Context) {
 	//GET Request params
-	mobileNo := c.Query("mobile_no")
-	countryCode := c.Query("country_code")
+	mobileNo := c.Query(ParamMobileNo)
+	countryCode := c.Query(ParamCountryCode)
 	if mobileNo == "" || countryCode == "" {
 		//If GET params are missing
 		utils.GETQueryParamsMissingError(c)
@@ -20,13 +24,13 @@ func GenerateOTP(c *gin.Context) {
 
 	//Params to be sent in the api/generate_otp request
 	params := map[string]string{
-		"country_code": countryCode,
-		"mobile_no":    mobileNo,
+		ParamCountryCode: countryCode,
+		ParamMobileNo:    mobileNo,
 	}
 	//Create internal API client
 	client := api_client.NewAPIClient()
 	options := api_client.GetRequestOptions{
-		Url:           client.CoreServiceBaseURL + "/api/generate_otp",
+		Url:           client.CoreServiceBaseURL + GenerateOTPEndPoint,
 		Params:        params,
 		CustomHeaders: nil,
 	}

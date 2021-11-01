@@ -9,28 +9,31 @@ import (
 	"sync"
 )
 
-type FetchCommunjitiesResponse struct {
+type FetchCommunitiesResponse struct {
 	HomeCommunities interface{} `json:"my_communities"`
 	Subscriptions   interface{} `json:"subscriptions"`
 }
 
+const CommunitiesEndPoint = "/api/community_member/home_communities?page="
+const SubscriptionEndPoint = "/api/subscription/fetch"
+const ParamPage = "page"
+const ResponseMyCommunities = "my_communities"
+const ResponseSubscriptions = "subscriptions"
+
 //FetchCommunities is used to blacklist LTM and RTM tokens
 func FetchCommunities(c *gin.Context) {
-	ltm, ok := c.MustGet("ltm").(*token.LoginTokenMeta)
+	//Check if request has valid login token or not
+	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: "Something went wrong! Please try after sometime",
-		})
+		//If token is not available
+		utils.SomethingWentWrongError(c)
 		return
 	}
 	//GET Request params
-	page := c.Query("page")
+	page := c.Query(ParamPage)
 	if page == "" {
-		c.JSON(http.StatusBadRequest, utils.Response{
-			Success:      false,
-			ErrorMessage: "Query params missing!",
-		})
+		//If GET params are missing
+		utils.GETQueryParamsMissingError(c)
 		return
 	}
 
@@ -38,12 +41,12 @@ func FetchCommunities(c *gin.Context) {
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 	headers := make(map[string]interface{})
-	headers["x-member-id"] = ltm.UserID
+	headers[utils.HeadersMemberId] = ltm.UserID
 	resp := utils.Response{}
 
 	go func() {
 		respBytes, err := apiClient.GetRequest(&api_client.GetRequestOptions{
-			Url:           apiClient.CoreServiceBaseURL + "/api/community_member/home_communities?page=" + page,
+			Url:           apiClient.CoreServiceBaseURL + CommunitiesEndPoint + page,
 			CustomHeaders: headers,
 		})
 		if err != nil {
@@ -57,12 +60,12 @@ func FetchCommunities(c *gin.Context) {
 			resp.ErrorMessage = "Something went wrong! Please try after sometime"
 			wg.Done()
 		}
-		resp.Data.(map[string]interface{})["my_communities"] = apiCR.Response["my_communities"]
+		resp.Data.(map[string]interface{})[ResponseMyCommunities] = apiCR.Response[ResponseMyCommunities]
 		wg.Done()
 	}()
 	go func() {
 		respBytes, err := apiClient.GetRequest(&api_client.GetRequestOptions{
-			Url:           apiClient.SubscriptionServiceBaseURL + "/api/subscription/fetch",
+			Url:           apiClient.SubscriptionServiceBaseURL + SubscriptionEndPoint,
 			CustomHeaders: headers,
 		})
 		if err != nil {
@@ -77,7 +80,7 @@ func FetchCommunities(c *gin.Context) {
 			wg.Done()
 			return
 		}
-		resp.Data.(map[string]interface{})["subscriptions"] = apiCR.Response["subscriptions"]
+		resp.Data.(map[string]interface{})[ResponseSubscriptions] = apiCR.Response[ResponseSubscriptions]
 		wg.Done()
 	}()
 

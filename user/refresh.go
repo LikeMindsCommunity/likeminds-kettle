@@ -7,14 +7,12 @@ import (
 	"net/http"
 )
 
+
 //Refresh to generate new LTM and RTM tokens
 func Refresh(c *gin.Context) {
-	currentRTM, ok := c.MustGet("rtm").(*token.RefreshTokenMeta)
+	currentRTM, ok := c.MustGet(token.ParamRTM).(*token.RefreshTokenMeta)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: "Something went wrong! Please try after sometime",
-		})
+		utils.SomethingWentWrongError(c)
 		return
 	}
 
@@ -28,8 +26,8 @@ func Refresh(c *gin.Context) {
 		return
 	}
 	token := map[string]string{
-		"access_token":  ltm.AccessToken,
-		"refresh_token": rtm.RefreshToken,
+		token.ParamAccessToken:  ltm.AccessToken,
+		token.ParamRefreshToken: rtm.RefreshToken,
 	}
 	c.JSON(http.StatusOK, utils.Response{
 		Success: true,

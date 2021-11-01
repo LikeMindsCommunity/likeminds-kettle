@@ -8,12 +8,18 @@ import (
 	"net/http"
 )
 
+const VerifyOTPEndPoint = "/api/verify_otp"
+const ParamOTP = "otp"
+const ResponseProfileExists = "profile_exists"
+const ResponseUser = "user"
+const ResponseId = "id"
+
 // VerifyOTP is used to verify otp and generate verify token
 func VerifyOTP(c *gin.Context) {
 	//GET Request params
-	otp := c.Query("otp")
-	mobileNo := c.Query("mobile_no")
-	countryCode := c.Query("country_code")
+	otp := c.Query(ParamOTP)
+	mobileNo := c.Query(ParamMobileNo)
+	countryCode := c.Query(ParamCountryCode)
 	if otp == "" || mobileNo == "" || countryCode == "" {
 		//If GET params are missing
 		utils.GETQueryParamsMissingError(c)
@@ -22,14 +28,14 @@ func VerifyOTP(c *gin.Context) {
 
 	//Params to be sent in the api/verify_otp request
 	params := map[string]string{
-		"country_code": countryCode,
-		"mobile_no":    mobileNo,
-		"otp":          otp,
+		ParamCountryCode: countryCode,
+		ParamMobileNo:    mobileNo,
+		ParamOTP:         otp,
 	}
 	//Create internal API client
 	client := api_client.NewAPIClient()
 	options := api_client.GetRequestOptions{
-		Url:           client.CoreServiceBaseURL + "/api/verify_otp",
+		Url:           client.CoreServiceBaseURL + VerifyOTPEndPoint,
 		Params:        params,
 		CustomHeaders: nil,
 	}
@@ -54,8 +60,8 @@ func VerifyOTP(c *gin.Context) {
 		return
 	}
 	//If flow succeeds
-	profileExists := apiCR.Response["profile_exists"].(bool)
-	userID := apiCR.Response["user"].(map[string]interface{})["id"].(float64)
+	profileExists := apiCR.Response[ResponseProfileExists].(bool)
+	userID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseId].(float64)
 	//If user exists in our DB, we need to return LTM and RTM
 	if profileExists {
 		//Create login and refresh token
@@ -67,8 +73,8 @@ func VerifyOTP(c *gin.Context) {
 		}
 		//Send response with login, refresh token and api/verify_otp response
 		dataResponse := apiCR.Response
-		dataResponse["access_token"] = ltm.AccessToken
-		dataResponse["refresh_token"] = rtm.RefreshToken
+		dataResponse[token.ParamAccessToken] = ltm.AccessToken
+		dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
 		c.JSON(http.StatusOK, utils.Response{
 			Success: true,
 			Data:    dataResponse,
@@ -84,7 +90,7 @@ func VerifyOTP(c *gin.Context) {
 		}
 		//Send response with verify token
 		dataResponse := apiCR.Response
-		dataResponse["access_token"] = vtm.AccessToken
+		dataResponse[token.ParamAccessToken] = vtm.AccessToken
 		c.JSON(http.StatusOK, utils.Response{
 			Success: true,
 			Data:    dataResponse,

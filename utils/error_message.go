@@ -6,6 +6,12 @@ import (
 	"net/http"
 )
 
+const ErrorSomethingWentWrong = "Something went wrong! Please try again after sometime"
+const ErrorDeviceLoggedOut = "Device logged out! Please login again"
+const ErrorInvalidRequest = "Invalid request!"
+const ErrorQueryParamsMissing = "Query params missing!"
+const ErrorBodyParamsMissing = "Body params missing!"
+
 func GeneralAPIError(c *gin.Context, errorMessage string) {
 	c.JSON(http.StatusInternalServerError, Response{
 		Success:      false,
@@ -17,25 +23,23 @@ func APIClientError(c *gin.Context, apiCTR api_client.APIClientResponse) {
 	c.JSON(http.StatusInternalServerError, apiCTR)
 }
 
-
 func GETQueryParamsMissingError(c *gin.Context) {
 	c.JSON(http.StatusBadRequest, Response{
 		Success:      false,
-		ErrorMessage: "Query params missing!",
+		ErrorMessage: ErrorQueryParamsMissing,
 	})
 }
 
 func POSTBodyParamsMissingError(c *gin.Context) {
 	c.JSON(http.StatusBadRequest, Response{
 		Success:      false,
-		ErrorMessage: "Body params missing!",
+		ErrorMessage: ErrorBodyParamsMissing,
 	})
 }
 
 func SomethingWentWrongError(c *gin.Context) {
 	c.JSON(http.StatusBadRequest, Response{
 		Success:      false,
-		ErrorMessage: "Something went wrong! Please try after sometime",
+		ErrorMessage: ErrorSomethingWentWrong,
 	})
 }
-

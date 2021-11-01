@@ -36,7 +36,7 @@ func main() {
 // ApiMiddleware will add the db connection to the context
 func ApiMiddleware(client *redis.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Set("redis_client", client)
+		c.Set(cache.ParamRedisClient, client)
 		c.Next()
 	}
 }
@@ -44,17 +44,17 @@ func ApiMiddleware(client *redis.Client) gin.HandlerFunc {
 func VTMValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//Extract VTM from token, internally it checks if token is valid or not
-		vtm, err := token.ExtractVTM(c.Request.Header.Get("Authorization"))
+		vtm, err := token.ExtractVTM(c.Request.Header.Get(token.HeaderAuthorization))
 		if vtm == nil {
 			log.Print(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
-				ErrorMessage: "Invalid VTM Token!",
+				ErrorMessage: token.ErrorInvalidVTM,
 			})
 			return
 		} else {
 			//If valid, set "vtm" in context, to be used in later APIs
-			c.Set("vtm", vtm)
+			c.Set(token.ParamVTM, vtm)
 		}
 		c.Next()
 	}
@@ -63,12 +63,12 @@ func VTMValidationMiddleware() gin.HandlerFunc {
 func LTMValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//Extract LTM from token, internally it checks if token is valid or not
-		ltm, err := token.ExtractLTM(c.Request.Header.Get("Authorization"))
+		ltm, err := token.ExtractLTM(c.Request.Header.Get(token.HeaderAuthorization))
 		if ltm == nil {
 			log.Print(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
-				ErrorMessage: "Invalid LTM token!",
+				ErrorMessage: token.ErrorInvalidLTM,
 			})
 			return
 		} else {
@@ -76,12 +76,12 @@ func LTMValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 			if cache.IsLTMBlacklisted(client, ltm) {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 					Success:      false,
-					ErrorMessage: "Device logged out! Please login again",
+					ErrorMessage: utils.ErrorDeviceLoggedOut,
 				})
 				return
 			}
 			//If valid and not blacklisted, set "ltm" in context, to be used in later APIs
-			c.Set("ltm", ltm)
+			c.Set(token.ParamLTM, ltm)
 		}
 		c.Next()
 	}
@@ -90,12 +90,12 @@ func LTMValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 func RTMValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//Extract RTM from token, internally it checks if token is valid or not
-		rtm, err := token.ExtractRTM(c.Request.Header.Get("Authorization"))
+		rtm, err := token.ExtractRTM(c.Request.Header.Get(token.HeaderAuthorization))
 		if rtm == nil {
 			log.Print(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
-				ErrorMessage: "Invalid RTM token!",
+				ErrorMessage: token.ErrorInvalidRTM,
 			})
 			return
 		} else {
@@ -103,12 +103,12 @@ func RTMValidationMiddleware() gin.HandlerFunc {
 			if cache.IsRTMBlacklisted(client, rtm) {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 					Success:      false,
-					ErrorMessage: "Device logged out! Please login again",
+					ErrorMessage: utils.ErrorDeviceLoggedOut,
 				})
 				return
 			}
 			//If valid and not blacklisted, set "rtm" in context, to be used in later APIs
-			c.Set("rtm", rtm)
+			c.Set(token.ParamRTM, rtm)
 		}
 		c.Next()
 	}
@@ -117,12 +117,12 @@ func RTMValidationMiddleware() gin.HandlerFunc {
 func LogoutValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//Extract LTM from token, internally it checks if token is valid or not
-		ltm, err := token.ExtractLTM(c.Request.Header.Get("Authorization"))
+		ltm, err := token.ExtractLTM(c.Request.Header.Get(token.HeaderAuthorization))
 		if ltm == nil {
 			log.Print(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
-				ErrorMessage: "Invalid LTM token",
+				ErrorMessage: token.ErrorInvalidLTM,
 			})
 			return
 		} else {
@@ -130,7 +130,7 @@ func LogoutValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 			if cache.IsLTMBlacklisted(client, ltm) {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 					Success:      false,
-					ErrorMessage: "Device logged out! Please login again",
+					ErrorMessage: utils.ErrorDeviceLoggedOut,
 				})
 				return
 			}
@@ -139,7 +139,7 @@ func LogoutValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 			if err := c.ShouldBindJSON(&logoutRequest); err != nil {
 				c.JSON(http.StatusUnprocessableEntity, utils.Response{
 					Success:      false,
-					ErrorMessage: "Invalid JSON Request!",
+					ErrorMessage: utils.ErrorInvalidRequest,
 				})
 				return
 			}
@@ -149,7 +149,7 @@ func LogoutValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 				log.Print(err)
 				c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 					Success:      false,
-					ErrorMessage: "Invalid RTM token!",
+					ErrorMessage: token.ErrorInvalidRTM,
 				})
 				return
 			} else {
@@ -157,13 +157,13 @@ func LogoutValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 				if cache.IsRTMBlacklisted(client, rtm) {
 					c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 						Success:      false,
-						ErrorMessage: "Device logged out! Please login again",
+						ErrorMessage: utils.ErrorDeviceLoggedOut,
 					})
 					return
 				}
 				//If valid and not blacklisted, set "ltm" and "rtm" in context, to be used in later APIs
-				c.Set("ltm", ltm)
-				c.Set("rtm", rtm)
+				c.Set(token.ParamLTM, ltm)
+				c.Set(token.ParamRTM, rtm)
 			}
 		}
 		c.Next()
