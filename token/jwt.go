@@ -10,6 +10,16 @@ import (
 	"time"
 )
 
+const HeaderAuthorization = "Authorization"
+const ParamAccessToken = "access_token"
+const ParamRefreshToken = "refresh_token"
+const ParamVTM = "vtm"
+const ParamLTM = "ltm"
+const ParamRTM = "rtm"
+const ErrorInvalidVTM = "Invalid VTM!"
+const ErrorInvalidLTM = "Invalid LTM!"
+const ErrorInvalidRTM = "Invalid RTM!"
+
 type VerifyTokenMeta struct {
 	AccessUuid         string
 	VerifiedMobileNo   string

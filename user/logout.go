@@ -14,24 +14,26 @@ type LogoutRequest struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
+const LogoutEndPoint = "/api/user/logout"
+
 //Logout is used to blacklist login and refresh tokens and logout user
 func Logout(c *gin.Context) {
 	//Check if request has valid login token or not
-	ltm, ok := c.MustGet("ltm").(*token.LoginTokenMeta)
+	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
 		//If token is not available
 		utils.SomethingWentWrongError(c)
 		return
 	}
 	//Check if request has refresh login token or not
-	rtm, ok := c.MustGet("rtm").(*token.RefreshTokenMeta)
+	rtm, ok := c.MustGet(token.ParamRTM).(*token.RefreshTokenMeta)
 	if !ok {
 		//If token is not available
 		utils.SomethingWentWrongError(c)
 		return
 	}
 	//Get redis clients
-	client, ok := c.MustGet("redis_client").(*redis.Client)
+	client, ok := c.MustGet(cache.ParamRedisClient).(*redis.Client)
 	if !ok {
 		//If redis client is unavailable
 		utils.SomethingWentWrongError(c)
@@ -40,12 +42,12 @@ func Logout(c *gin.Context) {
 
 	//Create headers from login token
 	headers := make(map[string]interface{})
-	headers["x-member-id"] = ltm.UserID
+	headers[utils.HeadersMemberId] = ltm.UserID
 	//Create internal API client
 	apiClient := api_client.NewAPIClient()
 	//Send request
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
-		Url:           apiClient.CoreServiceBaseURL + "/api/user/logout",
+		Url:           apiClient.CoreServiceBaseURL + LogoutEndPoint,
 		CustomHeaders: headers,
 	})
 	if err != nil {

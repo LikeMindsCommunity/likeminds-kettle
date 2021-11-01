@@ -8,6 +8,10 @@ import (
 	"net/http"
 )
 
+const LoginEndPoint = "/api/user/login"
+const ResponseUser = "user"
+const ResponseId = "id"
+
 type LoginRequest struct {
 	UserAcquisitionURL string `json:"user_acquisition_url"`
 	LoginJSON          string `json:"login_json"`
@@ -18,7 +22,7 @@ type LoginRequest struct {
 //Login used when user is signing up and generate login and refresh tokens
 func Login(c *gin.Context) {
 	//Check if request has valid verify token or not
-	vtm, ok := c.MustGet("vtm").(*token.VerifyTokenMeta)
+	vtm, ok := c.MustGet(token.ParamVTM).(*token.VerifyTokenMeta)
 	if !ok {
 		//If token is not available
 		utils.SomethingWentWrongError(c)
@@ -41,7 +45,7 @@ func Login(c *gin.Context) {
 	//Create internal API client
 	client := api_client.NewAPIClient()
 	options := api_client.GetRequestOptions{
-		Url:           client.CoreServiceBaseURL + "/api/user/login",
+		Url:           client.CoreServiceBaseURL + LoginEndPoint,
 		Params:        params,
 		CustomHeaders: nil,
 	}
@@ -66,7 +70,7 @@ func Login(c *gin.Context) {
 		return
 	}
 	//If flow succeeds
-	userID := apiCR.Response["user"].(map[string]interface{})["id"].(float64)
+	userID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseId].(float64)
 	mobileNo := vtm.VerifiedMobileNo
 	countryCode := vtm.CountryCode
 	//Create login and refresh token
@@ -78,8 +82,8 @@ func Login(c *gin.Context) {
 	}
 	//Send response with login, refresh token and api/user/login response
 	dataResponse := apiCR.Response
-	dataResponse["access_token"] = ltm.AccessToken
-	dataResponse["refresh_token"] = rtm.RefreshToken
+	dataResponse[token.ParamAccessToken] = ltm.AccessToken
+	dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
 	c.JSON(http.StatusOK, utils.Response{
 		Success: true,
 		Data:    dataResponse,
