@@ -1,6 +1,7 @@
 package home
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
@@ -51,7 +52,7 @@ func FetchCommunities(c *gin.Context) {
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 	headers := make(map[string]interface{})
-	headers[utils.HeadersMemberId] = ltm.UserID
+	headers[utils.HeadersMemberId] = fmt.Sprintf("%f", ltm.UserID)
 	resp := utils.Response{}
 
 	go func() {
