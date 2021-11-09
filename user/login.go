@@ -74,7 +74,7 @@ func Login(c *gin.Context) {
 	mobileNo := vtm.VerifiedMobileNo
 	countryCode := vtm.CountryCode
 	//Create login and refresh token
-	ltm, rtm, err := token.CreateLTMAndRTM(mobileNo, countryCode, userID)
+	ltm, rtm, err := token.CreateLTMAndRTM(mobileNo, countryCode, utils.FormatFloat(userID, 0))
 	if err != nil {
 		//If token creation fails
 		utils.SomethingWentWrongError(c)

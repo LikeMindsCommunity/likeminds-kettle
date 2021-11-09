@@ -1,7 +1,6 @@
 package home
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
@@ -18,7 +17,7 @@ type FetchCommunitiesResponse struct {
 const CommunitiesEndPoint = "/api/community_member/home_communities?page="
 const SubscriptionEndPoint = "/api/subscription/fetch"
 const ParamPage = "page"
-const ResponseMyCommunities = "my_communities"
+const ResponseMyCommunities = "home_communities"
 const ResponseSubscriptions = "subscriptions"
 
 //FetchCommunities is used to blacklist LTM and RTM tokens
@@ -42,8 +41,9 @@ func FetchCommunities(c *gin.Context) {
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 	headers := make(map[string]interface{})
-	headers[utils.HeadersMemberId] = fmt.Sprintf("%f", ltm.UserID)
+	headers[utils.HeadersMemberId] = ltm.UserID
 	resp := utils.Response{}
+	resp.Data = make(map[string]interface{})
 
 	go func() {
 		respBytes, err := apiClient.GetRequest(&api_client.GetRequestOptions{
@@ -53,7 +53,6 @@ func FetchCommunities(c *gin.Context) {
 		if err != nil {
 			resp.ErrorMessage = err.Error()
 			wg.Done()
-			return
 		}
 		var apiCR api_client.APIClientResponse
 		err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
@@ -61,7 +60,7 @@ func FetchCommunities(c *gin.Context) {
 			resp.ErrorMessage = "Something went wrong! Please try after sometime"
 			wg.Done()
 		}
-		resp.Data.(map[string]interface{})[ResponseMyCommunities] = apiCR.Response[ResponseMyCommunities]
+		resp.Data.(map[string]interface{})[ResponseMyCommunities] = apiCR.Response
 		wg.Done()
 	}()
 	go func() {
@@ -72,14 +71,12 @@ func FetchCommunities(c *gin.Context) {
 		if err != nil {
 			resp.ErrorMessage = err.Error()
 			wg.Done()
-			return
 		}
 		var apiCR api_client.APIClientResponse
 		err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 		if err != nil {
 			resp.ErrorMessage = "Something went wrong! Please try after sometime"
 			wg.Done()
-			return
 		}
 		resp.Data.(map[string]interface{})[ResponseSubscriptions] = apiCR.Response[ResponseSubscriptions]
 		wg.Done()
