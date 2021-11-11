@@ -37,16 +37,6 @@ func FetchCommunities(c *gin.Context) {
 		return
 	}
 
-	//GET Request params
-	page := c.Query("page")
-	if page == "" {
-		c.JSON(http.StatusBadRequest, utils.Response{
-			Success:      false,
-			ErrorMessage: "Query params missing!",
-		})
-		return
-	}
-
 	apiClient := api_client.NewAPIClient()
 	wg := sync.WaitGroup{}
 	wg.Add(2)
@@ -96,6 +86,7 @@ func FetchCommunities(c *gin.Context) {
 
 	if resp.ErrorMessage != "" {
 		c.JSON(http.StatusInternalServerError, resp)
+		return
 	}
 	c.JSON(http.StatusOK, resp)
 }
