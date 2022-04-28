@@ -10,6 +10,16 @@ import (
 	"time"
 )
 
+const HeaderAuthorization = "Authorization"
+const ParamAccessToken = "access_token"
+const ParamRefreshToken = "refresh_token"
+const ParamVTM = "vtm"
+const ParamLTM = "ltm"
+const ParamRTM = "rtm"
+const ErrorInvalidVTM = "Invalid VTM!"
+const ErrorInvalidLTM = "Invalid LTM!"
+const ErrorInvalidRTM = "Invalid RTM!"
+
 type VerifyTokenMeta struct {
 	AccessUuid         string
 	VerifiedMobileNo   string
@@ -24,7 +34,7 @@ type LoginTokenMeta struct {
 	AccessTokenExpires int64
 	VerifiedMobileNo   string
 	CountryCode        string
-	UserID             float64
+	UserID             string
 }
 
 type RefreshTokenMeta struct {
@@ -33,7 +43,7 @@ type RefreshTokenMeta struct {
 	RefreshTokenExpires int64
 	VerifiedMobileNo    string
 	CountryCode         string
-	UserID              float64
+	UserID              string
 }
 
 func CreateVTM(verifiedMobileNo string, countryCode string) (*VerifyTokenMeta, error) {
@@ -61,7 +71,7 @@ func CreateVTM(verifiedMobileNo string, countryCode string) (*VerifyTokenMeta, e
 }
 
 //CreateLTMAndRTM is used to create login and refresh token meta
-func CreateLTMAndRTM(verifiedMobileNo string, countryCode string, userID float64) (*LoginTokenMeta, *RefreshTokenMeta, error) {
+func CreateLTMAndRTM(verifiedMobileNo string, countryCode string, userID string) (*LoginTokenMeta, *RefreshTokenMeta, error) {
 	ltm := &LoginTokenMeta{
 		AccessUuid:         uuid.NewV4().String(),
 		VerifiedMobileNo:   verifiedMobileNo,
@@ -186,7 +196,7 @@ func ExtractLTM(bearerToken string) (*LoginTokenMeta, error) {
 		if !ok {
 			return nil, errors.New("country_code is empty")
 		}
-		userID, ok := claims["user_id"].(float64)
+		userID, ok := claims["user_id"].(string)
 		if !ok {
 			return nil, errors.New("user_id is empty")
 		}
@@ -217,7 +227,7 @@ func ExtractRTM(bearerToken string) (*RefreshTokenMeta, error) {
 		if rtExpires == 0 {
 			return nil, errors.New("exp is empty")
 		}
-		userID, ok := claims["user_id"].(float64)
+		userID, ok := claims["user_id"].(string)
 		if !ok {
 			return nil, errors.New("user_id is empty")
 		}

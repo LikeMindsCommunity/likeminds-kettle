@@ -8,85 +8,93 @@ import (
 	"net/http"
 )
 
-// VerifyOTP is used to verify otp and generate VTM Token
+const VerifyOTPEndPoint = "/api/verify_otp"
+const ParamOTP = "otp"
+const ResponseProfileExists = "profile_exists"
+const ResponseUser = "user"
+const ResponseId = "id"
+
+// VerifyOTP is used to verify otp and generate verify token
 func VerifyOTP(c *gin.Context) {
 	//GET Request params
-	otp := c.Query("otp")
-	mobileNo := c.Query("mobile_no")
-	countryCode := c.Query("country_code")
+	otp := c.Query(ParamOTP)
+	mobileNo := c.Query(ParamMobileNo)
+	countryCode := c.Query(ParamCountryCode)
 	if otp == "" || mobileNo == "" || countryCode == "" {
-		c.JSON(http.StatusBadRequest, api_client.APIClientResponse{
-			Success:      false,
-			ErrorMessage: "Query params missing!",
-		})
+		//If GET params are missing
+		utils.GETQueryParamsMissingError(c)
 		return
 	}
 
-	//Params to be sent in the request
+	//Params to be sent in the api/verify_otp request
 	params := map[string]string{
-		"country_code": countryCode,
-		"mobile_no":    mobileNo,
-		"otp":          otp,
+		ParamCountryCode: countryCode,
+		ParamMobileNo:    mobileNo,
+		ParamOTP:         otp,
 	}
-	//http client and request options
+	//Create internal API client
 	client := api_client.NewAPIClient()
 	options := api_client.GetRequestOptions{
-		Url:           client.CoreServiceBaseURL + "/api/verify_otp",
+		Url:           client.CoreServiceBaseURL + VerifyOTPEndPoint,
 		Params:        params,
 		CustomHeaders: nil,
 	}
-
-	//Unmarshaling of response
-	respBytes, _ := client.GetRequest(&options)
-	var resp api_client.APIClientResponse
-	err := api_client.UnmarshalAPIClientResponse(respBytes, &resp)
+	//Send request
+	respBytes, err := client.GetRequest(&options)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, utils.Response{
-			Success:      false,
-			ErrorMessage: "Something went wrong! Please try after sometime",
-		})
-	}
-
-	//Check api/verify_otp success and response
-	if !resp.Success {
-		c.JSON(http.StatusInternalServerError, resp)
+		//If API fails or any other error
+		utils.GeneralAPIError(c, err.Error())
 		return
 	}
+	//Parse response
+	var apiCR api_client.APIClientResponse
+	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
+	if err != nil {
+		//Internal unmarshal error
+		utils.SomethingWentWrongError(c)
+	}
 
-	profileExists := resp.Response["profile_exists"].(bool)
-	userID := resp.Response["user"].(map[string]interface{})["id"].(float64)
-
+	if !apiCR.Success {
+		//If api/verify_otp success as false
+		utils.APIClientError(c, apiCR)
+		return
+	}
+	//If flow succeeds
+	profileExists := apiCR.Response[ResponseProfileExists].(bool)
+	userID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseId].(float64)
+	//If user exists in our DB, we need to return LTM and RTM
 	if profileExists {
-		//Create login and refresh tokenResponse meta from the response received in api/verify_otp
-		ltm, rtm, err := token.CreateLTMAndRTM(mobileNo, countryCode, userID)
+		//Create login and refresh token
+		ltm, rtm, err := token.CreateLTMAndRTM(mobileNo, countryCode, utils.FormatFloat(userID, 0))
 		if err != nil {
-			c.JSON(http.StatusUnprocessableEntity, utils.Response{
-				Success:      false,
-				ErrorMessage: err.Error(),
-			})
+			//If token creation fails
+			utils.SomethingWentWrongError(c)
 			return
 		}
-		tokenResponse := map[string]string{
-			"access_token":  ltm.AccessToken,
-			"refresh_token": rtm.RefreshToken,
-		}
+		//Send response with login, refresh token and api/verify_otp response
+		dataResponse := apiCR.Response
+		dataResponse[token.ParamAccessToken] = ltm.AccessToken
+		dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
 		c.JSON(http.StatusOK, utils.Response{
 			Success: true,
-			Data:    tokenResponse,
+			Data:    dataResponse,
 		})
+		return
 	} else {
-		//Create verify tokenResponse meta from the response received in api/verify_otp
+		//Create verify token
 		vtm, err := token.CreateVTM(mobileNo, countryCode)
+		//If token creation fails
 		if err != nil {
-			c.JSON(http.StatusUnprocessableEntity, err.Error())
+			utils.SomethingWentWrongError(c)
 			return
 		}
-		tokenResponse := map[string]string{
-			"access_token": vtm.AccessToken,
-		}
+		//Send response with verify token
+		dataResponse := apiCR.Response
+		dataResponse[token.ParamAccessToken] = vtm.AccessToken
 		c.JSON(http.StatusOK, utils.Response{
 			Success: true,
-			Data:    tokenResponse,
+			Data:    dataResponse,
 		})
+		return
 	}
 }
