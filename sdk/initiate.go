@@ -1,13 +1,12 @@
 package sdk
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
+	"net/http"
 )
 
 const InitiateSDKEndPoint = "/api/sdk/initiate"
