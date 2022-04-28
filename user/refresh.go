@@ -7,7 +7,6 @@ import (
 	"net/http"
 )
 
-
 //Refresh to generate new LTM and RTM tokens
 func Refresh(c *gin.Context) {
 	currentRTM, ok := c.MustGet(token.ParamRTM).(*token.RefreshTokenMeta)
@@ -17,7 +16,7 @@ func Refresh(c *gin.Context) {
 	}
 
 	//Create login and refresh token meta from ltm
-	ltm, rtm, err := token.CreateLTMAndRTM(currentRTM.VerifiedMobileNo, currentRTM.CountryCode, currentRTM.UserID)
+	ltm, rtm, err := token.CreateLTMAndRTM(currentRTM.UserID)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, utils.Response{
 			Success:      false,

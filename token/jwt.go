@@ -22,8 +22,6 @@ const ErrorInvalidRTM = "Invalid RTM!"
 
 type VerifyTokenMeta struct {
 	AccessUuid         string
-	VerifiedMobileNo   string
-	CountryCode        string
 	AccessTokenExpires int64
 	AccessToken        string
 }
@@ -32,8 +30,6 @@ type LoginTokenMeta struct {
 	AccessUuid         string
 	AccessToken        string
 	AccessTokenExpires int64
-	VerifiedMobileNo   string
-	CountryCode        string
 	UserID             string
 }
 
@@ -41,16 +37,12 @@ type RefreshTokenMeta struct {
 	RefreshUuid         string
 	RefreshToken        string
 	RefreshTokenExpires int64
-	VerifiedMobileNo    string
-	CountryCode         string
 	UserID              string
 }
 
-func CreateVTM(verifiedMobileNo string, countryCode string) (*VerifyTokenMeta, error) {
+func CreateVTM() (*VerifyTokenMeta, error) {
 	vtm := &VerifyTokenMeta{
 		AccessUuid:         uuid.NewV4().String(),
-		VerifiedMobileNo:   verifiedMobileNo,
-		CountryCode:        countryCode,
 		AccessTokenExpires: time.Now().Add(time.Minute * 15).Unix(),
 	}
 
@@ -59,8 +51,6 @@ func CreateVTM(verifiedMobileNo string, countryCode string) (*VerifyTokenMeta, e
 	os.Setenv("ACCESS_SECRET", "JWT_SECRET") //this should be in an env file
 	vtmClaims := jwt.MapClaims{}
 	vtmClaims["access_uuid"] = vtm.AccessUuid
-	vtmClaims["verified_mobile_no"] = verifiedMobileNo
-	vtmClaims["country_code"] = countryCode
 	vtmClaims["exp"] = vtm.AccessTokenExpires
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, vtmClaims)
 	vtm.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
@@ -71,18 +61,14 @@ func CreateVTM(verifiedMobileNo string, countryCode string) (*VerifyTokenMeta, e
 }
 
 //CreateLTMAndRTM is used to create login and refresh token meta
-func CreateLTMAndRTM(verifiedMobileNo string, countryCode string, userID string) (*LoginTokenMeta, *RefreshTokenMeta, error) {
+func CreateLTMAndRTM(userID string) (*LoginTokenMeta, *RefreshTokenMeta, error) {
 	ltm := &LoginTokenMeta{
 		AccessUuid:         uuid.NewV4().String(),
-		VerifiedMobileNo:   verifiedMobileNo,
-		CountryCode:        countryCode,
 		AccessTokenExpires: time.Now().Add(time.Minute * 15).Unix(),
 	}
 
 	rtm := &RefreshTokenMeta{
 		RefreshUuid:         uuid.NewV4().String(),
-		VerifiedMobileNo:    verifiedMobileNo,
-		CountryCode:         countryCode,
 		RefreshTokenExpires: time.Now().Add(time.Hour * 24 * 31).Unix(),
 	}
 
@@ -91,8 +77,6 @@ func CreateLTMAndRTM(verifiedMobileNo string, countryCode string, userID string)
 	os.Setenv("ACCESS_SECRET", "JWT_SECRET") //this should be in an env file
 	ltmClaims := jwt.MapClaims{}
 	ltmClaims["access_uuid"] = ltm.AccessUuid
-	ltmClaims["verified_mobile_no"] = ltm.VerifiedMobileNo
-	ltmClaims["country_code"] = ltm.CountryCode
 	ltmClaims["user_id"] = userID
 	ltmClaims["exp"] = ltm.AccessTokenExpires
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, ltmClaims)
@@ -103,8 +87,6 @@ func CreateLTMAndRTM(verifiedMobileNo string, countryCode string, userID string)
 	//Creating refresh token meta
 	rtmClaims := jwt.MapClaims{}
 	rtmClaims["refresh_uuid"] = rtm.RefreshUuid
-	rtmClaims["verified_mobile_no"] = rtm.VerifiedMobileNo
-	rtmClaims["country_code"] = rtm.CountryCode
 	rtmClaims["user_id"] = userID
 	rtmClaims["exp"] = rtm.RefreshTokenExpires
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtmClaims)
@@ -155,18 +137,8 @@ func ExtractVTM(bearerToken string) (*VerifyTokenMeta, error) {
 		if !ok {
 			return nil, err
 		}
-		verifiedMobileNo, ok := claims["verified_mobile_no"].(string)
-		if !ok {
-			return nil, err
-		}
-		countryCode, ok := claims["country_code"].(string)
-		if !ok {
-			return nil, err
-		}
 		return &VerifyTokenMeta{
-			AccessUuid:       accessUuid,
-			VerifiedMobileNo: verifiedMobileNo,
-			CountryCode:      countryCode,
+			AccessUuid: accessUuid,
 		}, nil
 	}
 	return nil, err
@@ -188,22 +160,12 @@ func ExtractLTM(bearerToken string) (*LoginTokenMeta, error) {
 		if atExpires == 0 {
 			return nil, errors.New("exp is empty")
 		}
-		verifiedMobileNo, ok := claims["verified_mobile_no"].(string)
-		if !ok {
-			return nil, errors.New("verified_mobile_no is empty")
-		}
-		countryCode, ok := claims["country_code"].(string)
-		if !ok {
-			return nil, errors.New("country_code is empty")
-		}
 		userID, ok := claims["user_id"].(string)
 		if !ok {
 			return nil, errors.New("user_id is empty")
 		}
 		return &LoginTokenMeta{
 			AccessUuid:         accessUuid,
-			VerifiedMobileNo:   verifiedMobileNo,
-			CountryCode:        countryCode,
 			UserID:             userID,
 			AccessTokenExpires: atExpires,
 		}, nil

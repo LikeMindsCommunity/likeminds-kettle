@@ -27,8 +27,7 @@ func MergeAccount(c *gin.Context) {
 	headers[utils.HeadersMemberId] = ltm.UserID
 	//Params to be sent in the api/merge_account request
 	params := map[string]string{
-		ParamCountryCode: ltm.CountryCode,
-		ParamMobileNo:    ltm.VerifiedMobileNo,
+		//TODO - get mobile number and country code
 	}
 	//Create internal API client
 	apiClient := api_client.NewAPIClient()

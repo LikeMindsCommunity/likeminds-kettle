@@ -65,7 +65,7 @@ func VerifyOTP(c *gin.Context) {
 	//If user exists in our DB, we need to return LTM and RTM
 	if profileExists {
 		//Create login and refresh token
-		ltm, rtm, err := token.CreateLTMAndRTM(mobileNo, countryCode, utils.FormatFloat(userID, 0))
+		ltm, rtm, err := token.CreateLTMAndRTM(utils.FormatFloat(userID, 0))
 		if err != nil {
 			//If token creation fails
 			utils.SomethingWentWrongError(c)
@@ -82,7 +82,7 @@ func VerifyOTP(c *gin.Context) {
 		return
 	} else {
 		//Create verify token
-		vtm, err := token.CreateVTM(mobileNo, countryCode)
+		vtm, err := token.CreateVTM()
 		//If token creation fails
 		if err != nil {
 			utils.SomethingWentWrongError(c)
