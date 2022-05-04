@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/nateshr/likeminds-authentication/chatroom"
 	"github.com/nateshr/likeminds-authentication/sdk"
 	"log"
 	"net/http"
@@ -32,6 +33,7 @@ func main() {
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client), home.FetchCommunities)
 	router.POST("/sdk/initiate", sdk.InitiateSDK)
 	router.POST("/user/create_bot", user.CreateBot)
+	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client), chatroom.ScheduleFollow)
 
 	log.Fatal(router.Run(":8080"))
 }
