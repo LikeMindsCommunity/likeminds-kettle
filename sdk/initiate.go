@@ -28,17 +28,11 @@ func InitiateSDK(c *gin.Context) {
 		return
 	}
 
-	//bodyParams to be sent in the api/user/login
-	bodyParams, err := utils.RequestParamsToMap(isr)
-	if err != nil {
-		//If mapping fails
-		utils.GeneralAPIError(c, err.Error())
-	}
-
 	apiClient := api_client.NewAPIClient()
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
 		Url:  apiClient.CoreServiceBaseURL + InitiateSDKEndPoint,
-		Body: bodyParams,
+		Body: isr,
+		CustomHeaders: utils.CreateHeaders(c),
 	})
 	if err != nil {
 		//If API fails or any other error
