@@ -46,7 +46,7 @@ func GenerateOTP(c *gin.Context) {
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 	if err != nil {
 		//Internal unmarshal error
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 

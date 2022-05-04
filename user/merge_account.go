@@ -18,7 +18,7 @@ func MergeAccount(c *gin.Context) {
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
 		//If token is not available
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
 		return
 	}
 
@@ -27,8 +27,7 @@ func MergeAccount(c *gin.Context) {
 	headers[utils.HeadersMemberId] = ltm.UserID
 	//Params to be sent in the api/merge_account request
 	params := map[string]string{
-		ParamCountryCode: ltm.CountryCode,
-		ParamMobileNo:    ltm.VerifiedMobileNo,
+		//TODO - get mobile number and country code
 	}
 	//Create internal API client
 	apiClient := api_client.NewAPIClient()
@@ -48,7 +47,7 @@ func MergeAccount(c *gin.Context) {
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 	if err != nil {
 		//Internal unmarshal error
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, err.Error())
 	}
 
 	if !apiCR.Success {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/nateshr/likeminds-authentication/sdk"
 	"log"
 	"net/http"
 
@@ -29,6 +30,7 @@ func main() {
 	router.POST("/user/logout", LogoutValidationMiddleware(client), user.Logout)
 	router.POST("/user/merge_account", LTMValidationMiddleware(client), user.MergeAccount)
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client), home.FetchCommunities)
+	router.POST("/sdk/initiate", sdk.InitiateSDK)
 
 	log.Fatal(router.Run(":8080"))
 }

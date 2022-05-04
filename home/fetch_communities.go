@@ -26,7 +26,7 @@ func FetchCommunities(c *gin.Context) {
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
 		//If token is not available
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
 		return
 	}
 	//GET Request params
@@ -57,7 +57,7 @@ func FetchCommunities(c *gin.Context) {
 		var apiCR api_client.APIClientResponse
 		err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 		if err != nil {
-			resp.ErrorMessage = "Something went wrong! Please try after sometime"
+			resp.ErrorMessage = err.Error()
 			wg.Done()
 		}
 		resp.Data.(map[string]interface{})[ResponseMyCommunities] = apiCR.Response
@@ -75,7 +75,7 @@ func FetchCommunities(c *gin.Context) {
 		var apiCR api_client.APIClientResponse
 		err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 		if err != nil {
-			resp.ErrorMessage = "Something went wrong! Please try after sometime"
+			resp.ErrorMessage = err.Error()
 			wg.Done()
 		}
 		resp.Data.(map[string]interface{})[ResponseSubscriptions] = apiCR.Response[ResponseSubscriptions]
