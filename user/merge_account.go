@@ -8,10 +8,6 @@ import (
 	"net/http"
 )
 
-const MergeAccountEndPoint = "/api/merge_account"
-const ParamMobileNo = "mobile_no"
-const ParamCountryCode = "country_code"
-
 //MergeAccount used when user wants to merge account and generate login and refresh tokens
 func MergeAccount(c *gin.Context) {
 	//Check if request has valid login token or not
