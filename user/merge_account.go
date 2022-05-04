@@ -18,7 +18,7 @@ func MergeAccount(c *gin.Context) {
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
 		//If token is not available
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
 		return
 	}
 
@@ -47,7 +47,7 @@ func MergeAccount(c *gin.Context) {
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 	if err != nil {
 		//Internal unmarshal error
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, err.Error())
 	}
 
 	if !apiCR.Success {

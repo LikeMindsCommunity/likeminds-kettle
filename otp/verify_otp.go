@@ -51,7 +51,7 @@ func VerifyOTP(c *gin.Context) {
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 	if err != nil {
 		//Internal unmarshal error
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, err.Error())
 	}
 
 	if !apiCR.Success {
@@ -68,7 +68,7 @@ func VerifyOTP(c *gin.Context) {
 		ltm, rtm, err := token.CreateLTMAndRTM(utils.FormatFloat(userID, 0))
 		if err != nil {
 			//If token creation fails
-			utils.SomethingWentWrongError(c)
+			utils.GeneralAPIError(c, err.Error())
 			return
 		}
 		//Send response with login, refresh token and api/verify_otp response
@@ -85,7 +85,7 @@ func VerifyOTP(c *gin.Context) {
 		vtm, err := token.CreateVTM()
 		//If token creation fails
 		if err != nil {
-			utils.SomethingWentWrongError(c)
+			utils.GeneralAPIError(c, err.Error())
 			return
 		}
 		//Send response with verify token

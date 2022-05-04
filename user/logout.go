@@ -22,21 +22,21 @@ func Logout(c *gin.Context) {
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
 		//If token is not available
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
 		return
 	}
 	//Check if request has refresh login token or not
 	rtm, ok := c.MustGet(token.ParamRTM).(*token.RefreshTokenMeta)
 	if !ok {
 		//If token is not available
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, utils.ErrorInvalidRTM)
 		return
 	}
 	//Get redis clients
 	client, ok := c.MustGet(cache.ParamRedisClient).(*redis.Client)
 	if !ok {
 		//If redis client is unavailable
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, utils.ErrorRedisFailed)
 		return
 	}
 
@@ -60,7 +60,7 @@ func Logout(c *gin.Context) {
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 	if err != nil {
 		//Internal unmarshal error
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, err.Error())
 	}
 
 	if !apiCR.Success {
@@ -73,7 +73,7 @@ func Logout(c *gin.Context) {
 	err = cache.BlacklistToken(client, ltm, rtm)
 	if err != nil {
 		//If token blacklist returns error
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 	//Send response with success as true

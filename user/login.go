@@ -33,7 +33,7 @@ func Login(c *gin.Context) {
 	params, err := utils.RequestParamsToMap(lr)
 	if err != nil {
 		//If mapping fails
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, err.Error())
 	}
 	//Create internal API client
 	client := api_client.NewAPIClient()
@@ -54,7 +54,7 @@ func Login(c *gin.Context) {
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 	if err != nil {
 		//Internal unmarshal error
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, err.Error())
 	}
 
 	if !apiCR.Success {
@@ -68,7 +68,7 @@ func Login(c *gin.Context) {
 	ltm, rtm, err := token.CreateLTMAndRTM(utils.FormatFloat(userID, 0))
 	if err != nil {
 		//If token creation fails
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 	//Send response with login, refresh token and api/user/login response

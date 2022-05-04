@@ -11,7 +11,7 @@ import (
 func Refresh(c *gin.Context) {
 	currentRTM, ok := c.MustGet(token.ParamRTM).(*token.RefreshTokenMeta)
 	if !ok {
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, utils.ErrorInvalidRTM)
 		return
 	}
 

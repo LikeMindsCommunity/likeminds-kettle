@@ -32,7 +32,7 @@ func InitiateSDK(c *gin.Context) {
 	bodyParams, err := utils.RequestParamsToMap(isr)
 	if err != nil {
 		//If mapping fails
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, err.Error())
 	}
 
 	apiClient := api_client.NewAPIClient()
@@ -49,7 +49,7 @@ func InitiateSDK(c *gin.Context) {
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 	if err != nil {
 		//If API fails or any other error
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 	if !apiCR.Success {
@@ -64,7 +64,7 @@ func InitiateSDK(c *gin.Context) {
 	ltm, rtm, err := token.CreateLTMAndRTM(utils.FormatFloat(userID, 0))
 	if err != nil {
 		//If token creation fails
-		utils.SomethingWentWrongError(c)
+		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 	//Send response with login, refresh token and api/sdk/initiate response
