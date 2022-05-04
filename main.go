@@ -31,6 +31,7 @@ func main() {
 	router.POST("/user/merge_account", LTMValidationMiddleware(client), user.MergeAccount)
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client), home.FetchCommunities)
 	router.POST("/sdk/initiate", sdk.InitiateSDK)
+	router.POST("/user/create_bot", user.CreateBot)
 
 	log.Fatal(router.Run(":8080"))
 }

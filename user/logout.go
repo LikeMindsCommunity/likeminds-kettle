@@ -14,8 +14,6 @@ type LogoutRequest struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-const LogoutEndPoint = "/api/user/logout"
-
 //Logout is used to blacklist login and refresh tokens and logout user
 func Logout(c *gin.Context) {
 	//Check if request has valid login token or not
