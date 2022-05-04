@@ -6,7 +6,6 @@ import (
 	"net/http"
 )
 
-const ErrorSomethingWentWrong = "Something went wrong! Please try again after sometime"
 const ErrorDeviceLoggedOut = "Device logged out! Please login again"
 const ErrorInvalidRequest = "Invalid request!"
 const ErrorQueryParamsMissing = "Query params missing!"
