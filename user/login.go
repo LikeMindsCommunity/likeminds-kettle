@@ -25,7 +25,7 @@ func Login(c *gin.Context) {
 		utils.POSTBodyParamsMissingError(c)
 		return
 	}
-
+	
 	//Create internal API client
 	client := api_client.NewAPIClient()
 	options := api_client.PostRequestOptions{

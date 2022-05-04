@@ -28,7 +28,7 @@ func InitiateSDK(c *gin.Context) {
 		utils.POSTBodyParamsMissingError(c)
 		return
 	}
-
+	
 	apiClient := api_client.NewAPIClient()
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
 		Url:           apiClient.CoreServiceBaseURL + InitiateSDKEndPoint,
