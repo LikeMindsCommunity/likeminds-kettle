@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/cache"
+	"github.com/nateshr/likeminds-authentication/chatroom"
 	"github.com/nateshr/likeminds-authentication/home"
 	"github.com/nateshr/likeminds-authentication/otp"
 	"github.com/nateshr/likeminds-authentication/sdk"
@@ -33,6 +34,7 @@ func main() {
 	router.POST("/sdk/initiate", sdk.InitiateSDK)
 	router.POST("/sdk/create", sdk.CreateSDK)
 	router.POST("/user/create_bot", user.CreateBot)
+	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client), chatroom.ScheduleFollow)
 
 	log.Fatal(router.Run(":8080"))
 }
