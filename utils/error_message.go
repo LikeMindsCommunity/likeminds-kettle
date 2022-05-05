@@ -1,9 +1,10 @@
 package utils
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
-	"net/http"
 )
 
 const ErrorDeviceLoggedOut = "Device logged out! Please login again"
@@ -36,5 +37,12 @@ func POSTBodyParamsMissingError(c *gin.Context) {
 	c.JSON(http.StatusBadRequest, Response{
 		Success:      false,
 		ErrorMessage: ErrorBodyParamsMissing,
+	})
+}
+
+func TokenAuthError(c *gin.Context, errorMessage string) {
+	c.JSON(http.StatusUnauthorized, Response{
+		Success:      false,
+		ErrorMessage: errorMessage,
 	})
 }
