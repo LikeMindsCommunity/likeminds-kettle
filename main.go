@@ -1,11 +1,9 @@
 package main
 
 import (
-	"log"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
+	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/cache"
 	"github.com/nateshr/likeminds-authentication/chatroom"
 	"github.com/nateshr/likeminds-authentication/home"
@@ -14,6 +12,8 @@ import (
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
+	"log"
+	"net/http"
 )
 
 var (
@@ -30,11 +30,11 @@ func main() {
 	router.POST("/user/refresh", RTMValidationMiddleware(), user.Refresh)
 	router.POST("/user/logout", LogoutValidationMiddleware(client), user.Logout)
 	router.POST("/user/merge_account", LTMValidationMiddleware(client), user.MergeAccount)
-	router.POST("/home/fetch_communities", LTMValidationMiddleware(client), home.FetchCommunities)
+	router.GET("/home/fetch_communities", LTMValidationMiddleware(client), home.FetchCommunities)
 	router.POST("/sdk/initiate", sdk.InitiateSDK)
 	router.POST("/sdk/create", sdk.CreateSDK)
-	router.POST("/user/create_bot", user.CreateBot)
-	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client), chatroom.ScheduleFollow)
+	router.POST("/user/create_bot", APIKeyValidationMiddleware(), user.CreateBot)
+	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
 
 	log.Fatal(router.Run(":8080"))
 }
@@ -172,6 +172,61 @@ func LogoutValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 				c.Set(token.ParamRTM, rtm)
 			}
 		}
+		c.Next()
+	}
+}
+
+const APIKeyParam = "api_key"
+const SDKAuthenticateEndPoint = "api/sdk/authenticate"
+const ResponseCommunityId = "community_id"
+
+func APIKeyValidationMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//GET Request params
+		apiKey := c.Query(APIKeyParam)
+
+		//Params to be sent in the api/sdk/authenticate request
+		params := map[string]string{
+			APIKeyParam: apiKey,
+		}
+		//Create internal API client
+		client := api_client.NewAPIClient()
+		options := api_client.GetRequestOptions{
+			Url:           client.CoreServiceBaseURL + SDKAuthenticateEndPoint,
+			Params:        params,
+			CustomHeaders: utils.CreateHeaders(c),
+		}
+		//Send request
+		respBytes, err := client.GetRequest(&options)
+		if err != nil {
+			//If API fails or any other error
+			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+				Success:      false,
+				ErrorMessage: err.Error(),
+			})
+			return
+		}
+		//Parse response
+		var apiCR api_client.APIClientResponse
+		err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
+		if err != nil {
+			//Internal unmarshal error
+			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+				Success:      false,
+				ErrorMessage: err.Error(),
+			})
+			return
+		}
+
+		if !apiCR.Success {
+			//If api/sdk/authenticate returns success as false
+			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+				Success:      false,
+				ErrorMessage: utils.ErrorInvalidAPIKey,
+			})
+			return
+		}
+		c.Set(ResponseCommunityId, apiCR.Response[ResponseCommunityId])
 		c.Next()
 	}
 }

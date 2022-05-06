@@ -14,6 +14,7 @@ const ErrorBodyParamsMissing = "Body params missing!"
 const ErrorInvalidLTM = "Invalid LTM!"
 const ErrorInvalidRTM = "Invalid RTM!"
 const ErrorRedisFailed = "Unable to initialize Redis!"
+const ErrorInvalidAPIKey = "Invalid API key!"
 
 func GeneralAPIError(c *gin.Context, errorMessage string) {
 	c.JSON(http.StatusInternalServerError, Response{
