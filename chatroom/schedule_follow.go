@@ -14,10 +14,6 @@ const ResponseId = "id"
 
 type ScheduleFollowRequest struct {
 	ChatroomID         int32 `json:"chatroom_id"`
-	ScheduleTime       int64 `json:"schedule_time"`
-	ScheduleTimeBefore int64 `json:"schedule_time_before"`
-	EndTime            int64 `json:"end_time"`
-	EndTimeAfter       int64 `json:"end_time_after"`
 }
 
 //ScheduleFollow is used to schedule follow request for particular user
