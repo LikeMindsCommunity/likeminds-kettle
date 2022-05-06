@@ -30,11 +30,16 @@ func main() {
 	router.POST("/user/refresh", RTMValidationMiddleware(), user.Refresh)
 	router.POST("/user/logout", LogoutValidationMiddleware(client), user.Logout)
 	router.POST("/user/merge_account", LTMValidationMiddleware(client), user.MergeAccount)
+	router.POST("/user/create_bot", user.CreateBot)
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client), home.FetchCommunities)
 	router.POST("/sdk/initiate", sdk.InitiateSDK)
 	router.POST("/sdk/create", sdk.CreateSDK)
-	router.POST("/user/create_bot", user.CreateBot)
 	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client), chatroom.ScheduleFollow)
+	router.POST("/chatroom/create", LTMValidationMiddleware(client), chatroom.CreateChatroom)
+	router.GET("/chatroom/fetch", LTMValidationMiddleware(client), chatroom.FetchChatroom)
+	router.POST("/chatroom/edit", LTMValidationMiddleware(client), chatroom.EditChatroom)
+	router.POST("/chatroom/pin", LTMValidationMiddleware(client), chatroom.PinChatroom)
+	router.GET("/chatroom/get_tagging_list", LTMValidationMiddleware(client), chatroom.GetTaggingList)
 
 	log.Fatal(router.Run(":8080"))
 }

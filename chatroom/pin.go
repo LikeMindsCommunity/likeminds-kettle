@@ -9,16 +9,14 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-type ScheduleFollowRequest struct {
-	ChatroomID         int32 `json:"chatroom_id"`
-	ScheduleTime       int64 `json:"schedule_time"`
-	ScheduleTimeBefore int64 `json:"schedule_time_before"`
-	EndTime            int64 `json:"end_time"`
-	EndTimeAfter       int64 `json:"end_time_after"`
+type PinChatroomRequest struct {
+	ChatroomID int64 `json:"chatroom_id"`
+	Value      bool  `json:"value"`
+	Notify     bool  `json:"notify"`
 }
 
-//ScheduleFollow is used to schedule follow request for particular user
-func ScheduleFollow(c *gin.Context) {
+//PinChatroom is used to create a new chatroom
+func PinChatroom(c *gin.Context) {
 
 	//Check if request has valid login token or not
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
@@ -29,13 +27,13 @@ func ScheduleFollow(c *gin.Context) {
 	}
 
 	//Create headers from login token
-	headers := utils.CreateHeaders(c)
+	headers := make(map[string]interface{})
 	headers[utils.HeadersMemberId] = ltm.UserID
 
-	//POST body bodyParams
-	var sfr ScheduleFollowRequest
-	if err := c.ShouldBindJSON(&sfr); err != nil {
-		//If POST body bodyParams are missing
+	//POST body params
+	var pcr PinChatroomRequest
+	if err := c.ShouldBindJSON(&pcr); err != nil {
+		//If POST body params are missing
 		utils.POSTBodyParamsMissingError(c)
 		return
 	}
@@ -45,9 +43,9 @@ func ScheduleFollow(c *gin.Context) {
 
 	//Send request
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
-		Url:           apiClient.CoreServiceBaseURL + ScheduleFollowEndPoint,
-		Body:          sfr,
+		Url:           apiClient.CoreServiceBaseURL + PinChatroomEndPoint,
 		CustomHeaders: headers,
+		Body:          pcr,
 	})
 
 	if err != nil {
@@ -60,18 +58,17 @@ func ScheduleFollow(c *gin.Context) {
 	var apiCR api_client.APIClientResponse
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 	if err != nil {
-		//If API fails or any other error
+		//Internal unmarshal error
 		utils.GeneralAPIError(c, err.Error())
-		return
 	}
 
 	if !apiCR.Success {
-		//If api/chatroom/schedule_follow returns success as false
+		//If api/chatroom/pin returns success as false
 		c.JSON(http.StatusInternalServerError, apiCR)
 		return
 	}
 
-	//Send response
+	//Send response with api/chatroom/pin response
 	c.JSON(http.StatusOK, utils.Response{
 		Success: true,
 		Data:    apiCR.Response,
