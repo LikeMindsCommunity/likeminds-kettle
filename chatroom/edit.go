@@ -18,7 +18,7 @@ type EditChatroomRequest struct {
 //EditChatroom is used to edit an existing chatroom
 func EditChatroom(c *gin.Context) {
 
-	//Check if request has valid login token or not
+	//Check if request has LTM token or not
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
 		//If token is not available

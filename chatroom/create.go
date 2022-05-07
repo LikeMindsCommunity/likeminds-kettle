@@ -37,7 +37,7 @@ type CreateChatroomRequest struct {
 //CreateChatroom is used to create a new chatroom
 func CreateChatroom(c *gin.Context) {
 
-	//Check if request has valid login token or not
+	//Check if request has LTM token or not
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
 		//If token is not available

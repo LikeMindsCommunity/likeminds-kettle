@@ -10,13 +10,13 @@ import (
 )
 
 type ScheduleFollowRequest struct {
-	ChatroomID         int32 `json:"chatroom_id"`
+	ChatroomID int32 `json:"chatroom_id"`
 }
 
 //ScheduleFollow is used to schedule follow request for particular user
 func ScheduleFollow(c *gin.Context) {
 
-	//Check if request has valid login token or not
+	//Check if request has LTM token or not
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
 		//If token is not available

@@ -12,7 +12,7 @@ import (
 //GetTaggingList is used to fetch the tag members list for a specific chatroom
 func GetTaggingList(c *gin.Context) {
 
-	//Check if request has valid login token or not
+	//Check if request has LTM token or not
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
 		//If token is not available
