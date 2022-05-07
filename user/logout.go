@@ -1,13 +1,14 @@
 package user
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/cache"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
-	"net/http"
 )
 
 type LogoutRequest struct {
@@ -16,7 +17,8 @@ type LogoutRequest struct {
 
 //Logout is used to blacklist login and refresh tokens and logout user
 func Logout(c *gin.Context) {
-	//Check if request has valid login token or not
+
+	//Check if request has LTM token or not
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
 		//If token is not available

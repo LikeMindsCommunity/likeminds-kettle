@@ -1,12 +1,13 @@
 package home
 
 import (
+	"net/http"
+	"sync"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
-	"net/http"
-	"sync"
 )
 
 type FetchCommunitiesResponse struct {
@@ -22,13 +23,15 @@ const ResponseSubscriptions = "subscriptions"
 
 //FetchCommunities is used to blacklist LTM and RTM tokens
 func FetchCommunities(c *gin.Context) {
-	//Check if request has valid login token or not
+
+	//Check if request has LTM token or not
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
 		//If token is not available
 		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
 		return
 	}
+
 	//GET Request params
 	page := c.Query(ParamPage)
 	if page == "" {
