@@ -31,8 +31,8 @@ func main() {
 	router.POST("/user/logout", LogoutValidationMiddleware(client), user.Logout)
 	router.POST("/user/merge_account", LTMValidationMiddleware(client), user.MergeAccount)
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client), home.FetchCommunities)
-	router.POST("/sdk/initiate", sdk.InitiateSDK)
-	router.POST("/sdk/create", sdk.CreateSDK)
+	router.POST("/sdk/initiate", LTMValidationMiddleware(client), sdk.InitiateSDK)
+	router.POST("/sdk/create", LTMValidationMiddleware(client), sdk.CreateSDK)
 	router.POST("/user/create_bot", user.CreateBot)
 	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client), chatroom.ScheduleFollow)
 
