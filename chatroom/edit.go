@@ -1,22 +1,22 @@
-package user
+package chatroom
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/api_client"
-	"github.com/nateshr/likeminds-authentication/cache"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-type LogoutRequest struct {
-	RefreshToken string `json:"refresh_token"`
+type EditChatroomRequest struct {
+	ChatroomID int64  `json:"chatroom_id"`
+	Title      string `json:"title"`
+	Header     string `json:"header"`
 }
 
-//Logout is used to blacklist login and refresh tokens and logout user
-func Logout(c *gin.Context) {
+//EditChatroom is used to edit an existing chatroom
+func EditChatroom(c *gin.Context) {
 
 	//Check if request has LTM token or not
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
@@ -25,31 +25,29 @@ func Logout(c *gin.Context) {
 		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
 		return
 	}
-	//Check if request has refresh login token or not
-	rtm, ok := c.MustGet(token.ParamRTM).(*token.RefreshTokenMeta)
-	if !ok {
-		//If token is not available
-		utils.GeneralAPIError(c, utils.ErrorInvalidRTM)
-		return
-	}
-	//Get redis clients
-	client, ok := c.MustGet(cache.ParamRedisClient).(*redis.Client)
-	if !ok {
-		//If redis client is unavailable
-		utils.GeneralAPIError(c, utils.ErrorRedisFailed)
-		return
-	}
 
 	//Create headers from login token
 	headers := make(map[string]interface{})
 	headers[utils.HeadersMemberId] = ltm.UserID
+
+	//POST body params
+	var ecr EditChatroomRequest
+	if err := c.ShouldBindJSON(&ecr); err != nil {
+		//If POST body params are missing
+		utils.POSTBodyParamsMissingError(c)
+		return
+	}
+
 	//Create internal API client
 	apiClient := api_client.NewAPIClient()
+
 	//Send request
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
-		Url:           apiClient.CoreServiceBaseURL + LogoutEndPoint,
+		Url:           apiClient.CoreServiceBaseURL + EditChatroomEndPoint,
 		CustomHeaders: headers,
+		Body:          ecr,
 	})
+
 	if err != nil {
 		//If API fails or any other error
 		utils.GeneralAPIError(c, err.Error())
@@ -64,20 +62,14 @@ func Logout(c *gin.Context) {
 	}
 
 	if !apiCR.Success {
-		//If api/user/logout returns success as false
+		//If api/chatroom/edit returns success as false
 		c.JSON(http.StatusInternalServerError, apiCR)
 		return
 	}
-	//If flow succeeds
-	//Blacklist token
-	err = cache.BlacklistToken(client, ltm, rtm)
-	if err != nil {
-		//If token blacklist returns error
-		utils.GeneralAPIError(c, err.Error())
-		return
-	}
-	//Send response with success as true
+
+	//Send response with api/chatroom/edit response
 	c.JSON(http.StatusOK, utils.Response{
 		Success: true,
+		Data:    apiCR.Response,
 	})
 }
