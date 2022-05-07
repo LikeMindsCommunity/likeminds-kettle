@@ -1,16 +1,18 @@
 package user
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
-	"net/http"
 )
 
 //MergeAccount used when user wants to merge account and generate login and refresh tokens
 func MergeAccount(c *gin.Context) {
-	//Check if request has valid login token or not
+
+	//Check if request has LTM token or not
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
 		//If token is not available

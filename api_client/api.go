@@ -86,7 +86,7 @@ func (c *APIClient) sendRequest(req *http.Request) ([]byte, error) {
 		}
 	}(resp.Body)
 
-	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusBadRequest {
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusInternalServerError {
 		return nil, fmt.Errorf("unknown error, status code: %d", resp.StatusCode)
 	}
 	//Defer close error
