@@ -13,6 +13,7 @@ type CreateBotRequest struct {
 	APIKey string `json:"api_key"`
 }
 
+// CreateCommunityBotRequest | create community bot request schema
 type CreateCommunityBotRequest struct {
 	CommunityName string `json:"community_name" binding:"required"`
 }
