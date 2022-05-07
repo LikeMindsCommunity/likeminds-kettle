@@ -1,0 +1,13 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ubuntu/LikeMinds-Authentication/
+hooks:
+  ApplicationStart:
+    - location: scripts/build_auth
+      timeout: 300
+      runas: root
+    - location: scripts/start_auth
+      timeout: 300
+      runas: root
