@@ -1,11 +1,13 @@
 package sdk
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
+	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
-	"net/http"
 )
 
 const InitiateSDKEndPoint = "/api/sdk/initiate"
@@ -30,8 +32,8 @@ func InitiateSDK(c *gin.Context) {
 
 	apiClient := api_client.NewAPIClient()
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
-		Url:  apiClient.CoreServiceBaseURL + InitiateSDKEndPoint,
-		Body: isr,
+		Url:           apiClient.CoreServiceBaseURL + InitiateSDKEndPoint,
+		Body:          isr,
 		CustomHeaders: utils.CreateHeaders(c),
 	})
 	if err != nil {
@@ -53,9 +55,9 @@ func InitiateSDK(c *gin.Context) {
 	}
 
 	//If flow succeeds
-	userID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseId].(float64)
+	userID := apiCR.Response[ResponseUser].(map[string]interface{})[user.ResponseUserUniqueId].(string)
 	//Create login and refresh token
-	ltm, rtm, err := token.CreateLTMAndRTM(utils.FormatFloat(userID, 0))
+	ltm, rtm, err := token.CreateLTMAndRTM(userID)
 	if err != nil {
 		//If token creation fails
 		utils.GeneralAPIError(c, err.Error())
