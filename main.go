@@ -33,7 +33,7 @@ func main() {
 	router.POST("/user/merge_account", LTMValidationMiddleware(client), user.MergeAccount)
 	router.POST("/user/create_bot", APIKeyValidationMiddleware(), user.CreateBot)
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client), home.FetchCommunities)
-	router.POST("/sdk/initiate", LTMValidationMiddleware(client), sdk.InitiateSDK)
+	router.POST("/sdk/initiate", sdk.InitiateSDK)
 	router.POST("/sdk/create", LTMValidationMiddleware(client), sdk.CreateSDK)
 	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
 	router.POST("/chatroom/create", LTMValidationMiddleware(client), chatroom.CreateChatroom)
@@ -183,7 +183,7 @@ func LogoutValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 }
 
 const APIKeyParam = "api_key"
-const SDKAuthenticateEndPoint = "api/sdk/authenticate"
+const SDKAuthenticateEndPoint = "/api/sdk/authenticate"
 const ResponseCommunityId = "community_id"
 
 func APIKeyValidationMiddleware() gin.HandlerFunc {
