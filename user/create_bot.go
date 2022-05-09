@@ -1,17 +1,21 @@
 package user
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
-	"net/http"
 )
 
-
-
 type CreateBotRequest struct {
-	APIKey       string `json:"api_key"`
+	APIKey string `json:"api_key"`
+}
+
+// CreateCommunityBotRequest | create community bot request schema
+type CreateCommunityBotRequest struct {
+	CommunityName string `json:"community_name" binding:"required"`
 }
 
 //CreateBot is used to create bot
@@ -26,8 +30,8 @@ func CreateBot(c *gin.Context) {
 
 	apiClient := api_client.NewAPIClient()
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
-		Url:  apiClient.CoreServiceBaseURL + CreateBotEndpoint,
-		Body: isr,
+		Url:           apiClient.CoreServiceBaseURL + CreateBotEndpoint,
+		Body:          isr,
 		CustomHeaders: utils.CreateHeaders(c),
 	})
 	if err != nil {
