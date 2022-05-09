@@ -27,7 +27,7 @@ type CreateSDKRequestPlatform struct {
 type CreateSDKRequest struct {
 	CommunityName string                     `json:"name" binding:"required"`
 	Headline      string                     `json:"headline" binding:"required"`
-	BrandColor    string                     `json:"brand_color" binding:"required"`
+	BrandColor    string                     `json:"brand_color"`
 	ImageURL      string                     `json:"image_url"`
 	Platform      []CreateSDKRequestPlatform `json:"platform"`
 }
