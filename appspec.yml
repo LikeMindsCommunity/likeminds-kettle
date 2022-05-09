@@ -3,6 +3,7 @@ os: linux
 files:
   - source: /
     destination: /home/ubuntu/LikeMinds-Authentication/
+    overwrite: true
 hooks:
   ApplicationStart:
     - location: scripts/build_auth
