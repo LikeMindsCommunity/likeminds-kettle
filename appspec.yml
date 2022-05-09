@@ -5,9 +5,9 @@ files:
     destination: /home/ubuntu/LikeMinds-Authentication/
 hooks:
   ApplicationStart:
-    - location: scripts/build_auth
+    - location: scripts/build_auth.sh
       timeout: 300
       runas: root
-    - location: scripts/start_auth
+    - location: scripts/start_auth.sh
       timeout: 300
       runas: root
