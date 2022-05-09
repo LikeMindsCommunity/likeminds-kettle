@@ -1,12 +1,13 @@
 package sdk
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
-	"net/http"
 )
 
 const InitiateSDKEndPoint = "/api/sdk/initiate"
@@ -16,7 +17,6 @@ const ResponseId = "id"
 type InitiateSDKRequest struct {
 	UserName     string `json:"user_name" binding:"required"`
 	UserUniqueId string `json:"user_unique_id"`
-	APIKey       string `json:"api_key" binding:"required"`
 }
 
 //InitiateSDK is used to initiate sdk
@@ -28,18 +28,15 @@ func InitiateSDK(c *gin.Context) {
 		utils.POSTBodyParamsMissingError(c)
 		return
 	}
-	//Get LTM token
-	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
-	if ok {
-		//Set LTM token in case of returning user
-		isr.UserUniqueId = ltm.UserID
-	}
+
+	headers := utils.CreateHeaders(c)
+	headers[utils.HeadersApiKey] = c.GetHeader(utils.HeadersApiKey)
 
 	apiClient := api_client.NewAPIClient()
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
 		Url:           apiClient.CoreServiceBaseURL + InitiateSDKEndPoint,
 		Body:          isr,
-		CustomHeaders: utils.CreateHeaders(c),
+		CustomHeaders: headers,
 	})
 	if err != nil {
 		//If API fails or any other error
