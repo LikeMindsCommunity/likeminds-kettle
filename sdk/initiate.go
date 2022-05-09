@@ -14,9 +14,9 @@ const ResponseUser = "user"
 const ResponseId = "id"
 
 type InitiateSDKRequest struct {
-	UserName     string `json:"user_name"`
+	UserName     string `json:"user_name" binding:"required"`
 	UserUniqueId string `json:"user_unique_id"`
-	APIKey       string `json:"api_key"`
+	APIKey       string `json:"api_key" binding:"required"`
 }
 
 //InitiateSDK is used to initiate sdk
@@ -28,7 +28,13 @@ func InitiateSDK(c *gin.Context) {
 		utils.POSTBodyParamsMissingError(c)
 		return
 	}
-	
+	//Get LTM token
+	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
+	if ok {
+		//Set LTM token in case of returning user
+		isr.UserUniqueId = ltm.UserID
+	}
+
 	apiClient := api_client.NewAPIClient()
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
 		Url:           apiClient.CoreServiceBaseURL + InitiateSDKEndPoint,
