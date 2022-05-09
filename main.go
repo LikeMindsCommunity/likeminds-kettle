@@ -33,11 +33,7 @@ func main() {
 	router.POST("/user/merge_account", LTMValidationMiddleware(client), user.MergeAccount)
 	router.POST("/user/create_bot", APIKeyValidationMiddleware(), user.CreateBot)
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client), home.FetchCommunities)
-<<<<<<< HEAD
-	router.POST("/sdk/initiate", sdk.InitiateSDK)
-=======
 	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), sdk.InitiateSDK)
->>>>>>> ee24d4b8cc9966fd9f51078b596ca5069db2a2f8
 	router.POST("/sdk/create", LTMValidationMiddleware(client), sdk.CreateSDK)
 	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
 	router.POST("/chatroom/create", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
