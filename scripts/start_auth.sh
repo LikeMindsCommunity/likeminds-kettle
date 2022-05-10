@@ -1,3 +1,3 @@
 #!/bin/bash
 
-systemctl restart auth
+sudo systemctl restart auth

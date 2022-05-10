@@ -4,9 +4,6 @@ files:
   - source: /
     destination: /home/ubuntu/LikeMinds-Authentication
 hooks:
-  BeforeInstall:
-    - location: scripts/install_auth.sh
-      timeout: 600
   ApplicationStart:
     - location: scripts/build_auth.sh
       timeout: 300
