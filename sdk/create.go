@@ -16,20 +16,38 @@ const CreateSDKEndPoint = "/api/sdk/create"
 // CreateSDKBotUserEndPoint | create SDK community bot togther service endpoint
 const CreateSDKBotUserEndPoint = "/api/user/create_bot"
 
-// CreateSDKRequestPlatform | create SDK api key platform schema
-type CreateSDKRequestPlatform struct {
-	Type        int    `json:"type" binding:"required"`
-	Package     string `json:"package" binding:"required"`
-	Certificate string `json:"certificate" binding:"required"`
+// CreateSDKPlatform | create SDK api key platform schema
+type CreateSDKPlatform struct {
+	Type        int    `json:"type"`
+	Package     string `json:"package"`
+	Certificate string `json:"certificate"`
+}
+
+// CommunityBasicBranding | community basic branding schema
+type CommunityBasicBranding struct {
+	PrimaryColour string `json:"primary_colour"`
+}
+
+// CommunityAdvancedBranding | community advanced branding schema
+type CommunityAdvancedBranding struct {
+	HeaderColour       string `json:"header_colour"`
+	ButtonsIconsColour string `json:"buttons_icons_colour"`
+	TextLinksColour    string `json:"text_links_colour"`
+}
+
+// CommunityBrandingRequest | create SDK api key platform schema
+type CommunityBrandingRequest struct {
+	Basic    CommunityBasicBranding    `json:"basic"`
+	Advanced CommunityAdvancedBranding `json:"advanced"`
 }
 
 // CreateSDKRequest | create SDK api key request schema
 type CreateSDKRequest struct {
-	CommunityName string                     `json:"name" binding:"required"`
-	Headline      string                     `json:"headline" binding:"required"`
-	BrandColor    string                     `json:"brand_color" binding:"required"`
-	ImageURL      string                     `json:"image_url"`
-	Platform      []CreateSDKRequestPlatform `json:"platform"`
+	CommunityName string                   `json:"name" binding:"required"`
+	Branding      CommunityBrandingRequest `json:"branding"`
+	Headline      string                   `json:"headline" binding:"required"`
+	ImageURL      string                   `json:"image_url"`
+	Platform      []CreateSDKPlatform      `json:"platform"`
 }
 
 // CreateSDK | returns SDK client API key and community bot's access token

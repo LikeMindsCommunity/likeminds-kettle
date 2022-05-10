@@ -15,9 +15,8 @@ const ResponseUser = "user"
 const ResponseId = "id"
 
 type InitiateSDKRequest struct {
-	UserName     string `json:"user_name"`
+	UserName     string `json:"user_name" binding:"required"`
 	UserUniqueId string `json:"user_unique_id"`
-	APIKey       string `json:"api_key"`
 }
 
 //InitiateSDK is used to initiate sdk
