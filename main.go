@@ -182,24 +182,16 @@ func LogoutValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 	}
 }
 
-const APIKeyParam = "x-api-key"
 const SDKAuthenticateEndPoint = "/api/sdk/authenticate"
 const ResponseCommunityId = "community_id"
 
 func APIKeyValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//GET Request params
-		apiKey := c.GetHeader(APIKeyParam)
-
-		// create headers | add api key header
-		headers := utils.CreateHeaders(c)
-		headers[utils.HeadersApiKey] = apiKey
-
 		//Create internal API client
 		client := api_client.NewAPIClient()
 		options := api_client.GetRequestOptions{
 			Url:           client.CoreServiceBaseURL + SDKAuthenticateEndPoint,
-			CustomHeaders: headers,
+			CustomHeaders: utils.CreateHeaders(c),
 		}
 		//Send request
 		respBytes, err := client.GetRequest(&options)

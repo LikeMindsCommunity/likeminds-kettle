@@ -29,14 +29,11 @@ func InitiateSDK(c *gin.Context) {
 		return
 	}
 
-	headers := utils.CreateHeaders(c)
-	headers[utils.HeadersApiKey] = c.GetHeader(utils.HeadersApiKey)
-
 	apiClient := api_client.NewAPIClient()
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
 		Url:           apiClient.CoreServiceBaseURL + InitiateSDKEndPoint,
 		Body:          isr,
-		CustomHeaders: headers,
+		CustomHeaders: utils.CreateHeaders(c),
 	})
 	if err != nil {
 		//If API fails or any other error

@@ -38,5 +38,6 @@ func CreateHeaders(c *gin.Context) map[string]interface{} {
 	headers := make(map[string]interface{})
 	headers[HeadersPlatformCode] = c.GetHeader(HeadersPlatformCode)
 	headers[HeadersVersionCode] = c.GetHeader(HeadersVersionCode)
+	headers[HeadersApiKey] = c.GetHeader(HeadersApiKey)
 	return headers
 }
