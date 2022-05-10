@@ -1,5 +1,5 @@
 #!/bin/bash
-source ~/.profile
+source /home/ubuntu/.iprofile
 echo $PATH
 cd /home/ubuntu/LikeMinds-Authentication/
 go build .
