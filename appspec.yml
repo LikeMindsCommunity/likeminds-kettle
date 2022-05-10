@@ -2,9 +2,9 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu/LikeMinds-Authentication/
+    destination: /home/ubuntu/LikeMinds-Authentication
 permissions:
-  - object: /
+  - object: /home/ubuntu/LikeMinds-Authentication
     pattern: "**"
     owner: ubuntu
     group: ubuntu
