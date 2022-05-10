@@ -7,5 +7,7 @@ hooks:
   ApplicationStart:
     - location: scripts/build_auth.sh
       timeout: 300
+      runas: ubuntu
     - location: scripts/start_auth.sh
       timeout: 300
+      runas: ubuntu
