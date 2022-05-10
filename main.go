@@ -15,6 +15,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
+	"github.com/nateshr/likeminds-authentication/web"
 )
 
 var (
@@ -25,6 +26,7 @@ var (
 func main() {
 	client = cache.InitRedis()
 	router.Use(ApiMiddleware(client))
+	router.GET("", web.Home)
 	router.GET("/otp/generate", otp.GenerateOTP)
 	router.GET("/otp/verify", otp.VerifyOTP)
 	router.POST("/user/login", VTMValidationMiddleware(), user.Login)
