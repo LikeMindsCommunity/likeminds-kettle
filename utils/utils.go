@@ -3,14 +3,16 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"strconv"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 const HeadersMemberId = "x-member-id"
 const HeadersVersionCode = "x-version-code"
 const HeadersPlatformCode = "x-platform-code"
+const HeadersApiKey = "x-api-key"
 
 //RequestParamsToMap Converts a struct to a map while maintaining the json alias as keys
 func RequestParamsToMap(obj interface{}) (newMap map[string]string, err error) {
@@ -36,5 +38,6 @@ func CreateHeaders(c *gin.Context) map[string]interface{} {
 	headers := make(map[string]interface{})
 	headers[HeadersPlatformCode] = c.GetHeader(HeadersPlatformCode)
 	headers[HeadersVersionCode] = c.GetHeader(HeadersVersionCode)
+	headers[HeadersApiKey] = c.GetHeader(HeadersApiKey)
 	return headers
 }

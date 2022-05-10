@@ -1,6 +1,9 @@
 package main
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/api_client"
@@ -12,8 +15,6 @@ import (
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
-	"log"
-	"net/http"
 )
 
 var (
@@ -181,24 +182,15 @@ func LogoutValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 	}
 }
 
-const APIKeyParam = "api_key"
 const SDKAuthenticateEndPoint = "/api/sdk/authenticate"
 const ResponseCommunityId = "community_id"
 
 func APIKeyValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//GET Request params
-		apiKey := c.Query(APIKeyParam)
-
-		//Params to be sent in the api/sdk/authenticate request
-		params := map[string]string{
-			APIKeyParam: apiKey,
-		}
 		//Create internal API client
 		client := api_client.NewAPIClient()
 		options := api_client.GetRequestOptions{
 			Url:           client.CoreServiceBaseURL + SDKAuthenticateEndPoint,
-			Params:        params,
 			CustomHeaders: utils.CreateHeaders(c),
 		}
 		//Send request
