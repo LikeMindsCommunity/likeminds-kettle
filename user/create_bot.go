@@ -69,5 +69,4 @@ func CreateBot(c *gin.Context) {
 		Success: true,
 		Data:    dataResponse,
 	})
-	return
 }

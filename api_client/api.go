@@ -25,6 +25,7 @@ type GetRequestOptions struct {
 
 type PostRequestOptions struct {
 	Url           string
+	Params        map[string]string
 	Body          interface{}
 	CustomHeaders map[string]interface{}
 }
@@ -134,6 +135,11 @@ func (c *APIClient) PostRequest(pro *PostRequestOptions) ([]byte, error) {
 	req, err := http.NewRequest("POST", pro.Url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, err
+	}
+
+	params := pro.Params
+	if params != nil {
+		AddParams(req, params)
 	}
 
 	headers := pro.CustomHeaders

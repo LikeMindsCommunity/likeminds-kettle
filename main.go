@@ -9,6 +9,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/cache"
 	"github.com/nateshr/likeminds-authentication/chatroom"
+	"github.com/nateshr/likeminds-authentication/conversation"
 	"github.com/nateshr/likeminds-authentication/home"
 	"github.com/nateshr/likeminds-authentication/otp"
 	"github.com/nateshr/likeminds-authentication/sdk"
@@ -43,6 +44,47 @@ func main() {
 	router.POST("/chatroom/edit", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.EditChatroom)
 	router.POST("/chatroom/pin", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.PinChatroom)
 	router.GET("/chatroom/get_tagging_list", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.GetTaggingList)
+	router.POST("/chatroom/auto_follow_for_all_members", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.AutoFollowForAllMembers)
+	router.GET("/chatroom/fetch_participants_meta", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.FetchParticipantsMeta)
+	router.POST("/chatroom/add", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.AddChatroom)
+	router.POST("/chatroom/enable_member_message", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.EnableMemberMessage)
+	router.POST("/chatroom/update_files", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.UpdateFiles)
+	router.GET("/v2/fetch_chatroom", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.FetchChatroomV2)
+	router.GET("/v1/fetch_chatroom_feed", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.FetchChatroomFeed)
+	router.GET("/fetch_community_chatroom_feed", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.FetchCommunityChatroomFeed)
+	router.GET("/v1/my_chatrooms", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.MyChatrooms)
+	router.POST("/collabcard_seen", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.CollabcardSeen)
+	router.GET("/collabcard_follow", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.CollabcardFollow)
+	// router.POST("/chatroom_mute", LTMValidationMiddleware(client), chatroom.MuteChatroom)
+	// router.POST("/chatroom_rename", LTMValidationMiddleware(client), chatroom.RenameChatroom)
+	// router.POST("/chatroom_delete", LTMValidationMiddleware(client), chatroom.DeleteChatroom)
+	router.GET("/fetch_share_url", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.FetchShareUrl)
+	router.GET("/fetch_pending_chatroom", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.FetchPendingChatroom)
+	// router.POST("/action_pending_chatroom", LTMValidationMiddleware(client), chatroom.ActionPendingChatroom)
+	router.GET("/sync_chatrooms", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.SyncChatrooms)
+	router.GET("/sync_chatrooms_diff", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.SyncChatroomsDiff)
+	router.GET("/conversation/fetch", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.FetchConversation)
+	// router.POST("/conversation/create", LTMValidationMiddleware(client), conversation.CreateConversation)
+	// router.POST("/conversation/add_reaction", LTMValidationMiddleware(client), conversation.AddReaction)
+	// router.POST("/conversation/remove_reaction", LTMValidationMiddleware(client), conversation.RemoveReaction)
+	router.POST("/conversation/add_poll", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.AddPoll)
+	router.POST("/conversation/submit_poll", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.SubmitPoll)
+	router.GET("/conversation/poll_users", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.PollUsers)
+	router.POST("/conversation/set_topic", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.SetTopic)
+	router.POST("/conversation/event/attend", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.EventAttend)
+	router.POST("/conversation/event/attended", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.EventAttended)
+	router.GET("/conversation/event/fetch_unseen_count", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.FetchEventUnseenCount)
+	router.POST("/conversation/event/update_last_seen_event", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.UpdateLastSeenEvent)
+	router.GET("/conversation/event/fetch_link", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.FetchEventLink)
+	router.GET("/conversation/event/fetch_all", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.FetchAllEvents)
+	router.GET("/conversation/fetch_unread_previews", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.FetchUnreadPreviews)
+	router.GET("/conversation/fetch_preview_unread_messages_count", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.FetchPreviewUnreadMessagesCount)
+	router.GET("/conversation_meta", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.ConversationMeta)
+	router.GET("/unread_conversation_notification", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.UnreadConversationNotification)
+	router.POST("/delete_conversation", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.DeleteConversation)
+	// router.POST("/edit_conversation", LTMValidationMiddleware(client), conversation.EditConversation)
+	router.GET("/sync_conversation", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.SyncConversation)
+	router.GET("/sync_conversation_diff", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), conversation.SyncConversationDiff)
 
 	log.Fatal(router.Run(":8080"))
 }

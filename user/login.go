@@ -73,5 +73,4 @@ func Login(c *gin.Context) {
 		Success: true,
 		Data:    dataResponse,
 	})
-	return
 }
