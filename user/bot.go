@@ -33,20 +33,13 @@ func GetBot(c *gin.Context) {
 
 //Bot used when user is signing up and generate login and refresh tokens
 func Bot(c *gin.Context, method int) {
-	//POST body params
-	var br BotRequest
-	if err := c.ShouldBindJSON(&br); err != nil {
-		//If POST body params are missing
-		utils.POSTBodyParamsMissingError(c)
-		return
-	}
-
 	//Create internal API client
 	client := api_client.NewAPIClient()
 
 	//Send request
 	var respBytes []byte
 	var err error
+	var createToken bool
 	switch method {
 	case utils.GETMethod:
 		options := api_client.GetRequestOptions{
@@ -60,6 +53,13 @@ func Bot(c *gin.Context, method int) {
 			return
 		}
 	case utils.POSTMethod:
+		createToken = true
+		br, err := parseBotRequest(c)
+		if err != nil {
+			//If POST body params are missing
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
 		options := api_client.PostRequestOptions{
 			Url:           client.CoreServiceBaseURL + BotEndpoint,
 			Body:          br,
@@ -72,6 +72,12 @@ func Bot(c *gin.Context, method int) {
 			return
 		}
 	case utils.PUTMethod:
+		br, err := parseBotRequest(c)
+		if err != nil {
+			//If POST body params are missing
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
 		options := api_client.PostRequestOptions{
 			Url:           client.CoreServiceBaseURL + BotEndpoint,
 			Body:          br,
@@ -97,10 +103,9 @@ func Bot(c *gin.Context, method int) {
 		c.JSON(http.StatusInternalServerError, apiCR)
 		return
 	}
-
 	//If flow succeeds
 	dataResponse := apiCR.Response
-	if method == utils.POSTMethod {
+	if createToken {
 		userID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
 		//Create login and refresh token
 		ltm, rtm, err := token.CreateLTMAndRTM(userID)
@@ -118,4 +123,13 @@ func Bot(c *gin.Context, method int) {
 		Data:    dataResponse,
 	})
 	return
+}
+
+func parseBotRequest(c *gin.Context) (*BotRequest, error) {
+	//POST body params
+	var br BotRequest
+	if err := c.ShouldBindJSON(&br); err != nil {
+		return nil, err
+	}
+	return &br, nil
 }
