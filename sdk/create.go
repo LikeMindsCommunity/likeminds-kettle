@@ -13,9 +13,6 @@ import (
 // CreateSDKEndPoint | create SDK togther service endpoint
 const CreateSDKEndPoint = "/api/sdk/create"
 
-// CreateSDKBotUserEndPoint | create SDK community bot togther service endpoint
-const CreateSDKBotUserEndPoint = "/api/user/create_bot"
-
 // CreateSDKPlatform | create SDK api key platform schema
 type CreateSDKPlatform struct {
 	Type        int    `json:"type"`
@@ -61,14 +58,14 @@ func CreateSDK(request *gin.Context) {
 	}
 
 	// make community bot request
-	createCommunityBotRequest := user.CreateCommunityBotRequest{CommunityName: createSdkRequest.CommunityName}
+	createCommunityBotRequest := user.BotRequest{CommunityName: createSdkRequest.CommunityName}
 
 	// create internal API client
 	apiClient := api_client.NewAPIClient()
 
 	// send internal API request
 	createBotResponseBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
-		Url:           apiClient.CoreServiceBaseURL + CreateSDKBotUserEndPoint,
+		Url:           apiClient.CoreServiceBaseURL + user.BotEndpoint,
 		Body:          createCommunityBotRequest,
 		CustomHeaders: utils.CreateHeaders(request),
 	})

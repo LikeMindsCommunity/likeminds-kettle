@@ -148,3 +148,27 @@ func (c *APIClient) PostRequest(pro *PostRequestOptions) ([]byte, error) {
 
 	return respBytes, nil
 }
+
+func (c *APIClient) PutRequest(pro *PostRequestOptions) ([]byte, error) {
+	jsonData, err := json.Marshal(pro.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", pro.Url, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, err
+	}
+
+	headers := pro.CustomHeaders
+	if headers != nil {
+		AddHeaders(req, headers)
+	}
+
+	respBytes, err := c.sendRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return respBytes, nil
+}

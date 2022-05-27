@@ -33,7 +33,6 @@ func main() {
 	router.POST("/user/refresh", RTMValidationMiddleware(), user.Refresh)
 	router.POST("/user/logout", LogoutValidationMiddleware(client), user.Logout)
 	router.POST("/user/merge_account", LTMValidationMiddleware(client), user.MergeAccount)
-	router.POST("/user/create_bot", APIKeyValidationMiddleware(), user.CreateBot)
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client), home.FetchCommunities)
 	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), sdk.InitiateSDK)
 	router.POST("/sdk/create", LTMValidationMiddleware(client), sdk.CreateSDK)
@@ -43,6 +42,9 @@ func main() {
 	router.POST("/chatroom/edit", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.EditChatroom)
 	router.POST("/chatroom/pin", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.PinChatroom)
 	router.GET("/chatroom/get_tagging_list", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.GetTaggingList)
+	router.POST("/user/bot", APIKeyValidationMiddleware(), user.CreateBot)
+	router.PUT("/user/bot", APIKeyValidationMiddleware(), user.EditBot)
+	router.GET("/user/bot", APIKeyValidationMiddleware(), user.GetBot)
 
 	log.Fatal(router.Run(":8080"))
 }
