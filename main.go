@@ -34,7 +34,7 @@ func main() {
 	router.POST("/user/logout", LogoutValidationMiddleware(client), user.Logout)
 	router.POST("/user/merge_account", LTMValidationMiddleware(client), user.MergeAccount)
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client), home.FetchCommunities)
-	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), sdk.InitiateSDK)
+	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), LTMValidationMiddleware(client), sdk.InitiateSDK)
 	router.POST("/sdk/create", LTMValidationMiddleware(client), sdk.CreateSDK)
 	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
 	router.POST("/chatroom/create", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
@@ -195,7 +195,7 @@ func APIKeyValidationMiddleware() gin.HandlerFunc {
 		client := api_client.NewAPIClient()
 		options := api_client.GetRequestOptions{
 			Url:           client.CoreServiceBaseURL + SDKAuthenticateEndPoint,
-			CustomHeaders: utils.CreateHeaders(c),
+			CustomHeaders: utils.CreateHeaders(c, ""),
 		}
 		//Send request
 		respBytes, err := client.GetRequest(&options)

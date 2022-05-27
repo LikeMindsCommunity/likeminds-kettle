@@ -67,7 +67,7 @@ func CreateSDK(request *gin.Context) {
 	createBotResponseBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
 		Url:           apiClient.CoreServiceBaseURL + user.BotEndpoint,
 		Body:          createCommunityBotRequest,
-		CustomHeaders: utils.CreateHeaders(request),
+		CustomHeaders: utils.CreateHeaders(request, ""),
 	})
 	if err != nil {
 		// error in making API request
@@ -99,14 +99,11 @@ func CreateSDK(request *gin.Context) {
 		return
 	}
 
-	customHeaders := utils.CreateHeaders(request)
-	customHeaders[utils.HeadersMemberId] = userID
-
 	// send internal api request
 	createSDKResponseBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
 		Url:           apiClient.CoreServiceBaseURL + CreateSDKEndPoint,
 		Body:          createSdkRequest,
-		CustomHeaders: customHeaders,
+		CustomHeaders: utils.CreateHeaders(request, userID),
 	})
 	err = api_client.UnmarshalAPIClientResponse(createSDKResponseBytes, &apiCR)
 	if err != nil {

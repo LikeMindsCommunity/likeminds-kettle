@@ -42,7 +42,7 @@ func Logout(c *gin.Context) {
 
 	//Create headers from login token
 	headers := make(map[string]interface{})
-	headers[utils.HeadersMemberId] = ltm.UserID
+	headers[utils.HeadersMemberId] = ltm.UserUniqueID
 	//Create internal API client
 	apiClient := api_client.NewAPIClient()
 	//Send request
