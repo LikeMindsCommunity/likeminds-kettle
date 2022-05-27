@@ -43,6 +43,9 @@ func main() {
 	router.POST("/chatroom/edit", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.EditChatroom)
 	router.POST("/chatroom/pin", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.PinChatroom)
 	router.GET("/chatroom/get_tagging_list", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.GetTaggingList)
+	router.POST("/user/bot", APIKeyValidationMiddleware(), user.CreateBot)
+	router.PUT("/user/bot", APIKeyValidationMiddleware(), user.EditBot)
+	router.GET("/user/bot", APIKeyValidationMiddleware(), user.GetBot)
 
 	log.Fatal(router.Run(":8080"))
 }
