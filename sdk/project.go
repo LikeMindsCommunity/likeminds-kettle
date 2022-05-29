@@ -1,7 +1,6 @@
 package sdk
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -51,6 +50,11 @@ func CreateProject(c *gin.Context) {
 	Project(c, utils.POSTMethod)
 }
 
+//GetProject is used to get an existing sdk project
+func GetProject(c *gin.Context) {
+	Project(c, utils.GETMethod)
+}
+
 //Project method handles community sdk project for each client
 func Project(c *gin.Context, method int) {
 	//Create internal API client
@@ -64,24 +68,42 @@ func Project(c *gin.Context, method int) {
 		return
 	}
 
+	data := user.FetchBot(utils.CreateHeaders(c))
+	var userUniqueId = data.Data.(map[string]interface{})["user"].(map[string]interface{})["user_unique_id"]
+
+	headers := utils.CreateHeaders(c)
+	headers[utils.HeadersMemberId] = userUniqueId
+
 	//Send request
 	var respBytes []byte
 	var err error
 	switch method {
+	case utils.GETMethod:
+
+		//Params to be sent in the api/sdk/fetch request
+		params := map[string]string{
+			ParamCommunityCreator: ltm.UserID,
+		}
+
+		options := api_client.GetRequestOptions{
+			Url:           client.CoreServiceBaseURL + ProjectEndpoint,
+			CustomHeaders: headers,
+			Params:        params,
+		}
+		respBytes, err = client.GetRequest(&options)
+		if err != nil {
+			//If API fails or any other error
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
 	case utils.POSTMethod:
+
 		spr, err := parseProjectRequest(c)
 		if err != nil {
-			fmt.Println(err)
 			//If POST body params are missing
 			utils.GeneralAPIError(c, err.Error())
 			return
 		}
-
-		data := user.FetchBot(utils.CreateHeaders(c))
-		var userUniqueId = data.Data.(map[string]interface{})["user"].(map[string]interface{})["user_unique_id"]
-
-		headers := utils.CreateHeaders(c)
-		headers[utils.HeadersMemberId] = userUniqueId
 
 		spr.ProjectCreator = ltm.UserID
 
