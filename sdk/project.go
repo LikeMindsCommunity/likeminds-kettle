@@ -50,6 +50,11 @@ func CreateProject(c *gin.Context) {
 	Project(c, utils.POSTMethod)
 }
 
+//EditProject is used to edit an sdk project
+func EditProject(c *gin.Context) {
+	Project(c, utils.PUTMethod)
+}
+
 //GetProject is used to get an existing sdk project
 func GetProject(c *gin.Context) {
 	Project(c, utils.GETMethod)
@@ -114,6 +119,24 @@ func Project(c *gin.Context, method int) {
 		}
 
 		respBytes, err = client.PostRequest(&options)
+		if err != nil {
+			//If API fails or any other error
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
+	case utils.PUTMethod:
+		spr, err := parseProjectRequest(c)
+		if err != nil {
+			//If POST body params are missing
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
+		options := api_client.PostRequestOptions{
+			Url:           client.CoreServiceBaseURL + ProjectEndpoint,
+			Body:          spr,
+			CustomHeaders: headers,
+		}
+		respBytes, err = client.PutRequest(&options)
 		if err != nil {
 			//If API fails or any other error
 			utils.GeneralAPIError(c, err.Error())
