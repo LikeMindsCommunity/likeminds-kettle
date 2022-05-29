@@ -35,7 +35,6 @@ func main() {
 	router.POST("/user/merge_account", LTMValidationMiddleware(client), user.MergeAccount)
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client), home.FetchCommunities)
 	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), sdk.InitiateSDK)
-	router.POST("/sdk/create", LTMValidationMiddleware(client), sdk.CreateSDK)
 	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
 	router.POST("/chatroom/create", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
 	router.GET("/chatroom/fetch", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.FetchChatroom)
@@ -45,6 +44,7 @@ func main() {
 	router.POST("/user/bot", APIKeyValidationMiddleware(), user.CreateBot)
 	router.PUT("/user/bot", APIKeyValidationMiddleware(), user.EditBot)
 	router.GET("/user/bot", APIKeyValidationMiddleware(), user.GetBot)
+	router.POST("/sdk/project", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), sdk.CreateProject)
 
 	log.Fatal(router.Run(":8080"))
 }

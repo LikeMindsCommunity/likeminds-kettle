@@ -133,3 +133,35 @@ func parseBotRequest(c *gin.Context) (*BotRequest, error) {
 	}
 	return &br, nil
 }
+
+func FetchBot(headers map[string]interface{}) utils.Response {
+
+	client := api_client.NewAPIClient()
+
+	var respBytes []byte
+	var err error
+	resp := utils.Response{}
+
+	options := api_client.GetRequestOptions{
+		Url:           client.CoreServiceBaseURL + BotEndpoint,
+		CustomHeaders: headers,
+	}
+
+	respBytes, err = client.GetRequest(&options)
+	if err != nil {
+		//If API fails or any other error
+		resp.ErrorMessage = err.Error()
+		return resp
+	}
+
+	var apiCR api_client.APIClientResponse
+	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
+	if err != nil {
+		resp.ErrorMessage = err.Error()
+		return resp
+	}
+
+	resp.Data = apiCR.Response
+
+	return resp
+}
