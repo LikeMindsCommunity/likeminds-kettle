@@ -55,6 +55,11 @@ func GetProject(c *gin.Context) {
 	Project(c, utils.GETMethod)
 }
 
+//DeleteProject is used to delete an existing sdk project
+func DeleteProject(c *gin.Context) {
+	Project(c, utils.DELETEMethod)
+}
+
 //Project method handles community sdk project for each client
 func Project(c *gin.Context, method int) {
 	//Create internal API client
