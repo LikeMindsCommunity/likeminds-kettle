@@ -77,13 +77,12 @@ func Project(c *gin.Context, method int) {
 			return
 		}
 
-		data := user.FetchBot(utils.CreateHeaders(c))
+		data := user.FetchBot(utils.CreateHeaders(c, ""))
 		var userUniqueId = data.Data.(map[string]interface{})["user"].(map[string]interface{})["user_unique_id"]
 
-		headers := utils.CreateHeaders(c)
-		headers[utils.HeadersMemberId] = userUniqueId
+		headers := utils.CreateHeaders(c, userUniqueId.(string))
 
-		spr.ProjectCreator = ltm.UserID
+		spr.ProjectCreator = ltm.UserUniqueID
 
 		options := api_client.PostRequestOptions{
 			Url:           client.CoreServiceBaseURL + ProjectEndpoint,
