@@ -36,9 +36,6 @@ func main() {
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client, true), home.FetchCommunities)
 	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), LTMValidationMiddleware(client, false), sdk.InitiateSDK)
 	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
-	router.POST("/chatroom/create", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
-	router.GET("/chatroom/fetch", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.FetchChatroom)
-	router.POST("/chatroom/edit", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EditChatroom)
 	router.POST("/chatroom/pin", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.PinChatroom)
 	router.GET("/chatroom/get_tagging_list", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetTaggingList)
 	router.POST("/user/bot", APIKeyValidationMiddleware(), user.CreateBot)
@@ -47,6 +44,9 @@ func main() {
 	router.POST("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.CreateProject)
 	router.GET("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.GetProject)
 	router.DELETE("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.DeleteProject)
+	router.GET("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetChatroom)
+	router.POST("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
+	router.PUT("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EditChatroom)
 	log.Fatal(router.Run(":8080"))
 }
 
