@@ -35,7 +35,7 @@ type CommunityBrandingRequest struct {
 	Advanced CommunityAdvancedBranding `json:"advanced"`
 }
 
-// SDKRequest | create SDK api key request schema
+// SDKProjectRequest | create SDK api key request schema
 type SDKProjectRequest struct {
 	CommunityName  string                   `json:"name" binding:"required"`
 	Branding       CommunityBrandingRequest `json:"branding"`
