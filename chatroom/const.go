@@ -13,6 +13,7 @@ const AddParticipantsEndPoint = "/api/chatroom/add"
 const AddSecretParticipantsEndPoint = "/api/chatroom/secret/add"
 const FetchChatroomSettingsEndPoint = "/api/chatroom/fetch_settings"
 const EnableMemberMessageEndPoint = "/api/chatroom/enable_member_message"
+const AutoFollowMembersEndPoint = "/api/chatroom/auto_follow_for_all_members"
 
 const ParamChatroomId = "chatroom_id"
 const ParamPage = "page"
