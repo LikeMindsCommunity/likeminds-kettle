@@ -9,9 +9,20 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
+type MemberRequest struct {
+	UserName     string `json:"user_name"`
+	UserUniqueId string `json:"user_unique_id"`
+	ImageUrl     string `json:"image_url"`
+}
+
 //GetMember is used to get community members
 func GetMember(c *gin.Context) {
 	Member(c, utils.GETMethod)
+}
+
+//AddMember is used to add a member in community
+func AddMember(c *gin.Context) {
+	Member(c, utils.POSTMethod)
 }
 
 //Member method handles members for a commuinty
@@ -65,6 +76,31 @@ func Member(c *gin.Context, method int) {
 			return
 		}
 
+	case utils.POSTMethod:
+
+		//Body to be sent in the api/community/member POST request
+		memberRequest, err := parseMemberRequest(c)
+
+		if err != nil {
+			//If POST body params are missing
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
+
+		options := api_client.PostRequestOptions{
+			Url:           client.CoreServiceBaseURL + CommunityMemberEndPoint,
+			Body:          memberRequest,
+			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+		}
+
+		respBytes, err = client.PostRequest(&options)
+
+		if err != nil {
+			//If API fails or any other error
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
+
 	}
 
 	//Parse response
@@ -85,4 +121,15 @@ func Member(c *gin.Context, method int) {
 		Success: true,
 		Data:    apiCR.Response,
 	})
+}
+
+func parseMemberRequest(c *gin.Context) (*MemberRequest, error) {
+	//POST body params
+	var mr MemberRequest
+
+	if err := c.ShouldBindJSON(&mr); err != nil {
+		return nil, err
+	}
+
+	return &mr, nil
 }
