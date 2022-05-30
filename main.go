@@ -34,7 +34,7 @@ func main() {
 	router.POST("/user/logout", LogoutValidationMiddleware(client), user.Logout)
 	router.POST("/user/merge_account", LTMValidationMiddleware(client), user.MergeAccount)
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client), home.FetchCommunities)
-	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), LTMValidationMiddleware(client), sdk.InitiateSDK)
+	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), LTMWithoutValidationMiddleware(client), sdk.InitiateSDK)
 	router.POST("/sdk/create", LTMValidationMiddleware(client), sdk.CreateSDK)
 	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
 	router.POST("/chatroom/create", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
@@ -228,6 +228,19 @@ func APIKeyValidationMiddleware() gin.HandlerFunc {
 			return
 		}
 		c.Set(ResponseCommunityId, apiCR.Response[ResponseCommunityId])
+		c.Next()
+	}
+}
+
+func LTMWithoutValidationMiddleware(client *redis.Client) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//Extract LTM from token, internally it checks if token is valid or not
+		ltm, _ := token.ExtractLTM(c.Request.Header.Get(token.HeaderAuthorization))
+		//Check if LTM is black listed or not
+		if ltm != nil && cache.IsLTMBlacklisted(client, ltm) {
+			//If valid and not blacklisted, set "ltm" in context, to be used in later APIs
+			c.Set(token.ParamLTM, ltm)
+		}
 		c.Next()
 	}
 }
