@@ -12,7 +12,7 @@ import (
 )
 
 type LogoutRequest struct {
-	RefreshToken string `json:"refresh_token"binding:"required"`
+	RefreshToken string `json:"refresh_token" binding:"required"`
 }
 
 //Logout is used to blacklist login and refresh tokens and logout user
