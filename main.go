@@ -34,7 +34,7 @@ func main() {
 	router.POST("/user/logout", LogoutValidationMiddleware(client), user.Logout)
 	router.POST("/user/merge_account", LTMValidationMiddleware(client), user.MergeAccount)
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client), home.FetchCommunities)
-	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), LTMWithoutValidationMiddleware(client), sdk.InitiateSDK)
+	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), LTMEmptyValidationMiddleware(client), sdk.InitiateSDK)
 	router.POST("/sdk/create", LTMValidationMiddleware(client), sdk.CreateSDK)
 	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
 	router.POST("/chatroom/create", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
@@ -232,12 +232,30 @@ func APIKeyValidationMiddleware() gin.HandlerFunc {
 	}
 }
 
-func LTMWithoutValidationMiddleware(client *redis.Client) gin.HandlerFunc {
+func LTMEmptyValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//Extract LTM from token, internally it checks if token is valid or not
-		ltm, _ := token.ExtractLTM(c.Request.Header.Get(token.HeaderAuthorization))
-		//Check if LTM is black listed or not
-		if ltm != nil && cache.IsLTMBlacklisted(client, ltm) {
+		bearerToken := c.Request.Header.Get(token.HeaderAuthorization)
+		if len(bearerToken) <= 0 {
+			c.Next()
+		}
+		ltm, err := token.ExtractLTM(bearerToken)
+		if ltm == nil {
+			log.Print(err)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+				Success:      false,
+				ErrorMessage: token.ErrorInvalidLTM,
+			})
+			return
+		} else {
+			//Check if LTM is black listed or not
+			if cache.IsLTMBlacklisted(client, ltm) {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+					Success:      false,
+					ErrorMessage: utils.ErrorDeviceLoggedOut,
+				})
+				return
+			}
 			//If valid and not blacklisted, set "ltm" in context, to be used in later APIs
 			c.Set(token.ParamLTM, ltm)
 		}
