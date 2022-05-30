@@ -12,7 +12,7 @@ import (
 )
 
 type LogoutRequest struct {
-	RefreshToken string `json:"refresh_token"`
+	RefreshToken string `json:"refresh_token"binding:"required"`
 }
 
 //Logout is used to blacklist login and refresh tokens and logout user
@@ -40,15 +40,12 @@ func Logout(c *gin.Context) {
 		return
 	}
 
-	//Create headers from login token
-	headers := make(map[string]interface{})
-	headers[utils.HeadersMemberId] = ltm.UserUniqueID
 	//Create internal API client
 	apiClient := api_client.NewAPIClient()
 	//Send request
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
 		Url:           apiClient.CoreServiceBaseURL + LogoutEndPoint,
-		CustomHeaders: headers,
+		CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
 	})
 	if err != nil {
 		//If API fails or any other error
