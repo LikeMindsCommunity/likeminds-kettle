@@ -44,7 +44,7 @@ func Bot(c *gin.Context, method int) {
 	case utils.GETMethod:
 		options := api_client.GetRequestOptions{
 			Url:           client.CoreServiceBaseURL + BotEndpoint,
-			CustomHeaders: utils.CreateHeaders(c),
+			CustomHeaders: utils.CreateHeaders(c, ""),
 		}
 		respBytes, err = client.GetRequest(&options)
 		if err != nil {
@@ -63,7 +63,7 @@ func Bot(c *gin.Context, method int) {
 		options := api_client.PostRequestOptions{
 			Url:           client.CoreServiceBaseURL + BotEndpoint,
 			Body:          br,
-			CustomHeaders: utils.CreateHeaders(c),
+			CustomHeaders: utils.CreateHeaders(c, ""),
 		}
 		respBytes, err = client.PostRequest(&options)
 		if err != nil {
@@ -81,7 +81,7 @@ func Bot(c *gin.Context, method int) {
 		options := api_client.PostRequestOptions{
 			Url:           client.CoreServiceBaseURL + BotEndpoint,
 			Body:          br,
-			CustomHeaders: utils.CreateHeaders(c),
+			CustomHeaders: utils.CreateHeaders(c, ""),
 		}
 		respBytes, err = client.PutRequest(&options)
 		if err != nil {

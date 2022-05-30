@@ -68,11 +68,10 @@ func Project(c *gin.Context, method int) {
 		return
 	}
 
-	data := user.FetchBot(utils.CreateHeaders(c))
+	data := user.FetchBot(utils.CreateHeaders(c, ""))
 	var userUniqueId = data.Data.(map[string]interface{})["user"].(map[string]interface{})["user_unique_id"]
 
-	headers := utils.CreateHeaders(c)
-	headers[utils.HeadersMemberId] = userUniqueId
+	headers := utils.CreateHeaders(c, userUniqueId.(string))
 
 	//Send request
 	var respBytes []byte
@@ -82,7 +81,7 @@ func Project(c *gin.Context, method int) {
 
 		//Params to be sent in the api/sdk/fetch request
 		params := map[string]string{
-			ParamCommunityCreator: ltm.UserID,
+			ParamCommunityCreator: ltm.UserUniqueID,
 		}
 
 		options := api_client.GetRequestOptions{
@@ -105,7 +104,7 @@ func Project(c *gin.Context, method int) {
 			return
 		}
 
-		spr.ProjectCreator = ltm.UserID
+		spr.ProjectCreator = ltm.UserUniqueID
 
 		options := api_client.PostRequestOptions{
 			Url:           client.CoreServiceBaseURL + ProjectEndpoint,
