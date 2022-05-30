@@ -11,7 +11,6 @@ import (
 )
 
 const InitiateSDKEndPoint = "/api/sdk/initiate"
-const ResponseUser = "user"
 
 type InitiateSDKRequest struct {
 	UserName     string `json:"user_name" binding:"required"`
@@ -60,7 +59,7 @@ func InitiateSDK(c *gin.Context) {
 	dataResponse := apiCR.Response
 	if !ok {
 		//If flow succeeds
-		userUniqueID := apiCR.Response[ResponseUser].(map[string]interface{})[user.ResponseUserUniqueId].(string)
+		userUniqueID := apiCR.Response[user.ResponseUser].(map[string]interface{})[user.ResponseUserUniqueId].(string)
 		//Create login and refresh token
 		ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID)
 		if err != nil {
