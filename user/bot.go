@@ -136,8 +136,10 @@ func parseBotRequest(c *gin.Context) (*BotRequest, error) {
 
 func FetchBot(headers map[string]interface{}) utils.Response {
 
+	//Create internal API client
 	client := api_client.NewAPIClient()
 
+	//Send request
 	var respBytes []byte
 	var err error
 	resp := utils.Response{}
@@ -154,13 +156,16 @@ func FetchBot(headers map[string]interface{}) utils.Response {
 		return resp
 	}
 
+	//Parse response
 	var apiCR api_client.APIClientResponse
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 	if err != nil {
+		//Internal unmarshal error
 		resp.ErrorMessage = err.Error()
 		return resp
 	}
 
+	//If flow succeeds
 	resp.Data = apiCR.Response
 
 	return resp
