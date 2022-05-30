@@ -31,14 +31,22 @@ func GetBot(c *gin.Context) {
 	return
 }
 
-//Bot used when user is signing up and generate login and refresh tokens
+//Bot used to create/edit/get bot details of a community
 func Bot(c *gin.Context, method int) {
+	response := GetBotResponse(c, method)
+	if response != nil {
+		c.JSON(http.StatusOK, response)
+	}
+	return
+}
+
+//GetBotResponse used to get response when api/user/bot is hit internally
+func GetBotResponse(c *gin.Context, method int) *utils.Response {
 	//Create internal API client
 	client := api_client.NewAPIClient()
 
 	//Send request
 	var respBytes []byte
-	var err error
 	var createToken bool
 	switch method {
 	case utils.GETMethod:
@@ -46,11 +54,12 @@ func Bot(c *gin.Context, method int) {
 			Url:           client.CoreServiceBaseURL + BotEndpoint,
 			CustomHeaders: utils.CreateHeaders(c, ""),
 		}
+		var err error
 		respBytes, err = client.GetRequest(&options)
 		if err != nil {
 			//If API fails or any other error
 			utils.GeneralAPIError(c, err.Error())
-			return
+			return nil
 		}
 	case utils.POSTMethod:
 		createToken = true
@@ -58,7 +67,7 @@ func Bot(c *gin.Context, method int) {
 		if err != nil {
 			//If POST body params are missing
 			utils.GeneralAPIError(c, err.Error())
-			return
+			return nil
 		}
 		options := api_client.PostRequestOptions{
 			Url:           client.CoreServiceBaseURL + BotEndpoint,
@@ -69,14 +78,14 @@ func Bot(c *gin.Context, method int) {
 		if err != nil {
 			//If API fails or any other error
 			utils.GeneralAPIError(c, err.Error())
-			return
+			return nil
 		}
 	case utils.PUTMethod:
 		br, err := parseBotRequest(c)
 		if err != nil {
 			//If POST body params are missing
 			utils.GeneralAPIError(c, err.Error())
-			return
+			return nil
 		}
 		options := api_client.PostRequestOptions{
 			Url:           client.CoreServiceBaseURL + BotEndpoint,
@@ -87,21 +96,22 @@ func Bot(c *gin.Context, method int) {
 		if err != nil {
 			//If API fails or any other error
 			utils.GeneralAPIError(c, err.Error())
-			return
+			return nil
 		}
 	}
 
 	//Parse response
 	var apiCR api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
+	err := api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 	if err != nil {
 		//Internal unmarshal error
 		utils.GeneralAPIError(c, err.Error())
+		return nil
 	}
 	if !apiCR.Success {
 		//If api/user/login returns success as false
 		c.JSON(http.StatusInternalServerError, apiCR)
-		return
+		return nil
 	}
 	//If flow succeeds
 	dataResponse := apiCR.Response
@@ -112,17 +122,17 @@ func Bot(c *gin.Context, method int) {
 		if err != nil {
 			//If token creation fails
 			utils.GeneralAPIError(c, err.Error())
-			return
+			return nil
 		}
 		//Send response with login, refresh token and api/user/login response
 		dataResponse[token.ParamAccessToken] = ltm.AccessToken
 		dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
 	}
-	c.JSON(http.StatusOK, utils.Response{
+
+	return &utils.Response{
 		Success: true,
 		Data:    dataResponse,
-	})
-	return
+	}
 }
 
 func parseBotRequest(c *gin.Context) (*BotRequest, error) {
@@ -134,39 +144,6 @@ func parseBotRequest(c *gin.Context) (*BotRequest, error) {
 	return &br, nil
 }
 
-func FetchBot(headers map[string]interface{}) utils.Response {
-
-	//Create internal API client
-	client := api_client.NewAPIClient()
-
-	//Send request
-	var respBytes []byte
-	var err error
-	resp := utils.Response{}
-
-	options := api_client.GetRequestOptions{
-		Url:           client.CoreServiceBaseURL + BotEndpoint,
-		CustomHeaders: headers,
-	}
-
-	respBytes, err = client.GetRequest(&options)
-	if err != nil {
-		//If API fails or any other error
-		resp.ErrorMessage = err.Error()
-		return resp
-	}
-
-	//Parse response
-	var apiCR api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	if err != nil {
-		//Internal unmarshal error
-		resp.ErrorMessage = err.Error()
-		return resp
-	}
-
-	//If flow succeeds
-	resp.Data = apiCR.Response
-
-	return resp
+func GetUserUniqueIDFromResponse(response *utils.Response) string {
+	return response.Data.(map[string]interface{})[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
 }
