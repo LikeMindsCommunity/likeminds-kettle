@@ -12,6 +12,7 @@ const FetchSecretParticipantsMetaEndPoint = "/api/chatroom/secret/fetch_particip
 const AddParticipantsEndPoint = "/api/chatroom/add"
 const AddSecretParticipantsEndPoint = "/api/chatroom/secret/add"
 const FetchChatroomSettingsEndPoint = "/api/chatroom/fetch_settings"
+const EnableMemberMessageEndPoint = "/api/chatroom/enable_member_message"
 
 const ParamChatroomId = "chatroom_id"
 const ParamPage = "page"
