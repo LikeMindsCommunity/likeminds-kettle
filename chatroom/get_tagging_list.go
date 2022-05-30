@@ -22,7 +22,7 @@ func GetTaggingList(c *gin.Context) {
 
 	//Create headers from login token
 	headers := make(map[string]interface{})
-	headers[utils.HeadersMemberId] = ltm.UserID
+	headers[utils.HeadersMemberId] = ltm.UserUniqueID
 
 	//GET Request params
 	chatroom_id := c.Query(ParamChatroomId)

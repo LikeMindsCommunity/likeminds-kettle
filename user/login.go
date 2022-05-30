@@ -56,10 +56,10 @@ func Login(c *gin.Context) {
 	}
 
 	//If flow succeeds
-	userID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
+	userUniqueID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
 	//Create login and refresh token
 
-	ltm, rtm, err := token.CreateLTMAndRTM(userID)
+	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID)
 	if err != nil {
 		//If token creation fails
 		utils.GeneralAPIError(c, err.Error())

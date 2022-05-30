@@ -28,8 +28,8 @@ func InitRedis() *redis.Client {
 
 //IsLTMBlacklisted checks if token is blacklisted or not => user is logged out or not
 func IsLTMBlacklisted(client *redis.Client, ltm *token.LoginTokenMeta) bool {
-	userID, _ := client.Get(ltm.AccessUuid).Result()
-	if userID != "" {
+	userUniqueID, _ := client.Get(ltm.AccessUuid).Result()
+	if userUniqueID != "" {
 		return true
 	}
 	return false
@@ -37,8 +37,8 @@ func IsLTMBlacklisted(client *redis.Client, ltm *token.LoginTokenMeta) bool {
 
 //IsRTMBlacklisted checks if token is blacklisted or not => user is logged out or not
 func IsRTMBlacklisted(client *redis.Client, rtm *token.RefreshTokenMeta) bool {
-	userid, _ := client.Get(rtm.RefreshUuid).Result()
-	if userid != "" {
+	userUniqueID, _ := client.Get(rtm.RefreshUuid).Result()
+	if userUniqueID != "" {
 		return true
 	}
 	return false
@@ -50,11 +50,11 @@ func BlacklistToken(client *redis.Client, ltm *token.LoginTokenMeta, rtm *token.
 	rtExpires := time.Unix(rtm.RefreshTokenExpires, 0)
 	now := time.Now()
 
-	errAccess := client.Set(ltm.AccessUuid, ltm.UserID, atExpires.Sub(now)).Err()
+	errAccess := client.Set(ltm.AccessUuid, ltm.UserUniqueID, atExpires.Sub(now)).Err()
 	if errAccess != nil {
 		return errAccess
 	}
-	errRefresh := client.Set(rtm.RefreshUuid, ltm.UserID, rtExpires.Sub(now)).Err()
+	errRefresh := client.Set(rtm.RefreshUuid, ltm.UserUniqueID, rtExpires.Sub(now)).Err()
 	if errRefresh != nil {
 		return errRefresh
 	}

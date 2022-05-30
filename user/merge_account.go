@@ -22,7 +22,7 @@ func MergeAccount(c *gin.Context) {
 
 	//Create headers from login token
 	headers := make(map[string]interface{})
-	headers[utils.HeadersMemberId] = ltm.UserID
+	headers[utils.HeadersMemberId] = ltm.UserUniqueID
 	//Params to be sent in the api/merge_account request
 	params := map[string]string{
 		//TODO - get mobile number and country code
