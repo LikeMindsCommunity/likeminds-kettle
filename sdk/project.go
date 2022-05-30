@@ -117,7 +117,23 @@ func Project(c *gin.Context, method int) {
 			utils.GeneralAPIError(c, err.Error())
 			return
 		}
-
+	case utils.DELETEMethod:
+		//Call GET api/bot to get bot
+		response := user.GetBotResponse(c, utils.GETMethod)
+		if response == nil {
+			return
+		}
+		//api/sdk/project with delete request
+		options := api_client.PostRequestOptions{
+			Url:           client.CoreServiceBaseURL + ProjectEndpoint,
+			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+		}
+		respBytes, err = client.DeleteRequest(&options)
+		if err != nil {
+			//If API fails or any other error
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
 	}
 
 	//Parse response
