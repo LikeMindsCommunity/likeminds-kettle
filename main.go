@@ -44,7 +44,7 @@ func main() {
 	router.POST("/user/bot", APIKeyValidationMiddleware(), user.CreateBot)
 	router.PUT("/user/bot", APIKeyValidationMiddleware(), user.EditBot)
 	router.GET("/user/bot", APIKeyValidationMiddleware(), user.GetBot)
-	router.POST("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.CreateProject)
+	router.POST("/sdk/project", LTMValidationMiddleware(client, true), sdk.CreateProject)
 	router.GET("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.GetProject)
 	router.PUT("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.EditProject)
 	router.DELETE("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.DeleteProject)
