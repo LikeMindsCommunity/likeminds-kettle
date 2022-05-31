@@ -50,6 +50,11 @@ func CreateProject(c *gin.Context) {
 	Project(c, utils.POSTMethod)
 }
 
+//EditProject is used to edit an sdk project
+func EditProject(c *gin.Context) {
+	Project(c, utils.PUTMethod)
+}
+
 //GetProject is used to get an existing sdk project
 func GetProject(c *gin.Context) {
 	Project(c, utils.GETMethod)
@@ -93,11 +98,6 @@ func Project(c *gin.Context, method int) {
 			Params:        params,
 		}
 		respBytes, err = client.GetRequest(&options)
-		if err != nil {
-			//If API fails or any other error
-			utils.GeneralAPIError(c, err.Error())
-			return
-		}
 	case utils.POSTMethod:
 		//Call POST api/bot to create bot
 		response := user.GetBotResponse(c, utils.POSTMethod)
@@ -117,11 +117,25 @@ func Project(c *gin.Context, method int) {
 			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
 		}
 		respBytes, err = client.PostRequest(&options)
+	case utils.PUTMethod:
+		//Call POST api/bot to create bot
+		response := user.GetBotResponse(c, utils.POSTMethod)
+		if response == nil {
+			return
+		}
+		//Params to be sent in the api/sdk/project PUT request
+		projectRequest, err := parseProjectRequest(c, "")
 		if err != nil {
-			//If API fails or any other error
+			//If POST body params are missing
 			utils.GeneralAPIError(c, err.Error())
 			return
 		}
+		options := api_client.PostRequestOptions{
+			Url:           client.CoreServiceBaseURL + ProjectEndpoint,
+			Body:          projectRequest,
+			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+		}
+		respBytes, err = client.PutRequest(&options)
 	case utils.DELETEMethod:
 		//Call GET api/bot to get bot
 		response := user.GetBotResponse(c, utils.GETMethod)
@@ -134,11 +148,12 @@ func Project(c *gin.Context, method int) {
 			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
 		}
 		respBytes, err = client.DeleteRequest(&options)
-		if err != nil {
-			//If API fails or any other error
-			utils.GeneralAPIError(c, err.Error())
-			return
-		}
+	}
+
+	if err != nil {
+		//If API fails or any other error
+		utils.GeneralAPIError(c, err.Error())
+		return
 	}
 
 	//Parse response
@@ -167,6 +182,10 @@ func parseProjectRequest(c *gin.Context, projectCreatorID string) (*ProjectReque
 	if err := c.ShouldBindJSON(&spr); err != nil {
 		return nil, err
 	}
-	spr.ProjectCreator = projectCreatorID
+
+	if len(projectCreatorID) > 0 {
+		spr.ProjectCreator = projectCreatorID
+	}
+
 	return &spr, nil
 }
