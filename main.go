@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/api_client"
@@ -27,6 +28,7 @@ var (
 
 func main() {
 	client = cache.InitRedis()
+	router.Use(cors.New(enableCors()))
 	router.Use(ApiMiddleware(client))
 	router.GET("", web.Home)
 	router.GET("/otp/generate", otp.GenerateOTP)
@@ -301,4 +303,17 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 		}
 		c.Next()
 	}
+}
+
+func enableCors() cors.Config {
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AddAllowHeaders("x-member-id",
+		"x-platform-code",
+		"x-version-code",
+		"x-username",
+		"x-password",
+		"x-device-id",
+		"x-api_key")
+	return config
 }
