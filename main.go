@@ -9,6 +9,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/cache"
 	"github.com/nateshr/likeminds-authentication/chatroom"
+	"github.com/nateshr/likeminds-authentication/community"
 	"github.com/nateshr/likeminds-authentication/home"
 	"github.com/nateshr/likeminds-authentication/moderation"
 	"github.com/nateshr/likeminds-authentication/otp"
@@ -38,10 +39,7 @@ func main() {
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client, true), home.FetchCommunities)
 	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), LTMValidationMiddleware(client, false), sdk.InitiateSDK)
 	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
-	router.POST("/chatroom/create", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
-	router.GET("/chatroom/fetch", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.FetchChatroom)
-	router.POST("/chatroom/edit", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EditChatroom)
-	router.POST("/chatroom/pin", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.PinChatroom)
+	router.PUT("/chatroom/pin", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.PinChatroom)
 	router.GET("/chatroom/get_tagging_list", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetTaggingList)
 	router.POST("/user/bot", APIKeyValidationMiddleware(), user.CreateBot)
 	router.PUT("/user/bot", APIKeyValidationMiddleware(), user.EditBot)
@@ -49,6 +47,15 @@ func main() {
 	router.POST("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.CreateProject)
 	router.GET("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.GetProject)
 	router.DELETE("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.DeleteProject)
+	router.GET("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetChatroom)
+	router.POST("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
+	router.PUT("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EditChatroom)
+	router.GET("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetMember)
+	router.GET("/chatroom/participants", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetParticipants)
+	router.POST("/chatroom/participants", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.AddParticipants)
+	router.GET("/chatroom/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetChatroomSettings)
+	router.PUT("/chatroom/enable_member_message", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EnableMemberMessage)
+	router.PUT("/chatroom/auto_follow_members", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.AutoFollowMembers)
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
 	router.PUT("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.EditRights)
 	log.Fatal(router.Run(":8080"))
