@@ -51,6 +51,7 @@ func main() {
 	router.GET("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetChatroom)
 	router.POST("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
 	router.PUT("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EditChatroom)
+	router.POST("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditQuestions)
 	router.GET("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetMember)
 	router.POST("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.AddMember)
 	router.PUT("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditMember)
