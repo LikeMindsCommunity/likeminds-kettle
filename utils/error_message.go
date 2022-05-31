@@ -15,6 +15,7 @@ const ErrorInvalidLTM = "Invalid LTM!"
 const ErrorInvalidRTM = "Invalid RTM!"
 const ErrorRedisFailed = "Unable to initialize Redis!"
 const ErrorInvalidAPIKey = "Invalid API key!"
+const ErrorGuestAccessDenied = "Login required!"
 
 func GeneralAPIError(c *gin.Context, errorMessage string) {
 	c.JSON(http.StatusInternalServerError, Response{
@@ -46,4 +47,8 @@ func TokenAuthError(c *gin.Context, errorMessage string) {
 		Success:      false,
 		ErrorMessage: errorMessage,
 	})
+}
+
+func APIError(c *gin.Context, httpStatus int, response Response) {
+	c.JSON(httpStatus, response)
 }
