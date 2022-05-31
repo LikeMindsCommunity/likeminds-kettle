@@ -278,7 +278,6 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 
 		isGuest := apiCR.Response[user.ResponseUser].(map[string]interface{})[user.ResponseUserIsGuest].(bool)
 		if isGuest {
-
 			type GuestAccessDeniedResponseData struct {
 				Route string `json:"route"`
 			}
