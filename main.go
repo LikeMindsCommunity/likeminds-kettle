@@ -239,16 +239,13 @@ func APIKeyValidationMiddleware() gin.HandlerFunc {
 	}
 }
 
-// UserFetchEndpoint | togther service fetch user endpoint
-const UserFetchEndpoint = "/api/user/fetch"
-
 // GuestAccessCheckMiddleware | restrict guest access on endpoints
 func GuestAccessCheckMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//Create internal API client
 		client := api_client.NewAPIClient()
 		options := api_client.GetRequestOptions{
-			Url:           client.CoreServiceBaseURL + UserFetchEndpoint,
+			Url:           client.CoreServiceBaseURL + user.UserFetchEndpoint,
 			CustomHeaders: utils.CreateHeaders(c, c.GetHeader(utils.HeadersMemberId)),
 		}
 		//Send request
@@ -275,10 +272,7 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 
 		if !apiCR.Success {
 			//If api/user/fetch returns success as false
-			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
-				Success:      false,
-				ErrorMessage: utils.ErrorInvalidAPIKey,
-			})
+			utils.InternalAPICallError(c)
 			return
 		}
 
