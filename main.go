@@ -11,6 +11,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/chatroom"
 	"github.com/nateshr/likeminds-authentication/community"
 	"github.com/nateshr/likeminds-authentication/home"
+	"github.com/nateshr/likeminds-authentication/moderation"
 	"github.com/nateshr/likeminds-authentication/otp"
 	"github.com/nateshr/likeminds-authentication/sdk"
 	"github.com/nateshr/likeminds-authentication/token"
@@ -34,6 +35,7 @@ func main() {
 	router.POST("/user/refresh", RTMValidationMiddleware(), user.Refresh)
 	router.POST("/user/logout", LogoutValidationMiddleware(client), user.Logout)
 	router.POST("/user/merge_account", LTMValidationMiddleware(client, true), user.MergeAccount)
+	router.GET("/user/config", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.Config)
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client, true), home.FetchCommunities)
 	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), LTMValidationMiddleware(client, false), sdk.InitiateSDK)
 	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
@@ -56,6 +58,8 @@ func main() {
 	router.GET("/chatroom/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetChatroomSettings)
 	router.PUT("/chatroom/enable_member_message", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EnableMemberMessage)
 	router.PUT("/chatroom/auto_follow_members", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.AutoFollowMembers)
+	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
+	router.PUT("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.EditRights)
 	log.Fatal(router.Run(":8080"))
 }
 
@@ -243,6 +247,56 @@ func APIKeyValidationMiddleware() gin.HandlerFunc {
 			return
 		}
 		c.Set(ResponseCommunityId, apiCR.Response[ResponseCommunityId])
+		c.Next()
+	}
+}
+
+// GuestAccessCheckMiddleware | restrict guest access on endpoints
+func GuestAccessCheckMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//Create internal API client
+		client := api_client.NewAPIClient()
+		options := api_client.GetRequestOptions{
+			Url:           client.CoreServiceBaseURL + user.UserFetchEndpoint,
+			CustomHeaders: utils.CreateHeaders(c, c.GetHeader(utils.HeadersMemberId)),
+		}
+		//Send request
+		respBytes, err := client.GetRequest(&options)
+		if err != nil {
+			//If API fails or any other error
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
+		//Parse response
+		var apiCR api_client.APIClientResponse
+		err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
+		if err != nil {
+			//Internal unmarshal error
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
+
+		if !apiCR.Success {
+			//If api/user/fetch returns success as false
+			utils.APIClientError(c, apiCR)
+			return
+		}
+
+		isGuest := apiCR.Response[user.ResponseUser].(map[string]interface{})[user.ResponseUserIsGuest].(bool)
+		if isGuest {
+			type GuestAccessDeniedResponseData struct {
+				Route string `json:"route"`
+			}
+			response := utils.Response{
+				Success:      false,
+				ErrorMessage: utils.ErrorGuestAccessDenied,
+				Data:         GuestAccessDeniedResponseData{Route: user.GuestLoginRoute},
+			}
+
+			// If user is guest returns success as false
+			utils.APIError(c, http.StatusUnauthorized, response)
+			return
+		}
 		c.Next()
 	}
 }

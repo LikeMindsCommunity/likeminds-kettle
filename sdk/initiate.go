@@ -10,12 +10,15 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
+// InitiateSDKEndPoint | togther service user initiate endpoint
 const InitiateSDKEndPoint = "/api/sdk/initiate"
 
+// InitiateSDKRequest | user initiate request schema
 type InitiateSDKRequest struct {
-	UserName     string `json:"user_name" binding:"required"`
-	UserUniqueId string `json:"user_unique_id"`
+	UserName     string `json:"user_name"`
+	UserUniqueID string `json:"user_unique_id"`
 	ImageURL     string `json:"image_url"`
+	IsGuest      bool   `json:"is_guest"`
 }
 
 //InitiateSDK is used to initiate sdk
