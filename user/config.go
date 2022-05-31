@@ -64,7 +64,7 @@ func Config(c *gin.Context) {
 
 	if !apiCR.Success {
 		//If api/config returns success as false
-		c.JSON(http.StatusInternalServerError, apiCR)
+		utils.APIClientError(c, apiCR)
 		return
 	}
 

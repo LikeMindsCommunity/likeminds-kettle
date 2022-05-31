@@ -16,7 +16,6 @@ const ErrorInvalidRTM = "Invalid RTM!"
 const ErrorRedisFailed = "Unable to initialize Redis!"
 const ErrorInvalidAPIKey = "Invalid API key!"
 const ErrorGuestAccessDenied = "Login required!"
-const InternalAPIFailure = "Internal API call failed!"
 
 func GeneralAPIError(c *gin.Context, errorMessage string) {
 	c.JSON(http.StatusInternalServerError, Response{
@@ -50,9 +49,6 @@ func TokenAuthError(c *gin.Context, errorMessage string) {
 	})
 }
 
-func InternalAPICallError(c *gin.Context) {
-	c.JSON(http.StatusInternalServerError, Response{
-		Success:      false,
-		ErrorMessage: InternalAPIFailure,
-	})
+func APIAuthError(c *gin.Context, response Response) {
+	c.JSON(http.StatusUnauthorized, response)
 }

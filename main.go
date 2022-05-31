@@ -252,10 +252,7 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 		respBytes, err := client.GetRequest(&options)
 		if err != nil {
 			//If API fails or any other error
-			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
-				Success:      false,
-				ErrorMessage: err.Error(),
-			})
+			utils.GeneralAPIError(c, err.Error())
 			return
 		}
 		//Parse response
@@ -263,16 +260,13 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 		err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 		if err != nil {
 			//Internal unmarshal error
-			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
-				Success:      false,
-				ErrorMessage: err.Error(),
-			})
+			utils.GeneralAPIError(c, err.Error())
 			return
 		}
 
 		if !apiCR.Success {
 			//If api/user/fetch returns success as false
-			utils.InternalAPICallError(c)
+			utils.APIClientError(c, apiCR)
 			return
 		}
 
@@ -281,13 +275,14 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 			type GuestAccessDeniedResponseData struct {
 				Route string `json:"route"`
 			}
-
-			// If user is guest returns success as false
-			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+			response := utils.Response{
 				Success:      false,
 				ErrorMessage: utils.ErrorGuestAccessDenied,
 				Data:         GuestAccessDeniedResponseData{Route: user.GuestLoginRoute},
-			})
+			}
+
+			// If user is guest returns success as false
+			utils.APIAuthError(c, response)
 			return
 		}
 		c.Next()
