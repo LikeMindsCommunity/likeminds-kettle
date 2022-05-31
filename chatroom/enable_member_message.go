@@ -9,14 +9,14 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-type PinChatroomRequest struct {
-	ChatroomID int64 `json:"chatroom_id"`
+//EnableMemberMessageRequest | member message setting schema
+type EnableMemberMessageRequest struct {
+	ChatroomId int32 `json:"chatroom_id"`
 	Value      bool  `json:"value"`
-	Notify     bool  `json:"notify"`
 }
 
-//PinChatroom is used to create a pin a chatroom
-func PinChatroom(c *gin.Context) {
+//EnableMemberMessage is used to enable member message settings in chatroom
+func EnableMemberMessage(c *gin.Context) {
 
 	//Create internal API client
 	client := api_client.NewAPIClient()
@@ -27,8 +27,8 @@ func PinChatroom(c *gin.Context) {
 		return
 	}
 
-	//Body to be sent in the api/chatroom/pin POST request
-	pinChatroomRequest, err := parsePinChatroomRequest(c)
+	//Body to be sent in the api/chatroom/enable_member_message POST request
+	enableMemberMessageRequest, err := parseEnableMemberMessageRequest(c)
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
@@ -36,8 +36,8 @@ func PinChatroom(c *gin.Context) {
 	}
 
 	options := api_client.PostRequestOptions{
-		Url:           client.CoreServiceBaseURL + PinChatroomEndPoint,
-		Body:          pinChatroomRequest,
+		Url:           client.CoreServiceBaseURL + EnableMemberMessageEndPoint,
+		Body:          enableMemberMessageRequest,
 		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
 	}
 
@@ -57,25 +57,25 @@ func PinChatroom(c *gin.Context) {
 	}
 
 	if !apiCR.Success {
-		//If api/chatroom/pin returns success as false
+		//If api/chatroom/enable_member_message returns success as false
 		c.JSON(http.StatusInternalServerError, apiCR)
 		return
 	}
 
-	//Send response with api/chatroom/pin response
+	//Send response with api/chatroom/enable_member_message response
 	c.JSON(http.StatusOK, utils.Response{
 		Success: true,
 		Data:    apiCR.Response,
 	})
 }
 
-func parsePinChatroomRequest(c *gin.Context) (*PinChatroomRequest, error) {
+func parseEnableMemberMessageRequest(c *gin.Context) (*EnableMemberMessageRequest, error) {
 	//POST body params
-	var pcr PinChatroomRequest
+	var emmr EnableMemberMessageRequest
 
-	if err := c.ShouldBindJSON(&pcr); err != nil {
+	if err := c.ShouldBindJSON(&emmr); err != nil {
 		return nil, err
 	}
 
-	return &pcr, nil
+	return &emmr, nil
 }

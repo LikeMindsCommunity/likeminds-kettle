@@ -61,11 +61,11 @@ func VerifyOTP(c *gin.Context) {
 	}
 	//If flow succeeds
 	profileExists := apiCR.Response[ResponseProfileExists].(bool)
-	userID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseId].(float64)
+	userUniqueID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseId].(float64)
 	//If user exists in our DB, we need to return LTM and RTM
 	if profileExists {
 		//Create login and refresh token
-		ltm, rtm, err := token.CreateLTMAndRTM(utils.FormatFloat(userID, 0))
+		ltm, rtm, err := token.CreateLTMAndRTM(utils.FormatFloat(userUniqueID, 0))
 		if err != nil {
 			//If token creation fails
 			utils.GeneralAPIError(c, err.Error())

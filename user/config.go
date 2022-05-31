@@ -1,4 +1,4 @@
-package chatroom
+package user
 
 import (
 	"net/http"
@@ -9,14 +9,10 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-type EditChatroomRequest struct {
-	ChatroomID int64  `json:"chatroom_id"`
-	Title      string `json:"title"`
-	Header     string `json:"header"`
-}
+const ingestCommunitiesParam = "ingest_your_communities"
 
-//EditChatroom is used to edit an existing chatroom
-func EditChatroom(c *gin.Context) {
+// Config | fetch user app config
+func Config(c *gin.Context) {
 
 	//Check if request has LTM token or not
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
@@ -28,24 +24,28 @@ func EditChatroom(c *gin.Context) {
 
 	//Create headers from login token
 	headers := make(map[string]interface{})
-	headers[utils.HeadersMemberId] = ltm.UserID
+	headers[utils.HeadersMemberId] = ltm.UserUniqueID
 
-	//POST body params
-	var ecr EditChatroomRequest
-	if err := c.ShouldBindJSON(&ecr); err != nil {
-		//If POST body params are missing
-		utils.POSTBodyParamsMissingError(c)
+	//GET Request params
+	ingestCommunities := c.Query(ingestCommunitiesParam)
+	if ingestCommunities == "" {
+		//If GET params are missing
+		utils.GETQueryParamsMissingError(c)
 		return
+	}
+
+	//Params to be sent in the api/config request
+	params := map[string]string{
+		ingestCommunitiesParam: ingestCommunities,
 	}
 
 	//Create internal API client
 	apiClient := api_client.NewAPIClient()
-
 	//Send request
-	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
-		Url:           apiClient.CoreServiceBaseURL + EditChatroomEndPoint,
+	respBytes, err := apiClient.GetRequest(&api_client.GetRequestOptions{
+		Url:           apiClient.CoreServiceBaseURL + ConfigEndPoint,
 		CustomHeaders: headers,
-		Body:          ecr,
+		Params:        params,
 	})
 
 	if err != nil {
@@ -53,6 +53,7 @@ func EditChatroom(c *gin.Context) {
 		utils.GeneralAPIError(c, err.Error())
 		return
 	}
+
 	//Parse response
 	var apiCR api_client.APIClientResponse
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
@@ -62,12 +63,12 @@ func EditChatroom(c *gin.Context) {
 	}
 
 	if !apiCR.Success {
-		//If api/chatroom/edit returns success as false
-		c.JSON(http.StatusInternalServerError, apiCR)
+		//If api/config returns success as false
+		utils.APIClientError(c, apiCR)
 		return
 	}
 
-	//Send response with api/chatroom/edit response
+	//Send response with api/config response
 	c.JSON(http.StatusOK, utils.Response{
 		Success: true,
 		Data:    apiCR.Response,

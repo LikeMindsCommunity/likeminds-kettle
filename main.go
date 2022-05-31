@@ -9,7 +9,9 @@ import (
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/cache"
 	"github.com/nateshr/likeminds-authentication/chatroom"
+	"github.com/nateshr/likeminds-authentication/community"
 	"github.com/nateshr/likeminds-authentication/home"
+	"github.com/nateshr/likeminds-authentication/moderation"
 	"github.com/nateshr/likeminds-authentication/otp"
 	"github.com/nateshr/likeminds-authentication/sdk"
 	"github.com/nateshr/likeminds-authentication/token"
@@ -32,22 +34,31 @@ func main() {
 	router.POST("/user/login", VTMValidationMiddleware(), user.Login)
 	router.POST("/user/refresh", RTMValidationMiddleware(), user.Refresh)
 	router.POST("/user/logout", LogoutValidationMiddleware(client), user.Logout)
-	router.POST("/user/merge_account", LTMValidationMiddleware(client), user.MergeAccount)
-	router.POST("/home/fetch_communities", LTMValidationMiddleware(client), home.FetchCommunities)
-	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), sdk.InitiateSDK)
-	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
-	router.POST("/chatroom/create", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
-	router.GET("/chatroom/fetch", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.FetchChatroom)
-	router.POST("/chatroom/edit", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.EditChatroom)
-	router.POST("/chatroom/pin", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.PinChatroom)
-	router.GET("/chatroom/get_tagging_list", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), chatroom.GetTaggingList)
+	router.POST("/user/merge_account", LTMValidationMiddleware(client, true), user.MergeAccount)
+	router.GET("/user/config", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.Config)
+	router.POST("/home/fetch_communities", LTMValidationMiddleware(client, true), home.FetchCommunities)
+	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), LTMValidationMiddleware(client, false), sdk.InitiateSDK)
+	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
+	router.PUT("/chatroom/pin", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.PinChatroom)
+	router.GET("/chatroom/get_tagging_list", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetTaggingList)
 	router.POST("/user/bot", APIKeyValidationMiddleware(), user.CreateBot)
 	router.PUT("/user/bot", APIKeyValidationMiddleware(), user.EditBot)
 	router.GET("/user/bot", APIKeyValidationMiddleware(), user.GetBot)
-	router.POST("/sdk/project", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), sdk.CreateProject)
-	router.GET("/sdk/project", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), sdk.GetProject)
-	router.PUT("/sdk/project", LTMValidationMiddleware(client), APIKeyValidationMiddleware(), sdk.EditProject)
-
+	router.POST("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.CreateProject)
+	router.GET("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.GetProject)
+	router.PUT("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.EditProject)
+	router.DELETE("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.DeleteProject)
+	router.GET("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetChatroom)
+	router.POST("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
+	router.PUT("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EditChatroom)
+	router.GET("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetMember)
+	router.GET("/chatroom/participants", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetParticipants)
+	router.POST("/chatroom/participants", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.AddParticipants)
+	router.GET("/chatroom/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetChatroomSettings)
+	router.PUT("/chatroom/enable_member_message", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EnableMemberMessage)
+	router.PUT("/chatroom/auto_follow_members", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.AutoFollowMembers)
+	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
+	router.PUT("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.EditRights)
 	log.Fatal(router.Run(":8080"))
 }
 
@@ -78,10 +89,15 @@ func VTMValidationMiddleware() gin.HandlerFunc {
 	}
 }
 
-func LTMValidationMiddleware(client *redis.Client) gin.HandlerFunc {
+func LTMValidationMiddleware(client *redis.Client, emptyBearerTokenCheck bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		bearerToken := c.Request.Header.Get(token.HeaderAuthorization)
+		//If bearer token is empty, let it pass through
+		if !emptyBearerTokenCheck && len(bearerToken) == 0 {
+			c.Next()
+		}
 		//Extract LTM from token, internally it checks if token is valid or not
-		ltm, err := token.ExtractLTM(c.Request.Header.Get(token.HeaderAuthorization))
+		ltm, err := token.ExtractLTM(bearerToken)
 		if ltm == nil {
 			log.Print(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
@@ -197,7 +213,7 @@ func APIKeyValidationMiddleware() gin.HandlerFunc {
 		client := api_client.NewAPIClient()
 		options := api_client.GetRequestOptions{
 			Url:           client.CoreServiceBaseURL + SDKAuthenticateEndPoint,
-			CustomHeaders: utils.CreateHeaders(c),
+			CustomHeaders: utils.CreateHeaders(c, ""),
 		}
 		//Send request
 		respBytes, err := client.GetRequest(&options)
@@ -230,6 +246,56 @@ func APIKeyValidationMiddleware() gin.HandlerFunc {
 			return
 		}
 		c.Set(ResponseCommunityId, apiCR.Response[ResponseCommunityId])
+		c.Next()
+	}
+}
+
+// GuestAccessCheckMiddleware | restrict guest access on endpoints
+func GuestAccessCheckMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//Create internal API client
+		client := api_client.NewAPIClient()
+		options := api_client.GetRequestOptions{
+			Url:           client.CoreServiceBaseURL + user.UserFetchEndpoint,
+			CustomHeaders: utils.CreateHeaders(c, c.GetHeader(utils.HeadersMemberId)),
+		}
+		//Send request
+		respBytes, err := client.GetRequest(&options)
+		if err != nil {
+			//If API fails or any other error
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
+		//Parse response
+		var apiCR api_client.APIClientResponse
+		err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
+		if err != nil {
+			//Internal unmarshal error
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
+
+		if !apiCR.Success {
+			//If api/user/fetch returns success as false
+			utils.APIClientError(c, apiCR)
+			return
+		}
+
+		isGuest := apiCR.Response[user.ResponseUser].(map[string]interface{})[user.ResponseUserIsGuest].(bool)
+		if isGuest {
+			type GuestAccessDeniedResponseData struct {
+				Route string `json:"route"`
+			}
+			response := utils.Response{
+				Success:      false,
+				ErrorMessage: utils.ErrorGuestAccessDenied,
+				Data:         GuestAccessDeniedResponseData{Route: user.GuestLoginRoute},
+			}
+
+			// If user is guest returns success as false
+			utils.APIError(c, http.StatusUnauthorized, response)
+			return
+		}
 		c.Next()
 	}
 }
