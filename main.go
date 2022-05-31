@@ -285,7 +285,7 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 			}
 
 			// If user is guest returns success as false
-			utils.APIAuthError(c, response)
+			utils.APIError(c, http.StatusUnauthorized, response)
 			return
 		}
 		c.Next()

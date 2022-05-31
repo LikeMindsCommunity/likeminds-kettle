@@ -49,6 +49,6 @@ func TokenAuthError(c *gin.Context, errorMessage string) {
 	})
 }
 
-func APIAuthError(c *gin.Context, response Response) {
-	c.JSON(http.StatusUnauthorized, response)
+func APIError(c *gin.Context, httpStatus int, response Response) {
+	c.JSON(httpStatus, response)
 }
