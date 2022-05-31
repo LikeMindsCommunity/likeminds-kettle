@@ -37,7 +37,7 @@ func main() {
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client, true), home.FetchCommunities)
 	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), LTMValidationMiddleware(client, false), sdk.InitiateSDK)
 	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
-	router.POST("/chatroom/create", GuestAccessCheckMiddleware(), chatroom.CreateChatroom)
+	router.POST("/chatroom/create", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
 	router.GET("/chatroom/fetch", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.FetchChatroom)
 	router.POST("/chatroom/edit", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EditChatroom)
 	router.POST("/chatroom/pin", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.PinChatroom)
