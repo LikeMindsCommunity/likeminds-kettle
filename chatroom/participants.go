@@ -50,11 +50,11 @@ func Participants(c *gin.Context, method int) {
 	switch method {
 	case utils.GETMethod:
 
-		respBytes = participantsGetMethod(c, client, response)
+		respBytes = getParticipantsInternal(c, client, response)
 
 	case utils.POSTMethod:
 
-		respBytes = participantsPostMethod(c, client, response)
+		respBytes = addParticipantsInternal(c, client, response)
 	}
 
 	if respBytes == nil {
@@ -114,7 +114,7 @@ func parseParticipantsRequest(c *gin.Context) (*ParticipantRequest, error) {
 	return &pr, nil
 }
 
-func participantsGetMethod(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
+func getParticipantsInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
 	var options api_client.GetRequestOptions
 
 	//GET Request params
@@ -154,7 +154,7 @@ func participantsGetMethod(c *gin.Context, client *api_client.APIClient, respons
 	return respBytes
 }
 
-func participantsPostMethod(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
+func addParticipantsInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
 	var options api_client.PostRequestOptions
 
 	participantRequest, err := parseParticipantsRequest(c)

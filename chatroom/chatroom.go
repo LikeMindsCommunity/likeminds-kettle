@@ -80,15 +80,15 @@ func Chatroom(c *gin.Context, method int) {
 	switch method {
 	case utils.GETMethod:
 
-		respBytes = chatroomGetMethod(c, client, response)
+		respBytes = getChatroomInternal(c, client, response)
 
 	case utils.POSTMethod:
 
-		respBytes = chatroomPostMethod(c, client, response)
+		respBytes = createChatroomInternal(c, client, response)
 
 	case utils.PUTMethod:
 
-		respBytes = chatroomPutMethod(c, client, response)
+		respBytes = editChatroomInternal(c, client, response)
 	}
 
 	if respBytes == nil {
@@ -137,7 +137,7 @@ func parseEditChatroomRequest(c *gin.Context) (*EditChatroomRequest, error) {
 	return &ecr, nil
 }
 
-func chatroomGetMethod(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
+func getChatroomInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
 	var options api_client.GetRequestOptions
 
 	//GET Request params
@@ -181,7 +181,7 @@ func chatroomGetMethod(c *gin.Context, client *api_client.APIClient, response *u
 	return respBytes
 }
 
-func chatroomPostMethod(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
+func createChatroomInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
 	//Body to be sent in the api/chatroom/create POST request
 	createChatroomRequest, err := parseCreateChatroomRequest(c)
 
@@ -208,7 +208,7 @@ func chatroomPostMethod(c *gin.Context, client *api_client.APIClient, response *
 	return respBytes
 }
 
-func chatroomPutMethod(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
+func editChatroomInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
 	//Body to be sent in the api/chatroom/edit POST request
 	editChatroomRequest, err := parseEditChatroomRequest(c)
 
