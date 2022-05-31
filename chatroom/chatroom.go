@@ -80,95 +80,19 @@ func Chatroom(c *gin.Context, method int) {
 	switch method {
 	case utils.GETMethod:
 
-		var options api_client.GetRequestOptions
-
-		//GET Request params
-		chatroom_id := c.Query(ParamChatroomId)
-		if chatroom_id == "" {
-			//If chatroom_id is missing, call api/chatroom/fetch_all api internally
-
-			//Params to be sent in the api/chatroom/fetch_all request
-			params := map[string]string{
-				ParamPage: c.Query(ParamPage),
-			}
-
-			options = api_client.GetRequestOptions{
-				Url:           client.CoreServiceBaseURL + FetchAllChatroomEndPoint,
-				CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
-				Params:        params,
-			}
-
-		} else {
-			//else, call api/chatroom/fetch api internally
-
-			//Params to be sent in the api/chatroom/fetch request
-			params := map[string]string{
-				ParamChatroomId: c.Query(ParamChatroomId),
-			}
-
-			options = api_client.GetRequestOptions{
-				Url:           client.CoreServiceBaseURL + FetchChatroomEndPoint,
-				CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
-				Params:        params,
-			}
-		}
-
-		respBytes, err = client.GetRequest(&options)
-		if err != nil {
-			//If API fails or any other error
-			utils.GeneralAPIError(c, err.Error())
-			return
-		}
+		respBytes = chatroomGetMethod(c, client, response)
 
 	case utils.POSTMethod:
 
-		//Body to be sent in the api/chatroom/create POST request
-		createChatroomRequest, err := parseCreateChatroomRequest(c)
-
-		if err != nil {
-			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
-			return
-		}
-
-		options := api_client.PostRequestOptions{
-			Url:           client.CoreServiceBaseURL + CreateChatroomEndPoint,
-			Body:          createChatroomRequest,
-			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
-		}
-
-		respBytes, err = client.PostRequest(&options)
-
-		if err != nil {
-			//If API fails or any other error
-			utils.GeneralAPIError(c, err.Error())
-			return
-		}
+		respBytes = chatroomPostMethod(c, client, response)
 
 	case utils.PUTMethod:
 
-		//Body to be sent in the api/chatroom/edit POST request
-		editChatroomRequest, err := parseEditChatroomRequest(c)
+		respBytes = chatroomPutMethod(c, client, response)
+	}
 
-		if err != nil {
-			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
-			return
-		}
-
-		options := api_client.PostRequestOptions{
-			Url:           client.CoreServiceBaseURL + EditChatroomEndPoint,
-			Body:          editChatroomRequest,
-			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
-		}
-
-		respBytes, err = client.PutRequest(&options)
-
-		if err != nil {
-			//If API fails or any other error
-			utils.GeneralAPIError(c, err.Error())
-			return
-		}
+	if respBytes == nil {
+		return
 	}
 
 	//Parse response
@@ -211,4 +135,102 @@ func parseEditChatroomRequest(c *gin.Context) (*EditChatroomRequest, error) {
 	}
 
 	return &ecr, nil
+}
+
+func chatroomGetMethod(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
+	var options api_client.GetRequestOptions
+
+	//GET Request params
+	chatroom_id := c.Query(ParamChatroomId)
+	if chatroom_id == "" {
+		//If chatroom_id is missing, call api/chatroom/fetch_all api internally
+
+		//Params to be sent in the api/chatroom/fetch_all request
+		params := map[string]string{
+			ParamPage: c.Query(ParamPage),
+		}
+
+		options = api_client.GetRequestOptions{
+			Url:           client.CoreServiceBaseURL + FetchAllChatroomEndPoint,
+			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+			Params:        params,
+		}
+
+	} else {
+		//else, call api/chatroom/fetch api internally
+
+		//Params to be sent in the api/chatroom/fetch request
+		params := map[string]string{
+			ParamChatroomId: c.Query(ParamChatroomId),
+		}
+
+		options = api_client.GetRequestOptions{
+			Url:           client.CoreServiceBaseURL + FetchChatroomEndPoint,
+			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+			Params:        params,
+		}
+	}
+
+	respBytes, err := client.GetRequest(&options)
+	if err != nil {
+		//If API fails or any other error
+		utils.GeneralAPIError(c, err.Error())
+		return nil
+	}
+
+	return respBytes
+}
+
+func chatroomPostMethod(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
+	//Body to be sent in the api/chatroom/create POST request
+	createChatroomRequest, err := parseCreateChatroomRequest(c)
+
+	if err != nil {
+		//If POST body params are missing
+		utils.GeneralAPIError(c, err.Error())
+		return nil
+	}
+
+	options := api_client.PostRequestOptions{
+		Url:           client.CoreServiceBaseURL + CreateChatroomEndPoint,
+		Body:          createChatroomRequest,
+		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+	}
+
+	respBytes, err := client.PostRequest(&options)
+
+	if err != nil {
+		//If API fails or any other error
+		utils.GeneralAPIError(c, err.Error())
+		return nil
+	}
+
+	return respBytes
+}
+
+func chatroomPutMethod(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
+	//Body to be sent in the api/chatroom/edit POST request
+	editChatroomRequest, err := parseEditChatroomRequest(c)
+
+	if err != nil {
+		//If POST body params are missing
+		utils.GeneralAPIError(c, err.Error())
+		return nil
+	}
+
+	options := api_client.PostRequestOptions{
+		Url:           client.CoreServiceBaseURL + EditChatroomEndPoint,
+		Body:          editChatroomRequest,
+		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+	}
+
+	respBytes, err := client.PutRequest(&options)
+
+	if err != nil {
+		//If API fails or any other error
+		utils.GeneralAPIError(c, err.Error())
+		return nil
+	}
+
+	return respBytes
 }
