@@ -9,6 +9,10 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
+type ParticipantRequest struct {
+	IsSecret bool `json:"is_secret"`
+}
+
 type AddParticipantRequest struct {
 	ChatroomID           int64   `json:"chatroom_id"`
 	ChatroomParticipants []int64 `json:"chatroom_participants"`
@@ -40,9 +44,6 @@ func Participants(c *gin.Context, method int) {
 		return
 	}
 
-	//GET Request params
-	is_secret := c.Query(ParamIsSecret)
-
 	//Send request
 	var respBytes []byte
 	var err error
@@ -50,6 +51,9 @@ func Participants(c *gin.Context, method int) {
 	case utils.GETMethod:
 
 		var options api_client.GetRequestOptions
+
+		//GET Request params
+		is_secret := c.Query(ParamIsSecret)
 
 		//Params to be sent in the fetch_participants_meta request
 		params := map[string]string{
@@ -86,7 +90,17 @@ func Participants(c *gin.Context, method int) {
 
 		var options api_client.PostRequestOptions
 
-		if is_secret == "" || is_secret == "false" {
+		participantRequest, err := parseParticipantsRequest(c)
+
+		if err != nil {
+			//If POST body params are missing
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
+
+		is_secret := participantRequest.IsSecret
+
+		if !is_secret {
 			//If is_secret is missing or false, call api/chatroom/add api internally
 
 			//Body to be sent in the api/chatroom/add POST request
@@ -172,4 +186,15 @@ func parseAddSecretParticipantsRequest(c *gin.Context) (*AddSecretParticipantReq
 	}
 
 	return &aspr, nil
+}
+
+func parseParticipantsRequest(c *gin.Context) (*ParticipantRequest, error) {
+	//POST body params
+	var pr ParticipantRequest
+
+	if err := c.ShouldBindJSON(&pr); err != nil {
+		return nil, err
+	}
+
+	return &pr, nil
 }
