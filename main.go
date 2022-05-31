@@ -33,10 +33,11 @@ func main() {
 	router.POST("/user/refresh", RTMValidationMiddleware(), user.Refresh)
 	router.POST("/user/logout", LogoutValidationMiddleware(client), user.Logout)
 	router.POST("/user/merge_account", LTMValidationMiddleware(client, true), user.MergeAccount)
+	router.GET("/user/config", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.Config)
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client, true), home.FetchCommunities)
 	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), LTMValidationMiddleware(client, false), sdk.InitiateSDK)
 	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
-	router.POST("/chatroom/create", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
+	router.POST("/chatroom/create", GuestAccessCheckMiddleware(), chatroom.CreateChatroom)
 	router.GET("/chatroom/fetch", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.FetchChatroom)
 	router.POST("/chatroom/edit", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EditChatroom)
 	router.POST("/chatroom/pin", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.PinChatroom)
@@ -234,6 +235,68 @@ func APIKeyValidationMiddleware() gin.HandlerFunc {
 			return
 		}
 		c.Set(ResponseCommunityId, apiCR.Response[ResponseCommunityId])
+		c.Next()
+	}
+}
+
+// UserFetchEndpoint | togther service fetch user endpoint
+const UserFetchEndpoint = "/api/user/fetch"
+
+// GuestAccessCheckMiddleware | restrict guest access on endpoints
+func GuestAccessCheckMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//Create internal API client
+		client := api_client.NewAPIClient()
+		options := api_client.GetRequestOptions{
+			Url:           client.CoreServiceBaseURL + UserFetchEndpoint,
+			CustomHeaders: utils.CreateHeaders(c, c.GetHeader(utils.HeadersMemberId)),
+		}
+		//Send request
+		respBytes, err := client.GetRequest(&options)
+		if err != nil {
+			//If API fails or any other error
+			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+				Success:      false,
+				ErrorMessage: err.Error(),
+			})
+			return
+		}
+		//Parse response
+		var apiCR api_client.APIClientResponse
+		err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
+		if err != nil {
+			//Internal unmarshal error
+			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+				Success:      false,
+				ErrorMessage: err.Error(),
+			})
+			return
+		}
+
+		if !apiCR.Success {
+			//If api/user/fetch returns success as false
+			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+				Success:      false,
+				ErrorMessage: utils.ErrorInvalidAPIKey,
+			})
+			return
+		}
+
+		isGuest := apiCR.Response[user.ResponseUser].(map[string]interface{})[user.ResponseUserIsGuest].(bool)
+		if isGuest {
+
+			type GuestAccessDeniedResponseData struct {
+				Route string `json:"route"`
+			}
+
+			// If user is guest returns success as false
+			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+				Success:      false,
+				ErrorMessage: utils.ErrorGuestAccessDenied,
+				Data:         GuestAccessDeniedResponseData{Route: user.GuestLoginRoute},
+			})
+			return
+		}
 		c.Next()
 	}
 }
