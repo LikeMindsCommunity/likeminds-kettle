@@ -23,6 +23,7 @@ type RightsRequest struct {
 	CommunityId int64   `json:"community_id"`
 	CustomTitle string  `json:"custom_title"`
 	Rights      []Right `json:"rights"`
+	IsCM        bool    `json:"is_cm"`
 }
 
 //EditRights is used to edit community rights for members
@@ -46,9 +47,6 @@ func Rights(c *gin.Context, method int) {
 		return
 	}
 
-	//GET Request params
-	is_cm := c.Query(ParamIsCm)
-
 	//Send request
 	var respBytes []byte
 	var err error
@@ -62,6 +60,9 @@ func Rights(c *gin.Context, method int) {
 			ParamCommunityId: c.Query(ParamCommunityId),
 			ParamUserId:      c.Query(ParamUserId),
 		}
+
+		//GET Request params
+		is_cm := c.Query(ParamIsCm)
 
 		if is_cm == "" || is_cm == "false" {
 			//If is_cm is missing or false, call api/fetch_member_rights api internally
@@ -102,7 +103,9 @@ func Rights(c *gin.Context, method int) {
 			return
 		}
 
-		if is_cm == "" || is_cm == "false" {
+		is_cm := rightsRequest.IsCM
+
+		if is_cm == false {
 			//If is_cm is missing or false, call api/update_member_rights api internally
 
 			options = api_client.PostRequestOptions{
