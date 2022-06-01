@@ -30,15 +30,22 @@ func InitiateSDK(c *gin.Context) {
 		utils.POSTBodyParamsMissingError(c)
 		return
 	}
-	//Check if request has LTM token or not
-	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
+
+	//Checking if ltm token is present or not
+	userUniqueId := ""
+	ltmParam, ok := c.Get(token.ParamLTM)
+
+	if ok {
+		ltm := ltmParam.(*token.LoginTokenMeta)
+		userUniqueId = ltm.UserUniqueID
+	}
 
 	//Hit api/sdk/initiate
 	apiClient := api_client.NewAPIClient()
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
 		Url:           apiClient.CoreServiceBaseURL + InitiateSDKEndPoint,
 		Body:          isr,
-		CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
+		CustomHeaders: utils.CreateHeaders(c, userUniqueId),
 	})
 	if err != nil {
 		//If API fails or any other error

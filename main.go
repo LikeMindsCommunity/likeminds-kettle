@@ -100,6 +100,7 @@ func LTMValidationMiddleware(client *redis.Client, emptyBearerTokenCheck bool) g
 		//If bearer token is empty, let it pass through
 		if !emptyBearerTokenCheck && len(bearerToken) == 0 {
 			c.Next()
+			return
 		}
 		//Extract LTM from token, internally it checks if token is valid or not
 		ltm, err := token.ExtractLTM(bearerToken)
