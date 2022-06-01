@@ -14,6 +14,11 @@ const HeadersVersionCode = "x-version-code"
 const HeadersPlatformCode = "x-platform-code"
 const HeadersApiKey = "x-api-key"
 
+const GETMethod = 0
+const POSTMethod = 1
+const PUTMethod = 2
+const DELETEMethod = 3
+
 //RequestParamsToMap Converts a struct to a map while maintaining the json alias as keys
 func RequestParamsToMap(obj interface{}) (newMap map[string]string, err error) {
 	data, err := json.Marshal(obj) // Convert to a json string
@@ -34,8 +39,11 @@ func FormatFloat(num float64, prc int) string {
 }
 
 //CreateHeaders Used to create headers for our internal APIs
-func CreateHeaders(c *gin.Context) map[string]interface{} {
+func CreateHeaders(c *gin.Context, userUniqueID string) map[string]interface{} {
 	headers := make(map[string]interface{})
+	if len(userUniqueID) > 0 {
+		headers[HeadersMemberId] = userUniqueID
+	}
 	headers[HeadersPlatformCode] = c.GetHeader(HeadersPlatformCode)
 	headers[HeadersVersionCode] = c.GetHeader(HeadersVersionCode)
 	headers[HeadersApiKey] = c.GetHeader(HeadersApiKey)

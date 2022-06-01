@@ -1,10 +1,7 @@
 version: 0.0
 os: linux
-files:
-  - source: /
-    destination: /home/ubuntu/LikeMinds-Authentication
 permissions:
-  - object: /home/ubuntu/LikeMinds-Authentication
+  - object: /
     pattern: "**"
     owner: ubuntu
     group: ubuntu
@@ -12,5 +9,7 @@ hooks:
   ApplicationStart:
     - location: scripts/build_auth.sh
       timeout: 300
+      runas: ubuntu
     - location: scripts/start_auth.sh
       timeout: 300
+      runas: ubuntu

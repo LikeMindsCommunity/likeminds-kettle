@@ -15,7 +15,6 @@ type ScheduleFollowRequest struct {
 
 //ScheduleFollow is used to schedule follow request for particular user
 func ScheduleFollow(c *gin.Context) {
-
 	//Check if request has LTM token or not
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
@@ -23,11 +22,6 @@ func ScheduleFollow(c *gin.Context) {
 		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
 		return
 	}
-
-	//Create headers from login token
-	headers := utils.CreateHeaders(c)
-	headers[utils.HeadersMemberId] = ltm.UserID
-
 	//POST body bodyParams
 	var sfr ScheduleFollowRequest
 	if err := c.ShouldBindJSON(&sfr); err != nil {
@@ -43,7 +37,7 @@ func ScheduleFollow(c *gin.Context) {
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
 		Url:           apiClient.CoreServiceBaseURL + ScheduleFollowEndPoint,
 		Body:          sfr,
-		CustomHeaders: headers,
+		CustomHeaders: utils.CreateHeaders(c,ltm.UserUniqueID),
 	})
 
 	if err != nil {

@@ -10,13 +10,15 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
+// InitiateSDKEndPoint | togther service user initiate endpoint
 const InitiateSDKEndPoint = "/api/sdk/initiate"
-const ResponseUser = "user"
-const ResponseId = "id"
 
+// InitiateSDKRequest | user initiate request schema
 type InitiateSDKRequest struct {
-	UserName     string `json:"user_name" binding:"required"`
-	UserUniqueId string `json:"user_unique_id"`
+	UserName     string `json:"user_name"`
+	UserUniqueID string `json:"user_unique_id"`
+	ImageURL     string `json:"image_url"`
+	IsGuest      bool   `json:"is_guest"`
 }
 
 //InitiateSDK is used to initiate sdk
@@ -29,11 +31,21 @@ func InitiateSDK(c *gin.Context) {
 		return
 	}
 
+	//Checking if ltm token is present or not
+	userUniqueId := ""
+	ltmParam, ok := c.Get(token.ParamLTM)
+
+	if ok {
+		ltm := ltmParam.(*token.LoginTokenMeta)
+		userUniqueId = ltm.UserUniqueID
+	}
+
+	//Hit api/sdk/initiate
 	apiClient := api_client.NewAPIClient()
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
 		Url:           apiClient.CoreServiceBaseURL + InitiateSDKEndPoint,
 		Body:          isr,
-		CustomHeaders: utils.CreateHeaders(c),
+		CustomHeaders: utils.CreateHeaders(c, userUniqueId),
 	})
 	if err != nil {
 		//If API fails or any other error
@@ -53,22 +65,23 @@ func InitiateSDK(c *gin.Context) {
 		return
 	}
 
-	//If flow succeeds
-	userID := apiCR.Response[ResponseUser].(map[string]interface{})[user.ResponseUserUniqueId].(string)
-	//Create login and refresh token
-	ltm, rtm, err := token.CreateLTMAndRTM(userID)
-	if err != nil {
-		//If token creation fails
-		utils.GeneralAPIError(c, err.Error())
-		return
-	}
 	//Send response with login, refresh token and api/sdk/initiate response
 	dataResponse := apiCR.Response
-	dataResponse[token.ParamAccessToken] = ltm.AccessToken
-	dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
+	if !ok {
+		//If flow succeeds
+		userUniqueID := apiCR.Response[user.ResponseUser].(map[string]interface{})[user.ResponseUserUniqueId].(string)
+		//Create login and refresh token
+		ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID)
+		if err != nil {
+			//If token creation fails
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
+		dataResponse[token.ParamAccessToken] = ltm.AccessToken
+		dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
+	}
 	c.JSON(http.StatusOK, utils.Response{
 		Success: true,
 		Data:    dataResponse,
 	})
-	return
 }

@@ -102,7 +102,7 @@ func (c *APIClient) sendRequest(req *http.Request) ([]byte, error) {
 }
 
 func (c *APIClient) GetRequest(gro *GetRequestOptions) ([]byte, error) {
-	req, err := http.NewRequest("GET", gro.Url, nil)
+	req, err := http.NewRequest(http.MethodGet, gro.Url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +131,55 @@ func (c *APIClient) PostRequest(pro *PostRequestOptions) ([]byte, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", pro.Url, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest(http.MethodPost, pro.Url, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, err
+	}
+
+	headers := pro.CustomHeaders
+	if headers != nil {
+		AddHeaders(req, headers)
+	}
+
+	respBytes, err := c.sendRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return respBytes, nil
+}
+
+func (c *APIClient) PutRequest(pro *PostRequestOptions) ([]byte, error) {
+	jsonData, err := json.Marshal(pro.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, pro.Url, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, err
+	}
+
+	headers := pro.CustomHeaders
+	if headers != nil {
+		AddHeaders(req, headers)
+	}
+
+	respBytes, err := c.sendRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return respBytes, nil
+}
+
+func (c *APIClient) DeleteRequest(pro *PostRequestOptions) ([]byte, error) {
+	jsonData, err := json.Marshal(pro.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, pro.Url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, err
 	}
