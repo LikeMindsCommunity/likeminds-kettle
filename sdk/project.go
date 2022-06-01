@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
@@ -179,7 +180,7 @@ func Project(c *gin.Context, method int) {
 func parseProjectRequest(c *gin.Context, projectCreatorID string) (*ProjectRequest, error) {
 	//POST body params
 	var spr ProjectRequest
-	if err := c.ShouldBindJSON(&spr); err != nil {
+	if err := c.ShouldBindBodyWith(&spr, binding.JSON); err != nil {
 		return nil, err
 	}
 
