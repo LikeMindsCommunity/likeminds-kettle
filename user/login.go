@@ -33,13 +33,11 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	requestBody := createBody(&lr)
-
 	//Create internal API client
 	client := api_client.NewAPIClient()
 	options := api_client.PostRequestOptions{
 		Url:           client.CoreServiceBaseURL + LoginEndPoint,
-		Body:          requestBody,
+		Body:          updateLoginRequest(&lr),
 		CustomHeaders: nil,
 	}
 	//Send request
@@ -82,22 +80,21 @@ func Login(c *gin.Context) {
 		Success: true,
 		Data:    dataResponse,
 	})
-	return
 }
 
-func createBody(lr *LoginRequest) map[string]interface{} {
-	updatedBody := make(map[string]interface{})
-	userBody := make(map[string]interface{})
+func updateLoginRequest(lr *LoginRequest) map[string]interface{} {
+	updatedLr := make(map[string]interface{})
+	user := make(map[string]interface{})
 
-	userBody[UserName] = lr.User.Name
-	userBody[UserEmail] = lr.User.Email
-	userBody[UserImageUrl] = lr.User.ImageUrl
-	userBody[UserOrganisationName] = lr.User.OrganisationName
+	user[UserName] = lr.User.Name
+	user[UserEmail] = lr.User.Email
+	user[UserImageUrl] = lr.User.ImageUrl
+	user[UserOrganisationName] = lr.User.OrganisationName
 
-	updatedBody[UserMobileNo] = lr.User.MobileNo
-	updatedBody[UserCountryCode] = lr.User.CountryCode
-	updatedBody[UserLoginType] = lr.LoginType
-	updatedBody[ResponseUser] = userBody
+	updatedLr[UserMobileNo] = lr.User.MobileNo
+	updatedLr[UserCountryCode] = lr.User.CountryCode
+	updatedLr[UserLoginType] = lr.LoginType
+	updatedLr[ResponseUser] = user
 
-	return updatedBody
+	return updatedLr
 }
