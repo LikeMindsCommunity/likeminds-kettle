@@ -84,18 +84,13 @@ func Project(c *gin.Context, method int) {
 	var err error
 	switch method {
 	case utils.GETMethod:
-		//Call GET api/bot to get bot
-		response := user.GetBotResponse(c, utils.GETMethod)
-		if response == nil {
-			return
-		}
 		//Params to be sent in the api/sdk/project GET request
 		params := map[string]string{
 			ParamCommunityCreator: ltm.UserUniqueID,
 		}
 		options := api_client.GetRequestOptions{
 			Url:           client.CoreServiceBaseURL + ProjectEndpoint,
-			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+			CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
 			Params:        params,
 		}
 		respBytes, err = client.GetRequest(&options)

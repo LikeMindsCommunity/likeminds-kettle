@@ -17,19 +17,16 @@ type BotRequest struct {
 //CreateBot is used to create bot of a community
 func CreateBot(c *gin.Context) {
 	Bot(c, utils.POSTMethod)
-	return
 }
 
 //EditBot is used to edit bot of a community
 func EditBot(c *gin.Context) {
 	Bot(c, utils.PUTMethod)
-	return
 }
 
 //GetBot is used to get bot of a community
 func GetBot(c *gin.Context) {
 	Bot(c, utils.GETMethod)
-	return
 }
 
 //Bot used to create/edit/get bot details of a community
@@ -38,13 +35,20 @@ func Bot(c *gin.Context, method int) {
 	if response != nil {
 		c.JSON(http.StatusOK, response)
 	}
-	return
 }
 
 //GetBotResponse used to get response when api/user/bot is hit internally
 func GetBotResponse(c *gin.Context, method int) *utils.Response {
 	//Create internal API client
 	client := api_client.NewAPIClient()
+
+	//Check if request has LTM token or not
+	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
+	if !ok {
+		//If token is not available
+		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
+		return nil
+	}
 
 	//Send request
 	var respBytes []byte
@@ -91,7 +95,7 @@ func GetBotResponse(c *gin.Context, method int) *utils.Response {
 		options := api_client.PostRequestOptions{
 			Url:           client.CoreServiceBaseURL + BotEndpoint,
 			Body:          br,
-			CustomHeaders: utils.CreateHeaders(c, ""),
+			CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
 		}
 		respBytes, err = client.PutRequest(&options)
 		if err != nil {
