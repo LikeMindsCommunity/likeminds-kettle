@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/api_client"
@@ -27,6 +28,7 @@ var (
 
 func main() {
 	client = cache.InitRedis()
+	router.Use(cors.New(enableCors()))
 	router.Use(ApiMiddleware(client))
 	router.GET("", web.Home)
 	router.GET("/otp/generate", otp.GenerateOTP)
@@ -44,13 +46,17 @@ func main() {
 	router.POST("/user/bot", APIKeyValidationMiddleware(), user.CreateBot)
 	router.PUT("/user/bot", APIKeyValidationMiddleware(), user.EditBot)
 	router.GET("/user/bot", APIKeyValidationMiddleware(), user.GetBot)
-	router.POST("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.CreateProject)
+	router.POST("/sdk/project", LTMValidationMiddleware(client, true), sdk.CreateProject)
 	router.GET("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.GetProject)
+	router.PUT("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.EditProject)
 	router.DELETE("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.DeleteProject)
 	router.GET("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetChatroom)
 	router.POST("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
 	router.PUT("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EditChatroom)
+	router.POST("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditQuestions)
 	router.GET("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetMember)
+	router.POST("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.AddMember)
+	router.PUT("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditMember)
 	router.GET("/chatroom/participants", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetParticipants)
 	router.POST("/chatroom/participants", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.AddParticipants)
 	router.GET("/chatroom/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetChatroomSettings)
@@ -94,6 +100,7 @@ func LTMValidationMiddleware(client *redis.Client, emptyBearerTokenCheck bool) g
 		//If bearer token is empty, let it pass through
 		if !emptyBearerTokenCheck && len(bearerToken) == 0 {
 			c.Next()
+			return
 		}
 		//Extract LTM from token, internally it checks if token is valid or not
 		ltm, err := token.ExtractLTM(bearerToken)
@@ -297,4 +304,20 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 		}
 		c.Next()
 	}
+}
+
+func enableCors() cors.Config {
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AddAllowHeaders(
+		"x-member-id",
+		"x-platform-code",
+		"x-version-code",
+		"x-username",
+		"x-password",
+		"x-device-id",
+		"x-api_key",
+		"Authorization",
+	)
+	return config
 }

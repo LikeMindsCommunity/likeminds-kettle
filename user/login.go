@@ -9,11 +9,18 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
+type User struct {
+	MobileNo         string `json:"mobile_no"`
+	CountryCode      string `json:"country_code"`
+	Name             string `json:"name"`
+	Email            string `json:"email"`
+	ImageUrl         string `json:"image_url"`
+	OrganisationName string `json:"organisation_name"`
+}
+
 type LoginRequest struct {
-	APIKey       string `json:"api_key"`
-	LoginType    string `json:"type" binding:"required"`
-	UserName     string `json:"user_name" binding:"required"`
-	UserUniqueID string `json:"user_unique_id"`
+	LoginType string `json:"type" binding:"required"`
+	User      User   `json:"user"`
 }
 
 //Login used when user is signing up and generate login and refresh tokens
@@ -30,7 +37,7 @@ func Login(c *gin.Context) {
 	client := api_client.NewAPIClient()
 	options := api_client.PostRequestOptions{
 		Url:           client.CoreServiceBaseURL + LoginEndPoint,
-		Body:          lr,
+		Body:          updateLoginRequest(lr),
 		CustomHeaders: nil,
 	}
 	//Send request
@@ -73,5 +80,21 @@ func Login(c *gin.Context) {
 		Success: true,
 		Data:    dataResponse,
 	})
-	return
+}
+
+func updateLoginRequest(lr LoginRequest) map[string]interface{} {
+	updatedLr := make(map[string]interface{})
+	user := make(map[string]interface{})
+
+	user[UserName] = lr.User.Name
+	user[UserEmail] = lr.User.Email
+	user[UserImageUrl] = lr.User.ImageUrl
+	user[UserOrganisationName] = lr.User.OrganisationName
+
+	updatedLr[UserMobileNo] = lr.User.MobileNo
+	updatedLr[UserCountryCode] = lr.User.CountryCode
+	updatedLr[UserLoginType] = lr.LoginType
+	updatedLr[ResponseUser] = user
+
+	return updatedLr
 }
