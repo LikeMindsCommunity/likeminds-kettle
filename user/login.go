@@ -37,7 +37,7 @@ func Login(c *gin.Context) {
 	client := api_client.NewAPIClient()
 	options := api_client.PostRequestOptions{
 		Url:           client.CoreServiceBaseURL + LoginEndPoint,
-		Body:          updateLoginRequest(&lr),
+		Body:          updateLoginRequest(lr),
 		CustomHeaders: nil,
 	}
 	//Send request
@@ -82,7 +82,7 @@ func Login(c *gin.Context) {
 	})
 }
 
-func updateLoginRequest(lr *LoginRequest) map[string]interface{} {
+func updateLoginRequest(lr LoginRequest) map[string]interface{} {
 	updatedLr := make(map[string]interface{})
 	user := make(map[string]interface{})
 
