@@ -309,12 +309,15 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 func enableCors() cors.Config {
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
-	config.AddAllowHeaders("x-member-id",
+	config.AddAllowHeaders(
+		"x-member-id",
 		"x-platform-code",
 		"x-version-code",
 		"x-username",
 		"x-password",
 		"x-device-id",
-		"x-api_key")
+		"x-api_key",
+		"Authorization",
+	)
 	return config
 }
