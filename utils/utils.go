@@ -12,6 +12,7 @@ import (
 const HeadersMemberId = "x-member-id"
 const HeadersVersionCode = "x-version-code"
 const HeadersPlatformCode = "x-platform-code"
+const HeadersDeviceId = "x-device-id"
 const HeadersApiKey = "x-api-key"
 
 const GETMethod = 0
@@ -46,6 +47,7 @@ func CreateHeaders(c *gin.Context, userUniqueID string) map[string]interface{} {
 	}
 	headers[HeadersPlatformCode] = c.GetHeader(HeadersPlatformCode)
 	headers[HeadersVersionCode] = c.GetHeader(HeadersVersionCode)
+	headers[HeadersDeviceId] = c.GetHeader(HeadersDeviceId)
 	headers[HeadersApiKey] = c.GetHeader(HeadersApiKey)
 	return headers
 }

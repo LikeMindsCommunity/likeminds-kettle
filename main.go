@@ -316,7 +316,7 @@ func enableCors() cors.Config {
 		"x-username",
 		"x-password",
 		"x-device-id",
-		"x-api_key",
+		"x-api-key",
 		"Authorization",
 	)
 	return config
