@@ -9,14 +9,15 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-type PinChatroomRequest struct {
-	ChatroomID int64 `json:"chatroom_id"`
-	Value      bool  `json:"value"`
-	Notify     bool  `json:"notify"`
+//AutoFollowMembersRequest
+type AutoFollowMembersRequest struct {
+	ChatroomId          int32 `json:"chatroom_id"`
+	AutoFollowDone      bool  `json:"auto_follow_done"`
+	IncludeMembersLater bool  `json:"include_members_later"`
 }
 
-//PinChatroom is used to create a pin a chatroom
-func PinChatroom(c *gin.Context) {
+//AutoFollowMembers is used to enable auto follow members for a chatroom
+func AutoFollowMembers(c *gin.Context) {
 
 	//Create internal API client
 	client := api_client.NewAPIClient()
@@ -27,8 +28,8 @@ func PinChatroom(c *gin.Context) {
 		return
 	}
 
-	//Body to be sent in the api/chatroom/pin POST request
-	pinChatroomRequest, err := parsePinChatroomRequest(c)
+	//Body to be sent in the api/chatroom/auto_follow_for_all_members POST request
+	autoFollowMembersRequest, err := parseAutoFollowMembersRequst(c)
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
@@ -36,8 +37,8 @@ func PinChatroom(c *gin.Context) {
 	}
 
 	options := api_client.PostRequestOptions{
-		Url:           client.CoreServiceBaseURL + PinChatroomEndPoint,
-		Body:          pinChatroomRequest,
+		Url:           client.CoreServiceBaseURL + AutoFollowMembersEndPoint,
+		Body:          autoFollowMembersRequest,
 		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
 	}
 
@@ -57,25 +58,25 @@ func PinChatroom(c *gin.Context) {
 	}
 
 	if !apiCR.Success {
-		//If api/chatroom/pin returns success as false
+		//If api/chatroom/auto_follow_for_all_members returns success as false
 		c.JSON(http.StatusInternalServerError, apiCR)
 		return
 	}
 
-	//Send response with api/chatroom/pin response
+	//Send response with api/chatroom/auto_follow_for_all_members response
 	c.JSON(http.StatusOK, utils.Response{
 		Success: true,
 		Data:    apiCR.Response,
 	})
 }
 
-func parsePinChatroomRequest(c *gin.Context) (*PinChatroomRequest, error) {
+func parseAutoFollowMembersRequst(c *gin.Context) (*AutoFollowMembersRequest, error) {
 	//POST body params
-	var pcr PinChatroomRequest
+	var afmr AutoFollowMembersRequest
 
-	if err := c.ShouldBindJSON(&pcr); err != nil {
+	if err := c.ShouldBindJSON(&afmr); err != nil {
 		return nil, err
 	}
 
-	return &pcr, nil
+	return &afmr, nil
 }

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -138,7 +139,7 @@ func GetBotResponse(c *gin.Context, method int) *utils.Response {
 func parseBotRequest(c *gin.Context) (*BotRequest, error) {
 	//POST body params
 	var br BotRequest
-	if err := c.ShouldBindJSON(&br); err != nil {
+	if err := c.ShouldBindBodyWith(&br, binding.JSON); err != nil {
 		return nil, err
 	}
 	return &br, nil
