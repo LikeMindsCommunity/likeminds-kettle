@@ -115,7 +115,7 @@ func Project(c *gin.Context, method int) {
 		respBytes, err = client.PostRequest(&options)
 	case utils.PUTMethod:
 		//Call POST api/bot to create bot
-		response := user.GetBotResponse(c, utils.POSTMethod)
+		response := user.GetBotResponse(c, utils.GETMethod)
 		if response == nil {
 			return
 		}
