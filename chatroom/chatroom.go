@@ -19,7 +19,7 @@ type CreateChatroomRequest struct {
 	ImageCount                 int64       `json:"image_count"`
 	VideoCount                 int64       `json:"video_count"`
 	AudioCount                 int64       `json:"audio_count"`
-	Type                       int32       `json:"type" binding:"required"`
+	Type                       *int32      `json:"type" binding:"required"`
 	DateTime                   int64       `json:"date_time"`
 	EndDate                    int64       `json:"end_date"`
 	Duration                   int64       `json:"duration"`
