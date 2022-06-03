@@ -33,7 +33,7 @@ type CreateChatroomRequest struct {
 	CoHosts                    []int64     `json:"co_hosts"`
 	CohortIDs                  []int64     `json:"cohort_ids"`
 	OnlineLink                 string      `json:"online_link"`
-	IsSecret                   bool        `json:"is_secret" binding:"required"`
+	IsSecret                   *bool       `json:"is_secret" binding:"required"`
 	SecretChatroomParticipants []int64     `json:"secret_chatroom_participants"`
 	ThirdPartyUniqueID         string      `json:"third_party_unique_id"`
 	ScheduleTime               int64       `json:"schedule_time"`
