@@ -19,7 +19,7 @@ type CreateChatroomRequest struct {
 	ImageCount                 int64       `json:"image_count"`
 	VideoCount                 int64       `json:"video_count"`
 	AudioCount                 int64       `json:"audio_count"`
-	Type                       int32       `json:"type" binding:"required"`
+	Type                       *int32      `json:"type" binding:"required"`
 	DateTime                   int64       `json:"date_time"`
 	EndDate                    int64       `json:"end_date"`
 	Duration                   int64       `json:"duration"`
@@ -33,7 +33,7 @@ type CreateChatroomRequest struct {
 	CoHosts                    []int64     `json:"co_hosts"`
 	CohortIDs                  []int64     `json:"cohort_ids"`
 	OnlineLink                 string      `json:"online_link"`
-	IsSecret                   bool        `json:"is_secret" binding:"required"`
+	IsSecret                   *bool       `json:"is_secret" binding:"required"`
 	SecretChatroomParticipants []int64     `json:"secret_chatroom_participants"`
 	ThirdPartyUniqueID         string      `json:"third_party_unique_id"`
 	ScheduleTime               int64       `json:"schedule_time"`
