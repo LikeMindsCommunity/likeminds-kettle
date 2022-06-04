@@ -224,7 +224,7 @@ func editChatroomInternal(c *gin.Context, client *api_client.APIClient, response
 		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
 	}
 
-	respBytes, err := client.PutRequest(&options)
+	respBytes, err := client.PostRequest(&options)
 
 	if err != nil {
 		//If API fails or any other error
