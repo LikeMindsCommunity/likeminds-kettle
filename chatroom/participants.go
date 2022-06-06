@@ -97,7 +97,7 @@ func parseAddSecretParticipantsRequest(c *gin.Context) (*AddSecretParticipantReq
 	//POST body params
 	var aspr AddSecretParticipantRequest
 
-	if err := c.ShouldBindJSON(&aspr); err != nil {
+	if err := c.ShouldBindBodyWith(&aspr, binding.JSON); err != nil {
 		return nil, err
 	}
 
