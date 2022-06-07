@@ -37,8 +37,17 @@ type CommunityBrandingRequest struct {
 }
 
 //ProjectRequest | create SDK api key request schema
-type ProjectRequest struct {
+type CreateProjectRequest struct {
 	CommunityName  string                   `json:"name" binding:"required"`
+	Branding       CommunityBrandingRequest `json:"branding"`
+	Headline       string                   `json:"headline"`
+	ImageURL       string                   `json:"image_url"`
+	Platform       []Platform               `json:"platform"`
+	ProjectCreator string                   `json:"project_creator"`
+}
+
+type UpdateProjectRequest struct {
+	CommunityName  string                   `json:"name"`
 	Branding       CommunityBrandingRequest `json:"branding"`
 	Headline       string                   `json:"headline"`
 	ImageURL       string                   `json:"image_url"`
@@ -101,7 +110,7 @@ func Project(c *gin.Context, method int) {
 			return
 		}
 		//Params to be sent in the api/sdk/project POST request
-		projectRequest, err := parseProjectRequest(c, ltm.UserUniqueID)
+		projectRequest, err := parseCreateProjectRequest(c, ltm.UserUniqueID)
 		if err != nil {
 			//If POST body params are missing
 			utils.GeneralAPIError(c, err.Error())
@@ -120,7 +129,7 @@ func Project(c *gin.Context, method int) {
 			return
 		}
 		//Params to be sent in the api/sdk/project PUT request
-		projectRequest, err := parseProjectRequest(c, "")
+		projectRequest, err := parseUpdateProjectRequest(c)
 		if err != nil {
 			//If POST body params are missing
 			utils.GeneralAPIError(c, err.Error())
@@ -172,16 +181,26 @@ func Project(c *gin.Context, method int) {
 	})
 }
 
-func parseProjectRequest(c *gin.Context, projectCreatorID string) (*ProjectRequest, error) {
+func parseCreateProjectRequest(c *gin.Context, projectCreatorID string) (*CreateProjectRequest, error) {
 	//POST body params
-	var spr ProjectRequest
-	if err := c.ShouldBindBodyWith(&spr, binding.JSON); err != nil {
+	var cpr CreateProjectRequest
+	if err := c.ShouldBindBodyWith(&cpr, binding.JSON); err != nil {
 		return nil, err
 	}
 
 	if len(projectCreatorID) > 0 {
-		spr.ProjectCreator = projectCreatorID
+		cpr.ProjectCreator = projectCreatorID
 	}
 
-	return &spr, nil
+	return &cpr, nil
+}
+
+func parseUpdateProjectRequest(c *gin.Context) (*UpdateProjectRequest, error) {
+	//POST body params
+	var upr UpdateProjectRequest
+	if err := c.ShouldBindBodyWith(&upr, binding.JSON); err != nil {
+		return nil, err
+	}
+
+	return &upr, nil
 }
