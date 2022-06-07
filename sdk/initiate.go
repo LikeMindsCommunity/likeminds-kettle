@@ -31,21 +31,12 @@ func InitiateSDK(c *gin.Context) {
 		return
 	}
 
-	//Checking if ltm token is present or not
-	userUniqueId := ""
-	ltmParam, ok := c.Get(token.ParamLTM)
-
-	if ok {
-		ltm := ltmParam.(*token.LoginTokenMeta)
-		userUniqueId = ltm.UserUniqueID
-	}
-
 	//Hit api/sdk/initiate
 	apiClient := api_client.NewAPIClient()
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
 		Url:           apiClient.CoreServiceBaseURL + InitiateSDKEndPoint,
 		Body:          isr,
-		CustomHeaders: utils.CreateHeaders(c, userUniqueId),
+		CustomHeaders: utils.CreateHeaders(c, ""),
 	})
 	if err != nil {
 		//If API fails or any other error
@@ -67,19 +58,19 @@ func InitiateSDK(c *gin.Context) {
 
 	//Send response with login, refresh token and api/sdk/initiate response
 	dataResponse := apiCR.Response
-	if !ok {
-		//If flow succeeds
-		userUniqueID := apiCR.Response[user.ResponseUser].(map[string]interface{})[user.ResponseUserUniqueId].(string)
-		//Create login and refresh token
-		ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID)
-		if err != nil {
-			//If token creation fails
-			utils.GeneralAPIError(c, err.Error())
-			return
-		}
-		dataResponse[token.ParamAccessToken] = ltm.AccessToken
-		dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
+
+	//If flow succeeds
+	userUniqueID := apiCR.Response[user.ResponseUser].(map[string]interface{})[user.ResponseUserUniqueId].(string)
+	//Create login and refresh token
+	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID)
+	if err != nil {
+		//If token creation fails
+		utils.GeneralAPIError(c, err.Error())
+		return
 	}
+	dataResponse[token.ParamAccessToken] = ltm.AccessToken
+	dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
+
 	c.JSON(http.StatusOK, utils.Response{
 		Success: true,
 		Data:    dataResponse,
