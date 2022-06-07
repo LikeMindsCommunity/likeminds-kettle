@@ -1,6 +1,7 @@
 package chatroom
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,12 +10,15 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-type ScheduleFollowRequest struct {
-	ChatroomID int32 `json:"chatroom_id"`
+type DeleteChatroomRequest struct {
+	ChatroomID int64  `json:"chatroom_id"`
+	TagID      int32  `json:"tag_id"`
+	Reason     string `json:"reason"`
 }
 
-//ScheduleFollow is used to schedule follow request for particular user
-func ScheduleFollow(c *gin.Context) {
+//DeleteChatroom is used to delete an existing chatroom
+func DeleteChatroom(c *gin.Context) {
+
 	//Check if request has LTM token or not
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
@@ -22,10 +26,16 @@ func ScheduleFollow(c *gin.Context) {
 		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
 		return
 	}
-	//POST body bodyParams
-	var sfr ScheduleFollowRequest
-	if err := c.ShouldBindJSON(&sfr); err != nil {
-		//If POST body bodyParams are missing
+
+	//Create headers from login token
+	headers := make(map[string]interface{})
+	headers[utils.HeadersMemberId] = ltm.UserUniqueID
+
+	//POST body params
+	var dcr DeleteChatroomRequest
+	if err := c.ShouldBindJSON(&dcr); err != nil {
+		fmt.Println(err.Error())
+		//If POST body params are missing
 		utils.POSTBodyParamsMissingError(c)
 		return
 	}
@@ -35,10 +45,10 @@ func ScheduleFollow(c *gin.Context) {
 
 	//Send request
 	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
-		Url:           apiClient.CoreServiceBaseURL + ScheduleFollowEndPoint,
-		Body:          sfr,
-		CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
-	}, api_client.BodyTypeRaw)
+		Url:           apiClient.CoreServiceBaseURL + DeleteChatroomEndPoint,
+		CustomHeaders: headers,
+		Body:          dcr,
+	}, api_client.BodyTypeFormUrlEncoded)
 
 	if err != nil {
 		//If API fails or any other error
@@ -50,18 +60,17 @@ func ScheduleFollow(c *gin.Context) {
 	var apiCR api_client.APIClientResponse
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 	if err != nil {
-		//If API fails or any other error
+		//Internal unmarshal error
 		utils.GeneralAPIError(c, err.Error())
-		return
 	}
 
 	if !apiCR.Success {
-		//If api/chatroom/schedule_follow returns success as false
+		//If api/chatroom_delete returns success as false
 		c.JSON(http.StatusInternalServerError, apiCR)
 		return
 	}
 
-	//Send response
+	//Send response with api/chatroom_delete response
 	c.JSON(http.StatusOK, utils.Response{
 		Success: true,
 		Data:    apiCR.Response,

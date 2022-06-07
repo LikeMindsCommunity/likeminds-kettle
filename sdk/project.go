@@ -112,7 +112,7 @@ func Project(c *gin.Context, method int) {
 			Body:          projectRequest,
 			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
 		}
-		respBytes, err = client.PostRequest(&options)
+		respBytes, err = client.PostRequest(&options, api_client.BodyTypeRaw)
 	case utils.PUTMethod:
 		//Call POST api/bot to create bot
 		response := user.GetBotResponse(c, utils.GETMethod)

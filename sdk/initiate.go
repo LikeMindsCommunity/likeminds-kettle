@@ -46,7 +46,7 @@ func InitiateSDK(c *gin.Context) {
 		Url:           apiClient.CoreServiceBaseURL + InitiateSDKEndPoint,
 		Body:          isr,
 		CustomHeaders: utils.CreateHeaders(c, userUniqueId),
-	})
+	}, api_client.BodyTypeRaw)
 	if err != nil {
 		//If API fails or any other error
 		utils.GeneralAPIError(c, err.Error())

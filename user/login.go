@@ -41,7 +41,7 @@ func Login(c *gin.Context) {
 		CustomHeaders: nil,
 	}
 	//Send request
-	respBytes, err := client.PostRequest(&options)
+	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
 	if err != nil {
 		//If API fails or any other error
 		utils.GeneralAPIError(c, err.Error())

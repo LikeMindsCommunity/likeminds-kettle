@@ -124,7 +124,7 @@ func Rights(c *gin.Context, method int) {
 			}
 		}
 
-		respBytes, err = client.PostRequest(&options)
+		respBytes, err = client.PostRequest(&options, api_client.BodyTypeRaw)
 
 		if err != nil {
 			//If API fails or any other error
