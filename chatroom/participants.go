@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -85,7 +86,7 @@ func parseAddParticipantsRequest(c *gin.Context) (*AddParticipantRequest, error)
 	//POST body params
 	var apr AddParticipantRequest
 
-	if err := c.ShouldBindJSON(&apr); err != nil {
+	if err := c.ShouldBindBodyWith(&apr, binding.JSON); err != nil {
 		return nil, err
 	}
 
@@ -96,7 +97,7 @@ func parseAddSecretParticipantsRequest(c *gin.Context) (*AddSecretParticipantReq
 	//POST body params
 	var aspr AddSecretParticipantRequest
 
-	if err := c.ShouldBindJSON(&aspr); err != nil {
+	if err := c.ShouldBindBodyWith(&aspr, binding.JSON); err != nil {
 		return nil, err
 	}
 
@@ -107,7 +108,7 @@ func parseParticipantsRequest(c *gin.Context) (*ParticipantRequest, error) {
 	//POST body params
 	var pr ParticipantRequest
 
-	if err := c.ShouldBindJSON(&pr); err != nil {
+	if err := c.ShouldBindBodyWith(&pr, binding.JSON); err != nil {
 		return nil, err
 	}
 
