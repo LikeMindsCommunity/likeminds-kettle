@@ -16,6 +16,7 @@ type User struct {
 	Email            string `json:"email"`
 	ImageUrl         string `json:"image_url"`
 	OrganisationName string `json:"organisation_name"`
+	UserUniqueId     string `json:"user_unique_id"`
 }
 
 type LoginRequest struct {
@@ -90,6 +91,7 @@ func updateLoginRequest(lr LoginRequest) map[string]interface{} {
 	user[UserEmail] = lr.User.Email
 	user[UserImageUrl] = lr.User.ImageUrl
 	user[UserOrganisationName] = lr.User.OrganisationName
+	user[ResponseUserUniqueId] = lr.User.UserUniqueId
 
 	updatedLr[UserMobileNo] = lr.User.MobileNo
 	updatedLr[UserCountryCode] = lr.User.CountryCode
