@@ -12,7 +12,7 @@ import (
 type User struct {
 	MobileNo         string `json:"mobile_no"`
 	CountryCode      string `json:"country_code"`
-	Name             string `json:"name"`
+	Name             string `json:"name" binding:"required"`
 	Email            string `json:"email"`
 	ImageUrl         string `json:"image_url"`
 	OrganisationName string `json:"organisation_name"`
