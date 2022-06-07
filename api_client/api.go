@@ -104,19 +104,13 @@ func UpdateBody(pro *PostRequestOptions, body_type int) (*http.Request, error) {
 	case BodyTypeFormUrlEncoded:
 
 		var err error
-		data := url.Values{}
-		v := reflect.ValueOf(pro.Body)
-		typeOfS := v.Type()
 
-		for i := 0; i < v.NumField(); i++ {
-			data.Set(typeOfS.Field(i).Name, v.Field(i).Interface().(string))
-		}
+		body, _ := json.Marshal(pro.Body)
+		payload := convertToFormURLEncoded(&body)
 
-		fmt.Println(data)
+		req, err = http.NewRequest(http.MethodPost, pro.Url, strings.NewReader(payload.Encode()))
 
-		req, err = http.NewRequest(http.MethodPost, pro.Url, strings.NewReader(data.Encode()))
-
-		fmt.Println(data.Encode())
+		fmt.Println(payload.Encode())
 
 		fmt.Println("x form body")
 
@@ -125,11 +119,34 @@ func UpdateBody(pro *PostRequestOptions, body_type int) (*http.Request, error) {
 		}
 
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-		req.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
+		req.Header.Add("Content-Length", strconv.Itoa(len(payload.Encode())))
 
 	}
 
 	return req, nil
+}
+
+func convertToFormURLEncoded(body *[]byte) url.Values {
+	// datamap | converts incoming request body into a map
+	var datamap map[(string)]interface{}
+	json.Unmarshal(*body, &datamap)
+
+	// payload | form-url-encode paylaod
+	payload := url.Values{}
+
+	// loop over map and fill payload data
+	for key, value := range datamap {
+
+		// if value is not type string then convert to string
+		if reflect.TypeOf(value).String() == "float64" {
+			var elementString string = strconv.FormatFloat(value.(float64), 'f', -1, 64)
+			payload.Set(key, elementString)
+		} else if reflect.TypeOf(value).String() == "string" {
+			payload.Set(key, value.(string))
+		}
+	}
+
+	return payload
 }
 
 func (c *APIClient) sendRequest(req *http.Request) ([]byte, error) {
@@ -195,11 +212,6 @@ func (c *APIClient) PostRequest(pro *PostRequestOptions, body_type int) ([]byte,
 	if headers != nil {
 		AddHeaders(req, headers)
 	}
-
-	fmt.Println(req.Body)
-
-	// this is temporary
-	return nil, nil
 
 	respBytes, err := c.sendRequest(req)
 	if err != nil {
