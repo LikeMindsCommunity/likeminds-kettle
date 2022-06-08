@@ -60,7 +60,7 @@ func Participants(c *gin.Context, method int) {
 	utils.ParseResponse(c, respBytes)
 }
 
-func updateParticipantsRequest(c *gin.Context, pr *ParticipantRequest) *InternalParticipantRequest {
+func updateParticipantsRequest(pr *ParticipantRequest) *InternalParticipantRequest {
 	//POST body params
 	var ipr InternalParticipantRequest
 
@@ -147,7 +147,7 @@ func addParticipantsInternal(c *gin.Context, client *api_client.APIClient, respo
 		//else, call api/chatroom/secret/add api internally
 
 		//updated body according to secret participant add request
-		addSecretParticipantRequest := updateParticipantsRequest(c, participantRequest)
+		addSecretParticipantRequest := updateParticipantsRequest(participantRequest)
 
 		options = api_client.PostRequestOptions{
 			Url:           client.CoreServiceBaseURL + AddSecretParticipantsEndPoint,
