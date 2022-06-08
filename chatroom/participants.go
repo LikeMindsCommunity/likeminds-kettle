@@ -9,15 +9,12 @@ import (
 )
 
 type ParticipantRequest struct {
-	IsSecret bool `json:"is_secret"`
-}
-
-type AddParticipantRequest struct {
 	ChatroomID           int64   `json:"chatroom_id"`
 	ChatroomParticipants []int64 `json:"chatroom_participants"`
+	IsSecret             bool    `json:"is_secret"`
 }
 
-type AddSecretParticipantRequest struct {
+type InternalParticipantRequest struct {
 	ChatroomID                 int64   `json:"chatroom_id"`
 	SecretChatroomParticipants []int64 `json:"secret_chatroom_participants"`
 }
@@ -63,30 +60,14 @@ func Participants(c *gin.Context, method int) {
 	utils.ParseResponse(c, respBytes)
 }
 
-func parseAddParticipantsRequest(c *gin.Context) (*AddParticipantRequest, error) {
+func updateAddParticipantsRequest(c *gin.Context, pr *ParticipantRequest) *InternalParticipantRequest {
 	//POST body params
-	var apr AddParticipantRequest
+	var ipr InternalParticipantRequest
 
-	if err := c.ShouldBindBodyWith(&apr, binding.JSON); err != nil {
-		return nil, err
-	}
+	ipr.ChatroomID = pr.ChatroomID
+	ipr.SecretChatroomParticipants = pr.ChatroomParticipants
 
-	return &apr, nil
-}
-
-func parseAddSecretParticipantsRequest(c *gin.Context) (*AddSecretParticipantRequest, error) {
-	//POST body params
-	var aspr AddSecretParticipantRequest
-	var apr AddParticipantRequest
-
-	if err := c.ShouldBindBodyWith(&apr, binding.JSON); err != nil {
-		return nil, err
-	}
-
-	aspr.ChatroomID = apr.ChatroomID
-	aspr.SecretChatroomParticipants = apr.ChatroomParticipants
-
-	return &aspr, nil
+	return &ipr
 }
 
 func parseParticipantsRequest(c *gin.Context) (*ParticipantRequest, error) {
@@ -156,32 +137,17 @@ func addParticipantsInternal(c *gin.Context, client *api_client.APIClient, respo
 	if !is_secret {
 		//If is_secret is missing or false, call api/chatroom/add api internally
 
-		//Body to be sent in the api/chatroom/add POST request
-		addParticipantRequest, err := parseAddParticipantsRequest(c)
-
-		if err != nil {
-			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
-			return nil
-		}
-
 		options = api_client.PostRequestOptions{
 			Url:           client.CoreServiceBaseURL + AddParticipantsEndPoint,
-			Body:          addParticipantRequest,
+			Body:          participantRequest,
 			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
 		}
 
 	} else {
 		//else, call api/chatroom/secret/add api internally
 
-		//Body to be sent in the api/chatroom/secret/add POST request
-		addSecretParticipantRequest, err := parseAddSecretParticipantsRequest(c)
-
-		if err != nil {
-			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
-			return nil
-		}
+		//updated body according to secret participant add request
+		addSecretParticipantRequest := updateAddParticipantsRequest(c, participantRequest)
 
 		options = api_client.PostRequestOptions{
 			Url:           client.CoreServiceBaseURL + AddSecretParticipantsEndPoint,
