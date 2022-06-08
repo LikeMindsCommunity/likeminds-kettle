@@ -11,8 +11,8 @@ import (
 
 //EnableMemberMessageRequest | member message setting schema
 type EnableMemberMessageRequest struct {
-	ChatroomId int32 `json:"chatroom_id"`
-	Value      bool  `json:"value"`
+	ChatroomId int32 `json:"chatroom_id" binding:"required"`
+	Value      bool  `json:"value" binding:"required"`
 }
 
 //EnableMemberMessage is used to enable member message settings in chatroom
