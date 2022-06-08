@@ -105,19 +105,12 @@ func GetBotResponse(c *gin.Context, method int) *utils.Response {
 		}
 	}
 
-	//Parse response
-	var apiCR api_client.APIClientResponse
-	err := api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	if err != nil {
-		//Internal unmarshal error
-		utils.GeneralAPIError(c, err.Error())
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes)
+	if apiCR == nil {
 		return nil
 	}
-	if !apiCR.Success {
-		//If api/user/login returns success as false
-		c.JSON(http.StatusInternalServerError, apiCR)
-		return nil
-	}
+
 	//If flow succeeds
 	dataResponse := apiCR.Response
 	if createToken {

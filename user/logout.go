@@ -55,17 +55,9 @@ func Logout(c *gin.Context) {
 			utils.GeneralAPIError(c, err.Error())
 			return
 		}
-		//Parse response
-		var apiCR api_client.APIClientResponse
-		err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-		if err != nil {
-			//Internal unmarshal error
-			utils.GeneralAPIError(c, err.Error())
-		}
-
-		if !apiCR.Success {
-			//If api/user/logout returns success as false
-			c.JSON(http.StatusInternalServerError, apiCR)
+		//Validate response
+		apiCR := utils.ValidateClientResponse(c, respBytes)
+		if apiCR == nil {
 			return
 		}
 	}

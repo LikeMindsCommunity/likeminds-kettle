@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/utils"
-	"net/http"
 )
 
 const GenerateOTPEndPoint = "/api/generate_otp"
@@ -42,23 +41,5 @@ func GenerateOTP(c *gin.Context) {
 		return
 	}
 	//Parse response
-	var apiCR api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	if err != nil {
-		//Internal unmarshal error
-		utils.GeneralAPIError(c, err.Error())
-		return
-	}
-
-	if !apiCR.Success {
-		//If api/generate_otp returns success as false
-		utils.APIClientError(c, apiCR)
-		return
-	}
-
-	//If flow succeeds
-	//Send response with success as true
-	c.JSON(http.StatusOK, utils.Response{
-		Success: true,
-	})
+	utils.ParseResponse(c, respBytes)
 }

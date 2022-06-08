@@ -1,8 +1,6 @@
 package chatroom
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/nateshr/likeminds-authentication/api_client"
@@ -47,7 +45,6 @@ func Participants(c *gin.Context, method int) {
 
 	//Send request
 	var respBytes []byte
-	var err error
 	switch method {
 	case utils.GETMethod:
 
@@ -63,23 +60,7 @@ func Participants(c *gin.Context, method int) {
 	}
 
 	//Parse response
-	var apiCR api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	if err != nil {
-		//Internal unmarshal error
-		utils.GeneralAPIError(c, err.Error())
-		return
-	}
-	if !apiCR.Success {
-		//If chatroom apis returns success as false
-		c.JSON(http.StatusInternalServerError, apiCR)
-		return
-	}
-	//If flow succeeds
-	c.JSON(http.StatusOK, utils.Response{
-		Success: true,
-		Data:    apiCR.Response,
-	})
+	utils.ParseResponse(c, respBytes)
 }
 
 func parseAddParticipantsRequest(c *gin.Context) (*AddParticipantRequest, error) {

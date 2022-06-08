@@ -1,8 +1,6 @@
 package moderation
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/user"
@@ -105,7 +103,7 @@ func Rights(c *gin.Context, method int) {
 
 		is_cm := rightsRequest.IsCM
 
-		if is_cm == false {
+		if !is_cm {
 			//If is_cm is missing or false, call api/update_member_rights api internally
 
 			options = api_client.PostRequestOptions{
@@ -134,23 +132,7 @@ func Rights(c *gin.Context, method int) {
 	}
 
 	//Parse response
-	var apiCR api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	if err != nil {
-		//Internal unmarshal error
-		utils.GeneralAPIError(c, err.Error())
-		return
-	}
-	if !apiCR.Success {
-		//If chatroom apis returns success as false
-		c.JSON(http.StatusInternalServerError, apiCR)
-		return
-	}
-	//If flow succeeds
-	c.JSON(http.StatusOK, utils.Response{
-		Success: true,
-		Data:    apiCR.Response,
-	})
+	utils.ParseResponse(c, respBytes)
 }
 
 func parseRightsRequest(c *gin.Context) (*RightsRequest, error) {

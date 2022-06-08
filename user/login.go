@@ -1,8 +1,6 @@
 package user
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
@@ -49,17 +47,9 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	//Parse response
-	var apiCR api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	if err != nil {
-		//Internal unmarshal error
-		utils.GeneralAPIError(c, err.Error())
-	}
-
-	if !apiCR.Success {
-		//If api/user/login returns success as false
-		c.JSON(http.StatusInternalServerError, apiCR)
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes)
+	if apiCR == nil {
 		return
 	}
 
@@ -77,10 +67,9 @@ func Login(c *gin.Context) {
 	dataResponse := apiCR.Response
 	dataResponse[token.ParamAccessToken] = ltm.AccessToken
 	dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
-	c.JSON(http.StatusOK, utils.Response{
-		Success: true,
-		Data:    dataResponse,
-	})
+
+	//Generate response
+	utils.GenerateResponse(c, dataResponse)
 }
 
 func updateLoginRequest(lr LoginRequest) map[string]interface{} {

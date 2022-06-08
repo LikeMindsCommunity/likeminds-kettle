@@ -1,8 +1,6 @@
 package sdk
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
@@ -43,16 +41,10 @@ func InitiateSDK(c *gin.Context) {
 		utils.GeneralAPIError(c, err.Error())
 		return
 	}
-	var apiCR api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return
-	}
-	if !apiCR.Success {
-		//If api/sdk/initiate returns success as false
-		c.JSON(http.StatusInternalServerError, apiCR)
+
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes)
+	if apiCR == nil {
 		return
 	}
 
@@ -71,8 +63,6 @@ func InitiateSDK(c *gin.Context) {
 	dataResponse[token.ParamAccessToken] = ltm.AccessToken
 	dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
 
-	c.JSON(http.StatusOK, utils.Response{
-		Success: true,
-		Data:    dataResponse,
-	})
+	//Generate response
+	utils.GenerateResponse(c, dataResponse)
 }

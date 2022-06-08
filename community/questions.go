@@ -1,8 +1,6 @@
 package community
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/user"
@@ -63,25 +61,8 @@ func EditQuestions(c *gin.Context) {
 		return
 	}
 
-	//Parse response
-	var apiCR api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	if err != nil {
-		//Internal unmarshal error
-		utils.GeneralAPIError(c, err.Error())
-	}
-
-	if !apiCR.Success {
-		//If api/community/edit_questions returns success as false
-		c.JSON(http.StatusInternalServerError, apiCR)
-		return
-	}
-
-	//Send response with api/community/edit_questions response
-	c.JSON(http.StatusOK, utils.Response{
-		Success: true,
-		Data:    apiCR.Response,
-	})
+	//Parse Response
+	utils.ParseResponse(c, respBytes)
 }
 
 func parseEditQuestionRequest(c *gin.Context) (*EditQuestionsRequest, error) {
