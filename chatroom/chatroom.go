@@ -10,7 +10,6 @@ import (
 )
 
 type CreateChatroomRequest struct {
-	CommunityID                string      `json:"community_id" binding:"required"`
 	Title                      string      `json:"title" binding:"required"`
 	Header                     string      `json:"header"`
 	ShareLink                  string      `json:"share_link"`
