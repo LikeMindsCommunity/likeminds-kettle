@@ -96,10 +96,14 @@ func parseAddParticipantsRequest(c *gin.Context) (*AddParticipantRequest, error)
 func parseAddSecretParticipantsRequest(c *gin.Context) (*AddSecretParticipantRequest, error) {
 	//POST body params
 	var aspr AddSecretParticipantRequest
+	var apr AddParticipantRequest
 
-	if err := c.ShouldBindBodyWith(&aspr, binding.JSON); err != nil {
+	if err := c.ShouldBindBodyWith(&apr, binding.JSON); err != nil {
 		return nil, err
 	}
+
+	aspr.ChatroomID = apr.ChatroomID
+	aspr.SecretChatroomParticipants = apr.ChatroomParticipants
 
 	return &aspr, nil
 }
