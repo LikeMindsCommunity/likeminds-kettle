@@ -110,10 +110,6 @@ func UpdateBody(pro *PostRequestOptions, body_type int) (*http.Request, error) {
 
 		req, err = http.NewRequest(http.MethodPost, pro.Url, strings.NewReader(payload.Encode()))
 
-		fmt.Println(payload.Encode())
-
-		fmt.Println("x form body")
-
 		if err != nil {
 			return nil, err
 		}
@@ -138,11 +134,21 @@ func convertToFormURLEncoded(body *[]byte) url.Values {
 	for key, value := range datamap {
 
 		// if value is not type string then convert to string
-		if reflect.TypeOf(value).String() == "float64" {
+		switch reflect.TypeOf(value).String() {
+
+		case "int":
+			payload.Set(key, strconv.Itoa(value.(int)))
+
+		case "float64":
 			var elementString string = strconv.FormatFloat(value.(float64), 'f', -1, 64)
 			payload.Set(key, elementString)
-		} else if reflect.TypeOf(value).String() == "string" {
+
+		case "bool":
+			payload.Set(key, strconv.FormatBool(value.(bool)))
+
+		case "string":
 			payload.Set(key, value.(string))
+
 		}
 	}
 
