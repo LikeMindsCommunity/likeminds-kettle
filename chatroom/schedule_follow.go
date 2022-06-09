@@ -1,8 +1,6 @@
 package chatroom
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
@@ -47,23 +45,5 @@ func ScheduleFollow(c *gin.Context) {
 	}
 
 	//Parse response
-	var apiCR api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return
-	}
-
-	if !apiCR.Success {
-		//If api/chatroom/schedule_follow returns success as false
-		c.JSON(http.StatusInternalServerError, apiCR)
-		return
-	}
-
-	//Send response
-	c.JSON(http.StatusOK, utils.Response{
-		Success: true,
-		Data:    apiCR.Response,
-	})
+	utils.ParseResponse(c, respBytes)
 }

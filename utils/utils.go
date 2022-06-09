@@ -3,10 +3,12 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/api_client"
 )
 
 const HeadersMemberId = "x-member-id"
@@ -50,4 +52,47 @@ func CreateHeaders(c *gin.Context, userUniqueID string) map[string]interface{} {
 	headers[HeadersDeviceId] = c.GetHeader(HeadersDeviceId)
 	headers[HeadersApiKey] = c.GetHeader(HeadersApiKey)
 	return headers
+}
+
+//Generate Response to be sent on request success
+func GenerateResponse(c *gin.Context, dataResponse map[string]interface{}) {
+	//
+	response := Response{
+		Success: true,
+	}
+
+	if len(dataResponse) > 0 {
+		response.Data = dataResponse
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func ValidateClientResponse(c *gin.Context, respBytes []byte) *api_client.APIClientResponse {
+	//Parse response
+	var apiCR api_client.APIClientResponse
+	err := api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
+	if err != nil {
+		//Internal unmarshal error
+		GeneralAPIError(c, err.Error())
+		return nil
+	}
+
+	if !apiCR.Success {
+		//If internal api returns success as false
+		c.JSON(http.StatusInternalServerError, apiCR)
+		return nil
+	}
+
+	return &apiCR
+}
+
+//Parse Response from request sent internally
+func ParseResponse(c *gin.Context, respBytes []byte) {
+
+	apiCR := ValidateClientResponse(c, respBytes)
+
+	if apiCR != nil {
+		GenerateResponse(c, apiCR.Response)
+	}
 }
