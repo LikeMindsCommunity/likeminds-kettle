@@ -1,8 +1,6 @@
 package otp
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
@@ -47,19 +45,13 @@ func VerifyOTP(c *gin.Context) {
 		utils.GeneralAPIError(c, err.Error())
 		return
 	}
-	//Parse response
-	var apiCR api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	if err != nil {
-		//Internal unmarshal error
-		utils.GeneralAPIError(c, err.Error())
-	}
 
-	if !apiCR.Success {
-		//If api/verify_otp success as false
-		utils.APIClientError(c, apiCR)
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes)
+	if apiCR == nil {
 		return
 	}
+
 	//If flow succeeds
 	profileExists := apiCR.Response[ResponseProfileExists].(bool)
 	//If user exists in our DB, we need to return LTM and RTM
@@ -76,11 +68,9 @@ func VerifyOTP(c *gin.Context) {
 		dataResponse := apiCR.Response
 		dataResponse[token.ParamAccessToken] = ltm.AccessToken
 		dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
-		c.JSON(http.StatusOK, utils.Response{
-			Success: true,
-			Data:    dataResponse,
-		})
-		return
+
+		//Generate Response
+		utils.GenerateResponse(c, dataResponse)
 	} else {
 		//Create verify token
 		vtm, err := token.CreateVTM()
@@ -92,10 +82,8 @@ func VerifyOTP(c *gin.Context) {
 		//Send response with verify token
 		dataResponse := apiCR.Response
 		dataResponse[token.ParamAccessToken] = vtm.AccessToken
-		c.JSON(http.StatusOK, utils.Response{
-			Success: true,
-			Data:    dataResponse,
-		})
-		return
+
+		//Generate Response
+		utils.GenerateResponse(c, dataResponse)
 	}
 }

@@ -1,8 +1,6 @@
 package chatroom
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/nateshr/likeminds-authentication/api_client"
@@ -11,15 +9,12 @@ import (
 )
 
 type ParticipantRequest struct {
-	IsSecret bool `json:"is_secret"`
-}
-
-type AddParticipantRequest struct {
 	ChatroomID           int64   `json:"chatroom_id"`
 	ChatroomParticipants []int64 `json:"chatroom_participants"`
+	IsSecret             bool    `json:"is_secret"`
 }
 
-type AddSecretParticipantRequest struct {
+type InternalParticipantRequest struct {
 	ChatroomID                 int64   `json:"chatroom_id"`
 	SecretChatroomParticipants []int64 `json:"secret_chatroom_participants"`
 }
@@ -47,7 +42,6 @@ func Participants(c *gin.Context, method int) {
 
 	//Send request
 	var respBytes []byte
-	var err error
 	switch method {
 	case utils.GETMethod:
 
@@ -63,45 +57,17 @@ func Participants(c *gin.Context, method int) {
 	}
 
 	//Parse response
-	var apiCR api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	if err != nil {
-		//Internal unmarshal error
-		utils.GeneralAPIError(c, err.Error())
-		return
-	}
-	if !apiCR.Success {
-		//If chatroom apis returns success as false
-		c.JSON(http.StatusInternalServerError, apiCR)
-		return
-	}
-	//If flow succeeds
-	c.JSON(http.StatusOK, utils.Response{
-		Success: true,
-		Data:    apiCR.Response,
-	})
+	utils.ParseResponse(c, respBytes)
 }
 
-func parseAddParticipantsRequest(c *gin.Context) (*AddParticipantRequest, error) {
+func updateParticipantsRequest(pr *ParticipantRequest) *InternalParticipantRequest {
 	//POST body params
-	var apr AddParticipantRequest
+	var ipr InternalParticipantRequest
 
-	if err := c.ShouldBindBodyWith(&apr, binding.JSON); err != nil {
-		return nil, err
-	}
+	ipr.ChatroomID = pr.ChatroomID
+	ipr.SecretChatroomParticipants = pr.ChatroomParticipants
 
-	return &apr, nil
-}
-
-func parseAddSecretParticipantsRequest(c *gin.Context) (*AddSecretParticipantRequest, error) {
-	//POST body params
-	var aspr AddSecretParticipantRequest
-
-	if err := c.ShouldBindBodyWith(&aspr, binding.JSON); err != nil {
-		return nil, err
-	}
-
-	return &aspr, nil
+	return &ipr
 }
 
 func parseParticipantsRequest(c *gin.Context) (*ParticipantRequest, error) {
@@ -171,32 +137,17 @@ func addParticipantsInternal(c *gin.Context, client *api_client.APIClient, respo
 	if !is_secret {
 		//If is_secret is missing or false, call api/chatroom/add api internally
 
-		//Body to be sent in the api/chatroom/add POST request
-		addParticipantRequest, err := parseAddParticipantsRequest(c)
-
-		if err != nil {
-			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
-			return nil
-		}
-
 		options = api_client.PostRequestOptions{
 			Url:           client.CoreServiceBaseURL + AddParticipantsEndPoint,
-			Body:          addParticipantRequest,
+			Body:          participantRequest,
 			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
 		}
 
 	} else {
 		//else, call api/chatroom/secret/add api internally
 
-		//Body to be sent in the api/chatroom/secret/add POST request
-		addSecretParticipantRequest, err := parseAddSecretParticipantsRequest(c)
-
-		if err != nil {
-			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
-			return nil
-		}
+		//updated body according to secret participant add request
+		addSecretParticipantRequest := updateParticipantsRequest(participantRequest)
 
 		options = api_client.PostRequestOptions{
 			Url:           client.CoreServiceBaseURL + AddSecretParticipantsEndPoint,

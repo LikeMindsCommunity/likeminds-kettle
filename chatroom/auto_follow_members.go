@@ -1,8 +1,6 @@
 package chatroom
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/user"
@@ -11,9 +9,9 @@ import (
 
 //AutoFollowMembersRequest
 type AutoFollowMembersRequest struct {
-	ChatroomId          int32 `json:"chatroom_id"`
-	AutoFollowDone      bool  `json:"auto_follow_done"`
-	IncludeMembersLater bool  `json:"include_members_later"`
+	ChatroomId          int32 `json:"chatroom_id" binding:"required"`
+	AutoFollowDone      bool  `json:"auto_follow_done" binding:"required"`
+	IncludeMembersLater bool  `json:"include_members_later" binding:"required"`
 }
 
 //AutoFollowMembers is used to enable auto follow members for a chatroom
@@ -50,24 +48,7 @@ func AutoFollowMembers(c *gin.Context) {
 	}
 
 	//Parse response
-	var apiCR api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	if err != nil {
-		//Internal unmarshal error
-		utils.GeneralAPIError(c, err.Error())
-	}
-
-	if !apiCR.Success {
-		//If api/chatroom/auto_follow_for_all_members returns success as false
-		c.JSON(http.StatusInternalServerError, apiCR)
-		return
-	}
-
-	//Send response with api/chatroom/auto_follow_for_all_members response
-	c.JSON(http.StatusOK, utils.Response{
-		Success: true,
-		Data:    apiCR.Response,
-	})
+	utils.ParseResponse(c, respBytes)
 }
 
 func parseAutoFollowMembersRequst(c *gin.Context) (*AutoFollowMembersRequest, error) {

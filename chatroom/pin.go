@@ -1,8 +1,6 @@
 package chatroom
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/user"
@@ -10,8 +8,8 @@ import (
 )
 
 type PinChatroomRequest struct {
-	ChatroomID int64 `json:"chatroom_id"`
-	Value      bool  `json:"value"`
+	ChatroomID int64 `json:"chatroom_id" binding:"required"`
+	Value      bool  `json:"value" binding:"required"`
 	Notify     bool  `json:"notify"`
 }
 
@@ -48,25 +46,8 @@ func PinChatroom(c *gin.Context) {
 		return
 	}
 
-	//Parse response
-	var apiCR api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	if err != nil {
-		//Internal unmarshal error
-		utils.GeneralAPIError(c, err.Error())
-	}
-
-	if !apiCR.Success {
-		//If api/chatroom/pin returns success as false
-		c.JSON(http.StatusInternalServerError, apiCR)
-		return
-	}
-
-	//Send response with api/chatroom/pin response
-	c.JSON(http.StatusOK, utils.Response{
-		Success: true,
-		Data:    apiCR.Response,
-	})
+	//Parse Response
+	utils.ParseResponse(c, respBytes)
 }
 
 func parsePinChatroomRequest(c *gin.Context) (*PinChatroomRequest, error) {
