@@ -17,8 +17,7 @@ type Right struct {
 }
 
 type RightsRequest struct {
-	UserId      int64   `json:"user_id"`
-	CommunityId int64   `json:"community_id"`
+	UserId      int64   `json:"user_id" binding:"required"`
 	CustomTitle string  `json:"custom_title"`
 	Rights      []Right `json:"rights"`
 	IsCM        bool    `json:"is_cm"`
@@ -55,8 +54,7 @@ func Rights(c *gin.Context, method int) {
 
 		//Params to be sent in the fetch rights request
 		params := map[string]string{
-			ParamCommunityId: c.Query(ParamCommunityId),
-			ParamUserId:      c.Query(ParamUserId),
+			ParamUserId: c.Query(ParamUserId),
 		}
 
 		//GET Request params

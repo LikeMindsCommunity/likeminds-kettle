@@ -8,7 +8,7 @@ import (
 )
 
 type MemberRequest struct {
-	UserName     string `json:"user_name"`
+	UserName     string `json:"user_name" binding:"required"`
 	UserUniqueId string `json:"user_unique_id"`
 	ImageUrl     string `json:"image_url"`
 }
