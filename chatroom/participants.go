@@ -156,7 +156,7 @@ func addParticipantsInternal(c *gin.Context, client *api_client.APIClient, respo
 		}
 	}
 
-	respBytes, err := client.PostRequest(&options)
+	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
 
 	if err != nil {
 		//If API fails or any other error

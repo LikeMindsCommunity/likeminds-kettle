@@ -32,7 +32,7 @@ func MergeAccount(c *gin.Context) {
 		Url:           apiClient.CoreServiceBaseURL + MergeAccountEndPoint,
 		CustomHeaders: headers,
 		Body:          params,
-	})
+	}, api_client.BodyTypeRaw)
 	if err != nil {
 		//If API fails or any other error
 		utils.GeneralAPIError(c, err.Error())

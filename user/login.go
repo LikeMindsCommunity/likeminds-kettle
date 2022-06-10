@@ -37,10 +37,10 @@ func Login(c *gin.Context) {
 	options := api_client.PostRequestOptions{
 		Url:           client.CoreServiceBaseURL + LoginEndPoint,
 		Body:          updateLoginRequest(lr),
-		CustomHeaders: nil,
+		CustomHeaders: utils.CreateHeaders(c, ""),
 	}
 	//Send request
-	respBytes, err := client.PostRequest(&options)
+	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
 	if err != nil {
 		//If API fails or any other error
 		utils.GeneralAPIError(c, err.Error())

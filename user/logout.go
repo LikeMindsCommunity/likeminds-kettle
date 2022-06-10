@@ -49,7 +49,7 @@ func Logout(c *gin.Context) {
 		respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
 			Url:           apiClient.CoreServiceBaseURL + LogoutEndPoint,
 			CustomHeaders: headers,
-		})
+		}, api_client.BodyTypeRaw)
 		if err != nil {
 			//If API fails or any other error
 			utils.GeneralAPIError(c, err.Error())

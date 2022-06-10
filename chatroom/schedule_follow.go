@@ -36,7 +36,7 @@ func ScheduleFollow(c *gin.Context) {
 		Url:           apiClient.CoreServiceBaseURL + ScheduleFollowEndPoint,
 		Body:          sfr,
 		CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
-	})
+	}, api_client.BodyTypeRaw)
 
 	if err != nil {
 		//If API fails or any other error

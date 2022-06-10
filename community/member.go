@@ -8,7 +8,7 @@ import (
 )
 
 type MemberRequest struct {
-	UserName     string `json:"user_name"`
+	UserName     string `json:"user_name" binding:"required"`
 	UserUniqueId string `json:"user_unique_id"`
 	ImageUrl     string `json:"image_url"`
 }
@@ -129,7 +129,7 @@ func addMemberInternal(c *gin.Context, client *api_client.APIClient, response *u
 		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
 	}
 
-	respBytes, err := client.PostRequest(&options)
+	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
 
 	if err != nil {
 		//If API fails or any other error

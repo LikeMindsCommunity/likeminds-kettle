@@ -39,7 +39,7 @@ func EnableMemberMessage(c *gin.Context) {
 		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
 	}
 
-	respBytes, err := client.PostRequest(&options)
+	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
 	if err != nil {
 		//If API fails or any other error
 		utils.GeneralAPIError(c, err.Error())
