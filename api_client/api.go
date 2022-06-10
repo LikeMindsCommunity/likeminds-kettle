@@ -15,8 +15,12 @@ import (
 	"time"
 )
 
-const BodyTypeRaw = 0
-const BodyTypeFormUrlEncoded = 1
+type BodyType int
+
+const (
+	BodyTypeRaw BodyType = iota
+	BodyTypeFormUrlEncoded
+)
 
 type APIClient struct {
 	CoreServiceBaseURL         string
@@ -80,7 +84,7 @@ func AddParams(req *http.Request, params map[string]string) {
 	req.URL.RawQuery = q.Encode()
 }
 
-func UpdateBody(pro *PostRequestOptions, body_type int) (*http.Request, error) {
+func UpdateBody(pro *PostRequestOptions, body_type BodyType) (*http.Request, error) {
 
 	var req *http.Request
 
@@ -94,8 +98,6 @@ func UpdateBody(pro *PostRequestOptions, body_type int) (*http.Request, error) {
 		}
 
 		req, err = http.NewRequest(http.MethodPost, pro.Url, bytes.NewBuffer(data))
-
-		fmt.Println("raw body")
 
 		if err != nil {
 			return nil, err
@@ -207,7 +209,7 @@ func (c *APIClient) GetRequest(gro *GetRequestOptions) ([]byte, error) {
 	return respBytes, nil
 }
 
-func (c *APIClient) PostRequest(pro *PostRequestOptions, body_type int) ([]byte, error) {
+func (c *APIClient) PostRequest(pro *PostRequestOptions, body_type BodyType) ([]byte, error) {
 
 	req, err := UpdateBody(pro, body_type)
 	if err != nil {
