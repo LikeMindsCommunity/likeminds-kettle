@@ -9,7 +9,7 @@ import (
 
 type PinChatroomRequest struct {
 	ChatroomID int64 `json:"chatroom_id" binding:"required"`
-	Value      bool  `json:"value" binding:"required"`
+	Value      *bool `json:"value" binding:"required"`
 	Notify     bool  `json:"notify"`
 }
 
