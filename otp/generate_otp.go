@@ -6,10 +6,6 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-const GenerateOTPEndPoint = "/api/generate_otp"
-const ParamMobileNo = "mobile_no"
-const ParamCountryCode = "country_code"
-
 // GenerateOTP is used to generate otp
 func GenerateOTP(c *gin.Context) {
 	//GET Request params

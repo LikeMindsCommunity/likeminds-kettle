@@ -10,8 +10,8 @@ import (
 //AutoFollowMembersRequest
 type AutoFollowMembersRequest struct {
 	ChatroomId          int32 `json:"chatroom_id" binding:"required"`
-	AutoFollowDone      bool  `json:"auto_follow_done" binding:"required"`
-	IncludeMembersLater bool  `json:"include_members_later" binding:"required"`
+	AutoFollowDone      *bool `json:"auto_follow_done" binding:"required"`
+	IncludeMembersLater *bool `json:"include_members_later" binding:"required"`
 }
 
 //AutoFollowMembers is used to enable auto follow members for a chatroom

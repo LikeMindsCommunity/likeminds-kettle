@@ -7,12 +7,6 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-const VerifyOTPEndPoint = "/api/verify_otp"
-const ParamOTP = "otp"
-const ResponseProfileExists = "profile_exists"
-const ResponseUser = "user"
-const ResponseId = "id"
-
 // VerifyOTP is used to verify otp and generate verify token
 func VerifyOTP(c *gin.Context) {
 	//GET Request params
@@ -57,8 +51,8 @@ func VerifyOTP(c *gin.Context) {
 	//If user exists in our DB, we need to return LTM and RTM
 	if profileExists {
 		//Create login and refresh token
-		userUniqueID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseId].(float64)
-		ltm, rtm, err := token.CreateLTMAndRTM(utils.FormatFloat(userUniqueID, 0))
+		userUniqueID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
+		ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID)
 		if err != nil {
 			//If token creation fails
 			utils.GeneralAPIError(c, err.Error())
