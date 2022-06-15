@@ -7,9 +7,15 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-type MemberRequest struct {
+type AddMemberRequest struct {
 	UserName     string `json:"user_name" binding:"required"`
 	UserUniqueId string `json:"user_unique_id"`
+	ImageUrl     string `json:"image_url"`
+}
+
+type EditMemberRequest struct {
+	UserName     string `json:"user_name"`
+	UserUniqueId string `json:"user_unique_id" binding:"required"`
 	ImageUrl     string `json:"image_url"`
 }
 
@@ -64,15 +70,26 @@ func Member(c *gin.Context, method int) {
 	utils.ParseResponse(c, respBytes)
 }
 
-func parseMemberRequest(c *gin.Context) (*MemberRequest, error) {
+func parseAddMemberRequest(c *gin.Context) (*AddMemberRequest, error) {
 	//POST body params
-	var mr MemberRequest
+	var amr AddMemberRequest
 
-	if err := c.ShouldBindJSON(&mr); err != nil {
+	if err := c.ShouldBindJSON(&amr); err != nil {
 		return nil, err
 	}
 
-	return &mr, nil
+	return &amr, nil
+}
+
+func parseEditMemberRequest(c *gin.Context) (*EditMemberRequest, error) {
+	//POST body params
+	var emr EditMemberRequest
+
+	if err := c.ShouldBindJSON(&emr); err != nil {
+		return nil, err
+	}
+
+	return &emr, nil
 }
 
 func getMemberInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
@@ -115,7 +132,7 @@ func getMemberInternal(c *gin.Context, client *api_client.APIClient, response *u
 
 func addMemberInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
 	//Body to be sent in the api/community/member POST request
-	memberRequest, err := parseMemberRequest(c)
+	memberRequest, err := parseAddMemberRequest(c)
 
 	if err != nil {
 		//If POST body params are missing
@@ -142,7 +159,7 @@ func addMemberInternal(c *gin.Context, client *api_client.APIClient, response *u
 
 func editMemberInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
 	//Body to be sent in the api/community/member PUT request
-	memberRequest, err := parseMemberRequest(c)
+	memberRequest, err := parseEditMemberRequest(c)
 
 	if err != nil {
 		//If POST body params are missing

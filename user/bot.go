@@ -11,7 +11,7 @@ import (
 )
 
 type BotRequest struct {
-	CommunityName string `json:"community_name"`
+	CommunityName string `json:"name"`
 }
 
 //CreateBot is used to create bot of a community
