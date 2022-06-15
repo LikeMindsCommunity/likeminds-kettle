@@ -8,7 +8,7 @@ import (
 )
 
 type DeleteChatroomRequest struct {
-	ChatroomID int64  `json:"chatroom_id"`
+	ChatroomID int64  `json:"chatroom_id" binding:"required"`
 	TagID      int32  `json:"tag_id"`
 	Reason     string `json:"reason"`
 }

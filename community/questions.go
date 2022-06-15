@@ -24,8 +24,7 @@ type Question struct {
 
 //EditQuestionsRequest
 type EditQuestionsRequest struct {
-	CommunityId int32      `json:"community_id"`
-	Questions   []Question `json:"questions"`
+	Questions []Question `json:"questions"`
 }
 
 //EditQuestions is used to edit Community Questions
