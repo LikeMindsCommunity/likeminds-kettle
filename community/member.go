@@ -110,7 +110,7 @@ func getMemberInternal(c *gin.Context, client *api_client.APIClient, response *u
 
 		//Params to be sent in the api/v1/all_members request
 		params := map[string]string{
-			ParamCommunityId: c.Query(ParamCommunityId),
+			ParamPage: page,
 		}
 
 		options = api_client.GetRequestOptions{
