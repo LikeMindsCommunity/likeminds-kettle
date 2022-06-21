@@ -10,6 +10,9 @@ import (
 //GetTaggingList is used to fetch the tag members list for a specific chatroom
 func GetTaggingList(c *gin.Context) {
 
+	//Create internal API client
+	client := api_client.NewAPIClient()
+
 	//Check if request has LTM token or not
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
 	if !ok {
@@ -17,10 +20,6 @@ func GetTaggingList(c *gin.Context) {
 		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
 		return
 	}
-
-	//Create headers from login token
-	headers := make(map[string]interface{})
-	headers[utils.HeadersMemberId] = ltm.UserUniqueID
 
 	//GET Request params
 	chatroom_id := c.Query(ParamChatroomId)
@@ -35,15 +34,13 @@ func GetTaggingList(c *gin.Context) {
 		ParamChatroomId: chatroom_id,
 	}
 
-	//Create internal API client
-	apiClient := api_client.NewAPIClient()
-	//Send request
-	respBytes, err := apiClient.GetRequest(&api_client.GetRequestOptions{
-		Url:           apiClient.CoreServiceBaseURL + GetTaggingListEndPoint,
-		CustomHeaders: headers,
+	options := api_client.GetRequestOptions{
+		Url:           client.CoreServiceBaseURL + GetTaggingListEndPoint,
+		CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
 		Params:        params,
-	})
+	}
 
+	respBytes, err := client.GetRequest(&options)
 	if err != nil {
 		//If API fails or any other error
 		utils.GeneralAPIError(c, err.Error())
