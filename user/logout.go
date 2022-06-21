@@ -12,7 +12,7 @@ import (
 )
 
 type LogoutRequest struct {
-	RefreshToken string `json:"refresh_token"`
+	RefreshToken string `json:"refresh_token" binding:"required"`
 }
 
 //Logout is used to blacklist login and refresh tokens and logout user
@@ -40,37 +40,30 @@ func Logout(c *gin.Context) {
 		return
 	}
 
-	//Create headers from login token
-	headers := make(map[string]interface{})
-	headers[utils.HeadersMemberId] = ltm.UserID
-	//Create internal API client
-	apiClient := api_client.NewAPIClient()
-	//Send request
-	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
-		Url:           apiClient.CoreServiceBaseURL + LogoutEndPoint,
-		CustomHeaders: headers,
-	})
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return
-	}
-	//Parse response
-	var apiCR api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	if err != nil {
-		//Internal unmarshal error
-		utils.GeneralAPIError(c, err.Error())
-	}
+	headers := utils.CreateHeaders(c, ltm.UserUniqueID)
 
-	if !apiCR.Success {
-		//If api/user/logout returns success as false
-		c.JSON(http.StatusInternalServerError, apiCR)
-		return
+	if len(headers[utils.HeadersDeviceId].(string)) > 0 {
+		//Create internal API client
+		apiClient := api_client.NewAPIClient()
+		//Send request
+		respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
+			Url:           apiClient.CoreServiceBaseURL + LogoutEndPoint,
+			CustomHeaders: headers,
+		}, api_client.BodyTypeRaw)
+		if err != nil {
+			//If API fails or any other error
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
+		//Validate response
+		apiCR := utils.ValidateClientResponse(c, respBytes)
+		if apiCR == nil {
+			return
+		}
 	}
 	//If flow succeeds
 	//Blacklist token
-	err = cache.BlacklistToken(client, ltm, rtm)
+	err := cache.BlacklistToken(client, ltm, rtm)
 	if err != nil {
 		//If token blacklist returns error
 		utils.GeneralAPIError(c, err.Error())

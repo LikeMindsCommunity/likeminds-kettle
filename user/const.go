@@ -1,9 +1,20 @@
 package user
 
 const LoginEndPoint = "/api/user/login"
-const CreateBotEndpoint = "/api/user/create_bot"
+const BotEndpoint = "/api/user/bot"
 const LogoutEndPoint = "/api/user/logout"
 const MergeAccountEndPoint = "/api/merge_account"
+const UserFetchEndpoint = "/api/user/fetch"
 
 const ResponseUser = "user"
 const ResponseUserUniqueId = "user_unique_id"
+const ResponseUserIsGuest = "is_guest"
+const GuestLoginRoute = "route://guest_login"
+const ConfigEndPoint = "/api/config"
+const UserName = "name"
+const UserEmail = "email"
+const UserImageUrl = "image_url"
+const UserOrganisationName = "organisation_name"
+const UserMobileNo = "mobile_no"
+const UserCountryCode = "country_code"
+const UserLoginType = "type"

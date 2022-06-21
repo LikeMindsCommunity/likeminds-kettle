@@ -1,19 +1,25 @@
 package user
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
+type User struct {
+	MobileNo         string `json:"mobile_no"`
+	CountryCode      string `json:"country_code"`
+	Name             string `json:"name" binding:"required"`
+	Email            string `json:"email"`
+	ImageUrl         string `json:"image_url"`
+	OrganisationName string `json:"organisation_name"`
+	UserUniqueId     string `json:"user_unique_id"`
+}
+
 type LoginRequest struct {
-	APIKey       string `json:"api_key"`
-	LoginType    string `json:"type" binding:"required"`
-	UserName     string `json:"user_name" binding:"required"`
-	UserUniqueID string `json:"user_unique_id"`
+	LoginType string `json:"type" binding:"required"`
+	User      User   `json:"user"`
 }
 
 //Login used when user is signing up and generate login and refresh tokens
@@ -30,36 +36,28 @@ func Login(c *gin.Context) {
 	client := api_client.NewAPIClient()
 	options := api_client.PostRequestOptions{
 		Url:           client.CoreServiceBaseURL + LoginEndPoint,
-		Body:          lr,
-		CustomHeaders: nil,
+		Body:          updateLoginRequest(lr),
+		CustomHeaders: utils.CreateHeaders(c, ""),
 	}
 	//Send request
-	respBytes, err := client.PostRequest(&options)
+	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
 	if err != nil {
 		//If API fails or any other error
 		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 
-	//Parse response
-	var apiCR api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	if err != nil {
-		//Internal unmarshal error
-		utils.GeneralAPIError(c, err.Error())
-	}
-
-	if !apiCR.Success {
-		//If api/user/login returns success as false
-		c.JSON(http.StatusInternalServerError, apiCR)
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes)
+	if apiCR == nil {
 		return
 	}
 
 	//If flow succeeds
-	userID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
+	userUniqueID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
 	//Create login and refresh token
 
-	ltm, rtm, err := token.CreateLTMAndRTM(userID)
+	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID)
 	if err != nil {
 		//If token creation fails
 		utils.GeneralAPIError(c, err.Error())
@@ -69,8 +67,25 @@ func Login(c *gin.Context) {
 	dataResponse := apiCR.Response
 	dataResponse[token.ParamAccessToken] = ltm.AccessToken
 	dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
-	c.JSON(http.StatusOK, utils.Response{
-		Success: true,
-		Data:    dataResponse,
-	})
+
+	//Generate response
+	utils.GenerateResponse(c, dataResponse)
+}
+
+func updateLoginRequest(lr LoginRequest) map[string]interface{} {
+	updatedLr := make(map[string]interface{})
+	user := make(map[string]interface{})
+
+	user[UserName] = lr.User.Name
+	user[UserEmail] = lr.User.Email
+	user[UserImageUrl] = lr.User.ImageUrl
+	user[UserOrganisationName] = lr.User.OrganisationName
+	user[ResponseUserUniqueId] = lr.User.UserUniqueId
+
+	updatedLr[UserMobileNo] = lr.User.MobileNo
+	updatedLr[UserCountryCode] = lr.User.CountryCode
+	updatedLr[UserLoginType] = lr.LoginType
+	updatedLr[ResponseUser] = user
+
+	return updatedLr
 }

@@ -44,7 +44,7 @@ func FetchCommunities(c *gin.Context) {
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 	headers := make(map[string]interface{})
-	headers[utils.HeadersMemberId] = ltm.UserID
+	headers[utils.HeadersMemberId] = ltm.UserUniqueID
 	resp := utils.Response{}
 	resp.Data = make(map[string]interface{})
 

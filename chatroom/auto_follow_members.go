@@ -7,14 +7,15 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//EnableMemberMessageRequest | member message setting schema
-type EnableMemberMessageRequest struct {
-	ChatroomId int32 `json:"chatroom_id" binding:"required"`
-	Value      *bool `json:"value" binding:"required"`
+//AutoFollowMembersRequest
+type AutoFollowMembersRequest struct {
+	ChatroomId          int32 `json:"chatroom_id" binding:"required"`
+	AutoFollowDone      *bool `json:"auto_follow_done" binding:"required"`
+	IncludeMembersLater *bool `json:"include_members_later" binding:"required"`
 }
 
-//EnableMemberMessage is used to enable member message settings in chatroom
-func EnableMemberMessage(c *gin.Context) {
+//AutoFollowMembers is used to enable auto follow members for a chatroom
+func AutoFollowMembers(c *gin.Context) {
 
 	//Create internal API client
 	client := api_client.NewAPIClient()
@@ -25,8 +26,8 @@ func EnableMemberMessage(c *gin.Context) {
 		return
 	}
 
-	//Body to be sent in the api/chatroom/enable_member_message POST request
-	enableMemberMessageRequest, err := parseEnableMemberMessageRequest(c)
+	//Body to be sent in the api/chatroom/auto_follow_for_all_members POST request
+	autoFollowMembersRequest, err := parseAutoFollowMembersRequst(c)
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
@@ -34,8 +35,8 @@ func EnableMemberMessage(c *gin.Context) {
 	}
 
 	options := api_client.PostRequestOptions{
-		Url:           client.CoreServiceBaseURL + EnableMemberMessageEndPoint,
-		Body:          enableMemberMessageRequest,
+		Url:           client.CoreServiceBaseURL + AutoFollowMembersEndPoint,
+		Body:          autoFollowMembersRequest,
 		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
 	}
 
@@ -50,13 +51,13 @@ func EnableMemberMessage(c *gin.Context) {
 	utils.ParseResponse(c, respBytes)
 }
 
-func parseEnableMemberMessageRequest(c *gin.Context) (*EnableMemberMessageRequest, error) {
+func parseAutoFollowMembersRequst(c *gin.Context) (*AutoFollowMembersRequest, error) {
 	//POST body params
-	var emmr EnableMemberMessageRequest
+	var afmr AutoFollowMembersRequest
 
-	if err := c.ShouldBindJSON(&emmr); err != nil {
+	if err := c.ShouldBindJSON(&afmr); err != nil {
 		return nil, err
 	}
 
-	return &emmr, nil
+	return &afmr, nil
 }

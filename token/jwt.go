@@ -30,14 +30,14 @@ type LoginTokenMeta struct {
 	AccessUuid         string
 	AccessToken        string
 	AccessTokenExpires int64
-	UserID             string
+	UserUniqueID       string
 }
 
 type RefreshTokenMeta struct {
 	RefreshUuid         string
 	RefreshToken        string
 	RefreshTokenExpires int64
-	UserID              string
+	UserUniqueID        string
 }
 
 func CreateVTM() (*VerifyTokenMeta, error) {
@@ -61,7 +61,7 @@ func CreateVTM() (*VerifyTokenMeta, error) {
 }
 
 //CreateLTMAndRTM is used to create login and refresh token meta
-func CreateLTMAndRTM(userID string) (*LoginTokenMeta, *RefreshTokenMeta, error) {
+func CreateLTMAndRTM(userUniqueID string) (*LoginTokenMeta, *RefreshTokenMeta, error) {
 	ltm := &LoginTokenMeta{
 		AccessUuid:         uuid.NewV4().String(),
 		AccessTokenExpires: time.Now().Add(time.Minute * 15).Unix(),
@@ -77,7 +77,7 @@ func CreateLTMAndRTM(userID string) (*LoginTokenMeta, *RefreshTokenMeta, error) 
 	os.Setenv("ACCESS_SECRET", "JWT_SECRET") //this should be in an env file
 	ltmClaims := jwt.MapClaims{}
 	ltmClaims["access_uuid"] = ltm.AccessUuid
-	ltmClaims["user_unique_id"] = userID
+	ltmClaims["user_unique_id"] = userUniqueID
 	ltmClaims["exp"] = ltm.AccessTokenExpires
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, ltmClaims)
 	ltm.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
@@ -87,7 +87,7 @@ func CreateLTMAndRTM(userID string) (*LoginTokenMeta, *RefreshTokenMeta, error) 
 	//Creating refresh token meta
 	rtmClaims := jwt.MapClaims{}
 	rtmClaims["refresh_uuid"] = rtm.RefreshUuid
-	rtmClaims["user_unique_id"] = userID
+	rtmClaims["user_unique_id"] = userUniqueID
 	rtmClaims["exp"] = rtm.RefreshTokenExpires
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtmClaims)
 	rtm.RefreshToken, err = rt.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
@@ -160,13 +160,13 @@ func ExtractLTM(bearerToken string) (*LoginTokenMeta, error) {
 		if atExpires == 0 {
 			return nil, errors.New("exp is empty")
 		}
-		userID, ok := claims["user_unique_id"].(string)
+		userUniqueID, ok := claims["user_unique_id"].(string)
 		if !ok {
 			return nil, errors.New("user_unique_id is empty")
 		}
 		return &LoginTokenMeta{
 			AccessUuid:         accessUuid,
-			UserID:             userID,
+			UserUniqueID:       userUniqueID,
 			AccessTokenExpires: atExpires,
 		}, nil
 	}
@@ -189,13 +189,13 @@ func ExtractRTM(bearerToken string) (*RefreshTokenMeta, error) {
 		if rtExpires == 0 {
 			return nil, errors.New("exp is empty")
 		}
-		userID, ok := claims["user_unique_id"].(string)
+		userUniqueID, ok := claims["user_unique_id"].(string)
 		if !ok {
 			return nil, errors.New("user_unique_id is empty")
 		}
 		return &RefreshTokenMeta{
 			RefreshUuid:         refreshUuid,
-			UserID:              userID,
+			UserUniqueID:        userUniqueID,
 			RefreshTokenExpires: rtExpires,
 		}, nil
 	}
