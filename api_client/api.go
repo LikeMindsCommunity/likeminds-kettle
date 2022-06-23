@@ -51,7 +51,7 @@ func GetCoreServiceBaseUrl() string {
 }
 
 func GetSubscriptionServiceBaseUrl() string {
-	SubscriptionServiceBaseURL := os.Getenv("CORE_BASE_URL")
+	SubscriptionServiceBaseURL := os.Getenv("SUBSCRIPTION_BASE_URL")
 
 	if len(SubscriptionServiceBaseURL) == 0 {
 		SubscriptionServiceBaseURL = "https://betasubscription.likeminds.community"
