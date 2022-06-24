@@ -1,9 +1,6 @@
 package main
 
 import (
-	"log"
-	"net/http"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
@@ -19,14 +16,17 @@ import (
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 	"github.com/nateshr/likeminds-authentication/web"
+	"log"
+	"net/http"
 )
 
 var (
 	client *redis.Client
-	router = gin.Default()
+	router *gin.Engine
 )
 
 func main() {
+	initGin()
 	client = cache.InitRedis()
 	router.Use(cors.New(enableCors()))
 	router.Use(ApiMiddleware(client))
@@ -66,6 +66,11 @@ func main() {
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
 	router.PUT("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.EditRights)
 	log.Fatal(router.Run(":8080"))
+}
+
+func initGin() {
+	gin.SetMode(gin.ReleaseMode)
+	router = gin.Default()
 }
 
 // ApiMiddleware will add the db connection to the context

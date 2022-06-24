@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/nateshr/likeminds-authentication/environment"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -41,7 +41,7 @@ type PostRequestOptions struct {
 }
 
 func GetCoreServiceBaseUrl() string {
-	CoreServiceBaseURL := os.Getenv("CORE_BASE_URL")
+	CoreServiceBaseURL := environment.GoDotEnvVariable("CORE_BASE_URL")
 
 	if len(CoreServiceBaseURL) == 0 {
 		CoreServiceBaseURL = "https://beta.likeminds.community"
@@ -51,7 +51,7 @@ func GetCoreServiceBaseUrl() string {
 }
 
 func GetSubscriptionServiceBaseUrl() string {
-	SubscriptionServiceBaseURL := os.Getenv("SUBSCRIPTION_BASE_URL")
+	SubscriptionServiceBaseURL := environment.GoDotEnvVariable("SUBSCRIPTION_BASE_URL")
 
 	if len(SubscriptionServiceBaseURL) == 0 {
 		SubscriptionServiceBaseURL = "https://betasubscription.likeminds.community"
