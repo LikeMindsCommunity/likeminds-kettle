@@ -2,8 +2,8 @@ package cache
 
 import (
 	"github.com/go-redis/redis/v7"
+	"github.com/nateshr/likeminds-authentication/environment"
 	"github.com/nateshr/likeminds-authentication/token"
-	"os"
 	"time"
 )
 
@@ -11,7 +11,7 @@ const ParamRedisClient = "redis_client"
 
 func InitRedis() *redis.Client {
 	//Initializing Redis
-	dsn := os.Getenv("REDIS_DSN")
+	dsn := environment.GoDotEnvVariable("REDIS_DSN")
 	if len(dsn) == 0 {
 		dsn = "localhost:6379"
 	}
