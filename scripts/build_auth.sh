@@ -2,7 +2,7 @@
 source /home/ubuntu/.profile
 echo $PATH
 cd /home/ubuntu/LikeMinds-Authentication/
-BETA_ENVIRONMENT=true
+BETA_ENVIRONMENT=false
 if [ "$BETA_ENVIRONMENT" = true ]
 then
   export $(curl https://beta-likeminds-media.s3.ap-south-1.amazonaws.com/environment/beta-environment)
