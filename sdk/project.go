@@ -36,21 +36,23 @@ type CommunityBrandingRequest struct {
 
 //ProjectRequest | create SDK api key request schema
 type CreateProjectRequest struct {
-	CommunityName  string                   `json:"name" binding:"required"`
-	Branding       CommunityBrandingRequest `json:"branding"`
-	Headline       string                   `json:"headline"`
-	ImageURL       string                   `json:"image_url"`
-	Platform       []Platform               `json:"platform"`
-	ProjectCreator string                   `json:"project_creator"`
+	CommunityName     string                   `json:"name" binding:"required"`
+	Branding          CommunityBrandingRequest `json:"branding"`
+	Headline          string                   `json:"headline"`
+	ImageURL          string                   `json:"image_url"`
+	FirebaseServerKey string                   `json:"firebase_server_key"`
+	Platform          []Platform               `json:"platform"`
+	ProjectCreator    string                   `json:"project_creator"`
 }
 
 type UpdateProjectRequest struct {
-	CommunityName  string                   `json:"name"`
-	Branding       CommunityBrandingRequest `json:"branding"`
-	Headline       string                   `json:"headline"`
-	ImageURL       string                   `json:"image_url"`
-	Platform       []Platform               `json:"platform"`
-	ProjectCreator string                   `json:"project_creator"`
+	CommunityName     string                   `json:"name"`
+	Branding          CommunityBrandingRequest `json:"branding"`
+	Headline          string                   `json:"headline"`
+	ImageURL          string                   `json:"image_url"`
+	FirebaseServerKey string                   `json:"firebase_server_key"`
+	Platform          []Platform               `json:"platform"`
+	ProjectCreator    string                   `json:"project_creator"`
 }
 
 //CreateProject is used to create a new sdk project
