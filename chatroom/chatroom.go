@@ -32,6 +32,8 @@ type CreateChatroomRequest struct {
 	OnlineLink                 string      `json:"online_link"`
 	IsSecret                   bool        `json:"is_secret"`
 	ChatroomParticipants       []int64     `json:"chatroom_participants"`
+	AutoFollowDone             bool        `json:"auto_follow_done"`
+	IncludeMembersLater        bool        `json:"include_members_later"`
 	SecretChatroomParticipants []int64     `json:"secret_chatroom_participants"`
 	ThirdPartyUniqueID         string      `json:"third_party_unique_id"`
 	ScheduleTime               int64       `json:"schedule_time"`
