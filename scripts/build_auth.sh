@@ -1,5 +1,5 @@
 #!/bin/bash
-BETA_ENVIRONMENT=false
+BETA_ENVIRONMENT=true
 source /home/ubuntu/.profile
 cd /home/ubuntu/LikeMinds-Authentication/
 if [ "$BETA_ENVIRONMENT" = true ]
