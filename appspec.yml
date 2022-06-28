@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source: /scripts/build_auth.sh
-    destination: /home/ubuntu/LikeMinds-Authentication/scripts/build_auth.sh
+    destination: /home/ubuntu/LikeMinds-Authentication/scripts
 permissions:
   - object: /
     pattern: "**"
