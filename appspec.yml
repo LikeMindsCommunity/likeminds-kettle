@@ -1,10 +1,13 @@
 version: 0.0
 os: linux
-permissions:
-  - object: /
-    pattern: "**"
-    owner: ubuntu
-    group: ubuntu
+#files:
+#  - source: /scripts/build_auth.sh
+#    destination: /home/ubuntu/LikeMinds-Authentication/scripts
+#permissions:
+#  - object: /
+#    pattern: "**"
+#    owner: ubuntu
+#    group: ubuntu
 hooks:
   ApplicationStart:
     - location: scripts/build_auth.sh

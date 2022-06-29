@@ -1,8 +1,8 @@
 #!/bin/bash
-BETA_ENVIRONMENT=false
 source /home/ubuntu/.profile
 cd /home/ubuntu/LikeMinds-Authentication/
-if [ "$BETA_ENVIRONMENT" = true ]
+branch_name="$(git rev-parse --abbrev-ref HEAD)"
+if [ "$branch_name" = "development" ]
 then
   curl -o .env https://beta-likeminds-media.s3.ap-south-1.amazonaws.com/environment/beta-environment
   git pull origin development
