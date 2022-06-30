@@ -16,3 +16,6 @@
 
 #Go build binary
 likeminds-authentication
+
+#Environment file
+.env

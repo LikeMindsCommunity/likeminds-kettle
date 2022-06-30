@@ -87,7 +87,7 @@ func ValidateClientResponse(c *gin.Context, respBytes []byte) *api_client.APICli
 	return &apiCR
 }
 
-//Parse Response from request sent internally
+//ParseResponse from request sent internally
 func ParseResponse(c *gin.Context, respBytes []byte) {
 
 	apiCR := ValidateClientResponse(c, respBytes)
