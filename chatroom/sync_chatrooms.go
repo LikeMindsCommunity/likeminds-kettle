@@ -21,17 +21,43 @@ func SyncChatrooms(c *gin.Context) {
 		return
 	}
 
-	//Params to be sent in the api/sync_chatrooms request
-	params := map[string]string{
-		ParamPage:           c.Query(ParamPage),
-		ParamPageSize:       c.Query(ParamPageSize),
-		ParamChatroomStatus: c.Query(ParamChatroomStatus),
-	}
+	var options api_client.GetRequestOptions
 
-	options := api_client.GetRequestOptions{
-		Url:           client.CoreServiceBaseURL + SyncChatroomsEndPoint,
-		CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
-		Params:        params,
+	//GET Request params
+	is_diff := c.Query(ParamIsDiff)
+
+	if is_diff == "" || is_diff == "false" {
+		//If is_diff is missing or false, call api/sync_chatrooms api internally
+
+		//Params to be sent in the api/sync_chatrooms request
+		params := map[string]string{
+			ParamPage:           c.Query(ParamPage),
+			ParamPageSize:       c.Query(ParamPageSize),
+			ParamChatroomStatus: c.Query(ParamChatroomStatus),
+		}
+
+		options = api_client.GetRequestOptions{
+			Url:           client.CoreServiceBaseURL + SyncChatroomsEndPoint,
+			CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
+			Params:        params,
+		}
+
+	} else {
+		//else, call api/sync_chatrooms_diff api internally
+
+		//Params to be sent in the api/sync_chatrooms_diff request
+		params := map[string]string{
+			ParamPage:     c.Query(ParamPage),
+			ParamPageSize: c.Query(ParamPageSize),
+			ParamIsSynced: c.Query(ParamIsSynced),
+		}
+
+		options = api_client.GetRequestOptions{
+			Url:           client.CoreServiceBaseURL + SyncChatroomsDiffEndPoint,
+			CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
+			Params:        params,
+		}
+
 	}
 
 	respBytes, err := client.GetRequest(&options)

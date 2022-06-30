@@ -81,7 +81,6 @@ func main() {
 	router.GET("/chatroom/pending", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.FetchPendingChatroom)
 	router.PUT("/chatroom/pending", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ActionPendingChatroom)
 	router.GET("/chatroom/sync", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.SyncChatrooms)
-	router.GET("/sync_chatrooms_diff", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.SyncChatroomsDiff)
 
 	router.GET("/conversation", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.GetConversation)
 	router.POST("/conversation", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.CreateConversation)
@@ -103,7 +102,6 @@ func main() {
 	router.GET("/conversation/preview/unread_count", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.FetchPreviewUnreadMessagesCount)
 	router.GET("/conversation/notification/unread", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.UnreadConversationNotification)
 	router.GET("/conversation/sync", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.SyncConversation)
-	router.GET("/sync_conversation_diff", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.SyncConversationDiff)
 
 	log.Fatal(router.Run(":8080"))
 }

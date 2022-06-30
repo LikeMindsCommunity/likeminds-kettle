@@ -48,12 +48,18 @@ type EditChatroomRequest struct {
 	Header     string `json:"header"`
 }
 
+type DeleteChatroomRequest struct {
+	ChatroomID int64  `json:"chatroom_id" binding:"required"`
+	TagID      int32  `json:"tag_id"`
+	Reason     string `json:"reason"`
+}
+
 //CreateChatroom is used to create a new chatroom
 func CreateChatroom(c *gin.Context) {
 	Chatroom(c, utils.POSTMethod)
 }
 
-//EditChatroom is used to edit community details
+//EditChatroom is used to edit chatroom details
 func EditChatroom(c *gin.Context) {
 	Chatroom(c, utils.PUTMethod)
 }
@@ -63,7 +69,12 @@ func GetChatroom(c *gin.Context) {
 	Chatroom(c, utils.GETMethod)
 }
 
-//Project method handles community sdk project for each client
+//DeleteChatroom is used to delete an existing chatroom
+func DeleteChatroom(c *gin.Context) {
+	Chatroom(c, utils.DELETEMethod)
+}
+
+//Chatroom method handles chatroom objects
 func Chatroom(c *gin.Context, method int) {
 	//Create internal API client
 	client := api_client.NewAPIClient()
@@ -88,6 +99,10 @@ func Chatroom(c *gin.Context, method int) {
 	case utils.PUTMethod:
 
 		respBytes = editChatroomInternal(c, client, response)
+
+	case utils.DELETEMethod:
+
+		respBytes = deleteChatroomInternal(c, client, response)
 	}
 
 	if respBytes == nil {
@@ -118,6 +133,17 @@ func parseEditChatroomRequest(c *gin.Context) (*EditChatroomRequest, error) {
 	}
 
 	return &ecr, nil
+}
+
+func parseDeleteChatroomRequest(c *gin.Context) (*DeleteChatroomRequest, error) {
+	//POST body params
+	var dcr DeleteChatroomRequest
+
+	if err := c.ShouldBindJSON(&dcr); err != nil {
+		return nil, err
+	}
+
+	return &dcr, nil
 }
 
 func getChatroomInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
@@ -208,6 +234,33 @@ func editChatroomInternal(c *gin.Context, client *api_client.APIClient, response
 	}
 
 	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
+
+	if err != nil {
+		//If API fails or any other error
+		utils.GeneralAPIError(c, err.Error())
+		return nil
+	}
+
+	return respBytes
+}
+
+func deleteChatroomInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
+	//Body to be sent in the api/chatroom_delete POST request
+	deleteChatroomRequest, err := parseDeleteChatroomRequest(c)
+
+	if err != nil {
+		//If POST body params are missing
+		utils.GeneralAPIError(c, err.Error())
+		return nil
+	}
+
+	options := api_client.PostRequestOptions{
+		Url:           client.CoreServiceBaseURL + DeleteChatroomEndPoint,
+		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+		Body:          deleteChatroomRequest,
+	}
+
+	respBytes, err := client.PostRequest(&options, api_client.BodyTypeFormUrlEncoded)
 
 	if err != nil {
 		//If API fails or any other error
