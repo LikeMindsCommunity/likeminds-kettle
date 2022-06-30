@@ -1,8 +1,6 @@
 package conversation
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
@@ -15,6 +13,8 @@ type EventAttendedRequest struct {
 
 //EventAttended is used to send attendence of a user
 func EventAttended(c *gin.Context) {
+	//Create internal API client
+	client := api_client.NewAPIClient()
 
 	//Check if request has LTM token or not
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
@@ -24,28 +24,21 @@ func EventAttended(c *gin.Context) {
 		return
 	}
 
-	//Create headers from login token
-	headers := make(map[string]interface{})
-	headers[utils.HeadersMemberId] = ltm.UserID
-
-	//POST body params
-	var ear EventAttendedRequest
-	if err := c.ShouldBindJSON(&ear); err != nil {
+	//Body to be sent in the api/conversation/event/attended POST request
+	eventAttendedRequest, err := parseEventAttendedRequest(c)
+	if err != nil {
 		//If POST body params are missing
-		utils.POSTBodyParamsMissingError(c)
+		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 
-	//Create internal API client
-	apiClient := api_client.NewAPIClient()
+	options := api_client.PostRequestOptions{
+		Url:           client.CoreServiceBaseURL + EventAttendedEndPoint,
+		Body:          eventAttendedRequest,
+		CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
+	}
 
-	//Send request
-	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
-		Url:           apiClient.CoreServiceBaseURL + EventAttendedEndPoint,
-		CustomHeaders: headers,
-		Body:          ear,
-	})
-
+	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
 	if err != nil {
 		//If API fails or any other error
 		utils.GeneralAPIError(c, err.Error())
@@ -53,22 +46,16 @@ func EventAttended(c *gin.Context) {
 	}
 
 	//Parse response
-	var apiCR api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-	if err != nil {
-		//Internal unmarshal error
-		utils.GeneralAPIError(c, err.Error())
+	utils.ParseResponse(c, respBytes)
+}
+
+func parseEventAttendedRequest(c *gin.Context) (*EventAttendedRequest, error) {
+	//POST body params
+	var ear EventAttendedRequest
+
+	if err := c.ShouldBindJSON(&ear); err != nil {
+		return nil, err
 	}
 
-	if !apiCR.Success {
-		//If api/conversation/event/attended returns success as false
-		c.JSON(http.StatusInternalServerError, apiCR)
-		return
-	}
-
-	//Send response with api/conversation/event/attended response
-	c.JSON(http.StatusOK, utils.Response{
-		Success: true,
-		Data:    apiCR.Response,
-	})
+	return &ear, nil
 }
