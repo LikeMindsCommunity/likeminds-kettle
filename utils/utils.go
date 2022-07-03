@@ -76,7 +76,7 @@ func ParseResponse(c *gin.Context, respBytes []byte) {
 	}
 }
 
-func SendRequest(c *gin.Context, serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) {
+func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) []byte {
 	//Create internal API client
 	client := api_client.NewAPIClient()
 	var baseUrl string
@@ -145,9 +145,17 @@ func SendRequest(c *gin.Context, serviceType ServiceType, url string, requestTyp
 	if err != nil {
 		//If API fails or any other error
 		GeneralAPIError(c, err.Error())
-		return
+		return nil
 	}
 
-	//Parse response
-	ParseResponse(c, respBytes)
+	return respBytes
+}
+
+func SendRequest(c *gin.Context, serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) {
+	respBytes := GetRequestResponse(c, serviceType, url, requestType, headers, params, body)
+
+	if respBytes != nil {
+		//Parse response
+		ParseResponse(c, respBytes)
+	}
 }

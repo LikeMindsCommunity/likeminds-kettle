@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -39,14 +38,10 @@ func Bot(c *gin.Context, method int) {
 
 //GetBotResponse used to get response when api/user/bot is hit internally
 func GetBotResponse(c *gin.Context, method int) *utils.Response {
-	//Create internal API client
-	client := api_client.NewAPIClient()
 
-	//Check if request has LTM token or not
-	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
-	if !ok {
-		//If token is not available
-		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
+	userId := GetRequestingUserId(c)
+
+	if userId == "" {
 		return nil
 	}
 
@@ -55,54 +50,41 @@ func GetBotResponse(c *gin.Context, method int) *utils.Response {
 	var createToken bool
 	switch method {
 	case utils.GETMethod:
-		options := api_client.GetRequestOptions{
-			Url:           client.CoreServiceBaseURL + BotEndpoint,
-			CustomHeaders: utils.CreateHeaders(c, ""),
-		}
-		var err error
-		respBytes, err = client.GetRequest(&options)
-		if err != nil {
-			//If API fails or any other error
-			utils.GeneralAPIError(c, err.Error())
-			return nil
-		}
+
+		//Send Request
+		respBytes = utils.GetRequestResponse(c, utils.CoreService, BotEndpoint, utils.GETRequest, utils.CreateHeaders(c, ""), nil, nil)
+
 	case utils.POSTMethod:
+
 		createToken = true
-		br, err := parseBotRequest(c)
+		botRequest, err := parseBotRequest(c)
+
 		if err != nil {
 			//If POST body params are missing
 			utils.GeneralAPIError(c, err.Error())
 			return nil
 		}
-		options := api_client.PostRequestOptions{
-			Url:           client.CoreServiceBaseURL + BotEndpoint,
-			Body:          br,
-			CustomHeaders: utils.CreateHeaders(c, ""),
-		}
-		respBytes, err = client.PostRequest(&options, api_client.BodyTypeRaw)
-		if err != nil {
-			//If API fails or any other error
-			utils.GeneralAPIError(c, err.Error())
-			return nil
-		}
+
+		//Send Request
+		respBytes = utils.GetRequestResponse(c, utils.CoreService, BotEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, ""), nil, botRequest)
+
 	case utils.PUTMethod:
-		br, err := parseBotRequest(c)
+
+		botRequest, err := parseBotRequest(c)
+
 		if err != nil {
 			//If POST body params are missing
 			utils.GeneralAPIError(c, err.Error())
 			return nil
 		}
-		options := api_client.PostRequestOptions{
-			Url:           client.CoreServiceBaseURL + BotEndpoint,
-			Body:          br,
-			CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
-		}
-		respBytes, err = client.PutRequest(&options)
-		if err != nil {
-			//If API fails or any other error
-			utils.GeneralAPIError(c, err.Error())
-			return nil
-		}
+
+		//Send Request
+		respBytes = utils.GetRequestResponse(c, utils.CoreService, BotEndpoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, botRequest)
+
+	}
+
+	if respBytes == nil {
+		return nil
 	}
 
 	//Validate response
