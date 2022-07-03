@@ -356,6 +356,7 @@ func enableCors() cors.Config {
 	config.AddAllowHeaders(
 		"x-member-id",
 		"x-platform-code",
+		"x-platform-type",
 		"x-version-code",
 		"x-username",
 		"x-password",
