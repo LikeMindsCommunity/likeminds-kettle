@@ -2,26 +2,20 @@ package chatroom
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/api_client"
-	"github.com/nateshr/likeminds-authentication/token"
+	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
 //CollabcardSeen is used to mark a chatroom as seen
 func CollabcardSeen(c *gin.Context) {
 
-	//Create internal API client
-	client := api_client.NewAPIClient()
-
-	//Check if request has LTM token or not
-	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
-	if !ok {
-		//If token is not available
-		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
+	//Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
 		return
 	}
 
-	//Params to be sent in the api/collabcard_seen request
+	//Params to be sent in the collabcard seen api internally
 	params := map[string]string{
 		ParamCollabcardId:   c.Query(ParamCollabcardId),
 		ParamCommunityId:    c.Query(ParamCommunityId),
@@ -29,19 +23,6 @@ func CollabcardSeen(c *gin.Context) {
 		ParamCollabcardType: c.Query(ParamCollabcardType),
 	}
 
-	options := api_client.PostRequestOptions{
-		Url:           client.CoreServiceBaseURL + CollabcardSeenEndPoint,
-		CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
-		Params:        params,
-	}
-
-	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return
-	}
-
-	//Parse response
-	utils.ParseResponse(c, respBytes)
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, CollabcardSeenEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), params, nil)
 }

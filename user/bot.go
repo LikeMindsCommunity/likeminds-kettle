@@ -18,11 +18,6 @@ func CreateBot(c *gin.Context) {
 	Bot(c, utils.POSTMethod)
 }
 
-//EditBot is used to edit bot of a community
-func EditBot(c *gin.Context) {
-	Bot(c, utils.PUTMethod)
-}
-
 //GetBot is used to get bot of a community
 func GetBot(c *gin.Context) {
 	Bot(c, utils.GETMethod)
@@ -30,6 +25,13 @@ func GetBot(c *gin.Context) {
 
 //Bot used to create/edit/get bot details of a community
 func Bot(c *gin.Context, method int) {
+
+	//Authorize User
+	userId := GetRequestingUserId(c)
+	if userId == "" {
+		return
+	}
+
 	response := GetBotResponse(c, method)
 	if response != nil {
 		c.JSON(http.StatusOK, response)
@@ -38,12 +40,6 @@ func Bot(c *gin.Context, method int) {
 
 //GetBotResponse used to get response when api/user/bot is hit internally
 func GetBotResponse(c *gin.Context, method int) *utils.Response {
-
-	userId := GetRequestingUserId(c)
-
-	if userId == "" {
-		return nil
-	}
 
 	//Send request
 	var respBytes []byte
@@ -67,19 +63,6 @@ func GetBotResponse(c *gin.Context, method int) *utils.Response {
 
 		//Send Request
 		respBytes = utils.GetRequestResponse(c, utils.CoreService, BotEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, ""), nil, botRequest)
-
-	case utils.PUTMethod:
-
-		botRequest, err := parseBotRequest(c)
-
-		if err != nil {
-			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
-			return nil
-		}
-
-		//Send Request
-		respBytes = utils.GetRequestResponse(c, utils.CoreService, BotEndpoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, botRequest)
 
 	}
 

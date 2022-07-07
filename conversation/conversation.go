@@ -2,8 +2,7 @@ package conversation
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/api_client"
-	"github.com/nateshr/likeminds-authentication/token"
+	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -82,43 +81,31 @@ func DeleteConversation(c *gin.Context) {
 
 //Conversation method handles conversation object
 func Conversation(c *gin.Context, method int) {
-	//Create internal API client
-	client := api_client.NewAPIClient()
 
-	//Check if request has LTM token or not
-	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
-	if !ok {
-		//If token is not available
-		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
+	//Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
 		return
 	}
 
 	//Send request
-	var respBytes []byte
 	switch method {
 	case utils.GETMethod:
 
-		respBytes = getConversationInternal(c, client, ltm)
+		getConversationInternal(c, userId)
 
 	case utils.POSTMethod:
 
-		respBytes = createConversationInternal(c, client, ltm)
+		createConversationInternal(c, userId)
 
 	case utils.PUTMethod:
 
-		respBytes = editConversationInternal(c, client, ltm)
+		editConversationInternal(c, userId)
 
 	case utils.DELETEMethod:
 
-		respBytes = deleteConversationInternal(c, client, ltm)
+		deleteConversationInternal(c, userId)
 	}
-
-	if respBytes == nil {
-		return
-	}
-
-	//Parse response
-	utils.ParseResponse(c, respBytes)
 }
 
 func parseCreateConversationRequest(c *gin.Context) (*CreateConversationRequest, error) {
@@ -154,8 +141,7 @@ func parseDeleteConversationRequest(c *gin.Context) (*DeleteConversationRequest,
 	return &dcr, nil
 }
 
-func getConversationInternal(c *gin.Context, client *api_client.APIClient, ltm *token.LoginTokenMeta) []byte {
-	var options api_client.GetRequestOptions
+func getConversationInternal(c *gin.Context, userId string) {
 
 	//GET Request params
 	chatroom_id := c.Query(ParamChatroomId)
@@ -164,134 +150,78 @@ func getConversationInternal(c *gin.Context, client *api_client.APIClient, ltm *
 	if chatroom_id == "" {
 		//If GET params are missing
 		utils.GETQueryParamsMissingError(c)
-		return nil
+		return
 	}
 
 	if meta == "" || meta == "false" {
 		//If meta is missing, call api/conversation/fetch api internally
 
-		//Params to be sent in the api/conversation/fetch request
+		//Params to be sent in the fetch conversation api internally
 		params := map[string]string{
 			ParamChatroomId: chatroom_id,
 		}
 
-		options = api_client.GetRequestOptions{
-			Url:           client.CoreServiceBaseURL + FetchConversationEndPoint,
-			CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
-			Params:        params,
-		}
-
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, FetchConversationEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 	} else {
 		//else, call api/conversation_meta api internally
-
-		//GET Request params
-		conversationId := c.Query(ParamConversationId)
-		if conversationId == "" {
-			//If GET params are missing
-			utils.GETQueryParamsMissingError(c)
-			return nil
-		}
 
 		//Params to be sent in the api/conversation_meta request
 		params := map[string]string{
 			ParamChatroomId:     chatroom_id,
-			ParamConversationId: conversationId,
+			ParamConversationId: c.Query(ParamConversationId),
 		}
 
-		options = api_client.GetRequestOptions{
-			Url:           client.CoreServiceBaseURL + ConversationMetaEndPoint,
-			CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
-			Params:        params,
+		//Params Validation
+		if params[ParamConversationId] == "" {
+			//If GET params are missing
+			utils.GETQueryParamsMissingError(c)
+			return
 		}
-	}
 
-	respBytes, err := client.GetRequest(&options)
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return nil
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, ConversationMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 	}
-
-	return respBytes
 }
 
-func createConversationInternal(c *gin.Context, client *api_client.APIClient, ltm *token.LoginTokenMeta) []byte {
-	//Body to be sent in the api/conversation/create POST request
+func createConversationInternal(c *gin.Context, userId string) {
+
+	//Body to be sent in the create conversation api internally
 	createConversationRequest, err := parseCreateConversationRequest(c)
-
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
-		return nil
+		return
 	}
 
-	options := api_client.PostRequestOptions{
-		Url:           client.CoreServiceBaseURL + CreateConversationEndPoint,
-		Body:          createConversationRequest,
-		CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
-	}
-
-	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
-
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return nil
-	}
-
-	return respBytes
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, CreateConversationEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createConversationRequest)
 }
 
-func editConversationInternal(c *gin.Context, client *api_client.APIClient, ltm *token.LoginTokenMeta) []byte {
-	//Body to be sent in the api/edit_conversation POST request
+func editConversationInternal(c *gin.Context, userId string) {
+
+	//Body to be sent in the edit conversation api internally
 	editConversationRequest, err := parseEditConversationRequest(c)
-
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
-		return nil
+		return
 	}
 
-	options := api_client.PostRequestOptions{
-		Url:           client.CoreServiceBaseURL + EditConversationEndPoint,
-		Body:          editConversationRequest,
-		CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
-	}
-
-	respBytes, err := client.PostRequest(&options, api_client.BodyTypeFormUrlEncoded)
-
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return nil
-	}
-
-	return respBytes
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, EditConversationEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, editConversationRequest)
 }
 
-func deleteConversationInternal(c *gin.Context, client *api_client.APIClient, ltm *token.LoginTokenMeta) []byte {
-	//Body to be sent in the api/delete_conversation POST request
-	deleteConversationRequest, err := parseDeleteConversationRequest(c)
+func deleteConversationInternal(c *gin.Context, userId string) {
 
+	//Body to be sent in the delete conversation api internally
+	deleteConversationRequest, err := parseDeleteConversationRequest(c)
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
-		return nil
+		return
 	}
 
-	options := api_client.PostRequestOptions{
-		Url:           client.CoreServiceBaseURL + DeleteConversationEndPoint,
-		Body:          deleteConversationRequest,
-		CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
-	}
-
-	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
-
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return nil
-	}
-
-	return respBytes
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, DeleteConversationEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, deleteConversationRequest)
 }

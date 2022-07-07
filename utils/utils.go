@@ -154,8 +154,7 @@ func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, req
 func SendRequest(c *gin.Context, serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) {
 	respBytes := GetRequestResponse(c, serviceType, url, requestType, headers, params, body)
 
-	if respBytes != nil {
-		//Parse response
-		ParseResponse(c, respBytes)
-	}
+	//Parse response
+	ParseResponse(c, respBytes)
+
 }

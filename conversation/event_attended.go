@@ -2,8 +2,7 @@ package conversation
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/api_client"
-	"github.com/nateshr/likeminds-authentication/token"
+	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -13,18 +12,14 @@ type EventAttendedRequest struct {
 
 //EventAttended is used to send attendence of a user
 func EventAttended(c *gin.Context) {
-	//Create internal API client
-	client := api_client.NewAPIClient()
 
-	//Check if request has LTM token or not
-	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
-	if !ok {
-		//If token is not available
-		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
+	//Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
 		return
 	}
 
-	//Body to be sent in the api/conversation/event/attended POST request
+	//Body to be sent in the event attended api internally
 	eventAttendedRequest, err := parseEventAttendedRequest(c)
 	if err != nil {
 		//If POST body params are missing
@@ -32,21 +27,8 @@ func EventAttended(c *gin.Context) {
 		return
 	}
 
-	options := api_client.PostRequestOptions{
-		Url:           client.CoreServiceBaseURL + EventAttendedEndPoint,
-		Body:          eventAttendedRequest,
-		CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
-	}
-
-	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return
-	}
-
-	//Parse response
-	utils.ParseResponse(c, respBytes)
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, EventAttendedEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, eventAttendedRequest)
 }
 
 func parseEventAttendedRequest(c *gin.Context) (*EventAttendedRequest, error) {

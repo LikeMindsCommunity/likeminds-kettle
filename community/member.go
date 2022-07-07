@@ -2,7 +2,6 @@ package community
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -36,38 +35,33 @@ func EditMember(c *gin.Context) {
 
 //Member method handles members for a commuinty
 func Member(c *gin.Context, method int) {
-	//Create internal API client
-	client := api_client.NewAPIClient()
 
-	//Call GET api/bot to get bot
-	response := user.GetBotResponse(c, utils.GETMethod)
-	if response == nil {
+	//Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
 		return
+	}
+
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
 	}
 
 	//Send request
-	var respBytes []byte
 	switch method {
 	case utils.GETMethod:
 
-		respBytes = getMemberInternal(c, client, response)
+		getMemberInternal(c, userId)
 
 	case utils.POSTMethod:
 
-		respBytes = addMemberInternal(c, client, response)
+		addMemberInternal(c, userId)
 
 	case utils.PUTMethod:
 
-		respBytes = editMemberInternal(c, client, response)
+		editMemberInternal(c, userId)
 
 	}
-
-	if respBytes == nil {
-		return
-	}
-
-	//Parse Response
-	utils.ParseResponse(c, respBytes)
 }
 
 func parseAddMemberRequest(c *gin.Context) (*AddMemberRequest, error) {
@@ -92,94 +86,52 @@ func parseEditMemberRequest(c *gin.Context) (*EditMemberRequest, error) {
 	return &emr, nil
 }
 
-func getMemberInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
-	var options api_client.GetRequestOptions
+func getMemberInternal(c *gin.Context, userId string) {
 
 	//GET Request params
 	page := c.Query(ParamPage)
 	if page == "" {
 		//If page is missing, call api/community/fetch_members_meta api internally
 
-		options = api_client.GetRequestOptions{
-			Url:           client.CoreServiceBaseURL + FetchMembersMetaEndPoint,
-			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
-		}
-
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, FetchMembersMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
 	} else {
 		//else, call api/v1/all_members api internally
 
-		//Params to be sent in the api/v1/all_members request
+		//Params to be sent in the fetch all members api internally
 		params := map[string]string{
 			ParamPage: page,
 		}
 
-		options = api_client.GetRequestOptions{
-			Url:           client.CoreServiceBaseURL + AllMembersV1EndPoint,
-			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
-			Params:        params,
-		}
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, AllMembersV1EndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 	}
-
-	respBytes, err := client.GetRequest(&options)
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return nil
-	}
-
-	return respBytes
 }
 
-func addMemberInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
-	//Body to be sent in the api/community/member POST request
+func addMemberInternal(c *gin.Context, userId string) {
+
+	//Body to be sent in the add member api internally
 	memberRequest, err := parseAddMemberRequest(c)
-
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
-		return nil
+		return
 	}
 
-	options := api_client.PostRequestOptions{
-		Url:           client.CoreServiceBaseURL + CommunityMemberEndPoint,
-		Body:          memberRequest,
-		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
-	}
-
-	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
-
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return nil
-	}
-
-	return respBytes
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, CommunityMemberEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, memberRequest)
 }
 
-func editMemberInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
-	//Body to be sent in the api/community/member PUT request
-	memberRequest, err := parseEditMemberRequest(c)
+func editMemberInternal(c *gin.Context, userId string) {
 
+	//Body to be sent in the edit member api internally
+	memberRequest, err := parseEditMemberRequest(c)
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
-		return nil
+		return
 	}
 
-	options := api_client.PostRequestOptions{
-		Url:           client.CoreServiceBaseURL + CommunityMemberEndPoint,
-		Body:          memberRequest,
-		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
-	}
-
-	respBytes, err := client.PutRequest(&options)
-
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return nil
-	}
-
-	return respBytes
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, CommunityMemberEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, memberRequest)
 }

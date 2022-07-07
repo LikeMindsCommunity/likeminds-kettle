@@ -2,8 +2,7 @@ package conversation
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/api_client"
-	"github.com/nateshr/likeminds-authentication/token"
+	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -30,35 +29,23 @@ func RemoveReaction(c *gin.Context) {
 
 //Reaction method handles reaction on a conversation object
 func Reaction(c *gin.Context, method int) {
-	//Create internal API client
-	client := api_client.NewAPIClient()
 
-	//Check if request has LTM token or not
-	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
-	if !ok {
-		//If token is not available
-		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
+	//Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
 		return
 	}
 
 	//Send request
-	var respBytes []byte
 	switch method {
 	case utils.PUTMethod:
 
-		respBytes = addReactionInternal(c, client, ltm)
+		addReactionInternal(c, userId)
 
 	case utils.DELETEMethod:
 
-		respBytes = removeReactionInternal(c, client, ltm)
+		removeReactionInternal(c, userId)
 	}
-
-	if respBytes == nil {
-		return
-	}
-
-	//Parse response
-	utils.ParseResponse(c, respBytes)
 }
 
 func parseAddReactionRequest(c *gin.Context) (*AddReactionRequest, error) {
@@ -83,56 +70,30 @@ func parseRemoveReactionRequest(c *gin.Context) (*RemoveReactionRequest, error) 
 	return &rrr, nil
 }
 
-func addReactionInternal(c *gin.Context, client *api_client.APIClient, ltm *token.LoginTokenMeta) []byte {
-	//Body to be sent in the api/conversation/add_reaction POST request
-	addReactionRequest, err := parseAddReactionRequest(c)
+func addReactionInternal(c *gin.Context, userId string) {
 
+	//Body to be sent in the add reaction api internally
+	addReactionRequest, err := parseAddReactionRequest(c)
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
-		return nil
+		return
 	}
 
-	options := api_client.PostRequestOptions{
-		Url:           client.CoreServiceBaseURL + AddReactionEndPoint,
-		Body:          addReactionRequest,
-		CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
-	}
-
-	respBytes, err := client.PostRequest(&options, api_client.BodyTypeFormUrlEncoded)
-
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return nil
-	}
-
-	return respBytes
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, AddReactionEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, addReactionRequest)
 }
 
-func removeReactionInternal(c *gin.Context, client *api_client.APIClient, ltm *token.LoginTokenMeta) []byte {
-	//Body to be sent in the api/conversation/remove_reaction POST request
-	removeReactionRequest, err := parseRemoveReactionRequest(c)
+func removeReactionInternal(c *gin.Context, userId string) {
 
+	//Body to be sent in the remove reaction api internally
+	removeReactionRequest, err := parseRemoveReactionRequest(c)
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
-		return nil
+		return
 	}
 
-	options := api_client.PostRequestOptions{
-		Url:           client.CoreServiceBaseURL + RemoveReactionEndPoint,
-		Body:          removeReactionRequest,
-		CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
-	}
-
-	respBytes, err := client.PostRequest(&options, api_client.BodyTypeFormUrlEncoded)
-
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return nil
-	}
-
-	return respBytes
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, RemoveReactionEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeReactionRequest)
 }

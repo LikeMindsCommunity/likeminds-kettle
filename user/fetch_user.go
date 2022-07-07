@@ -21,6 +21,14 @@ func GetRequestingUserId(c *gin.Context) string {
 
 	userUniqueId = ltm.UserUniqueID
 
+	return userUniqueId
+}
+
+func GetBotId(c *gin.Context) string {
+
+	var userUniqueId string = ""
+
+	//Get Platform Type
 	platform_type := c.GetHeader(utils.HeadersPlatformType)
 
 	if platform_type == string(utils.PlatformDashboard) {
