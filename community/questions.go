@@ -2,6 +2,7 @@ package community
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -29,15 +30,13 @@ type EditQuestionsRequest struct {
 //EditQuestions is used to edit Community Questions
 func EditQuestions(c *gin.Context) {
 
-	//Authorize User
-	userId := user.GetRequestingUserId(c)
-	if userId == "" {
-		return
-	}
+	//Create internal API client
+	client := api_client.NewAPIClient()
 
-	botId := user.GetBotId(c)
-	if botId != "" {
-		userId = botId
+	//Call GET api/bot to get bot
+	response := user.GetBotResponse(c, utils.GETMethod)
+	if response == nil {
+		return
 	}
 
 	//Body to be sent in the api/community/edit_questions POST request
@@ -48,8 +47,21 @@ func EditQuestions(c *gin.Context) {
 		return
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, EditQuestionsEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, editQuestionsRequest)
+	options := api_client.PostRequestOptions{
+		Url:           client.CoreServiceBaseURL + EditQuestionsEndPoint,
+		Body:          editQuestionsRequest,
+		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+	}
+
+	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
+	if err != nil {
+		//If API fails or any other error
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	//Parse Response
+	utils.ParseResponse(c, respBytes)
 }
 
 func parseEditQuestionRequest(c *gin.Context) (*EditQuestionsRequest, error) {
