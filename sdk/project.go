@@ -3,6 +3,8 @@ package sdk
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/nateshr/likeminds-authentication/api_client"
+	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -75,78 +77,92 @@ func DeleteProject(c *gin.Context) {
 
 //Project method handles community sdk project for each client
 func Project(c *gin.Context, method int) {
+	//Create internal API client
+	client := api_client.NewAPIClient()
 
-	//Authorizing User
-	userId := user.GetRequestingUserId(c)
-	if userId == "" {
+	//Check if request has LTM token or not
+	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
+	if !ok {
+		//If token is not available
+		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
 		return
 	}
 
+	//Send request
+	var respBytes []byte
+	var err error
 	switch method {
 	case utils.GETMethod:
-
-		//Params to be sent in the SDK fetch request internally
+		//Params to be sent in the api/sdk/project GET request
 		params := map[string]string{
-			ParamCommunityCreator: userId,
+			ParamCommunityCreator: ltm.UserUniqueID,
 		}
-
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
-
+		options := api_client.GetRequestOptions{
+			Url:           client.CoreServiceBaseURL + ProjectEndpoint,
+			CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
+			Params:        params,
+		}
+		respBytes, err = client.GetRequest(&options)
 	case utils.POSTMethod:
-
 		//Call POST api/bot to create bot
 		response := user.GetBotResponse(c, utils.POSTMethod)
 		if response == nil {
 			return
 		}
-
-		botId := user.GetUserUniqueIDFromResponse(response)
-
-		//Params to be sent in the create sdk project request internally
-		projectRequest, err := parseCreateProjectRequest(c, userId)
+		//Params to be sent in the api/sdk/project POST request
+		projectRequest, err := parseCreateProjectRequest(c, ltm.UserUniqueID)
 		if err != nil {
 			//If POST body params are missing
 			utils.GeneralAPIError(c, err.Error())
 			return
 		}
-
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, botId), nil, projectRequest)
-
+		options := api_client.PostRequestOptions{
+			Url:           client.CoreServiceBaseURL + ProjectEndpoint,
+			Body:          projectRequest,
+			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+		}
+		respBytes, err = client.PostRequest(&options, api_client.BodyTypeRaw)
 	case utils.PUTMethod:
-
-		//Fetch bot
-		botId := user.GetBotId(c)
-		if botId == "" {
-			utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
+		//Call POST api/bot to create bot
+		response := user.GetBotResponse(c, utils.GETMethod)
+		if response == nil {
 			return
 		}
-
-		//Params to be sent in the update sdk project request internally
+		//Params to be sent in the api/sdk/project PUT request
 		projectRequest, err := parseUpdateProjectRequest(c)
 		if err != nil {
 			//If POST body params are missing
 			utils.GeneralAPIError(c, err.Error())
 			return
 		}
-
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.PUTRequest, utils.CreateHeaders(c, botId), nil, projectRequest)
-
+		options := api_client.PostRequestOptions{
+			Url:           client.CoreServiceBaseURL + ProjectEndpoint,
+			Body:          projectRequest,
+			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+		}
+		respBytes, err = client.PutRequest(&options)
 	case utils.DELETEMethod:
-
-		//Fetch bot
-		botId := user.GetBotId(c)
-		if botId == "" {
-			utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
+		//Call GET api/bot to get bot
+		response := user.GetBotResponse(c, utils.GETMethod)
+		if response == nil {
 			return
 		}
-
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.DELETERequest, utils.CreateHeaders(c, botId), nil, nil)
-
+		//api/sdk/project with delete request
+		options := api_client.PostRequestOptions{
+			Url:           client.CoreServiceBaseURL + ProjectEndpoint,
+			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+		}
+		respBytes, err = client.DeleteRequest(&options)
 	}
+
+	if err != nil {
+		//If API fails or any other error
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	//Parse response
+	utils.ParseResponse(c, respBytes)
 }
 
 func parseCreateProjectRequest(c *gin.Context, projectCreatorID string) (*CreateProjectRequest, error) {
