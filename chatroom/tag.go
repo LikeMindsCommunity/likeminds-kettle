@@ -6,8 +6,8 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//GetChatroomSettings is used to fetch the chatroom settings
-func GetChatroomSettings(c *gin.Context) {
+//GetTaggingList is used to fetch the tag members list for a specific chatroom
+func GetTaggingList(c *gin.Context) {
 
 	//Authorize User
 	userId := user.GetRequestingUserId(c)
@@ -15,12 +15,7 @@ func GetChatroomSettings(c *gin.Context) {
 		return
 	}
 
-	botId := user.GetBotId(c)
-	if botId != "" {
-		userId = botId
-	}
-
-	//Params to be sent in the fetch chatroom settings api internally
+	//Params to be sent in the get tag list api internally
 	params := map[string]string{
 		ParamChatroomId: c.Query(ParamChatroomId),
 	}
@@ -33,5 +28,5 @@ func GetChatroomSettings(c *gin.Context) {
 	}
 
 	//Send Request
-	utils.SendRequest(c, utils.CoreService, FetchChatroomSettingsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	utils.SendRequest(c, utils.CoreService, GetTaggingListEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 }
