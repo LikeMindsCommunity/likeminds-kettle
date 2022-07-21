@@ -2,6 +2,7 @@ package conversation
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/community"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -10,26 +11,14 @@ type PollObject struct {
 	Text string `json:"text"`
 }
 
-type CommunityObject struct {
-	ID             int64  `json:"id"`
-	Name           string `json:"name"`
-	Purpose        string `json:"purpose"`
-	ImageUrl       string `json:"image_url"`
-	ImageUrlRound  string `json:"image_url_round"`
-	CreatedBy      string `json:"created_by"`
-	PromotersCount int32  `json:"promoters_count"`
-	MembersCount   int32  `json:"members_count"`
-	MemberState    int32  `json:"member_state"`
-}
-
 type ConversationPreview struct {
-	InternalLink string          `json:"internal_link"`
-	PreviewType  string          `json:"preview_type"`
-	PreviewText  string          `json:"preview_text"`
-	Title        string          `json:"title"`
-	Community    CommunityObject `json:"community"`
-	Action       string          `json:"action"`
-	ActionRoute  string          `json:"action_route"`
+	InternalLink string                    `json:"internal_link"`
+	PreviewType  string                    `json:"preview_type"`
+	PreviewText  string                    `json:"preview_text"`
+	Title        string                    `json:"title"`
+	Community    community.CommunityObject `json:"community"`
+	Action       string                    `json:"action"`
+	ActionRoute  string                    `json:"action_route"`
 }
 
 type CreateConversationRequest struct {
