@@ -275,7 +275,7 @@ func APIKeyValidationMiddleware() gin.HandlerFunc {
 			CustomHeaders: utils.CreateHeaders(c, ""),
 		}
 		//Send request
-		respBytes, err := client.GetRequest(&options)
+		respBytes, _, err := client.GetRequest(&options)
 		if err != nil {
 			//If API fails or any other error
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
@@ -319,7 +319,7 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 			CustomHeaders: utils.CreateHeaders(c, c.GetHeader(utils.HeadersMemberId)),
 		}
 		//Send request
-		respBytes, err := client.GetRequest(&options)
+		respBytes, _, err := client.GetRequest(&options)
 		if err != nil {
 			//If API fails or any other error
 			utils.GeneralAPIError(c, err.Error())
