@@ -1,6 +1,9 @@
 package main
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
@@ -16,8 +19,6 @@ import (
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 	"github.com/nateshr/likeminds-authentication/web"
-	"log"
-	"net/http"
 )
 
 var (
@@ -318,6 +319,7 @@ func enableCors() cors.Config {
 	config.AddAllowHeaders(
 		"x-member-id",
 		"x-platform-code",
+		"x-platform-type",
 		"x-version-code",
 		"x-username",
 		"x-password",
