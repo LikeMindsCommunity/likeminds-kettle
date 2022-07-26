@@ -40,6 +40,7 @@ type CreateChatroomRequest struct {
 	ScheduleTimeBefore         int64       `json:"schedule_time_before"`
 	EndTime                    int64       `json:"end_time"`
 	EndTimeAfter               int64       `json:"end_time_after"`
+	ChatroomImageUrl           string      `json:"chatroom_image_url"`
 }
 
 type EditChatroomRequest struct {
