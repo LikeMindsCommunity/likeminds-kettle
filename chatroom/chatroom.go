@@ -43,9 +43,10 @@ type CreateChatroomRequest struct {
 }
 
 type EditChatroomRequest struct {
-	ChatroomID int64  `json:"chatroom_id"`
-	Title      string `json:"title"`
-	Header     string `json:"header"`
+	ChatroomID       int64  `json:"chatroom_id"`
+	Title            string `json:"title"`
+	Header           string `json:"header"`
+	ChatroomImageUrl string `json:"chatroom_image_url"`
 }
 
 //CreateChatroom is used to create a new chatroom
