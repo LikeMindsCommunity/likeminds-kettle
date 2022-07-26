@@ -40,12 +40,14 @@ type CreateChatroomRequest struct {
 	ScheduleTimeBefore         int64       `json:"schedule_time_before"`
 	EndTime                    int64       `json:"end_time"`
 	EndTimeAfter               int64       `json:"end_time_after"`
+	ChatroomImageUrl           string      `json:"chatroom_image_url"`
 }
 
 type EditChatroomRequest struct {
-	ChatroomID int64  `json:"chatroom_id"`
-	Title      string `json:"title"`
-	Header     string `json:"header"`
+	ChatroomID       int64  `json:"chatroom_id"`
+	Title            string `json:"title"`
+	Header           string `json:"header"`
+	ChatroomImageUrl string `json:"chatroom_image_url"`
 }
 
 //CreateChatroom is used to create a new chatroom
