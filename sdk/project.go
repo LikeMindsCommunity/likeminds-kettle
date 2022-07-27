@@ -82,6 +82,11 @@ func Project(c *gin.Context, method int) {
 		return
 	}
 
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
+	}
+
 	switch method {
 	case utils.GETMethod:
 
@@ -116,13 +121,6 @@ func Project(c *gin.Context, method int) {
 
 	case utils.PUTMethod:
 
-		//Fetch bot
-		botId := user.GetBotId(c)
-		if botId == "" {
-			utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
-			return
-		}
-
 		//Params to be sent in the update sdk project request internally
 		projectRequest, err := parseUpdateProjectRequest(c)
 		if err != nil {
@@ -132,19 +130,12 @@ func Project(c *gin.Context, method int) {
 		}
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.PUTRequest, utils.CreateHeaders(c, botId), nil, projectRequest)
+		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, projectRequest)
 
 	case utils.DELETEMethod:
 
-		//Fetch bot
-		botId := user.GetBotId(c)
-		if botId == "" {
-			utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
-			return
-		}
-
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.DELETERequest, utils.CreateHeaders(c, botId), nil, nil)
+		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, nil)
 
 	}
 }
