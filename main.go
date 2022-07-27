@@ -319,7 +319,7 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 			CustomHeaders: utils.CreateHeaders(c, c.GetHeader(utils.HeadersMemberId)),
 		}
 		//Send request
-		respBytes, _, err := client.GetRequest(&options)
+		respBytes, statusCode, err := client.GetRequest(&options)
 		if err != nil {
 			//If API fails or any other error
 			utils.GeneralAPIError(c, err.Error())
@@ -336,7 +336,7 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 
 		if !apiCR.Success {
 			//If api/user/fetch returns success as false
-			utils.APIClientError(c, apiCR)
+			c.JSON(statusCode, apiCR)
 			return
 		}
 
