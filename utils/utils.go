@@ -2,25 +2,11 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
 )
-
-const HeadersMemberId = "x-member-id"
-const HeadersVersionCode = "x-version-code"
-const HeadersPlatformCode = "x-platform-code"
-const HeadersDeviceId = "x-device-id"
-const HeadersApiKey = "x-api-key"
-
-const GETMethod = 0
-const POSTMethod = 1
-const PUTMethod = 2
-const DELETEMethod = 3
 
 //RequestParamsToMap Converts a struct to a map while maintaining the json alias as keys
 func RequestParamsToMap(obj interface{}) (newMap map[string]string, err error) {
@@ -30,15 +16,6 @@ func RequestParamsToMap(obj interface{}) (newMap map[string]string, err error) {
 	}
 	err = json.Unmarshal(data, &newMap) // Convert to a map
 	return
-}
-
-//FormatFloat convert float upto prc
-func FormatFloat(num float64, prc int) string {
-	var (
-		zero, dot = "0", "."
-		str       = fmt.Sprintf("%."+strconv.Itoa(prc)+"f", num)
-	)
-	return strings.TrimRight(strings.TrimRight(str, zero), dot)
 }
 
 //CreateHeaders Used to create headers for our internal APIs
@@ -56,11 +33,12 @@ func CreateHeaders(c *gin.Context, userUniqueID string) map[string]interface{} {
 
 //Generate Response to be sent on request success
 func GenerateResponse(c *gin.Context, dataResponse map[string]interface{}) {
-	//
+	//Generating Response Object
 	response := Response{
 		Success: true,
 	}
 
+	//Removing Blank Data Key
 	if len(dataResponse) > 0 {
 		response.Data = dataResponse
 	}
@@ -72,6 +50,7 @@ func ValidateClientResponse(c *gin.Context, respBytes []byte) *api_client.APICli
 	//Parse response
 	var apiCR api_client.APIClientResponse
 	err := api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
+
 	if err != nil {
 		//Internal unmarshal error
 		GeneralAPIError(c, err.Error())
@@ -95,4 +74,87 @@ func ParseResponse(c *gin.Context, respBytes []byte) {
 	if apiCR != nil {
 		GenerateResponse(c, apiCR.Response)
 	}
+}
+
+func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) []byte {
+	//Create internal API client
+	client := api_client.NewAPIClient()
+	var baseUrl string
+	var respBytes []byte
+	var err error
+
+	switch serviceType {
+	case CoreService:
+		baseUrl = client.CoreServiceBaseURL
+
+	case SubscriptionService:
+		baseUrl = client.SubscriptionServiceBaseURL
+	}
+
+	switch requestType {
+	case GETRequest:
+
+		options := api_client.GetRequestOptions{
+			Url:           baseUrl + url,
+			CustomHeaders: headers,
+			Params:        params,
+		}
+
+		respBytes, err = client.GetRequest(&options)
+
+	case POSTRequestRawBody:
+
+		options := api_client.PostRequestOptions{
+			Url:           baseUrl + url,
+			CustomHeaders: headers,
+			Body:          body,
+		}
+
+		respBytes, err = client.PostRequest(&options, api_client.BodyTypeRaw)
+
+	case POSTRequestFormUrlEncodedBody:
+
+		options := api_client.PostRequestOptions{
+			Url:           baseUrl + url,
+			CustomHeaders: headers,
+			Body:          body,
+		}
+
+		respBytes, err = client.PostRequest(&options, api_client.BodyTypeFormUrlEncoded)
+
+	case PUTRequest:
+
+		options := api_client.PostRequestOptions{
+			Url:           baseUrl + url,
+			CustomHeaders: headers,
+			Body:          body,
+		}
+
+		respBytes, err = client.PutRequest(&options)
+
+	case DELETERequest:
+
+		options := api_client.PostRequestOptions{
+			Url:           baseUrl + url,
+			CustomHeaders: headers,
+		}
+
+		respBytes, err = client.DeleteRequest(&options)
+	}
+
+	if err != nil {
+		//If API fails or any other error
+		GeneralAPIError(c, err.Error())
+		return nil
+	}
+
+	return respBytes
+}
+
+func SendRequest(c *gin.Context, serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) {
+	respBytes := GetRequestResponse(c, serviceType, url, requestType, headers, params, body)
+
+	//Parse response
+	ParseResponse(c, respBytes)
+
 }

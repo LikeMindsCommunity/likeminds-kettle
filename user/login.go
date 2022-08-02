@@ -2,7 +2,6 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -24,26 +23,18 @@ type LoginRequest struct {
 
 //Login used when user is signing up and generate login and refresh tokens
 func Login(c *gin.Context) {
-	//POST body params
-	var lr LoginRequest
-	if err := c.ShouldBindJSON(&lr); err != nil {
+
+	//Body to be sent in the login api internally
+	loginRequest, err := parseLoginRequest(c)
+	if err != nil {
 		//If POST body params are missing
-		utils.POSTBodyParamsMissingError(c)
+		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 
-	//Create internal API client
-	client := api_client.NewAPIClient()
-	options := api_client.PostRequestOptions{
-		Url:           client.CoreServiceBaseURL + LoginEndPoint,
-		Body:          updateLoginRequest(lr),
-		CustomHeaders: utils.CreateHeaders(c, ""),
-	}
-	//Send request
-	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
+	//Send Request
+	respBytes := utils.GetRequestResponse(c, utils.CoreService, LoginEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, ""), nil, updateLoginRequest(loginRequest))
+	if respBytes == nil {
 		return
 	}
 
@@ -72,7 +63,18 @@ func Login(c *gin.Context) {
 	utils.GenerateResponse(c, dataResponse)
 }
 
-func updateLoginRequest(lr LoginRequest) map[string]interface{} {
+func parseLoginRequest(c *gin.Context) (*LoginRequest, error) {
+	//POST body params
+	var lr LoginRequest
+
+	if err := c.ShouldBindJSON(&lr); err != nil {
+		return nil, err
+	}
+
+	return &lr, nil
+}
+
+func updateLoginRequest(lr *LoginRequest) interface{} {
 	updatedLr := make(map[string]interface{})
 	user := make(map[string]interface{})
 

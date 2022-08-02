@@ -3,7 +3,6 @@ package chatroom
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -31,33 +30,28 @@ func GetParticipants(c *gin.Context) {
 
 //Participatns method handles chatroom participants
 func Participants(c *gin.Context, method int) {
-	//Create internal API client
-	client := api_client.NewAPIClient()
 
-	//Call GET api/bot to get bot
-	response := user.GetBotResponse(c, utils.GETMethod)
-	if response == nil {
+	//Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
 		return
+	}
+
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
 	}
 
 	//Send request
-	var respBytes []byte
 	switch method {
 	case utils.GETMethod:
 
-		respBytes = getParticipantsInternal(c, client, response)
+		getParticipantsInternal(c, userId)
 
 	case utils.POSTMethod:
 
-		respBytes = addParticipantsInternal(c, client, response)
+		addParticipantsInternal(c, userId)
 	}
-
-	if respBytes == nil {
-		return
-	}
-
-	//Parse response
-	utils.ParseResponse(c, respBytes)
 }
 
 func updateParticipantsRequest(pr *ParticipantRequest) *InternalParticipantRequest {
@@ -81,8 +75,7 @@ func parseParticipantsRequest(c *gin.Context) (*ParticipantRequest, error) {
 	return &pr, nil
 }
 
-func getParticipantsInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
-	var options api_client.GetRequestOptions
+func getParticipantsInternal(c *gin.Context, userId string) {
 
 	//GET Request params
 	is_secret := c.Query(ParamIsSecret)
@@ -95,74 +88,39 @@ func getParticipantsInternal(c *gin.Context, client *api_client.APIClient, respo
 	if is_secret == "" || is_secret == "false" {
 		//If is_secret is missing or false, call api/chatroom/fetch_participants_meta api internally
 
-		options = api_client.GetRequestOptions{
-			Url:           client.CoreServiceBaseURL + FetchParticipantsMetaEndPoint,
-			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
-			Params:        params,
-		}
-
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, FetchParticipantsMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 	} else {
 		//else, call api/chatroom/secret/fetch_participants_meta api internally
 
-		options = api_client.GetRequestOptions{
-			Url:           client.CoreServiceBaseURL + FetchSecretParticipantsMetaEndPoint,
-			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
-			Params:        params,
-		}
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, FetchSecretParticipantsMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 	}
-
-	respBytes, err := client.GetRequest(&options)
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return nil
-	}
-
-	return respBytes
 }
 
-func addParticipantsInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
-	var options api_client.PostRequestOptions
+func addParticipantsInternal(c *gin.Context, userId string) {
 
 	participantRequest, err := parseParticipantsRequest(c)
-
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
-		return nil
+		return
 	}
 
 	is_secret := participantRequest.IsSecret
 
 	if !is_secret {
-		//If is_secret is missing or false, call api/chatroom/add api internally
+		//If is_secret is missing or false, call add chatroom participant api internally
 
-		options = api_client.PostRequestOptions{
-			Url:           client.CoreServiceBaseURL + AddParticipantsEndPoint,
-			Body:          participantRequest,
-			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
-		}
-
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, AddParticipantsEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, participantRequest)
 	} else {
-		//else, call api/chatroom/secret/add api internally
+		//else, call add secret chatroom participant api internally
 
 		//updated body according to secret participant add request
 		addSecretParticipantRequest := updateParticipantsRequest(participantRequest)
 
-		options = api_client.PostRequestOptions{
-			Url:           client.CoreServiceBaseURL + AddSecretParticipantsEndPoint,
-			Body:          addSecretParticipantRequest,
-			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
-		}
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, AddSecretParticipantsEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, addSecretParticipantRequest)
 	}
-
-	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
-
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return nil
-	}
-
-	return respBytes
 }

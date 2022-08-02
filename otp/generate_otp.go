@@ -2,40 +2,25 @@ package otp
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
 // GenerateOTP is used to generate otp
 func GenerateOTP(c *gin.Context) {
-	//GET Request params
-	mobileNo := c.Query(ParamMobileNo)
-	countryCode := c.Query(ParamCountryCode)
-	if mobileNo == "" || countryCode == "" {
+
+	//Params to be sent in the generate otp api internally
+	params := map[string]string{
+		ParamCountryCode: c.Query(ParamCountryCode),
+		ParamMobileNo:    c.Query(ParamMobileNo),
+	}
+
+	//Params Validation
+	if params[ParamCountryCode] == "" || params[ParamMobileNo] == "" {
 		//If GET params are missing
 		utils.GETQueryParamsMissingError(c)
 		return
 	}
 
-	//Params to be sent in the api/generate_otp request
-	params := map[string]string{
-		ParamCountryCode: countryCode,
-		ParamMobileNo:    mobileNo,
-	}
-	//Create internal API client
-	client := api_client.NewAPIClient()
-	options := api_client.GetRequestOptions{
-		Url:           client.CoreServiceBaseURL + GenerateOTPEndPoint,
-		Params:        params,
-		CustomHeaders: nil,
-	}
-	//Send request
-	respBytes, err := client.GetRequest(&options)
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return
-	}
-	//Parse response
-	utils.ParseResponse(c, respBytes)
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, GenerateOTPEndPoint, utils.GETRequest, nil, params, nil)
 }

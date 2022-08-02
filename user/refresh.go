@@ -1,14 +1,17 @@
 package user
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
-	"net/http"
 )
 
 //Refresh to generate new LTM and RTM tokens
 func Refresh(c *gin.Context) {
+
+	//Check if request has RTM token or not
 	currentRTM, ok := c.MustGet(token.ParamRTM).(*token.RefreshTokenMeta)
 	if !ok {
 		utils.GeneralAPIError(c, utils.ErrorInvalidRTM)
@@ -24,12 +27,13 @@ func Refresh(c *gin.Context) {
 		})
 		return
 	}
-	token := map[string]string{
+
+	//Generate Token Object
+	token := map[string]interface{}{
 		token.ParamAccessToken:  ltm.AccessToken,
 		token.ParamRefreshToken: rtm.RefreshToken,
 	}
-	c.JSON(http.StatusOK, utils.Response{
-		Success: true,
-		Data:    token,
-	})
+
+	//Generate Response
+	utils.GenerateResponse(c, token)
 }

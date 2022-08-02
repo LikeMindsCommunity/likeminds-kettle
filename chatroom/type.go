@@ -2,7 +2,6 @@ package chatroom
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -15,13 +14,15 @@ type ChatroomTypeRequest struct {
 //ChatroomType is used to change the type of chatroom
 func ChatroomType(c *gin.Context) {
 
-	//Create internal API client
-	client := api_client.NewAPIClient()
-
-	//Call GET api/bot to get bot
-	response := user.GetBotResponse(c, utils.GETMethod)
-	if response == nil {
+	//Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
 		return
+	}
+
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
 	}
 
 	//Body to be sent in the api/chatroom/change_type POST request
@@ -32,21 +33,8 @@ func ChatroomType(c *gin.Context) {
 		return
 	}
 
-	options := api_client.PostRequestOptions{
-		Url:           client.CoreServiceBaseURL + ChatroomTypeEndPoint,
-		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
-		Body:          chatroomTypeRequest,
-	}
-
-	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
-	if err != nil {
-		//If API fails or any other error
-		utils.GeneralAPIError(c, err.Error())
-		return
-	}
-
-	//Parse response
-	utils.ParseResponse(c, respBytes)
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, ChatroomTypeEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, chatroomTypeRequest)
 }
 
 func parseChatroomTypeRequest(c *gin.Context) (*ChatroomTypeRequest, error) {
