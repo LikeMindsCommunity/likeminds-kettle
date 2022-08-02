@@ -7,13 +7,14 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-type ChatroomTypeRequest struct {
-	ChatroomID *int32 `json:"chatroom_id" binding:"required"`
-	IsSecret   *bool  `json:"is_secret" binding:"required"`
+type DeleteChatroomRequest struct {
+	ChatroomID int64  `json:"chatroom_id" binding:"required"`
+	TagID      int32  `json:"tag_id"`
+	Reason     string `json:"reason"`
 }
 
-//ChatroomType is used to change the type of chatroom
-func ChatroomType(c *gin.Context) {
+//DeleteChatroom is used to delete an existing chatroom
+func DeleteChatroom(c *gin.Context) {
 
 	//Create internal API client
 	client := api_client.NewAPIClient()
@@ -24,8 +25,8 @@ func ChatroomType(c *gin.Context) {
 		return
 	}
 
-	//Body to be sent in the api/chatroom/change_type POST request
-	chatroomTypeRequest, err := parseChatroomTypeRequest(c)
+	//Body to be sent in the api/chatroom_delete POST request
+	deleteChatroomRequest, err := parseDeleteChatroomRequest(c)
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
@@ -33,12 +34,12 @@ func ChatroomType(c *gin.Context) {
 	}
 
 	options := api_client.PostRequestOptions{
-		Url:           client.CoreServiceBaseURL + ChatroomTypeEndPoint,
+		Url:           client.CoreServiceBaseURL + DeleteChatroomEndPoint,
 		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
-		Body:          chatroomTypeRequest,
+		Body:          deleteChatroomRequest,
 	}
 
-	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
+	respBytes, err := client.PostRequest(&options, api_client.BodyTypeFormUrlEncoded)
 	if err != nil {
 		//If API fails or any other error
 		utils.GeneralAPIError(c, err.Error())
@@ -49,13 +50,13 @@ func ChatroomType(c *gin.Context) {
 	utils.ParseResponse(c, respBytes)
 }
 
-func parseChatroomTypeRequest(c *gin.Context) (*ChatroomTypeRequest, error) {
+func parseDeleteChatroomRequest(c *gin.Context) (*DeleteChatroomRequest, error) {
 	//POST body params
-	var ctr ChatroomTypeRequest
+	var dcr DeleteChatroomRequest
 
-	if err := c.ShouldBindJSON(&ctr); err != nil {
+	if err := c.ShouldBindJSON(&dcr); err != nil {
 		return nil, err
 	}
 
-	return &ctr, nil
+	return &dcr, nil
 }

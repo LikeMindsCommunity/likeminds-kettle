@@ -1,4 +1,4 @@
-package user
+package chatroom
 
 import (
 	"github.com/gin-gonic/gin"
@@ -7,8 +7,8 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//MergeAccount used when user wants to merge account and generate login and refresh tokens
-func MergeAccount(c *gin.Context) {
+//GetTaggingList is used to fetch the tag members list for a specific chatroom
+func GetTaggingList(c *gin.Context) {
 
 	//Check if request has LTM token or not
 	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
@@ -21,23 +21,35 @@ func MergeAccount(c *gin.Context) {
 	//Create headers from login token
 	headers := make(map[string]interface{})
 	headers[utils.HeadersMemberId] = ltm.UserUniqueID
-	//Params to be sent in the api/merge_account request
-	params := map[string]string{
-		//TODO - get mobile number and country code
+
+	//GET Request params
+	chatroom_id := c.Query(ParamChatroomId)
+	if chatroom_id == "" {
+		//If GET params are missing
+		utils.GETQueryParamsMissingError(c)
+		return
 	}
+
+	//Params to be sent in the api/chatroom/get_tagging_list request
+	params := map[string]string{
+		ParamChatroomId: chatroom_id,
+	}
+
 	//Create internal API client
 	apiClient := api_client.NewAPIClient()
 	//Send request
-	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
-		Url:           apiClient.CoreServiceBaseURL + MergeAccountEndPoint,
+	respBytes, err := apiClient.GetRequest(&api_client.GetRequestOptions{
+		Url:           apiClient.CoreServiceBaseURL + GetTaggingListEndPoint,
 		CustomHeaders: headers,
-		Body:          params,
-	}, api_client.BodyTypeRaw)
+		Params:        params,
+	})
+
 	if err != nil {
 		//If API fails or any other error
 		utils.GeneralAPIError(c, err.Error())
 		return
 	}
+
 	//Parse response
 	utils.ParseResponse(c, respBytes)
 }

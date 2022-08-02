@@ -2,6 +2,7 @@ package chatroom
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -49,18 +50,12 @@ type EditChatroomRequest struct {
 	ChatroomImageUrl string `json:"chatroom_image_url"`
 }
 
-type DeleteChatroomRequest struct {
-	ChatroomID int64  `json:"chatroom_id" binding:"required"`
-	TagID      int32  `json:"tag_id"`
-	Reason     string `json:"reason"`
-}
-
 //CreateChatroom is used to create a new chatroom
 func CreateChatroom(c *gin.Context) {
 	Chatroom(c, utils.POSTMethod)
 }
 
-//EditChatroom is used to edit chatroom details
+//EditChatroom is used to edit community details
 func EditChatroom(c *gin.Context) {
 	Chatroom(c, utils.PUTMethod)
 }
@@ -70,43 +65,39 @@ func GetChatroom(c *gin.Context) {
 	Chatroom(c, utils.GETMethod)
 }
 
-//DeleteChatroom is used to delete an existing chatroom
-func DeleteChatroom(c *gin.Context) {
-	Chatroom(c, utils.DELETEMethod)
-}
-
-//Chatroom method handles chatroom objects
+//Project method handles community sdk project for each client
 func Chatroom(c *gin.Context, method int) {
+	//Create internal API client
+	client := api_client.NewAPIClient()
 
-	//Authorize User
-	userId := user.GetRequestingUserId(c)
-	if userId == "" {
+	//Call GET api/bot to get bot
+	response := user.GetBotResponse(c, utils.GETMethod)
+	if response == nil {
 		return
 	}
 
-	botId := user.GetBotId(c)
-	if botId != "" {
-		userId = botId
-	}
-
 	//Send request
+	var respBytes []byte
 	switch method {
 	case utils.GETMethod:
 
-		getChatroomInternal(c, userId)
+		respBytes = getChatroomInternal(c, client, response)
 
 	case utils.POSTMethod:
 
-		createChatroomInternal(c, userId)
+		respBytes = createChatroomInternal(c, client, response)
 
 	case utils.PUTMethod:
 
-		editChatroomInternal(c, userId)
-
-	case utils.DELETEMethod:
-
-		deleteChatroomInternal(c, userId)
+		respBytes = editChatroomInternal(c, client, response)
 	}
+
+	if respBytes == nil {
+		return
+	}
+
+	//Parse response
+	utils.ParseResponse(c, respBytes)
 }
 
 func parseCreateChatroomRequest(c *gin.Context) (*CreateChatroomRequest, error) {
@@ -131,18 +122,8 @@ func parseEditChatroomRequest(c *gin.Context) (*EditChatroomRequest, error) {
 	return &ecr, nil
 }
 
-func parseDeleteChatroomRequest(c *gin.Context) (*DeleteChatroomRequest, error) {
-	//POST body params
-	var dcr DeleteChatroomRequest
-
-	if err := c.ShouldBindJSON(&dcr); err != nil {
-		return nil, err
-	}
-
-	return &dcr, nil
-}
-
-func getChatroomInternal(c *gin.Context, userId string) {
+func getChatroomInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
+	var options api_client.GetRequestOptions
 
 	//GET Request params
 	chatroom_id := c.Query(ParamChatroomId)
@@ -154,83 +135,87 @@ func getChatroomInternal(c *gin.Context, userId string) {
 			ParamPage: c.Query(ParamPage),
 		}
 
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchAllChatroomEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		options = api_client.GetRequestOptions{
+			Url:           client.CoreServiceBaseURL + FetchAllChatroomEndPoint,
+			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+			Params:        params,
+		}
 
 	} else {
 		//else, call api/chatroom/fetch api internally
 
-		version := c.GetHeader(utils.HeadersVersionCode)
-
-		if version == "" {
-			//Params to be sent in the api/chatroom/fetch request
-			params := map[string]string{
-				ParamChatroomId: c.Query(ParamChatroomId),
-			}
-
-			//Send Request
-			utils.SendRequest(c, utils.CoreService, FetchChatroomEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
-
+		//Params to be sent in the api/chatroom/fetch request
+		params := map[string]string{
+			ParamChatroomId: c.Query(ParamChatroomId),
 		}
 
-		if version == "v2" {
-			//Params to be sent in the /api/v2/fetch_chatroom request
-			params := map[string]string{
-				ParamChatroomId: chatroom_id,
-				ParamAJ:         c.Query(ParamAJ),
-				ParamSourceId:   c.Query(ParamSourceId),
-				ParamApiType:    c.Query(ParamApiType),
-			}
-
-			//Send Request
-			utils.SendRequest(c, utils.CoreService, FetchChatroomV2EndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
-
+		options = api_client.GetRequestOptions{
+			Url:           client.CoreServiceBaseURL + FetchChatroomEndPoint,
+			CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+			Params:        params,
 		}
-
 	}
+
+	respBytes, err := client.GetRequest(&options)
+	if err != nil {
+		//If API fails or any other error
+		utils.GeneralAPIError(c, err.Error())
+		return nil
+	}
+
+	return respBytes
 }
 
-func createChatroomInternal(c *gin.Context, userId string) {
+func createChatroomInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
 	//Body to be sent in the api/chatroom/create POST request
 	createChatroomRequest, err := parseCreateChatroomRequest(c)
 
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
-		return
+		return nil
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, CreateChatroomEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createChatroomRequest)
+	options := api_client.PostRequestOptions{
+		Url:           client.CoreServiceBaseURL + CreateChatroomEndPoint,
+		Body:          createChatroomRequest,
+		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+	}
 
+	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
+
+	if err != nil {
+		//If API fails or any other error
+		utils.GeneralAPIError(c, err.Error())
+		return nil
+	}
+
+	return respBytes
 }
 
-func editChatroomInternal(c *gin.Context, userId string) {
+func editChatroomInternal(c *gin.Context, client *api_client.APIClient, response *utils.Response) []byte {
 	//Body to be sent in the api/chatroom/edit POST request
 	editChatroomRequest, err := parseEditChatroomRequest(c)
 
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
-		return
+		return nil
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, EditChatroomEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, editChatroomRequest)
+	options := api_client.PostRequestOptions{
+		Url:           client.CoreServiceBaseURL + EditChatroomEndPoint,
+		Body:          editChatroomRequest,
+		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+	}
 
-}
-
-func deleteChatroomInternal(c *gin.Context, userId string) {
-	//Body to be sent in the api/chatroom_delete POST request
-	deleteChatroomRequest, err := parseDeleteChatroomRequest(c)
+	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
 
 	if err != nil {
-		//If POST body params are missing
+		//If API fails or any other error
 		utils.GeneralAPIError(c, err.Error())
-		return
+		return nil
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, DeleteChatroomEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, deleteChatroomRequest)
-
+	return respBytes
 }

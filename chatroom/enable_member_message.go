@@ -2,6 +2,7 @@ package chatroom
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -15,18 +16,16 @@ type EnableMemberMessageRequest struct {
 //EnableMemberMessage is used to enable member message settings in chatroom
 func EnableMemberMessage(c *gin.Context) {
 
-	//Authorize User
-	userId := user.GetRequestingUserId(c)
-	if userId == "" {
+	//Create internal API client
+	client := api_client.NewAPIClient()
+
+	//Call GET api/bot to get bot
+	response := user.GetBotResponse(c, utils.GETMethod)
+	if response == nil {
 		return
 	}
 
-	botId := user.GetBotId(c)
-	if botId != "" {
-		userId = botId
-	}
-
-	//Body to be sent in the enable member message api internally
+	//Body to be sent in the api/chatroom/enable_member_message POST request
 	enableMemberMessageRequest, err := parseEnableMemberMessageRequest(c)
 	if err != nil {
 		//If POST body params are missing
@@ -34,8 +33,21 @@ func EnableMemberMessage(c *gin.Context) {
 		return
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, EnableMemberMessageEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, enableMemberMessageRequest)
+	options := api_client.PostRequestOptions{
+		Url:           client.CoreServiceBaseURL + EnableMemberMessageEndPoint,
+		Body:          enableMemberMessageRequest,
+		CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+	}
+
+	respBytes, err := client.PostRequest(&options, api_client.BodyTypeRaw)
+	if err != nil {
+		//If API fails or any other error
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	//Parse response
+	utils.ParseResponse(c, respBytes)
 }
 
 func parseEnableMemberMessageRequest(c *gin.Context) (*EnableMemberMessageRequest, error) {
