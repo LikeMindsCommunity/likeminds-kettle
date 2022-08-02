@@ -2,6 +2,7 @@ package moderation
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -34,21 +35,22 @@ func GetRights(c *gin.Context) {
 
 //Rigths method handles community rights for members
 func Rights(c *gin.Context, method int) {
+	//Create internal API client
+	client := api_client.NewAPIClient()
 
-	//Authorize User
-	userId := user.GetRequestingUserId(c)
-	if userId == "" {
+	//Call GET api/bot to get bot
+	response := user.GetBotResponse(c, utils.GETMethod)
+	if response == nil {
 		return
 	}
 
-	botId := user.GetBotId(c)
-	if botId != "" {
-		userId = botId
-	}
-
 	//Send request
+	var respBytes []byte
+	var err error
 	switch method {
 	case utils.GETMethod:
+
+		var options api_client.GetRequestOptions
 
 		//Params to be sent in the fetch rights request
 		params := map[string]string{
@@ -59,21 +61,38 @@ func Rights(c *gin.Context, method int) {
 		is_cm := c.Query(ParamIsCm)
 
 		if is_cm == "" || is_cm == "false" {
-			//If is_cm is missing or false, call fetch member rights api internally
+			//If is_cm is missing or false, call api/fetch_member_rights api internally
 
-			//Send Request
-			utils.SendRequest(c, utils.CoreService, FetchMemberRights, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+			options = api_client.GetRequestOptions{
+				Url:           client.CoreServiceBaseURL + FetchMemberRights,
+				CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+				Params:        params,
+			}
+
 		} else {
-			//else, call fetch cm rights api internally
+			//else, call api/fetch_community_manager_rights api internally
 
-			//Send Request
-			utils.SendRequest(c, utils.CoreService, FetchCMRights, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+			options = api_client.GetRequestOptions{
+				Url:           client.CoreServiceBaseURL + FetchCMRights,
+				CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+				Params:        params,
+			}
+		}
+
+		respBytes, err = client.GetRequest(&options)
+		if err != nil {
+			//If API fails or any other error
+			utils.GeneralAPIError(c, err.Error())
+			return
 		}
 
 	case utils.PUTMethod:
 
+		var options api_client.PostRequestOptions
+
 		//Body to be sent in the update rights POST request
 		rightsRequest, err := parseRightsRequest(c)
+
 		if err != nil {
 			//If POST body params are missing
 			utils.GeneralAPIError(c, err.Error())
@@ -83,17 +102,35 @@ func Rights(c *gin.Context, method int) {
 		is_cm := rightsRequest.IsCM
 
 		if !is_cm {
-			//If is_cm is missing or false, call update member rights api internally
+			//If is_cm is missing or false, call api/update_member_rights api internally
 
-			//Send Request
-			utils.SendRequest(c, utils.CoreService, UpdateMemberRights, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, rightsRequest)
+			options = api_client.PostRequestOptions{
+				Url:           client.CoreServiceBaseURL + UpdateMemberRights,
+				Body:          rightsRequest,
+				CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+			}
+
 		} else {
-			//else, call update cm rights api internally
+			//else, call api/update_community_manager_rights api internally
 
-			//Send Request
-			utils.SendRequest(c, utils.CoreService, UpdateCMRights, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, rightsRequest)
+			options = api_client.PostRequestOptions{
+				Url:           client.CoreServiceBaseURL + UpdateCMRights,
+				Body:          rightsRequest,
+				CustomHeaders: utils.CreateHeaders(c, user.GetUserUniqueIDFromResponse(response)),
+			}
+		}
+
+		respBytes, err = client.PostRequest(&options, api_client.BodyTypeRaw)
+
+		if err != nil {
+			//If API fails or any other error
+			utils.GeneralAPIError(c, err.Error())
+			return
 		}
 	}
+
+	//Parse response
+	utils.ParseResponse(c, respBytes)
 }
 
 func parseRightsRequest(c *gin.Context) (*RightsRequest, error) {
