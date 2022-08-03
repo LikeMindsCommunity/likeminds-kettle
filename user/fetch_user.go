@@ -28,13 +28,14 @@ func GetBotId(c *gin.Context) string {
 
 	var userUniqueId string = ""
 
-	//Get Platform Type
+	//Get Platform Type and API Key
 	platform_type := c.GetHeader(utils.HeadersPlatformType)
+	api_key := c.GetHeader(utils.HeadersApiKey)
 
-	if platform_type == string(utils.PlatformDashboard) {
+	if platform_type == string(utils.PlatformDashboard) && api_key != "" {
 		//Call GET api/bot to get bot
 		response := GetBotResponse(c, utils.GETMethod)
-		if response != nil {
+		if response != nil && response.Success {
 			userUniqueId = GetUserUniqueIDFromResponse(response)
 		}
 	}

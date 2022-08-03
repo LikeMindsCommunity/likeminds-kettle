@@ -82,11 +82,6 @@ func Project(c *gin.Context, method int) {
 		return
 	}
 
-	botId := user.GetBotId(c)
-	if botId != "" {
-		userId = botId
-	}
-
 	switch method {
 	case utils.GETMethod:
 
@@ -121,6 +116,11 @@ func Project(c *gin.Context, method int) {
 
 	case utils.PUTMethod:
 
+		botId := user.GetBotId(c)
+		if botId != "" {
+			userId = botId
+		}
+
 		//Params to be sent in the update sdk project request internally
 		projectRequest, err := parseUpdateProjectRequest(c)
 		if err != nil {
@@ -133,6 +133,11 @@ func Project(c *gin.Context, method int) {
 		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, projectRequest)
 
 	case utils.DELETEMethod:
+
+		botId := user.GetBotId(c)
+		if botId != "" {
+			userId = botId
+		}
 
 		//Send Request
 		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, nil)
