@@ -32,7 +32,6 @@ const SyncChatroomsEndPoint = "/api/sync_chatrooms"
 const SyncChatroomsDiffEndPoint = "/api/sync_chatrooms_diff"
 const ChatroomTypeEndPoint = "/api/chatroom/change_type"
 
-const ParamCommunityId = "community_id"
 const ParamChatroomId = "chatroom_id"
 const ParamCollabcardId = "collabcard_id"
 const ParamMemberId = "member_id"

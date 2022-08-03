@@ -17,8 +17,7 @@ func FetchShareUrl(c *gin.Context) {
 
 	//Params to be sent in the fetch share url api internally
 	params := map[string]string{
-		ParamChatroomId:  c.Query(ParamChatroomId),
-		ParamCommunityId: c.Query(ParamCommunityId),
+		ParamChatroomId: c.Query(ParamChatroomId),
 	}
 
 	//Send Request
