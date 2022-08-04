@@ -8,16 +8,16 @@ import (
 
 //CreateScreenRequest | create Onboarding Screen Schema
 type CreateScreenRequest struct {
-	Index     *int64  `json:"index" binding:"required"`
-	Image     *string `json:"image" binding:"required"`
-	Heading   string  `json:"heading"`
-	Text      string  `json:"text"`
-	CtaColour string  `json:"cta_colour"`
-	CtaText   string  `json:"cta_text"`
+	Index     int64  `json:"index" binding:"required"`
+	Image     string `json:"image" binding:"required"`
+	Heading   string `json:"heading"`
+	Text      string `json:"text"`
+	CtaColour string `json:"cta_colour"`
+	CtaText   string `json:"cta_text"`
 }
 
 type UpdateScreenRequest struct {
-	Id        *int64 `json:"id" binding:"required"`
+	Id        int64  `json:"id" binding:"required"`
 	Index     int64  `json:"index"`
 	Image     string `json:"image"`
 	Heading   string `json:"heading"`
@@ -27,7 +27,7 @@ type UpdateScreenRequest struct {
 }
 
 type DeleteScreenRequest struct {
-	Id *int64 `json:"id" binding:"required"`
+	Id int64 `json:"id" binding:"required"`
 }
 
 //CreateScreen is used to create a new onboarding screen
