@@ -59,6 +59,11 @@ func OnboardingScreen(c *gin.Context, method int) {
 		return
 	}
 
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
+	}
+
 	switch method {
 	case utils.GETMethod:
 
@@ -72,13 +77,6 @@ func OnboardingScreen(c *gin.Context, method int) {
 
 	case utils.POSTMethod:
 
-		//Fetch bot
-		botId := user.GetBotId(c)
-		if botId == "" {
-			utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
-			return
-		}
-
 		//Params to be sent in the create onboarding screen api internally
 		screenRequest, err := parseCreateScreenRequest(c)
 		if err != nil {
@@ -88,16 +86,9 @@ func OnboardingScreen(c *gin.Context, method int) {
 		}
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, OnboardingEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, botId), nil, screenRequest)
+		utils.SendRequest(c, utils.CoreService, OnboardingEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, screenRequest)
 
 	case utils.PUTMethod:
-
-		//Fetch bot
-		botId := user.GetBotId(c)
-		if botId == "" {
-			utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
-			return
-		}
 
 		//Params to be sent in the update onboarding screen api internally
 		screenRequest, err := parseUpdateScreenRequest(c)
@@ -108,16 +99,9 @@ func OnboardingScreen(c *gin.Context, method int) {
 		}
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, OnboardingEndpoint, utils.PUTRequest, utils.CreateHeaders(c, botId), nil, screenRequest)
+		utils.SendRequest(c, utils.CoreService, OnboardingEndpoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, screenRequest)
 
 	case utils.DELETEMethod:
-
-		//Fetch bot
-		botId := user.GetBotId(c)
-		if botId == "" {
-			utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
-			return
-		}
 
 		//Params to be sent in the delete onboarding screen api internally
 		screenRequest, err := parseDeleteScreenRequest(c)
@@ -128,7 +112,7 @@ func OnboardingScreen(c *gin.Context, method int) {
 		}
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, OnboardingEndpoint, utils.DELETERequest, utils.CreateHeaders(c, botId), nil, screenRequest)
+		utils.SendRequest(c, utils.CoreService, OnboardingEndpoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, screenRequest)
 
 	}
 }
