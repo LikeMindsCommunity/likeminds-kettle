@@ -18,7 +18,6 @@ func CollabcardSeen(c *gin.Context) {
 	//Params to be sent in the collabcard seen api internally
 	params := map[string]string{
 		ParamCollabcardId:   c.Query(ParamCollabcardId),
-		ParamCommunityId:    c.Query(ParamCommunityId),
 		ParamMemberId:       c.Query(ParamMemberId),
 		ParamCollabcardType: c.Query(ParamCollabcardType),
 	}

@@ -15,11 +15,6 @@ func FetchPendingChatroom(c *gin.Context) {
 		return
 	}
 
-	//Params to be sent in the fetch pending chatroom api internally
-	params := map[string]string{
-		ParamCommunityId: c.Query(ParamCommunityId),
-	}
-
 	//Send Request
-	utils.SendRequest(c, utils.CoreService, FetchPendingChatroomEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	utils.SendRequest(c, utils.CoreService, FetchPendingChatroomEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
 }

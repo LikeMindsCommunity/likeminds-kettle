@@ -55,12 +55,17 @@ func main() {
 	router.GET("/sdk/project", LTMValidationMiddleware(client, true), sdk.GetProject)
 	router.PUT("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.EditProject)
 	router.DELETE("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.DeleteProject)
+	router.GET("/sdk/onboarding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.GetScreen)
+	router.POST("/sdk/onboarding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.CreateScreen)
+	router.PUT("/sdk/onboarding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.EditScreen)
+	router.DELETE("/sdk/onboarding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.DeleteScreen)
 
 	//Chatroom Apis
 	router.GET("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetChatroom)
 	router.POST("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
 	router.PUT("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EditChatroom)
 	router.DELETE("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.DeleteChatroom)
+	router.PUT("/chatroom/type", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ChatroomType)
 	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
 	router.PUT("/chatroom/pin", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.PinChatroom)
 	router.GET("/chatroom/tag", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetTaggingList)

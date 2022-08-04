@@ -6,7 +6,6 @@ const EditQuestionsEndPoint = "/api/community/edit_questions"
 const CommunityMemberEndPoint = "/api/community/member"
 
 const ParamPage = "page"
-const ParamCommunityId = "community_id"
 
 type CommunityObject struct {
 	ID             int64  `json:"id"`

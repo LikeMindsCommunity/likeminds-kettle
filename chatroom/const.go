@@ -30,6 +30,7 @@ const FetchPendingChatroomEndPoint = "/api/fetch_pending_chatroom"
 const ActionPendingChatroomEndPoint = "/api/action_pending_chatroom"
 const SyncChatroomsEndPoint = "/api/sync_chatrooms"
 const SyncChatroomsDiffEndPoint = "/api/sync_chatrooms_diff"
+const ChatroomTypeEndPoint = "/api/chatroom/change_type"
 
 const ParamCommunityId = "community_id"
 const ParamChatroomId = "chatroom_id"
