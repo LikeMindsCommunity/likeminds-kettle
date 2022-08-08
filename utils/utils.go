@@ -137,6 +137,7 @@ func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, req
 		options := api_client.PostRequestOptions{
 			Url:           baseUrl + url,
 			CustomHeaders: headers,
+			Body:          body,
 		}
 
 		respBytes, err = client.DeleteRequest(&options)

@@ -55,6 +55,10 @@ func main() {
 	router.GET("/sdk/project", LTMValidationMiddleware(client, true), sdk.GetProject)
 	router.PUT("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.EditProject)
 	router.DELETE("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.DeleteProject)
+	router.GET("/sdk/onboarding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.GetScreen)
+	router.POST("/sdk/onboarding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.CreateScreen)
+	router.PUT("/sdk/onboarding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.EditScreen)
+	router.DELETE("/sdk/onboarding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.DeleteScreen)
 
 	//Chatroom Apis
 	router.GET("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetChatroom)
