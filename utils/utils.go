@@ -107,6 +107,7 @@ func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, req
 		options := api_client.PostRequestOptions{
 			Url:           baseUrl + url,
 			CustomHeaders: headers,
+			Params:        params,
 			Body:          body,
 		}
 
@@ -117,6 +118,7 @@ func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, req
 		options := api_client.PostRequestOptions{
 			Url:           baseUrl + url,
 			CustomHeaders: headers,
+			Params:        params,
 			Body:          body,
 		}
 
@@ -127,6 +129,7 @@ func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, req
 		options := api_client.PostRequestOptions{
 			Url:           baseUrl + url,
 			CustomHeaders: headers,
+			Params:        params,
 			Body:          body,
 		}
 
@@ -137,6 +140,7 @@ func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, req
 		options := api_client.PostRequestOptions{
 			Url:           baseUrl + url,
 			CustomHeaders: headers,
+			Params:        params,
 			Body:          body,
 		}
 

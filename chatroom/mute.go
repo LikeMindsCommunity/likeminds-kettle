@@ -29,7 +29,7 @@ func MuteChatroom(c *gin.Context) {
 	}
 
 	//Send Request
-	utils.SendRequest(c, utils.CoreService, MuteChatroomEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, muteChatroomRequest)
+	utils.SendRequest(c, utils.CoreService, MuteChatroomEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, muteChatroomRequest)
 }
 
 func parseMuteChatroomRequest(c *gin.Context) (*MuteChatroomRequest, error) {
