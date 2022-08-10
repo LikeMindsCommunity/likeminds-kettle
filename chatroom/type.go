@@ -11,8 +11,18 @@ type ChatroomTypeRequest struct {
 	IsSecret   *bool  `json:"is_secret" binding:"required"`
 }
 
+//ChangeChatroomType is used to change chatroom type
+func ChangeChatroomType(c *gin.Context) {
+	ChatroomType(c, utils.PUTMethod)
+}
+
+//GetChatroomTypeStatus is used to get chatroom conversion status
+func GetChatroomTypeStatus(c *gin.Context) {
+	ChatroomType(c, utils.GETMethod)
+}
+
 //ChatroomType is used to change the type of chatroom
-func ChatroomType(c *gin.Context) {
+func ChatroomType(c *gin.Context, method int) {
 
 	//Authorize User
 	userId := user.GetRequestingUserId(c)
@@ -25,16 +35,38 @@ func ChatroomType(c *gin.Context) {
 		userId = botId
 	}
 
-	//Body to be sent in the api/chatroom/change_type POST request
-	chatroomTypeRequest, err := parseChatroomTypeRequest(c)
-	if err != nil {
-		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
-		return
-	}
+	//Send request
+	switch method {
+	case utils.GETMethod:
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, ChatroomTypeEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, chatroomTypeRequest)
+		//Params to be sent in the api/chatroom/change_type GET request
+		params := map[string]string{
+			ParamChatroomId: c.Query(ParamChatroomId),
+		}
+
+		//Params Validation
+		if params[ParamChatroomId] == "" {
+			//If GET params are missing
+			utils.GETQueryParamsMissingError(c)
+			return
+		}
+
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, ChatroomTypeEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
+	case utils.PUTMethod:
+
+		//Body to be sent in the api/chatroom/change_type POST request
+		chatroomTypeRequest, err := parseChatroomTypeRequest(c)
+		if err != nil {
+			//If POST body params are missing
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
+
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, ChatroomTypeEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, chatroomTypeRequest)
+	}
 }
 
 func parseChatroomTypeRequest(c *gin.Context) (*ChatroomTypeRequest, error) {
