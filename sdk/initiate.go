@@ -2,7 +2,6 @@ package sdk
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -21,26 +20,17 @@ type InitiateSDKRequest struct {
 
 //InitiateSDK is used to initiate sdk
 func InitiateSDK(c *gin.Context) {
-	//POST body bodyParams
-	var isr InitiateSDKRequest
-	if err := c.ShouldBindJSON(&isr); err != nil {
-		//If POST body bodyParams are missing
-		utils.POSTBodyParamsMissingError(c)
-		return
-	}
 
-	//Hit api/sdk/initiate
-	apiClient := api_client.NewAPIClient()
-	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
-		Url:           apiClient.CoreServiceBaseURL + InitiateSDKEndPoint,
-		Body:          isr,
-		CustomHeaders: utils.CreateHeaders(c, ""),
-	}, api_client.BodyTypeRaw)
+	//Body to be sent in the initiate SDK api internally
+	initiateSDKRequest, err := parseInitiateSDKRequest(c)
 	if err != nil {
-		//If API fails or any other error
+		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
 		return
 	}
+
+	//Send Request
+	respBytes := utils.GetRequestResponse(c, utils.CoreService, InitiateSDKEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, ""), nil, initiateSDKRequest)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes)
@@ -65,4 +55,15 @@ func InitiateSDK(c *gin.Context) {
 
 	//Generate response
 	utils.GenerateResponse(c, dataResponse)
+}
+
+func parseInitiateSDKRequest(c *gin.Context) (*InitiateSDKRequest, error) {
+	//POST body params
+	var isr InitiateSDKRequest
+
+	if err := c.ShouldBindJSON(&isr); err != nil {
+		return nil, err
+	}
+
+	return &isr, nil
 }

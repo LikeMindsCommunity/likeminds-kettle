@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/nateshr/likeminds-authentication/environment"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -13,6 +12,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/nateshr/likeminds-authentication/environment"
 )
 
 type BodyType int
@@ -36,6 +37,7 @@ type GetRequestOptions struct {
 
 type PostRequestOptions struct {
 	Url           string
+	Params        map[string]string
 	Body          interface{}
 	CustomHeaders map[string]interface{}
 }
@@ -216,6 +218,11 @@ func (c *APIClient) PostRequest(pro *PostRequestOptions, body_type BodyType) ([]
 		return nil, err
 	}
 
+	params := pro.Params
+	if params != nil {
+		AddParams(req, params)
+	}
+
 	headers := pro.CustomHeaders
 	if headers != nil {
 		AddHeaders(req, headers)
@@ -240,6 +247,11 @@ func (c *APIClient) PutRequest(pro *PostRequestOptions) ([]byte, error) {
 		return nil, err
 	}
 
+	params := pro.Params
+	if params != nil {
+		AddParams(req, params)
+	}
+
 	headers := pro.CustomHeaders
 	if headers != nil {
 		AddHeaders(req, headers)
@@ -262,6 +274,11 @@ func (c *APIClient) DeleteRequest(pro *PostRequestOptions) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodDelete, pro.Url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, err
+	}
+
+	params := pro.Params
+	if params != nil {
+		AddParams(req, params)
 	}
 
 	headers := pro.CustomHeaders

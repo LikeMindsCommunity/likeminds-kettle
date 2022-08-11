@@ -6,6 +6,7 @@ const LogoutEndPoint = "/api/user/logout"
 const MergeAccountEndPoint = "/api/merge_account"
 const UserFetchEndpoint = "/api/user/fetch"
 
+const ParamIngestCommunities = "ingest_your_communities"
 const ResponseUser = "user"
 const ResponseUserUniqueId = "user_unique_id"
 const ResponseUserIsGuest = "is_guest"

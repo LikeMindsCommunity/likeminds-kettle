@@ -2,8 +2,7 @@ package chatroom
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/api_client"
-	"github.com/nateshr/likeminds-authentication/token"
+	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -13,37 +12,31 @@ type ScheduleFollowRequest struct {
 
 //ScheduleFollow is used to schedule follow request for particular user
 func ScheduleFollow(c *gin.Context) {
-	//Check if request has LTM token or not
-	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
-	if !ok {
-		//If token is not available
-		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
-		return
-	}
-	//POST body bodyParams
-	var sfr ScheduleFollowRequest
-	if err := c.ShouldBindJSON(&sfr); err != nil {
-		//If POST body bodyParams are missing
-		utils.POSTBodyParamsMissingError(c)
+
+	//Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
 		return
 	}
 
-	//Create internal API client
-	apiClient := api_client.NewAPIClient()
-
-	//Send request
-	respBytes, err := apiClient.PostRequest(&api_client.PostRequestOptions{
-		Url:           apiClient.CoreServiceBaseURL + ScheduleFollowEndPoint,
-		Body:          sfr,
-		CustomHeaders: utils.CreateHeaders(c, ltm.UserUniqueID),
-	}, api_client.BodyTypeRaw)
-
+	//Params to be sent in the schedule follow request internally
+	scheduleFollowRequest, err := parseScheduleFollowRequest(c)
 	if err != nil {
-		//If API fails or any other error
+		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 
-	//Parse response
-	utils.ParseResponse(c, respBytes)
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, ScheduleFollowEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, scheduleFollowRequest)
+}
+
+func parseScheduleFollowRequest(c *gin.Context) (*ScheduleFollowRequest, error) {
+	//POST body params
+	var sfr ScheduleFollowRequest
+	if err := c.ShouldBindJSON(&sfr); err != nil {
+		return nil, err
+	}
+
+	return &sfr, nil
 }
