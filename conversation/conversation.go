@@ -133,40 +133,19 @@ func parseDeleteConversationRequest(c *gin.Context) (*DeleteConversationRequest,
 func getConversationInternal(c *gin.Context, userId string) {
 
 	//GET Request params
-	chatroom_id := c.Query(ParamChatroomId)
 	meta := c.Query(ParamMeta)
-
-	if chatroom_id == "" {
-		//If GET params are missing
-		utils.GETQueryParamsMissingError(c)
-		return
+	params := map[string]string{
+		ParamChatroomId:     c.Query(ParamChatroomId),
+		ParamConversationId: c.Query(ParamConversationId),
 	}
 
 	if meta == "" || meta == "false" {
 		//If meta is missing, call api/conversation/fetch api internally
 
-		//Params to be sent in the fetch conversation api internally
-		params := map[string]string{
-			ParamChatroomId: chatroom_id,
-		}
-
 		//Send Request
 		utils.SendRequest(c, utils.CoreService, FetchConversationEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 	} else {
 		//else, call api/conversation_meta api internally
-
-		//Params to be sent in the api/conversation_meta request
-		params := map[string]string{
-			ParamChatroomId:     chatroom_id,
-			ParamConversationId: c.Query(ParamConversationId),
-		}
-
-		//Params Validation
-		if params[ParamConversationId] == "" {
-			//If GET params are missing
-			utils.GETQueryParamsMissingError(c)
-			return
-		}
 
 		//Send Request
 		utils.SendRequest(c, utils.CoreService, ConversationMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
