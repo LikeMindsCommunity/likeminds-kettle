@@ -220,6 +220,11 @@ func (c *APIClient) PostRequest(pro *PostRequestOptions, body_type BodyType) ([]
 		return nil, DefaultStatusCode, err
 	}
 
+	params := pro.Params
+	if params != nil {
+		AddParams(req, params)
+	}
+
 	headers := pro.CustomHeaders
 	if headers != nil {
 		AddHeaders(req, headers)
@@ -242,6 +247,11 @@ func (c *APIClient) PutRequest(pro *PostRequestOptions) ([]byte, int, error) {
 	req, err := http.NewRequest(http.MethodPut, pro.Url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, DefaultStatusCode, err
+	}
+
+	params := pro.Params
+	if params != nil {
+		AddParams(req, params)
 	}
 
 	headers := pro.CustomHeaders

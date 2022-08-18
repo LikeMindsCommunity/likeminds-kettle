@@ -19,12 +19,12 @@ type RemoveReactionRequest struct {
 
 //AddReaction is used to add reaction to specific conversation
 func AddReaction(c *gin.Context) {
-	Conversation(c, utils.PUTMethod)
+	Reaction(c, utils.PUTMethod)
 }
 
 //RemoveReaction is used to delete reaction from a specific conversation
 func RemoveReaction(c *gin.Context) {
-	Conversation(c, utils.DELETEMethod)
+	Reaction(c, utils.DELETEMethod)
 }
 
 //Reaction method handles reaction on a conversation object
