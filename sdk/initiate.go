@@ -31,6 +31,9 @@ func InitiateSDK(c *gin.Context) {
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, InitiateSDKEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, ""), nil, initiateSDKRequest)
+	if respBytes == nil {
+		return
+	}
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
