@@ -4,8 +4,10 @@ const FetchMembersMetaEndPoint = "/api/community/fetch_members_meta"
 const AllMembersV1EndPoint = "/api/v1/all_members"
 const EditQuestionsEndPoint = "/api/community/edit_questions"
 const CommunityMemberEndPoint = "/api/community/member"
+const MemberStateEndPoint = "/api/members_state"
 
 const ParamPage = "page"
+const ParamMemberId = "member_id"
 
 type CommunityObject struct {
 	ID             int64  `json:"id"`
