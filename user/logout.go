@@ -43,13 +43,13 @@ func Logout(c *gin.Context) {
 	if c.GetHeader(utils.HeadersDeviceId) != "" {
 
 		//Send Request
-		respBytes := utils.GetRequestResponse(c, utils.CoreService, LogoutEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, ltm.UserUniqueID), nil, nil)
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, LogoutEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, ltm.UserUniqueID), nil, nil)
 		if respBytes == nil {
 			return
 		}
 
 		//Validate response
-		apiCR := utils.ValidateClientResponse(c, respBytes)
+		apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
 		if apiCR == nil {
 			return
 		}

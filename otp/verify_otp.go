@@ -24,13 +24,13 @@ func VerifyOTP(c *gin.Context) {
 	}
 
 	//Send Request
-	respBytes := utils.GetRequestResponse(c, utils.CoreService, VerifyOTPEndPoint, utils.GETRequest, nil, params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, VerifyOTPEndPoint, utils.GETRequest, nil, params, nil)
 	if respBytes == nil {
 		return
 	}
 
 	//Validate response
-	apiCR := utils.ValidateClientResponse(c, respBytes)
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
 	if apiCR == nil {
 		return
 	}

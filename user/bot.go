@@ -43,12 +43,13 @@ func GetBotResponse(c *gin.Context, method int) *utils.Response {
 
 	//Send request
 	var respBytes []byte
+	var statusCode int
 	var createToken bool
 	switch method {
 	case utils.GETMethod:
 
 		//Send Request
-		respBytes = utils.GetRequestResponse(c, utils.CoreService, BotEndpoint, utils.GETRequest, utils.CreateHeaders(c, ""), nil, nil)
+		respBytes, statusCode = utils.GetRequestResponse(c, utils.CoreService, BotEndpoint, utils.GETRequest, utils.CreateHeaders(c, ""), nil, nil)
 
 	case utils.POSTMethod:
 
@@ -62,7 +63,7 @@ func GetBotResponse(c *gin.Context, method int) *utils.Response {
 		}
 
 		//Send Request
-		respBytes = utils.GetRequestResponse(c, utils.CoreService, BotEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, ""), nil, botRequest)
+		respBytes, statusCode = utils.GetRequestResponse(c, utils.CoreService, BotEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, ""), nil, botRequest)
 
 	}
 
@@ -71,7 +72,7 @@ func GetBotResponse(c *gin.Context, method int) *utils.Response {
 	}
 
 	//Validate response
-	apiCR := utils.ValidateClientResponse(c, respBytes)
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
 	if apiCR == nil {
 		return nil
 	}

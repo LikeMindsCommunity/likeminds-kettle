@@ -23,6 +23,8 @@ const (
 	BodyTypeFormUrlEncoded
 )
 
+const DefaultStatusCode = -1
+
 type APIClient struct {
 	CoreServiceBaseURL         string
 	SubscriptionServiceBaseURL string
@@ -159,10 +161,10 @@ func convertToFormURLEncoded(body *[]byte) url.Values {
 	return payload
 }
 
-func (c *APIClient) sendRequest(req *http.Request) ([]byte, error) {
+func (c *APIClient) sendRequest(req *http.Request) ([]byte, int, error) {
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, DefaultStatusCode, err
 	}
 
 	defer func(Body io.ReadCloser) {
@@ -173,24 +175,24 @@ func (c *APIClient) sendRequest(req *http.Request) ([]byte, error) {
 	}(resp.Body)
 
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusInternalServerError {
-		return nil, fmt.Errorf("unknown error, status code: %d", resp.StatusCode)
+		return nil, DefaultStatusCode, fmt.Errorf("unknown error, status code: %d", resp.StatusCode)
 	}
 	//Defer close error
 	if err != nil {
-		return nil, err
+		return nil, DefaultStatusCode, err
 	}
 
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, DefaultStatusCode, err
 	}
-	return respBytes, nil
+	return respBytes, resp.StatusCode, nil
 }
 
-func (c *APIClient) GetRequest(gro *GetRequestOptions) ([]byte, error) {
+func (c *APIClient) GetRequest(gro *GetRequestOptions) ([]byte, int, error) {
 	req, err := http.NewRequest(http.MethodGet, gro.Url, nil)
 	if err != nil {
-		return nil, err
+		return nil, DefaultStatusCode, err
 	}
 
 	params := gro.Params
@@ -203,19 +205,19 @@ func (c *APIClient) GetRequest(gro *GetRequestOptions) ([]byte, error) {
 		AddHeaders(req, headers)
 	}
 
-	respBytes, err := c.sendRequest(req)
+	respBytes, statusCode, err := c.sendRequest(req)
 	if err != nil {
-		return nil, err
+		return nil, DefaultStatusCode, err
 	}
 
-	return respBytes, nil
+	return respBytes, statusCode, nil
 }
 
-func (c *APIClient) PostRequest(pro *PostRequestOptions, body_type BodyType) ([]byte, error) {
+func (c *APIClient) PostRequest(pro *PostRequestOptions, body_type BodyType) ([]byte, int, error) {
 
 	req, err := UpdateBody(pro, body_type)
 	if err != nil {
-		return nil, err
+		return nil, DefaultStatusCode, err
 	}
 
 	params := pro.Params
@@ -228,23 +230,23 @@ func (c *APIClient) PostRequest(pro *PostRequestOptions, body_type BodyType) ([]
 		AddHeaders(req, headers)
 	}
 
-	respBytes, err := c.sendRequest(req)
+	respBytes, statusCode, err := c.sendRequest(req)
 	if err != nil {
-		return nil, err
+		return nil, DefaultStatusCode, err
 	}
 
-	return respBytes, nil
+	return respBytes, statusCode, nil
 }
 
-func (c *APIClient) PutRequest(pro *PostRequestOptions) ([]byte, error) {
+func (c *APIClient) PutRequest(pro *PostRequestOptions) ([]byte, int, error) {
 	jsonData, err := json.Marshal(pro.Body)
 	if err != nil {
-		return nil, err
+		return nil, DefaultStatusCode, err
 	}
 
 	req, err := http.NewRequest(http.MethodPut, pro.Url, bytes.NewBuffer(jsonData))
 	if err != nil {
-		return nil, err
+		return nil, DefaultStatusCode, err
 	}
 
 	params := pro.Params
@@ -257,23 +259,23 @@ func (c *APIClient) PutRequest(pro *PostRequestOptions) ([]byte, error) {
 		AddHeaders(req, headers)
 	}
 
-	respBytes, err := c.sendRequest(req)
+	respBytes, statusCode, err := c.sendRequest(req)
 	if err != nil {
-		return nil, err
+		return nil, DefaultStatusCode, err
 	}
 
-	return respBytes, nil
+	return respBytes, statusCode, nil
 }
 
-func (c *APIClient) DeleteRequest(pro *PostRequestOptions) ([]byte, error) {
+func (c *APIClient) DeleteRequest(pro *PostRequestOptions) ([]byte, int, error) {
 	jsonData, err := json.Marshal(pro.Body)
 	if err != nil {
-		return nil, err
+		return nil, DefaultStatusCode, err
 	}
 
 	req, err := http.NewRequest(http.MethodDelete, pro.Url, bytes.NewBuffer(jsonData))
 	if err != nil {
-		return nil, err
+		return nil, DefaultStatusCode, err
 	}
 
 	params := pro.Params
@@ -286,10 +288,10 @@ func (c *APIClient) DeleteRequest(pro *PostRequestOptions) ([]byte, error) {
 		AddHeaders(req, headers)
 	}
 
-	respBytes, err := c.sendRequest(req)
+	respBytes, statusCode, err := c.sendRequest(req)
 	if err != nil {
-		return nil, err
+		return nil, DefaultStatusCode, err
 	}
 
-	return respBytes, nil
+	return respBytes, statusCode, nil
 }

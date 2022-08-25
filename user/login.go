@@ -33,13 +33,13 @@ func Login(c *gin.Context) {
 	}
 
 	//Send Request
-	respBytes := utils.GetRequestResponse(c, utils.CoreService, LoginEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, ""), nil, updateLoginRequest(loginRequest))
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, LoginEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, ""), nil, updateLoginRequest(loginRequest))
 	if respBytes == nil {
 		return
 	}
 
 	//Validate response
-	apiCR := utils.ValidateClientResponse(c, respBytes)
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
 	if apiCR == nil {
 		return
 	}

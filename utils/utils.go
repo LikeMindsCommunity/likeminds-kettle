@@ -46,7 +46,7 @@ func GenerateResponse(c *gin.Context, dataResponse map[string]interface{}) {
 	c.JSON(http.StatusOK, response)
 }
 
-func ValidateClientResponse(c *gin.Context, respBytes []byte) *api_client.APIClientResponse {
+func ValidateClientResponse(c *gin.Context, respBytes []byte, statusCode int) *api_client.APIClientResponse {
 	//Parse response
 	var apiCR api_client.APIClientResponse
 	err := api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
@@ -59,7 +59,7 @@ func ValidateClientResponse(c *gin.Context, respBytes []byte) *api_client.APICli
 
 	if !apiCR.Success {
 		//If internal api returns success as false
-		c.JSON(http.StatusInternalServerError, apiCR)
+		c.JSON(statusCode, apiCR)
 		return nil
 	}
 
@@ -67,20 +67,21 @@ func ValidateClientResponse(c *gin.Context, respBytes []byte) *api_client.APICli
 }
 
 //ParseResponse from request sent internally
-func ParseResponse(c *gin.Context, respBytes []byte) {
+func ParseResponse(c *gin.Context, respBytes []byte, statusCode int) {
 
-	apiCR := ValidateClientResponse(c, respBytes)
+	apiCR := ValidateClientResponse(c, respBytes, statusCode)
 
 	if apiCR != nil {
 		GenerateResponse(c, apiCR.Response)
 	}
 }
 
-func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) []byte {
+func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) ([]byte, int) {
 	//Create internal API client
 	client := api_client.NewAPIClient()
 	var baseUrl string
 	var respBytes []byte
+	var statusCode int
 	var err error
 
 	switch serviceType {
@@ -100,7 +101,7 @@ func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, req
 			Params:        params,
 		}
 
-		respBytes, err = client.GetRequest(&options)
+		respBytes, statusCode, err = client.GetRequest(&options)
 
 	case POSTRequestRawBody:
 
@@ -111,7 +112,7 @@ func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, req
 			Body:          body,
 		}
 
-		respBytes, err = client.PostRequest(&options, api_client.BodyTypeRaw)
+		respBytes, statusCode, err = client.PostRequest(&options, api_client.BodyTypeRaw)
 
 	case POSTRequestFormUrlEncodedBody:
 
@@ -122,7 +123,7 @@ func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, req
 			Body:          body,
 		}
 
-		respBytes, err = client.PostRequest(&options, api_client.BodyTypeFormUrlEncoded)
+		respBytes, statusCode, err = client.PostRequest(&options, api_client.BodyTypeFormUrlEncoded)
 
 	case PUTRequest:
 
@@ -133,7 +134,7 @@ func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, req
 			Body:          body,
 		}
 
-		respBytes, err = client.PutRequest(&options)
+		respBytes, statusCode, err = client.PutRequest(&options)
 
 	case DELETERequest:
 
@@ -144,22 +145,25 @@ func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, req
 			Body:          body,
 		}
 
-		respBytes, err = client.DeleteRequest(&options)
+		respBytes, statusCode, err = client.DeleteRequest(&options)
 	}
 
 	if err != nil {
 		//If API fails or any other error
 		GeneralAPIError(c, err.Error())
-		return nil
+		return nil, api_client.DefaultStatusCode
 	}
 
-	return respBytes
+	return respBytes, statusCode
 }
 
 func SendRequest(c *gin.Context, serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) {
-	respBytes := GetRequestResponse(c, serviceType, url, requestType, headers, params, body)
+	respBytes, statusCode := GetRequestResponse(c, serviceType, url, requestType, headers, params, body)
+	if respBytes == nil {
+		return
+	}
 
 	//Parse response
-	ParseResponse(c, respBytes)
+	ParseResponse(c, respBytes, statusCode)
 
 }
