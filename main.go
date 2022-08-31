@@ -91,6 +91,7 @@ func main() {
 	router.GET("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetMember)
 	router.POST("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.AddMember)
 	router.PUT("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditMember)
+	router.GET("/community/member/state", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.FetchMemberState)
 
 	//Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
@@ -281,7 +282,7 @@ func APIKeyValidationMiddleware() gin.HandlerFunc {
 			CustomHeaders: utils.CreateHeaders(c, ""),
 		}
 		//Send request
-		respBytes, err := client.GetRequest(&options)
+		respBytes, _, err := client.GetRequest(&options)
 		if err != nil {
 			//If API fails or any other error
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
@@ -325,7 +326,7 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 			CustomHeaders: utils.CreateHeaders(c, c.GetHeader(utils.HeadersMemberId)),
 		}
 		//Send request
-		respBytes, err := client.GetRequest(&options)
+		respBytes, statusCode, err := client.GetRequest(&options)
 		if err != nil {
 			//If API fails or any other error
 			utils.GeneralAPIError(c, err.Error())
@@ -342,7 +343,7 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 
 		if !apiCR.Success {
 			//If api/user/fetch returns success as false
-			utils.APIClientError(c, apiCR)
+			c.JSON(statusCode, apiCR)
 			return
 		}
 
