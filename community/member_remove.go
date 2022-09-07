@@ -1,23 +1,18 @@
 package community
 
 import (
-	"strconv"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
 type RemoveMemberRequest struct {
-	UserId int64 `json:"user_id" binding:"required"`
-	IsCM   bool  `json:"is_cm"`
-}
-
-type InternalRemoveMemberRequest struct {
 	MemberIds []string `json:"member_ids"`
+	TagID     int32    `json:"tag_id"`
+	Reason    string   `json:"reason"`
 }
 
-//RemoveMember is used to remove a member of CM from community
+//RemoveMember is used to remove a member from community
 func RemoveMember(c *gin.Context) {
 
 	//Authorize User
@@ -39,19 +34,8 @@ func RemoveMember(c *gin.Context) {
 		return
 	}
 
-	is_cm := removeMemberRequest.IsCM
-
-	if !is_cm {
-		//If is_cm is missing or false, call remove from member api internally
-
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, RemoveMemberEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, updateRemoveMemberRequest(removeMemberRequest))
-	} else {
-		//else, call remove community manager api internally
-
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, RemoveCMEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeMemberRequest)
-	}
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, RemoveMemberEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeMemberRequest)
 }
 
 func parseRemoveMemberRequest(c *gin.Context) (*RemoveMemberRequest, error) {
@@ -63,12 +47,4 @@ func parseRemoveMemberRequest(c *gin.Context) (*RemoveMemberRequest, error) {
 	}
 
 	return &rmr, nil
-}
-
-func updateRemoveMemberRequest(rmr *RemoveMemberRequest) interface{} {
-	var updatedRmr InternalRemoveMemberRequest
-
-	updatedRmr.MemberIds = []string{strconv.Itoa(int(rmr.UserId))}
-
-	return updatedRmr
 }

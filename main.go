@@ -92,6 +92,7 @@ func main() {
 	router.POST("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.AddMember)
 	router.PUT("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditMember)
 	router.GET("/community/member/state", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.FetchMemberState)
+	router.DELETE("/community/manager/remove", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.RemoveCommunityManager)
 	router.DELETE("/community/member/remove", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.RemoveMember)
 	router.GET("/community/management/tool", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetManagementTools)
 	router.GET("/community/report", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetReport)

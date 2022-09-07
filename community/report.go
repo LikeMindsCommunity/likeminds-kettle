@@ -39,7 +39,7 @@ func Report(c *gin.Context, method int) {
 	case utils.GETMethod:
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchManagementToolsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+		utils.SendRequest(c, utils.CoreService, FetchReportsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
 
 	case utils.DELETEMethod:
 
