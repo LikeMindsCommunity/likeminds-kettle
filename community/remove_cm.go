@@ -1,0 +1,48 @@
+package community
+
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/utils"
+)
+
+type RemoveCommunityManagerRequest struct {
+	UserId int64 `json:"user_id" binding:"required"`
+}
+
+//RemoveCommunityManager is used to remove a CM from community
+func RemoveCommunityManager(c *gin.Context) {
+
+	//Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
+		return
+	}
+
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
+	}
+
+	//Body to be sent in the remove member request
+	removeCMRequest, err := parseRemoveCMRequest(c)
+	if err != nil {
+		//If POST body params are missing
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, RemoveCMEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeCMRequest)
+}
+
+func parseRemoveCMRequest(c *gin.Context) (*RemoveCommunityManagerRequest, error) {
+	//POST body params
+	var rcmr RemoveCommunityManagerRequest
+
+	if err := c.ShouldBindJSON(&rcmr); err != nil {
+		return nil, err
+	}
+
+	return &rcmr, nil
+}

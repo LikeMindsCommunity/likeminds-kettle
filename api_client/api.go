@@ -155,6 +155,8 @@ func convertToFormURLEncoded(body *[]byte) url.Values {
 		case "string":
 			payload.Set(key, value.(string))
 
+		case "[]interface {}":
+			payload.Set(key, fmt.Sprintf("%+v", value))
 		}
 	}
 
