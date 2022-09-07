@@ -121,7 +121,7 @@ func main() {
 	router.GET("/conversation/notification/unread", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.UnreadConversationNotification)
 	router.GET("/conversation/sync", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.SyncConversation)
 
-	log.Print(APP_VERSION)
+	log.Printf("application version: %s", APP_VERSION)
 	log.Fatal(router.Run(":8080"))
 }
 
