@@ -28,7 +28,7 @@ var (
 )
 
 func main() {
-	var APP_VERSION string = "1.0.1"
+	var AppVersion string = "1.1.0"
 
 	initGin()
 	client = cache.InitRedis()
@@ -126,7 +126,7 @@ func main() {
 	router.GET("/conversation/notification/unread", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.UnreadConversationNotification)
 	router.GET("/conversation/sync", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.SyncConversation)
 
-	log.Printf("application version: %s", APP_VERSION)
+	log.Printf("application version: %s", AppVersion)
 	log.Fatal(router.Run(":8080"))
 }
 
