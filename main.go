@@ -28,7 +28,7 @@ var (
 )
 
 func main() {
-	var APP_VERSION string = "1.0.1"
+	var AppVersion string = "1.1.0"
 
 	initGin()
 	client = cache.InitRedis()
@@ -94,6 +94,11 @@ func main() {
 	router.POST("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.AddMember)
 	router.PUT("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditMember)
 	router.GET("/community/member/state", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.FetchMemberState)
+	router.DELETE("/community/manager/remove", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.RemoveCommunityManager)
+	router.DELETE("/community/member/remove", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.RemoveMember)
+	router.GET("/community/management/tool", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetManagementTools)
+	router.GET("/community/report", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetReport)
+	router.DELETE("/community/report", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.CloseReport)
 
 	//Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
@@ -121,7 +126,7 @@ func main() {
 	router.GET("/conversation/notification/unread", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.UnreadConversationNotification)
 	router.GET("/conversation/sync", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.SyncConversation)
 
-	log.Printf("application version: %s", APP_VERSION)
+	log.Printf("application version: %s", AppVersion)
 	log.Fatal(router.Run(":8080"))
 }
 
