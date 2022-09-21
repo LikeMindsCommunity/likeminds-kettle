@@ -5,6 +5,8 @@ const BotEndpoint = "/api/user/bot"
 const LogoutEndPoint = "/api/user/logout"
 const MergeAccountEndPoint = "/api/merge_account"
 const UserFetchEndpoint = "/api/user/fetch"
+const UserDMHomeEndpoint = "/api/user/fetch_dm_home"
+const UserDMFeedEndpoint = "/api/user/fetch_dm_feed"
 
 const ParamIngestCommunities = "ingest_your_communities"
 const ResponseUser = "user"

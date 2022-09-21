@@ -11,7 +11,7 @@ type CommunityRight struct {
 	State      int    `json:"state" binding:"required"`
 	Title      string `json:"title" binding:"required"`
 	IsSelected bool   `json:"is_selected" binding:"required"`
-	IsLocked   bool   `json:"is_locked" binding:"required"`
+	IsLocked   bool   `json:"is_locked"`
 }
 
 type EditCommunityRightsRequest struct {

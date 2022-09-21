@@ -47,6 +47,8 @@ func main() {
 	router.POST("/user/merge_account", LTMValidationMiddleware(client, true), user.MergeAccount)
 	router.GET("/user/config", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.Config)
 	router.GET("/user/bot", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.GetBot)
+	router.GET("/user/dm/home", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.DMHome)
+	router.GET("/user/dm/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.DMFeed)
 
 	//Home Apis
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client, true), home.FetchCommunities)
