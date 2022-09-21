@@ -101,6 +101,9 @@ func main() {
 	router.DELETE("/community/report", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.CloseReport)
 	router.GET("/community/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunitySettings)
 	router.PUT("/community/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.UpdateCommunitySettings)
+	router.PUT("/community/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditCommunityRights)
+	router.GET("/community/dm/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityDMSettings)
+	router.PUT("/community/dm/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditCommunityDMSettings)
 
 	//Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)

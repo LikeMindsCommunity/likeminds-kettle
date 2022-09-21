@@ -29,13 +29,13 @@ func UpdateCommunitySettings(c *gin.Context) {
 
 func parseEditCommunitySettingsRequest(c *gin.Context) (*EditCommunitySettingsRequest, error) {
 	//POST body params
-	var arr EditCommunitySettingsRequest
+	var ecsr EditCommunitySettingsRequest
 
-	if err := c.ShouldBindJSON(&arr); err != nil {
+	if err := c.ShouldBindJSON(&ecsr); err != nil {
 		return nil, err
 	}
 
-	return &arr, nil
+	return &ecsr, nil
 }
 
 func CommunitySettings(c *gin.Context, method int) {
@@ -55,7 +55,7 @@ func CommunitySettings(c *gin.Context, method int) {
 	case utils.GETMethod:
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchCommunitySettings, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+		utils.SendRequest(c, utils.CoreService, FetchCommunitySettingsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
 
 	case utils.PUTMethod:
 
@@ -68,7 +68,7 @@ func CommunitySettings(c *gin.Context, method int) {
 		}
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, EditCommunitySettings, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, editCommunitySettingsRequest)
+		utils.SendRequest(c, utils.CoreService, EditCommunitySettingsEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, editCommunitySettingsRequest)
 
 	}
 
