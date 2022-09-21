@@ -10,6 +10,8 @@ const RemoveCMEndPoint = "/api/remove_community_manager"
 const FetchManagementToolsEndPoint = "/api/fetch_management_tools"
 const FetchReportsEndPoint = "/api/fetch_reports"
 const CloseReportsEndPoint = "/api/close_report"
+const FetchCommunitySettings = "/api/community/fetch_community_settings"
+const EditCommunitySettings = "/api/community/update_community_settings"
 
 const ParamPage = "page"
 const ParamMemberId = "member_id"
