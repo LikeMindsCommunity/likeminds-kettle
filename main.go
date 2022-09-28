@@ -28,7 +28,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "1.1.0"
+	var AppVersion string = "1.2.0"
 
 	initGin()
 	client = cache.InitRedis()
@@ -47,6 +47,7 @@ func main() {
 	router.POST("/user/merge_account", LTMValidationMiddleware(client, true), user.MergeAccount)
 	router.GET("/user/config", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.Config)
 	router.GET("/user/bot", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.GetBot)
+	router.POST("/user/subscription/whatsapp", user.WASubscription)
 
 	//Home Apis
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client, true), home.FetchCommunities)
@@ -330,7 +331,7 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 		//Create internal API client
 		client := api_client.NewAPIClient()
 		options := api_client.GetRequestOptions{
-			Url:           client.CoreServiceBaseURL + user.UserFetchEndpoint,
+			Url:           client.CoreServiceBaseURL + user.UserFetchEndPoint,
 			CustomHeaders: utils.CreateHeaders(c, c.GetHeader(utils.HeadersMemberId)),
 		}
 		//Send request
