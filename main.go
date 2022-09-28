@@ -50,6 +50,7 @@ func main() {
 	router.GET("/user/dm/home", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.DMHome)
 	router.GET("/user/dm/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.DMFeed)
 	router.GET("/user/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.UserSearch)
+	router.GET("/user/dm", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.UserCanDM)
 
 	//Home Apis
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client, true), home.FetchCommunities)
