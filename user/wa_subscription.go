@@ -9,14 +9,14 @@ import (
 type WASubscriptionRequest struct {
 	Id             string `json:"id" binding:"required"`
 	Created        string `json:"created" binding:"required"`
-	ConversationId string `json:"conversation_id" binding:"required"`
-	TicketId       string `json:"ticket_id" binding:"required"`
+	ConversationId string `json:"conversationId" binding:"required"`
+	TicketId       string `json:"ticketId" binding:"required"`
 	Text           string `json:"text"`
 	Type           string `json:"type" binding:"required"`
 	Data           string `json:"data"`
 	Timestamp      string `json:"timestamp" binding:"required"`
 	Owner          bool   `json:"owner" binding:"required"`
-	EventType      string `json:"event_type" binding:"required"`
+	EventType      string `json:"eventType" binding:"required"`
 	StatusString   string `json:"statusString"`
 	AvatarURL      string `json:"avatarUrl"`
 	AssignedId     string `json:"assignedId"`
