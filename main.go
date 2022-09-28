@@ -49,6 +49,7 @@ func main() {
 	router.GET("/user/bot", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.GetBot)
 	router.GET("/user/dm/home", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.DMHome)
 	router.GET("/user/dm/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.DMFeed)
+	router.GET("/user/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.UserSearch)
 
 	//Home Apis
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client, true), home.FetchCommunities)
