@@ -15,7 +15,7 @@ type WASubscriptionRequest struct {
 	Type           string `json:"type" binding:"required"`
 	Data           string `json:"data"`
 	Timestamp      string `json:"timestamp" binding:"required"`
-	Owner          bool   `json:"owner" binding:"required"`
+	Owner          *bool  `json:"owner" binding:"required"`
 	EventType      string `json:"eventType" binding:"required"`
 	StatusString   string `json:"statusString"`
 	AvatarURL      string `json:"avatarUrl"`
