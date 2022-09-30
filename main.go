@@ -88,6 +88,7 @@ func main() {
 	router.GET("/chatroom/pending", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.FetchPendingChatroom)
 	router.PUT("/chatroom/pending", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ActionPendingChatroom)
 	router.GET("/chatroom/sync", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.SyncChatrooms)
+	router.GET("/chatroom/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ChatroomSearch)
 
 	//Community Apis
 	router.POST("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditQuestions)
@@ -126,6 +127,7 @@ func main() {
 	router.GET("/conversation/preview/unread_count", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.FetchPreviewUnreadMessagesCount)
 	router.GET("/conversation/notification/unread", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.UnreadConversationNotification)
 	router.GET("/conversation/sync", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.SyncConversation)
+	router.GET("/conversation/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.ConversationSearch)
 
 	log.Printf("application version: %s", AppVersion)
 	log.Fatal(router.Run(":8080"))
