@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -138,26 +137,7 @@ func convertToFormURLEncoded(body *[]byte) url.Values {
 
 	// loop over map and fill payload data
 	for key, value := range datamap {
-
-		// if value is not type string then convert to string
-		switch reflect.TypeOf(value).String() {
-
-		case "int":
-			payload.Set(key, strconv.Itoa(value.(int)))
-
-		case "float64":
-			var elementString string = strconv.FormatFloat(value.(float64), 'f', -1, 64)
-			payload.Set(key, elementString)
-
-		case "bool":
-			payload.Set(key, strconv.FormatBool(value.(bool)))
-
-		case "string":
-			payload.Set(key, value.(string))
-
-		case "[]interface {}":
-			payload.Set(key, fmt.Sprintf("%+v", value))
-		}
+		payload.Set(key, fmt.Sprintf("%+v", value))
 	}
 
 	return payload
