@@ -7,7 +7,7 @@ import (
 )
 
 type EditCommunityDMSettingsRequest struct {
-	State            int    `json:"state" binding:"required"`
+	State            int    `json:"state"`
 	Duration         string `json:"duration"`
 	NumberInDuration int    `json:"number_in_duration"`
 }

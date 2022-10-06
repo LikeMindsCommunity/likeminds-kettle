@@ -47,13 +47,10 @@ func main() {
 	router.POST("/user/merge_account", LTMValidationMiddleware(client, true), user.MergeAccount)
 	router.GET("/user/config", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.Config)
 	router.GET("/user/bot", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.GetBot)
-	router.GET("/user/dm/home", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.DMHome)
-	router.GET("/user/dm/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.DMFeed)
-	router.GET("/user/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.UserSearch)
-	router.GET("/user/dm", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.UserCanDM)
 
 	//Home Apis
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client, true), home.FetchCommunities)
+	router.GET("/home/dm/meta", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), home.DMHome)
 
 	//SDK Apis
 	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), sdk.InitiateSDK)
@@ -91,9 +88,11 @@ func main() {
 	router.GET("/chatroom/pending", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.FetchPendingChatroom)
 	router.PUT("/chatroom/pending", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ActionPendingChatroom)
 	router.GET("/chatroom/sync", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.SyncChatrooms)
-	router.POST("/chatroom/block", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ChatroomBlock)
-	router.POST("/chatroom/dm", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.InitiatingDMRequest)
+	router.POST("/chatroom/dm/block", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ChatroomBlock)
+	router.POST("/chatroom/dm/request", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.InitiatingDMRequest)
+	router.POST("/chatroom/dm/create", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.CreateDM)
 	router.GET("/chatroom/dm", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ListDMChatrooms)
+	router.GET("/chatroom/dm/limit", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.DMLimit)
 
 	//Community Apis
 	router.POST("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditQuestions)
@@ -109,8 +108,11 @@ func main() {
 	router.GET("/community/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunitySettings)
 	router.PUT("/community/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.UpdateCommunitySettings)
 	router.PUT("/community/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditCommunityRights)
-	router.GET("/community/dm/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityDMSettings)
-	router.PUT("/community/dm/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditCommunityDMSettings)
+	router.GET("/community/settings/dm", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityDMSettings)
+	router.PUT("/community/settings/dm", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditCommunityDMSettings)
+	router.GET("/community/feed/dm", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.DMFeed)
+	router.GET("/community/dm/status", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.DMStatus)
+	router.GET("/community/member/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.MemberSearch)
 
 	//Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)

@@ -1,14 +1,15 @@
-package user
+package community
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-func UserSearch(c *gin.Context) {
+func MemberSearch(c *gin.Context) {
 
 	// Authorize User
-	userId := GetRequestingUserId(c)
+	userId := user.GetRequestingUserId(c)
 	if userId == "" {
 		return
 	}

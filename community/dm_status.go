@@ -1,14 +1,15 @@
-package user
+package community
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-func UserCanDM(c *gin.Context) {
+func DMStatus(c *gin.Context) {
 
 	// Authorize User
-	userId := GetRequestingUserId(c)
+	userId := user.GetRequestingUserId(c)
 	if userId == "" {
 		return
 	}
@@ -16,7 +17,7 @@ func UserCanDM(c *gin.Context) {
 	// Params to be sent in the api/community_member/can_dm request
 	requestParams := map[string]string{
 		RequestFromParam: c.Query(RequestFromParam),
-		MemberIDParam:    c.Query(MemberIDParam),
+		ParamMemberId:    c.Query(ParamMemberId),
 		ChatroomIDParam:  c.Query(ChatroomIDParam),
 	}
 

@@ -1,0 +1,24 @@
+package chatroom
+
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/utils"
+)
+
+func ListDMChatrooms(c *gin.Context) {
+
+	// Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
+		return
+	}
+
+	// Params to be sent in the api/community_member/fetch_dm_chatrooms request
+	requestParams := map[string]string{
+		ParamPage: c.Query(ParamPage),
+	}
+
+	// Send Request
+	utils.SendRequest(c, utils.CoreService, FetchDMChatroomsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), requestParams, nil)
+}
