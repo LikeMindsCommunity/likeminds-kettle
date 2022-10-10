@@ -29,7 +29,7 @@ func ChatroomBlock(c *gin.Context) {
 		return
 	}
 
-	//Params to be sent in the schedule follow request internally
+	//Params to be sent in the block chatroom request internally
 	chatroomBlockRequest, err := parseChatroomBlockRequest(c)
 	if err != nil {
 		//If POST body params are missing

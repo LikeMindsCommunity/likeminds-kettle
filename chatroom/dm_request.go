@@ -1,8 +1,6 @@
 package chatroom
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -32,8 +30,6 @@ func InitiatingDMRequest(c *gin.Context) {
 	if userId == "" {
 		return
 	}
-
-	fmt.Printf("%v", userId)
 
 	//Params to be sent in the intiate dm request internally
 	initiateDMRequest, err := parseInitiateDMRequest(c)
