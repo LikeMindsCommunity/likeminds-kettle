@@ -89,7 +89,6 @@ func main() {
 	router.GET("/chatroom/pending", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.FetchPendingChatroom)
 	router.PUT("/chatroom/pending", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ActionPendingChatroom)
 	router.GET("/chatroom/sync", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.SyncChatrooms)
-  router.GET("/chatroom/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ChatroomSearch)
 	router.POST("/chatroom/dm/block", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ChatroomBlock)
 	router.POST("/chatroom/dm/request", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.InitiatingDMRequest)
 	router.POST("/chatroom/dm/create", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.CreateDM)
