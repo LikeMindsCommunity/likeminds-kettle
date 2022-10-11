@@ -115,6 +115,9 @@ func main() {
 	router.GET("/community/feed/dm", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.DMFeed)
 	router.GET("/community/dm/status", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.DMStatus)
 	router.GET("/community/member/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.MemberSearch)
+	router.GET("/community/member/profile", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetMemberProfile)
+	router.PUT("/community/member/profile", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditMemberProfile)
+	router.GET("/community/member/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.MemberChatroom)
 
 	//Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
