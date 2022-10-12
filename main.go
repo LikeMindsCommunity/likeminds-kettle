@@ -28,7 +28,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "1.3.0"
+	var AppVersion string = "1.4.0"
 
 	initGin()
 	client = cache.InitRedis()
@@ -51,6 +51,7 @@ func main() {
 
 	//Home Apis
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client, true), home.FetchCommunities)
+	router.GET("/home/dm/meta", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), home.DMHome)
 
 	//SDK Apis
 	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), sdk.InitiateSDK)
@@ -88,6 +89,11 @@ func main() {
 	router.GET("/chatroom/pending", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.FetchPendingChatroom)
 	router.PUT("/chatroom/pending", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ActionPendingChatroom)
 	router.GET("/chatroom/sync", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.SyncChatrooms)
+	router.POST("/chatroom/dm/block", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ChatroomBlock)
+	router.POST("/chatroom/dm/request", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.InitiatingDMRequest)
+	router.POST("/chatroom/dm/create", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.CreateDM)
+	router.GET("/chatroom/dm", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ListDMChatrooms)
+	router.GET("/chatroom/dm/limit", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.DMLimit)
 	router.GET("/chatroom/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ChatroomSearch)
 
 	//Community Apis
@@ -101,6 +107,14 @@ func main() {
 	router.GET("/community/management/tool", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetManagementTools)
 	router.GET("/community/report", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetReport)
 	router.DELETE("/community/report", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.CloseReport)
+	router.GET("/community/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunitySettings)
+	router.PUT("/community/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.UpdateCommunitySettings)
+	router.PUT("/community/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditCommunityRights)
+	router.GET("/community/settings/dm", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityDMSettings)
+	router.PUT("/community/settings/dm", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditCommunityDMSettings)
+	router.GET("/community/feed/dm", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.DMFeed)
+	router.GET("/community/dm/status", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.DMStatus)
+	router.GET("/community/member/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.MemberSearch)
 
 	//Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
