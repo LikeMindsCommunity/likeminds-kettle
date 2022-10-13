@@ -20,7 +20,7 @@ const UserCanDMEndpoint = "/api/community_member/can_dm"
 const UserSearchEndpoint = "/api/search/member_directory"
 const FetchMemberProfileEndPoint = "/api/community_member/fetch_profile"
 const EditMemberProfileEndPoint = "/api/community_member/edit_profile"
-const FetchMemberChatroomEndPoint = "api/fetch_user_chatrooms"
+const FetchMemberChatroomEndPoint = "/api/fetch_user_chatrooms"
 
 const ParamPage = "page"
 const ParamMemberId = "member_id"
