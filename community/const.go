@@ -18,14 +18,19 @@ const EditCommunityDMSettingsEndPoint = "/api/community/update_community_dm_sett
 const UserDMFeedEndpoint = "/api/user/fetch_dm_feed"
 const UserCanDMEndpoint = "/api/community_member/can_dm"
 const UserSearchEndpoint = "/api/search/member_directory"
+const FetchMemberProfileEndPoint = "/api/community_member/fetch_profile"
+const EditMemberProfileEndPoint = "/api/community_member/edit_profile"
+const FetchMemberChatroomEndPoint = "/api/fetch_user_chatrooms"
 
 const ParamPage = "page"
 const ParamMemberId = "member_id"
+const ParamUserId = "user_id"
 const MemberIds = "member_ids"
 const ChatroomIDParam = "chatroom_id"
 const RequestFromParam = "req_from"
 const SearchParam = "search"
 const SearchTypeParam = "search_type"
+const ParamState = "state"
 
 type CommunityObject struct {
 	ID             int64  `json:"id"`
