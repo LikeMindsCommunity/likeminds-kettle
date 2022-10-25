@@ -15,6 +15,18 @@ func GetReportTags(c *gin.Context) {
 		return
 	}
 
+	//Params to be sent in the member state api internally
+	params := map[string]string{
+		ParamType: c.Query(ParamType),
+	}
+
+	//Params Validation
+	if params[ParamType] == "" {
+		//If GET params are missing
+		utils.GETQueryParamsMissingError(c)
+		return
+	}
+
 	//Send Request
-	utils.SendRequest(c, utils.CoreService, FetchReportTagsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+	utils.SendRequest(c, utils.CoreService, FetchReportTagsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 }

@@ -13,7 +13,6 @@ type PushReportRequest struct {
 	Link             string `json:"link"`
 	TagId            int    `json:"tag_id"`
 	Reason           string `json:"reason"`
-	Type             int    `json:"type"`
 }
 
 type CloseReportRequest struct {
