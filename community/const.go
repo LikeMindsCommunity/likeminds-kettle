@@ -9,7 +9,9 @@ const RemoveMemberEndPoint = "/api/remove_from_member"
 const RemoveCMEndPoint = "/api/remove_community_manager"
 const FetchManagementToolsEndPoint = "/api/fetch_management_tools"
 const FetchReportsEndPoint = "/api/fetch_reports"
+const PushReportEndPoint = "/api/push_report"
 const CloseReportsEndPoint = "/api/close_report"
+const FetchReportTagsEndPoint = "/api/fetch_report_tags"
 const FetchCommunitySettingsEndPoint = "/api/community/fetch_community_settings"
 const EditCommunitySettingsEndPoint = "/api/community/update_community_settings"
 const EditCommunityRightsEndPoint = "/api/update_community_rights"
@@ -31,6 +33,7 @@ const RequestFromParam = "req_from"
 const SearchParam = "search"
 const SearchTypeParam = "search_type"
 const ParamState = "state"
+const ParamType = "type"
 
 type CommunityObject struct {
 	ID             int64  `json:"id"`
