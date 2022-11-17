@@ -7,13 +7,23 @@ import (
 )
 
 type QuestionAnswer struct {
-	QuestionId interface{} `json:"question_id"`
-	Answer     string      `json:"answer"`
+	QuestionId string `json:"question_id"`
+	Answer     string `json:"answer"`
+}
+
+type QuestionAnswerWithInt struct {
+	QuestionId int    `json:"question_id"`
+	Answer     string `json:"answer"`
 }
 
 type MemberProfileRequest struct {
 	QuestionAnswers []QuestionAnswer `json:"question_answers"`
 	ImageUrl        string           `json:"image_url"`
+}
+
+type MemberProfileRequestWithInt struct {
+	QuestionAnswers []QuestionAnswerWithInt `json:"question_answers"`
+	ImageUrl        string                  `json:"image_url"`
 }
 
 //GetProfile is used to get member profile
@@ -49,8 +59,19 @@ func Profile(c *gin.Context, method int) {
 
 	case utils.PUTMethod:
 
+		var memberProfileRequest interface{}
+		var err error
+
 		//Body to be sent in the edit profile api internally
-		memberProfileRequest, err := parseMemberProfileRequest(c)
+
+		questionIdVersionCheck := utils.CheckVersion(c, utils.QuestionIdVersions)
+
+		if !questionIdVersionCheck {
+			memberProfileRequest, err = parseMemberProfileRequest(c)
+		} else {
+			memberProfileRequest, err = parseMemberProfileRequestWithInt(c)
+		}
+
 		if err != nil {
 			//If POST body params are missing
 			utils.GeneralAPIError(c, err.Error())
@@ -64,8 +85,19 @@ func Profile(c *gin.Context, method int) {
 }
 
 func parseMemberProfileRequest(c *gin.Context) (*MemberProfileRequest, error) {
-	//POST body params
+	// POST body params
 	var mpr MemberProfileRequest
+
+	if err := c.ShouldBindJSON(&mpr); err != nil {
+		return nil, err
+	}
+
+	return &mpr, nil
+}
+
+func parseMemberProfileRequestWithInt(c *gin.Context) (*MemberProfileRequestWithInt, error) {
+	// POST body params
+	var mpr MemberProfileRequestWithInt
 
 	if err := c.ShouldBindJSON(&mpr); err != nil {
 		return nil, err
