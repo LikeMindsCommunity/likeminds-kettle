@@ -7,8 +7,8 @@ import (
 )
 
 type QuestionAnswer struct {
-	QuestionId string `json:"question_id"`
-	Answer     string `json:"answer"`
+	QuestionId interface{} `json:"question_id"`
+	Answer     string      `json:"answer"`
 }
 
 type MemberProfileRequest struct {
