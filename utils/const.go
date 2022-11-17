@@ -34,3 +34,17 @@ type PlatformType string
 const (
 	PlatformDashboard PlatformType = "dashboard"
 )
+
+const (
+	PlatformAndroid string = "an"
+	PlatformWeb     string = "web"
+	PlatformIoS     string = "ios"
+)
+
+var MaxVersion int = 9999
+
+var QuestionIdVersions = map[string]int{
+	PlatformAndroid: MaxVersion,
+	PlatformWeb:     MaxVersion,
+	PlatformIoS:     363,
+}
