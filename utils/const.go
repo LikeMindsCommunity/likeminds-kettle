@@ -44,7 +44,7 @@ const (
 var MaxVersion int = 9999
 
 var QuestionIdVersions = map[string]int{
-	PlatformAndroid: MaxVersion,
+	PlatformAndroid: 202,
 	PlatformWeb:     MaxVersion,
 	PlatformIoS:     363,
 }
