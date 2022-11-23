@@ -40,7 +40,7 @@ func RemoveParticipants(c *gin.Context) {
 	Participants(c, utils.DELETEMethod)
 }
 
-//Participatns method handles chatroom participants
+// Participatns method handles chatroom participants
 func Participants(c *gin.Context, method int) {
 
 	//Authorize User

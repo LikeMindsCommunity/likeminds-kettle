@@ -31,6 +31,7 @@ const EditCohortEndPoint = "/api/cohort/update"
 const GetCohortAccessEndPoint = "/api/cohort/fetch_cohort_access"
 const EditCohortAccessEndPoint = "/api/cohort/update_cohort_access"
 const RemoveCohortMemberEndPoint = "/api/cohort/remove_member"
+const CommunityFetchFeedEndPoint = "/api/community_member/fetch_feed"
 
 const ParamPage = "page"
 const ParamMemberId = "member_id"
@@ -43,6 +44,8 @@ const SearchTypeParam = "search_type"
 const ParamState = "state"
 const ParamType = "type"
 const ParamCohortID = "cohort_id"
+const ParamPinned = "pinned"
+const ParamOrderType = "order_type"
 
 type CommunityObject struct {
 	ID             int64  `json:"id"`

@@ -130,6 +130,7 @@ func main() {
 	router.DELETE("/community/cohort/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.RemoveCohortMember)
 	router.GET("/community/cohort/access", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCohortAccess)
 	router.PUT("/community/cohort/access", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditCohortAccess)
+	router.GET("/community/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityFeed)
 
 	//Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
