@@ -18,14 +18,26 @@ type InternalParticipantRequest struct {
 	SecretChatroomParticipants []int64 `json:"secret_chatroom_participants"`
 }
 
-//AddParticipants is used to add participants in chatroom
+type RemoveParticipantRequest struct {
+	ChatroomID     int   `json:"chatroom_id"`
+	MemberID       int   `json:"member_id"`
+	RemovedMembers []int `json:"removed_members"`
+	IsSecret       bool  `json:"is_secret"`
+}
+
+// AddParticipants is used to add participants in chatroom
 func AddParticipants(c *gin.Context) {
 	Participants(c, utils.POSTMethod)
 }
 
-//GetParticipants is used to get chatroom participants
+// GetParticipants is used to get chatroom participants
 func GetParticipants(c *gin.Context) {
 	Participants(c, utils.GETMethod)
+}
+
+// GetParticipants is used to get chatroom participants
+func RemoveParticipants(c *gin.Context) {
+	Participants(c, utils.DELETEMethod)
 }
 
 //Participatns method handles chatroom participants
@@ -51,11 +63,15 @@ func Participants(c *gin.Context, method int) {
 	case utils.POSTMethod:
 
 		addParticipantsInternal(c, userId)
+
+	case utils.DELETEMethod:
+
+		removeParticipantsInternal(c, userId)
 	}
 }
 
 func updateParticipantsRequest(pr *ParticipantRequest) *InternalParticipantRequest {
-	//POST body params
+	// POST body params
 	var ipr InternalParticipantRequest
 
 	ipr.ChatroomID = pr.ChatroomID
@@ -65,7 +81,7 @@ func updateParticipantsRequest(pr *ParticipantRequest) *InternalParticipantReque
 }
 
 func parseParticipantsRequest(c *gin.Context) (*ParticipantRequest, error) {
-	//POST body params
+	// POST body params
 	var pr ParticipantRequest
 
 	if err := c.ShouldBindBodyWith(&pr, binding.JSON); err != nil {
@@ -75,9 +91,20 @@ func parseParticipantsRequest(c *gin.Context) (*ParticipantRequest, error) {
 	return &pr, nil
 }
 
+func parseRemoveParticipantsRequest(c *gin.Context) (*RemoveParticipantRequest, error) {
+	// POST body params
+	var rpr RemoveParticipantRequest
+
+	if err := c.ShouldBindBodyWith(&rpr, binding.JSON); err != nil {
+		return nil, err
+	}
+
+	return &rpr, nil
+}
+
 func getParticipantsInternal(c *gin.Context, userId string) {
 
-	//GET Request params
+	// GET Request params
 	is_secret := c.Query(ParamIsSecret)
 
 	//Params to be sent in the fetch_participants_meta request
@@ -122,5 +149,30 @@ func addParticipantsInternal(c *gin.Context, userId string) {
 
 		//Send Request
 		utils.SendRequest(c, utils.CoreService, AddSecretParticipantsEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, addSecretParticipantRequest)
+	}
+}
+
+func removeParticipantsInternal(c *gin.Context, userId string) {
+
+	removeParticipantRequest, err := parseRemoveParticipantsRequest(c)
+
+	if err != nil {
+		// If POST body params are missing
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	is_secret := removeParticipantRequest.IsSecret
+
+	if is_secret {
+		// If is_secret is true, call remove participant from open chatroom api internally
+		utils.SendRequest(c, utils.CoreService, RemoveSecretParticipantsEndpoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeParticipantRequest)
+
+	} else {
+		// Updated body according to secret participant remove request
+		removeParticipantRequest.RemovedMembers = []int{removeParticipantRequest.MemberID}
+
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, RemoveOpenParticipantsEndpoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, removeParticipantRequest)
 	}
 }
