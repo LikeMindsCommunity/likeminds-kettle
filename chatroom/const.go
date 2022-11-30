@@ -41,6 +41,8 @@ const AddCohortsToChatroomEndPoint = "/api/chatroom/add_cohorts"
 const RemoveCohortFromChatroomEndPoint = "/api/chatroom/remove_cohort"
 const RemoveOpenParticipantsEndpoint = "/api/chatroom/participants"
 const RemoveSecretParticipantsEndpoint = "/api/chatroom/secret/leave"
+const GetCohortAccessEndPoint = "/api/cohort/fetch_cohort_access"
+const EditCohortAccessEndPoint = "/api/cohort/update_cohort_access"
 
 const ParamCommunityId = "community_id"
 const ParamChatroomId = "chatroom_id"

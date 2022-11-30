@@ -1,8 +1,7 @@
-package community
+package chatroom
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/chatroom"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -41,7 +40,7 @@ func CohortAccess(c *gin.Context, method int) {
 
 		// Params to be sent in fetch cohort access api internally
 		params := map[string]string{
-			chatroom.ParamChatroomId: c.Query(chatroom.ParamChatroomId),
+			ParamChatroomId: c.Query(ParamChatroomId),
 		}
 
 		// Send Request

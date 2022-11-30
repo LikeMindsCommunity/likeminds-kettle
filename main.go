@@ -98,6 +98,8 @@ func main() {
 	router.GET("/chatroom/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ChatroomSearch)
 	router.POST("/chatroom/cohort", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.AddCohortToChatroom)
 	router.DELETE("/chatroom/cohort", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.RemoveCohortFromChatroom)
+	router.GET("/chatroom/cohort/access", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetCohortAccess)
+	router.PUT("/chatroom/cohort/access", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EditCohortAccess)
 
 	//Community Apis
 	router.POST("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditQuestions)
@@ -128,8 +130,6 @@ func main() {
 	router.DELETE("/community/cohort", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.DeleteCohort)
 	router.PUT("/community/cohort", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditCohort)
 	router.DELETE("/community/cohort/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.RemoveCohortMember)
-	router.GET("/community/cohort/access", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCohortAccess)
-	router.PUT("/community/cohort/access", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditCohortAccess)
 	router.GET("/community/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityFeed)
 
 	//Moderation Apis

@@ -28,8 +28,6 @@ const GetCohortEndPoint = "/api/cohort/fetch"
 const GetCommunityCohortsEndPoint = "/api/cohort/fetch_community_cohorts"
 const DeleteCohortEndPoint = "/api/cohort/delete"
 const EditCohortEndPoint = "/api/cohort/update"
-const GetCohortAccessEndPoint = "/api/cohort/fetch_cohort_access"
-const EditCohortAccessEndPoint = "/api/cohort/update_cohort_access"
 const RemoveCohortMemberEndPoint = "/api/cohort/remove_member"
 const CommunityFetchFeedEndPoint = "/api/community_member/fetch_feed"
 
