@@ -6,6 +6,7 @@ const HeadersPlatformCode = "x-platform-code"
 const HeadersPlatformType = "x-platform-type"
 const HeadersDeviceId = "x-device-id"
 const HeadersApiKey = "x-api-key"
+const HeadersAcceptVersion = "x-accept-version"
 
 const GETMethod = 0
 const POSTMethod = 1

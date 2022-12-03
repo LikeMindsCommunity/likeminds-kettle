@@ -23,6 +23,13 @@ const UserSearchEndpoint = "/api/search/member_directory"
 const FetchMemberProfileEndPoint = "/api/community_member/fetch_profile"
 const EditMemberProfileEndPoint = "/api/community_member/edit_profile"
 const FetchMemberChatroomEndPoint = "/api/fetch_user_chatrooms"
+const CreateCohortEndPoint = "/api/cohort/create"
+const GetCohortEndPoint = "/api/cohort/fetch"
+const GetCommunityCohortsEndPoint = "/api/cohort/fetch_community_cohorts"
+const DeleteCohortEndPoint = "/api/cohort/delete"
+const EditCohortEndPoint = "/api/cohort/update"
+const RemoveCohortMemberEndPoint = "/api/cohort/remove_member"
+const CommunityFetchFeedEndPoint = "/api/community_member/fetch_feed"
 
 const ParamPage = "page"
 const ParamMemberId = "member_id"
@@ -34,6 +41,9 @@ const SearchParam = "search"
 const SearchTypeParam = "search_type"
 const ParamState = "state"
 const ParamType = "type"
+const ParamCohortID = "cohort_id"
+const ParamPinned = "pinned"
+const ParamOrderType = "order_type"
 
 type CommunityObject struct {
 	ID             int64  `json:"id"`
