@@ -10,12 +10,18 @@ import (
 // InitiateSDKEndPoint | togther service user initiate endpoint
 const InitiateSDKEndPoint = "/api/sdk/initiate"
 
+type QuestionAnswer struct {
+	QuestionId int    `json:"question_id"`
+	Answer     string `json:"answer"`
+}
+
 // InitiateSDKRequest | user initiate request schema
 type InitiateSDKRequest struct {
-	UserName     string `json:"user_name"`
-	UserUniqueID string `json:"user_unique_id"`
-	ImageURL     string `json:"image_url"`
-	IsGuest      bool   `json:"is_guest"`
+	UserName        string           `json:"user_name"`
+	UserUniqueID    string           `json:"user_unique_id"`
+	ImageURL        string           `json:"image_url"`
+	IsGuest         bool             `json:"is_guest"`
+	QuestionAnswers []QuestionAnswer `json:"question_answers"`
 }
 
 //InitiateSDK is used to initiate sdk

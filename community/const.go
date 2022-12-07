@@ -31,7 +31,6 @@ const DeleteCohortEndPoint = "/api/cohort/delete"
 const EditCohortEndPoint = "/api/cohort/update"
 const RemoveCohortMemberEndPoint = "/api/cohort/remove_member"
 const CommunityFetchFeedEndPoint = "/api/community_member/fetch_feed"
-const CommunityJoinEndPoint = "/api/community_member/join"
 
 const ParamPage = "page"
 const ParamMemberId = "member_id"
