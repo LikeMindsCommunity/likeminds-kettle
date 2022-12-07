@@ -2,6 +2,7 @@ package sdk
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/community"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -10,18 +11,13 @@ import (
 // InitiateSDKEndPoint | togther service user initiate endpoint
 const InitiateSDKEndPoint = "/api/sdk/initiate"
 
-type QuestionAnswer struct {
-	QuestionId int    `json:"question_id"`
-	Answer     string `json:"answer"`
-}
-
 // InitiateSDKRequest | user initiate request schema
 type InitiateSDKRequest struct {
-	UserName        string           `json:"user_name"`
-	UserUniqueID    string           `json:"user_unique_id"`
-	ImageURL        string           `json:"image_url"`
-	IsGuest         bool             `json:"is_guest"`
-	QuestionAnswers []QuestionAnswer `json:"question_answers"`
+	UserName        string                            `json:"user_name"`
+	UserUniqueID    string                            `json:"user_unique_id"`
+	ImageURL        string                            `json:"image_url"`
+	IsGuest         bool                              `json:"is_guest"`
+	QuestionAnswers []community.QuestionAnswerWithInt `json:"question_answers"`
 }
 
 //InitiateSDK is used to initiate sdk
