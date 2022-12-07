@@ -103,6 +103,7 @@ func main() {
 
 	//Community Apis
 	router.POST("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditQuestions)
+	router.GET("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetQuestions)
 	router.GET("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetMember)
 	router.POST("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.AddMember)
 	router.PUT("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditMember)
@@ -131,6 +132,7 @@ func main() {
 	router.PUT("/community/cohort", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditCohort)
 	router.DELETE("/community/cohort/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.RemoveCohortMember)
 	router.GET("/community/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityFeed)
+	router.POST("/community/join", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.CommunityJoin)
 
 	//Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
