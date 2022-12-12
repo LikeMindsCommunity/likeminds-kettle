@@ -10,6 +10,9 @@ type PushReportRequest struct {
 	ReportedMemberID int    `json:"reported_member_id"`
 	ConversationID   int    `json:"conversation_id"`
 	ChatroomID       int    `json:"collabcard_id"`
+	EntityId         string `json:"entity_id"`
+	EntityCreatorId  string `json:"entity_creator_id"`
+	EntityType       int    `json:"entity_type"`
 	Link             string `json:"link"`
 	TagId            int    `json:"tag_id"`
 	Reason           string `json:"reason"`

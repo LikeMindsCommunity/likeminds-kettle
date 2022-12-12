@@ -8,7 +8,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/api_client"
 )
 
-//RequestParamsToMap Converts a struct to a map while maintaining the json alias as keys
+// RequestParamsToMap Converts a struct to a map while maintaining the json alias as keys
 func RequestParamsToMap(obj interface{}) (newMap map[string]string, err error) {
 	data, err := json.Marshal(obj) // Convert to a json string
 	if err != nil {
@@ -18,7 +18,7 @@ func RequestParamsToMap(obj interface{}) (newMap map[string]string, err error) {
 	return
 }
 
-//CreateHeaders Used to create headers for our internal APIs
+// CreateHeaders Used to create headers for our internal APIs
 func CreateHeaders(c *gin.Context, userUniqueID string) map[string]interface{} {
 	headers := make(map[string]interface{})
 	if len(userUniqueID) > 0 {
@@ -32,7 +32,7 @@ func CreateHeaders(c *gin.Context, userUniqueID string) map[string]interface{} {
 	return headers
 }
 
-//Generate Response to be sent on request success
+// Generate Response to be sent on request success
 func GenerateResponse(c *gin.Context, dataResponse map[string]interface{}) {
 	//Generating Response Object
 	response := Response{
@@ -67,7 +67,7 @@ func ValidateClientResponse(c *gin.Context, respBytes []byte, statusCode int) *a
 	return &apiCR
 }
 
-//ParseResponse from request sent internally
+// ParseResponse from request sent internally
 func ParseResponse(c *gin.Context, respBytes []byte, statusCode int) {
 
 	apiCR := ValidateClientResponse(c, respBytes, statusCode)
@@ -91,6 +91,9 @@ func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, req
 
 	case SubscriptionService:
 		baseUrl = client.SubscriptionServiceBaseURL
+
+	case SwarmService:
+		baseUrl = client.SwarmServiceBaseUrl
 	}
 
 	switch requestType {

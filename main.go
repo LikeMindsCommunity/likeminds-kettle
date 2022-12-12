@@ -12,6 +12,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/chatroom"
 	"github.com/nateshr/likeminds-authentication/community"
 	"github.com/nateshr/likeminds-authentication/conversation"
+	"github.com/nateshr/likeminds-authentication/feed"
 	"github.com/nateshr/likeminds-authentication/home"
 	"github.com/nateshr/likeminds-authentication/moderation"
 	"github.com/nateshr/likeminds-authentication/otp"
@@ -131,6 +132,8 @@ func main() {
 	router.PUT("/community/cohort", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditCohort)
 	router.DELETE("/community/cohort/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.RemoveCohortMember)
 	router.GET("/community/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityFeed)
+	router.GET("/community/settings/notification/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetFeedNotificationSettings)
+	router.PUT("/community/settings/notification/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditFeedNotificationSettings)
 
 	//Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
@@ -158,6 +161,24 @@ func main() {
 	router.GET("/conversation/notification/unread", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.UnreadConversationNotification)
 	router.GET("/conversation/sync", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.SyncConversation)
 	router.GET("/conversation/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.ConversationSearch)
+
+	//Feed Apis
+	router.POST("/feed/post", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CreatePost)
+	router.GET("/feed/post/:post_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.GetPost)
+	router.DELETE("/feed/post/:post_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.DeletePost)
+	router.PUT("/feed/post/:post_id/like", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CreatePostLike)
+	router.GET("/feed/post/:post_id/like", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.GetPostLikes)
+	router.PUT("/feed/post/:post_id/pin", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.PinPost)
+	router.PUT("/feed/post/:post_id/save", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CreateSavePost)
+	router.POST("/feed/post/:post_id/comment", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CommentPost)
+	router.POST("/feed/post/:post_id/comment/:comment_id/comment", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CreateCommentReply)
+	router.GET("/feed/post/:post_id/comment/:comment_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.GetComment)
+	router.DELETE("/feed/post/:post_id/comment/:comment_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.DeleteComment)
+	router.PUT("/feed/post/:post_id/comment/:comment_id/like", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CreateCommentLike)
+	router.GET("/feed/post/:post_id/comment/:comment_id/like", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.GetCommentLikes)
+	router.GET("/feed/user/:user_id/save", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.GetSavedPosts)
+	router.GET("/feed/user/:user_id/post", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.FetchUserCreatedPosts)
+	router.POST("/feed/user/:user_id/activity", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CreateUserActivity)
 
 	log.Printf("application version: %s", AppVersion)
 	log.Fatal(router.Run(":8080"))

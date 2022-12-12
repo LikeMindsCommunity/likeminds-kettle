@@ -27,6 +27,7 @@ const DefaultStatusCode = -1
 type APIClient struct {
 	CoreServiceBaseURL         string
 	SubscriptionServiceBaseURL string
+	SwarmServiceBaseUrl        string
 	HTTPClient                 *http.Client
 }
 
@@ -63,10 +64,21 @@ func GetSubscriptionServiceBaseUrl() string {
 	return SubscriptionServiceBaseURL
 }
 
+func GetSwarmServiceBaseUrl() string {
+	SwarmServiceBaseURL := environment.GoDotEnvVariable("SWARM_BASE_URL")
+
+	if len(SwarmServiceBaseURL) == 0 {
+		SwarmServiceBaseURL = "https://betaswarm.likeminds.community"
+	}
+
+	return SwarmServiceBaseURL
+}
+
 func NewAPIClient() *APIClient {
 	return &APIClient{
 		CoreServiceBaseURL:         GetCoreServiceBaseUrl(),
 		SubscriptionServiceBaseURL: GetSubscriptionServiceBaseUrl(),
+		SwarmServiceBaseUrl:        GetSwarmServiceBaseUrl(),
 		HTTPClient: &http.Client{
 			Timeout: time.Minute,
 		},

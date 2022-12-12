@@ -16,6 +16,7 @@ const ErrorInvalidRTM = "Invalid RTM!"
 const ErrorRedisFailed = "Unable to initialize Redis!"
 const ErrorInvalidAPIKey = "Invalid API key!"
 const ErrorGuestAccessDenied = "Login required!"
+const ErrorMemeberAccessFail = "You are not authorized to perform this operation!"
 
 func GeneralAPIError(c *gin.Context, errorMessage string) {
 	c.JSON(http.StatusInternalServerError, Response{
@@ -44,6 +45,20 @@ func POSTBodyParamsMissingError(c *gin.Context) {
 
 func TokenAuthError(c *gin.Context, errorMessage string) {
 	c.JSON(http.StatusUnauthorized, Response{
+		Success:      false,
+		ErrorMessage: errorMessage,
+	})
+}
+
+func MemberAccessFailError(c *gin.Context) {
+	c.JSON(http.StatusUnauthorized, Response{
+		Success:      false,
+		ErrorMessage: ErrorMemeberAccessFail,
+	})
+}
+
+func GeneralBadRequestError(c *gin.Context, errorMessage string) {
+	c.JSON(http.StatusBadRequest, Response{
 		Success:      false,
 		ErrorMessage: errorMessage,
 	})
