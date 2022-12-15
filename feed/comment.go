@@ -128,35 +128,18 @@ func getCommentInternal(c *gin.Context, userId string) {
 			return
 		}
 
-		//Update comment user data
-		if comment_user_unique_id, ok := comment_data["user_id"]; ok {
-			for _, member := range user_data.Members {
-				if member.UserUniqueId == comment_user_unique_id.(string) {
-					dataResponse["comment"].(map[string]interface{})["user"] = member
-				}
-			}
-			delete(dataResponse["comment"].(map[string]interface{}), "user_id")
-		}
-
 		//Validation of comment based on community member
-		if _, ok := dataResponse["comment"].(map[string]interface{})["user"]; !ok {
-			utils.GeneralBadRequestError(c, "Invalid comment_id sent!")
-			return
-		}
-
-		//Update user data for replies
-		if replies, ok := comment_data["replies"]; ok {
-			for reply_index, reply_data := range replies.([]interface{}) {
-				if user_unique_id, ok := reply_data.(map[string]interface{})["user_id"]; ok {
-					for _, member := range user_data.Members {
-						if member.UserUniqueId == user_unique_id {
-							dataResponse["comment"].(map[string]interface{})["replies"].([]interface{})[reply_index].(map[string]interface{})["user"] = member
-						}
-					}
-					delete(dataResponse["comment"].(map[string]interface{})["replies"].([]interface{})[reply_index].(map[string]interface{}), "user_id")
+		if comment_user_unique_id, ok := comment_data["user_id"]; ok {
+			if comment_user, ok := user_data[comment_user_unique_id.(string)]; ok {
+				if comment_user.IsDeleted {
+					utils.GeneralBadRequestError(c, "Invalid comment_id sent!")
+					return
 				}
 			}
 		}
+
+		//Update users data in dataResponse
+		dataResponse["users"] = user_data
 	}
 
 	//Send response

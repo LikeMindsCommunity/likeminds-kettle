@@ -14,6 +14,7 @@ type MemberMeta struct {
 	ImageUrl     string `json:"image_url"`
 	UserUniqueId string `json:"user_unique_id"`
 	IsGuest      bool   `json:"is_guest"`
+	IsDeleted    bool   `json:"is_deleted"`
 }
 
 type MemberMetaResponse struct {
@@ -22,7 +23,7 @@ type MemberMetaResponse struct {
 }
 
 // FetchMemberMeta | fetch member meta for sent ids
-func FetchMemberMeta(c *gin.Context, member_ids []string) (bool, *MemberMetaResponse) {
+func FetchMemberMeta(c *gin.Context, member_ids []string) (bool, map[string]MemberMeta) {
 
 	//Authorize User
 	userId := GetRequestingUserId(c)
@@ -46,6 +47,7 @@ func FetchMemberMeta(c *gin.Context, member_ids []string) (bool, *MemberMetaResp
 		return false, nil
 	}
 
+	//Parse response
 	var membersMetaResponse MemberMetaResponse
 	if err := json.Unmarshal(respBytes, &membersMetaResponse); err != nil {
 		//Internal unmarshal error
@@ -53,5 +55,20 @@ func FetchMemberMeta(c *gin.Context, member_ids []string) (bool, *MemberMetaResp
 		return false, nil
 	}
 
-	return true, &membersMetaResponse
+	//Generate user data for received data
+	response := map[string]MemberMeta{}
+	for _, memberData := range membersMetaResponse.Members {
+		response[memberData.UserUniqueId] = memberData
+	}
+
+	//Generate user data for remaining member_ids
+	for _, memberId := range member_ids {
+		if _, ok := response[memberId]; !ok {
+			response[memberId] = MemberMeta{
+				IsDeleted: true,
+			}
+		}
+	}
+
+	return true, response
 }

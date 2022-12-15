@@ -66,17 +66,8 @@ func FetchUserCreatedPosts(c *gin.Context) {
 			return
 		}
 
-		//Update user data for posts
-		for post_index, post_data := range posts {
-			if user_unique_id, ok := post_data.(map[string]interface{})["user_id"]; ok {
-				for _, member := range user_data.Members {
-					if member.UserUniqueId == user_unique_id {
-						dataResponse["posts"].([]interface{})[post_index].(map[string]interface{})["user"] = member
-					}
-				}
-				delete(dataResponse["posts"].([]interface{})[post_index].(map[string]interface{}), "user_id")
-			}
-		}
+		//Update user data in dataResponse
+		dataResponse["users"] = user_data
 	}
 
 	//Send response

@@ -76,6 +76,7 @@ func getPostLikesInternal(c *gin.Context, userId string, endPoint string) {
 		likes_data := value.([]interface{})
 		user_ids := []string{}
 
+		//Fetch user ids
 		for _, like_data := range likes_data {
 			if user_unique_id, ok := like_data.(map[string]interface{})["user_id"]; ok {
 				user_ids = append(user_ids, user_unique_id.(string))
@@ -88,17 +89,8 @@ func getPostLikesInternal(c *gin.Context, userId string, endPoint string) {
 			return
 		}
 
-		//Update user data
-		for like_index, like_data := range likes_data {
-			if user_unique_id, ok := like_data.(map[string]interface{})["user_id"]; ok {
-				for _, member := range user_data.Members {
-					if member.UserUniqueId == user_unique_id {
-						dataResponse["likes"].([]interface{})[like_index].(map[string]interface{})["user"] = member
-					}
-				}
-				delete(dataResponse["likes"].([]interface{})[like_index].(map[string]interface{}), "user_id")
-			}
-		}
+		//Update user data in dataResponse
+		dataResponse["users"] = user_data
 	}
 
 	//Send response
