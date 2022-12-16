@@ -7,19 +7,19 @@ import (
 )
 
 type Question struct {
-	Id                  int32  `json:"id"`
-	QuestionTitle       string `json:"question_title"`
-	Value               string `json:"value"`
-	Optional            bool   `json:"optional"`
-	State               int32  `json:"state"`
-	HelpText            string `json:"help_text"`
-	IsHidden            bool   `json:"is_hidden"`
-	Field               bool   `json:"field"`
-	Rank                int32  `json:"rank"`
-	QuestionChangeState int32  `json:"question_change_state"`
-	CanAddOptions       bool   `json:"can_add_options"`
-	IsCompulsory        bool   `json:"is_compulsory"`
-	IsAnswerEditable    bool   `json:"is_answer_editable"`
+	Id                  int32       `json:"id"`
+	QuestionTitle       string      `json:"question_title"`
+	Value               interface{} `json:"value"`
+	Optional            bool        `json:"optional"`
+	State               int32       `json:"state"`
+	HelpText            string      `json:"help_text"`
+	IsHidden            bool        `json:"is_hidden"`
+	Field               bool        `json:"field"`
+	Rank                int32       `json:"rank"`
+	QuestionChangeState int32       `json:"question_change_state"`
+	CanAddOptions       bool        `json:"can_add_options"`
+	IsCompulsory        bool        `json:"is_compulsory"`
+	IsAnswerEditable    bool        `json:"is_answer_editable"`
 }
 
 // EditQuestionsRequest
