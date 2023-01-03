@@ -8,7 +8,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//Refresh to generate new LTM and RTM tokens
+// Refresh to generate new LTM and RTM tokens
 func Refresh(c *gin.Context) {
 
 	//Check if request has RTM token or not
@@ -19,7 +19,7 @@ func Refresh(c *gin.Context) {
 	}
 
 	//Create login and refresh token meta from ltm
-	ltm, rtm, err := token.CreateLTMAndRTM(currentRTM.UserUniqueID)
+	ltm, rtm, err := token.CreateLTMAndRTM(currentRTM.UserUniqueID, currentRTM.ApiKey)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, utils.Response{
 			Success:      false,

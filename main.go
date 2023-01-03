@@ -339,6 +339,13 @@ const ResponseCommunityId = "community_id"
 
 func APIKeyValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		//Check if request has LTM token or not
+		ltm, ok := c.Get(token.ParamLTM)
+		if ok && ltm.(*token.LoginTokenMeta).ApiKey != "" {
+			c.Request.Header["X-Api-Key"] = []string{ltm.(*token.LoginTokenMeta).ApiKey}
+			c.Next()
+		}
+
 		//Create internal API client
 		client := api_client.NewAPIClient()
 		options := api_client.GetRequestOptions{

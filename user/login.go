@@ -21,7 +21,7 @@ type LoginRequest struct {
 	User      User   `json:"user"`
 }
 
-//Login used when user is signing up and generate login and refresh tokens
+// Login used when user is signing up and generate login and refresh tokens
 func Login(c *gin.Context) {
 
 	//Body to be sent in the login api internally
@@ -48,7 +48,7 @@ func Login(c *gin.Context) {
 	userUniqueID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
 	//Create login and refresh token
 
-	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID)
+	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, "")
 	if err != nil {
 		//If token creation fails
 		utils.GeneralAPIError(c, err.Error())
