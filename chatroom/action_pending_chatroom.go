@@ -12,7 +12,7 @@ type ActionPendingChatroomRequest struct {
 	PreApprove bool  `json:"pre_approve"`
 }
 
-//ActionPendingChatroom is used to change the state of pending chatroom
+// ActionPendingChatroom is used to change the state of pending chatroom
 func ActionPendingChatroom(c *gin.Context) {
 
 	//Authorize User
