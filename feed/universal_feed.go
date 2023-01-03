@@ -8,23 +8,19 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-// FetchUserCreatedPost is used to fetch posts created by a user
-func FetchUserCreatedPosts(c *gin.Context) {
+// FetchUniversalFeed is used to fetch universal feed by a user
+func FetchUniversalFeed(c *gin.Context) {
 	//Authorize User
 	userId := user.GetRequestingUserId(c)
 	if userId == "" {
 		return
 	}
 
-	//Params to be sent in the /user/<user_id>/post request
+	//Params to be sent in the /feed/universal request
 	params := map[string]string{
 		ParamPage:     c.Query(ParamPage),
 		ParamPageSize: c.Query(ParamPageSize),
 	}
-
-	//Access query params and url generation
-	user_id := c.Param("user_id")
-	UserCreatedPostsEndPoint := fmt.Sprintf(FetchUserCreatedPostsEndPoint, user_id)
 
 	//Fetch member access to view post
 	success, response := user.FetchMemberAccess(c, VIEW_POST_ACTION)
@@ -42,7 +38,7 @@ func FetchUserCreatedPosts(c *gin.Context) {
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, UserCreatedPostsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchUniversalFeedEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
@@ -52,7 +48,7 @@ func FetchUserCreatedPosts(c *gin.Context) {
 
 	//If flow succeeds
 	dataResponse := apiCR.Response
-	if value, ok := dataResponse["posts"]; ok {
+	if value, ok := dataResponse["feed"]; ok {
 		posts := value.([]interface{})
 		user_ids := []string{}
 

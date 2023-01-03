@@ -12,6 +12,7 @@ const SingleCommentReplyEndPoint = "/post/%s/comment/%s/comment"
 const FetchUserSavedPostsEndPoint = "/user/%s/save"
 const FetchUserCreatedPostsEndPoint = "/user/%s/post"
 const SingleUserActivityEndPoint = "/user/%s/activity"
+const FetchUniversalFeedEndPoint = "/feed/universal"
 
 const ParamPage = "page"
 const ParamPageSize = "page_size"

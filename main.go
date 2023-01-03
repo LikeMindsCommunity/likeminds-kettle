@@ -179,6 +179,7 @@ func main() {
 	router.GET("/feed/user/:user_id/save", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.GetSavedPosts)
 	router.GET("/feed/user/:user_id/post", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.FetchUserCreatedPosts)
 	router.POST("/feed/user/:user_id/activity", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CreateUserActivity)
+	router.GET("/feed/universal", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.FetchUniversalFeed)
 
 	log.Printf("application version: %s", AppVersion)
 	log.Fatal(router.Run(":8080"))

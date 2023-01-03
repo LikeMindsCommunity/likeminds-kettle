@@ -68,7 +68,7 @@ func GetSwarmServiceBaseUrl() string {
 	SwarmServiceBaseURL := environment.GoDotEnvVariable("SWARM_BASE_URL")
 
 	if len(SwarmServiceBaseURL) == 0 {
-		SwarmServiceBaseURL = "https://betaswarm.likeminds.community"
+		SwarmServiceBaseURL = "https://swarm-beta.likeminds.community"
 	}
 
 	return SwarmServiceBaseURL
