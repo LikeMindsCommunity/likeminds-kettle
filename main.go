@@ -339,21 +339,11 @@ const ResponseCommunityId = "community_id"
 
 func APIKeyValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		checkApiKeyHeader := false
-		apiKey := ""
-
 		//Check if request has LTM token or not
 		ltm, ok := c.Get(token.ParamLTM)
-		if !ok {
-			checkApiKeyHeader = true
+		if ok && ltm.(*token.LoginTokenMeta).ApiKey != "" {
+			c.Request.Header["X-Api-Key"] = []string{ltm.(*token.LoginTokenMeta).ApiKey}
 		} else {
-			apiKey = ltm.(*token.LoginTokenMeta).ApiKey
-			if apiKey == "" {
-				checkApiKeyHeader = true
-			}
-		}
-
-		if checkApiKeyHeader {
 			//Create internal API client
 			client := api_client.NewAPIClient()
 			options := api_client.GetRequestOptions{
@@ -391,8 +381,6 @@ func APIKeyValidationMiddleware() gin.HandlerFunc {
 				return
 			}
 			c.Set(ResponseCommunityId, apiCR.Response[ResponseCommunityId])
-		} else {
-			c.Request.Header["X-Api-Key"] = []string{apiKey}
 		}
 
 		c.Next()
