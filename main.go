@@ -339,43 +339,62 @@ const ResponseCommunityId = "community_id"
 
 func APIKeyValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//Create internal API client
-		client := api_client.NewAPIClient()
-		options := api_client.GetRequestOptions{
-			Url:           client.CoreServiceBaseURL + SDKAuthenticateEndPoint,
-			CustomHeaders: utils.CreateHeaders(c, ""),
-		}
-		//Send request
-		respBytes, _, err := client.GetRequest(&options)
-		if err != nil {
-			//If API fails or any other error
-			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
-				Success:      false,
-				ErrorMessage: err.Error(),
-			})
-			return
-		}
-		//Parse response
-		var apiCR api_client.APIClientResponse
-		err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-		if err != nil {
-			//Internal unmarshal error
-			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
-				Success:      false,
-				ErrorMessage: err.Error(),
-			})
-			return
+		checkApiKeyHeader := false
+		apiKey := ""
+
+		//Check if request has LTM token or not
+		ltm, ok := c.Get(token.ParamLTM)
+		if !ok {
+			checkApiKeyHeader = true
+		} else {
+			apiKey = ltm.(*token.LoginTokenMeta).ApiKey
+			if apiKey == "" {
+				checkApiKeyHeader = true
+			}
 		}
 
-		if !apiCR.Success {
-			//If api/sdk/authenticate returns success as false
-			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
-				Success:      false,
-				ErrorMessage: utils.ErrorInvalidAPIKey,
-			})
-			return
+		if checkApiKeyHeader {
+			//Create internal API client
+			client := api_client.NewAPIClient()
+			options := api_client.GetRequestOptions{
+				Url:           client.CoreServiceBaseURL + SDKAuthenticateEndPoint,
+				CustomHeaders: utils.CreateHeaders(c, ""),
+			}
+			//Send request
+			respBytes, _, err := client.GetRequest(&options)
+			if err != nil {
+				//If API fails or any other error
+				c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+					Success:      false,
+					ErrorMessage: err.Error(),
+				})
+				return
+			}
+			//Parse response
+			var apiCR api_client.APIClientResponse
+			err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
+			if err != nil {
+				//Internal unmarshal error
+				c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+					Success:      false,
+					ErrorMessage: err.Error(),
+				})
+				return
+			}
+
+			if !apiCR.Success {
+				//If api/sdk/authenticate returns success as false
+				c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+					Success:      false,
+					ErrorMessage: utils.ErrorInvalidAPIKey,
+				})
+				return
+			}
+			c.Set(ResponseCommunityId, apiCR.Response[ResponseCommunityId])
+		} else {
+			c.Request.Header["X-Api-Key"] = []string{apiKey}
 		}
-		c.Set(ResponseCommunityId, apiCR.Response[ResponseCommunityId])
+
 		c.Next()
 	}
 }
