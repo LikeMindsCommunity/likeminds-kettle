@@ -29,7 +29,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "1.6.1"
+	var AppVersion string = "1.8.1"
 
 	initGin()
 	client = cache.InitRedis()
@@ -104,6 +104,7 @@ func main() {
 
 	//Community Apis
 	router.POST("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditQuestions)
+	router.GET("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetQuestions)
 	router.GET("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetMember)
 	router.POST("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.AddMember)
 	router.PUT("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditMember)
@@ -338,6 +339,13 @@ const ResponseCommunityId = "community_id"
 
 func APIKeyValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		//Check if request has LTM token or not
+		ltm, ok := c.Get(token.ParamLTM)
+		if ok && ltm.(*token.LoginTokenMeta).ApiKey != "" {
+			c.Request.Header["X-Api-Key"] = []string{ltm.(*token.LoginTokenMeta).ApiKey}
+			c.Next()
+		}
+
 		//Create internal API client
 		client := api_client.NewAPIClient()
 		options := api_client.GetRequestOptions{

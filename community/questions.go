@@ -7,27 +7,38 @@ import (
 )
 
 type Question struct {
-	Id                  int32  `json:"id"`
-	QuestionTitle       string `json:"question_title"`
-	Value               string `json:"value"`
-	Optional            bool   `json:"optional"`
-	State               int32  `json:"state"`
-	HelpText            string `json:"help_text"`
-	IsHidden            bool   `json:"is_hidden"`
-	Field               bool   `json:"field"`
-	Rank                int32  `json:"rank"`
-	QuestionChangeState int32  `json:"question_change_state"`
-	CanAddOptions       bool   `json:"can_add_options"`
-	IsCompulsory        bool   `json:"is_compulsory"`
+	Id                  int32       `json:"id"`
+	QuestionTitle       string      `json:"question_title"`
+	Value               interface{} `json:"value"`
+	Optional            bool        `json:"optional"`
+	State               int32       `json:"state"`
+	HelpText            string      `json:"help_text"`
+	IsHidden            bool        `json:"is_hidden"`
+	Field               bool        `json:"field"`
+	Rank                int32       `json:"rank"`
+	QuestionChangeState int32       `json:"question_change_state"`
+	CanAddOptions       bool        `json:"can_add_options"`
+	IsCompulsory        bool        `json:"is_compulsory"`
+	IsAnswerEditable    bool        `json:"is_answer_editable"`
 }
 
-//EditQuestionsRequest
+// EditQuestionsRequest
 type EditQuestionsRequest struct {
 	Questions []Question `json:"questions"`
 }
 
-//EditQuestions is used to edit Community Questions
+// EditQuestions is used to edit Community Questions
 func EditQuestions(c *gin.Context) {
+	Questions(c, utils.PUTMethod)
+}
+
+// GetQuestions is used to get Community Questions
+func GetQuestions(c *gin.Context) {
+	Questions(c, utils.GETMethod)
+}
+
+// Questions is used to for Community Questions
+func Questions(c *gin.Context, method int) {
 
 	//Authorize User
 	userId := user.GetRequestingUserId(c)
@@ -40,16 +51,23 @@ func EditQuestions(c *gin.Context) {
 		userId = botId
 	}
 
-	//Body to be sent in the api/community/edit_questions POST request
-	editQuestionsRequest, err := parseEditQuestionRequest(c)
-	if err != nil {
-		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
-		return
-	}
+	switch method {
+	case utils.PUTMethod:
+		//Body to be sent in the api/community/edit_questions POST request
+		editQuestionsRequest, err := parseEditQuestionRequest(c)
+		if err != nil {
+			//If POST body params are missing
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, EditQuestionsEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, editQuestionsRequest)
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, EditQuestionsEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, editQuestionsRequest)
+
+	case utils.GETMethod:
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, FetchQuestionsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+	}
 }
 
 func parseEditQuestionRequest(c *gin.Context) (*EditQuestionsRequest, error) {

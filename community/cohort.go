@@ -6,9 +6,16 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
+type CohortFilter struct {
+	QuestionID    int    `json:"question_id" binding:"required"`
+	QuestionTitle string `json:"question_title"`
+	Value         string `json:"value" binding:"required"`
+}
+
 type CreateCohortRequest struct {
-	Name      string `json:"name" binding:"required"`
-	MemberIDs []int  `json:"member_ids"  binding:"required"`
+	Name      string         `json:"name" binding:"required"`
+	MemberIDs []int          `json:"member_ids"  binding:"required"`
+	Filter    []CohortFilter `json:"filter"`
 }
 
 type CohortRights struct {
@@ -26,7 +33,7 @@ type EditCohortRequest struct {
 	Rights     []CohortRights `json:"rights"`
 	CohortType int            `json:"type"`
 	TypeID     string         `json:"type_id"`
-	FilterList []string       `json:"filter"`
+	FilterList []CohortFilter `json:"filter"`
 }
 
 // Create a cohort in community

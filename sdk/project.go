@@ -41,6 +41,7 @@ type CreateProjectRequest struct {
 	FirebaseServerKey string                   `json:"firebase_server_key"`
 	Platform          []Platform               `json:"platform"`
 	ProjectCreator    string                   `json:"project_creator"`
+	IsJoinFormEnabled bool                     `json:"is_join_form_enabled"`
 }
 
 type UpdateProjectRequest struct {
@@ -51,6 +52,7 @@ type UpdateProjectRequest struct {
 	FirebaseServerKey string                   `json:"firebase_server_key"`
 	Platform          []Platform               `json:"platform"`
 	ProjectCreator    string                   `json:"project_creator"`
+	IsJoinFormEnabled bool                     `json:"is_join_form_enabled"`
 }
 
 //CreateProject is used to create a new sdk project

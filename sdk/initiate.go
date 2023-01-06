@@ -2,6 +2,7 @@ package sdk
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/community"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -12,13 +13,14 @@ const InitiateSDKEndPoint = "/api/sdk/initiate"
 
 // InitiateSDKRequest | user initiate request schema
 type InitiateSDKRequest struct {
-	UserName     string `json:"user_name"`
-	UserUniqueID string `json:"user_unique_id"`
-	ImageURL     string `json:"image_url"`
-	IsGuest      bool   `json:"is_guest"`
+	UserName        string                            `json:"user_name"`
+	UserUniqueID    string                            `json:"user_unique_id"`
+	ImageURL        string                            `json:"image_url"`
+	IsGuest         bool                              `json:"is_guest"`
+	QuestionAnswers []community.QuestionAnswerWithInt `json:"question_answers"`
 }
 
-//InitiateSDK is used to initiate sdk
+// InitiateSDK is used to initiate sdk
 func InitiateSDK(c *gin.Context) {
 
 	//Body to be sent in the initiate SDK api internally
@@ -47,7 +49,7 @@ func InitiateSDK(c *gin.Context) {
 	//If flow succeeds
 	userUniqueID := apiCR.Response[user.ResponseUser].(map[string]interface{})[user.ResponseUserUniqueId].(string)
 	//Create login and refresh token
-	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID)
+	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, c.GetHeader(utils.HeadersApiKey))
 	if err != nil {
 		//If token creation fails
 		utils.GeneralAPIError(c, err.Error())

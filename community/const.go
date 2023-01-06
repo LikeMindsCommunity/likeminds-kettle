@@ -3,6 +3,7 @@ package community
 const FetchMembersMetaEndPoint = "/api/community/fetch_members_meta"
 const AllMembersV1EndPoint = "/api/v1/all_members"
 const EditQuestionsEndPoint = "/api/community/edit_questions"
+const FetchQuestionsEndPoint = "/api/community/questions"
 const CommunityMemberEndPoint = "/api/community/member"
 const MemberStateEndPoint = "/api/members_state"
 const RemoveMemberEndPoint = "/api/remove_from_member"

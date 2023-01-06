@@ -3,11 +3,12 @@ package token
 import (
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/myesui/uuid"
 	"github.com/nateshr/likeminds-authentication/environment"
-	"strings"
-	"time"
 )
 
 const HeaderAuthorization = "Authorization"
@@ -31,6 +32,7 @@ type LoginTokenMeta struct {
 	AccessToken        string
 	AccessTokenExpires int64
 	UserUniqueID       string
+	ApiKey             string
 }
 
 type RefreshTokenMeta struct {
@@ -38,6 +40,7 @@ type RefreshTokenMeta struct {
 	RefreshToken        string
 	RefreshTokenExpires int64
 	UserUniqueID        string
+	ApiKey              string
 }
 
 func CreateVTM() (*VerifyTokenMeta, error) {
@@ -60,8 +63,8 @@ func CreateVTM() (*VerifyTokenMeta, error) {
 	return vtm, nil
 }
 
-//CreateLTMAndRTM is used to create login and refresh token meta
-func CreateLTMAndRTM(userUniqueID string) (*LoginTokenMeta, *RefreshTokenMeta, error) {
+// CreateLTMAndRTM is used to create login and refresh token meta
+func CreateLTMAndRTM(userUniqueID string, api_key string) (*LoginTokenMeta, *RefreshTokenMeta, error) {
 	ltm := &LoginTokenMeta{
 		AccessUuid:         uuid.NewV4().String(),
 		AccessTokenExpires: time.Now().Add(time.Minute * 15).Unix(),
@@ -79,6 +82,7 @@ func CreateLTMAndRTM(userUniqueID string) (*LoginTokenMeta, *RefreshTokenMeta, e
 	ltmClaims["access_uuid"] = ltm.AccessUuid
 	ltmClaims["user_unique_id"] = userUniqueID
 	ltmClaims["exp"] = ltm.AccessTokenExpires
+	ltmClaims["api_key"] = api_key
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, ltmClaims)
 	ltm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
 	if err != nil {
@@ -89,6 +93,7 @@ func CreateLTMAndRTM(userUniqueID string) (*LoginTokenMeta, *RefreshTokenMeta, e
 	rtmClaims["refresh_uuid"] = rtm.RefreshUuid
 	rtmClaims["user_unique_id"] = userUniqueID
 	rtmClaims["exp"] = rtm.RefreshTokenExpires
+	rtmClaims["api_key"] = api_key
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtmClaims)
 	rtm.RefreshToken, err = rt.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
 	if err != nil {
@@ -97,7 +102,7 @@ func CreateLTMAndRTM(userUniqueID string) (*LoginTokenMeta, *RefreshTokenMeta, e
 	return ltm, rtm, nil
 }
 
-//ExtractToken to extract token from headers or return string value
+// ExtractToken to extract token from headers or return string value
 func ExtractToken(bearerToken string) string {
 	//Normally Authorization the_token_xxx
 	strArr := strings.Split(bearerToken, " ")
@@ -108,7 +113,7 @@ func ExtractToken(bearerToken string) string {
 	return bearerToken
 }
 
-//VerifyToken to verify token
+// VerifyToken to verify token
 func VerifyToken(bearerToken string) (*jwt.Token, error) {
 	tokenString := ExtractToken(bearerToken)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -125,7 +130,7 @@ func VerifyToken(bearerToken string) (*jwt.Token, error) {
 	return token, nil
 }
 
-//ExtractVTM is used to return VTM and check if bearer token is valid or not
+// ExtractVTM is used to return VTM and check if bearer token is valid or not
 func ExtractVTM(bearerToken string) (*VerifyTokenMeta, error) {
 	token, err := VerifyToken(bearerToken)
 	if err != nil {
@@ -144,7 +149,7 @@ func ExtractVTM(bearerToken string) (*VerifyTokenMeta, error) {
 	return nil, err
 }
 
-//ExtractLTM is used to return LTM and check if bearer token is valid or not
+// ExtractLTM is used to return LTM and check if bearer token is valid or not
 func ExtractLTM(bearerToken string) (*LoginTokenMeta, error) {
 	token, err := VerifyToken(bearerToken)
 	if err != nil {
@@ -164,16 +169,18 @@ func ExtractLTM(bearerToken string) (*LoginTokenMeta, error) {
 		if !ok {
 			return nil, errors.New("user_unique_id is empty")
 		}
+		apiKey, _ := claims["api_key"].(string)
 		return &LoginTokenMeta{
 			AccessUuid:         accessUuid,
 			UserUniqueID:       userUniqueID,
 			AccessTokenExpires: atExpires,
+			ApiKey:             apiKey,
 		}, nil
 	}
 	return nil, err
 }
 
-//ExtractRTM is used to return RTM and check if bearer token is valid or not
+// ExtractRTM is used to return RTM and check if bearer token is valid or not
 func ExtractRTM(bearerToken string) (*RefreshTokenMeta, error) {
 	token, err := VerifyToken(bearerToken)
 	if err != nil {
@@ -193,10 +200,12 @@ func ExtractRTM(bearerToken string) (*RefreshTokenMeta, error) {
 		if !ok {
 			return nil, errors.New("user_unique_id is empty")
 		}
+		apiKey, _ := claims["api_key"].(string)
 		return &RefreshTokenMeta{
 			RefreshUuid:         refreshUuid,
 			UserUniqueID:        userUniqueID,
 			RefreshTokenExpires: rtExpires,
+			ApiKey:              apiKey,
 		}, nil
 	}
 	return nil, err
