@@ -55,27 +55,27 @@ type DeleteChatroomRequest struct {
 	Reason     string `json:"reason"`
 }
 
-//CreateChatroom is used to create a new chatroom
+// CreateChatroom is used to create a new chatroom
 func CreateChatroom(c *gin.Context) {
 	Chatroom(c, utils.POSTMethod)
 }
 
-//EditChatroom is used to edit chatroom details
+// EditChatroom is used to edit chatroom details
 func EditChatroom(c *gin.Context) {
 	Chatroom(c, utils.PUTMethod)
 }
 
-//GetChatroom is used to get chatrooms details
+// GetChatroom is used to get chatrooms details
 func GetChatroom(c *gin.Context) {
 	Chatroom(c, utils.GETMethod)
 }
 
-//DeleteChatroom is used to delete an existing chatroom
+// DeleteChatroom is used to delete an existing chatroom
 func DeleteChatroom(c *gin.Context) {
 	Chatroom(c, utils.DELETEMethod)
 }
 
-//Chatroom method handles chatroom objects
+// Chatroom method handles chatroom objects
 func Chatroom(c *gin.Context, method int) {
 
 	//Authorize User
@@ -162,17 +162,6 @@ func getChatroomInternal(c *gin.Context, userId string) {
 
 		version := c.GetHeader(utils.HeadersVersionCode)
 
-		if version == "" {
-			//Params to be sent in the api/chatroom/fetch request
-			params := map[string]string{
-				ParamChatroomId: c.Query(ParamChatroomId),
-			}
-
-			//Send Request
-			utils.SendRequest(c, utils.CoreService, FetchChatroomEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
-
-		}
-
 		if version == "v2" {
 			//Params to be sent in the /api/v2/fetch_chatroom request
 			params := map[string]string{
@@ -184,7 +173,14 @@ func getChatroomInternal(c *gin.Context, userId string) {
 
 			//Send Request
 			utils.SendRequest(c, utils.CoreService, FetchChatroomV2EndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		} else {
+			//Params to be sent in the api/chatroom/fetch request
+			params := map[string]string{
+				ParamChatroomId: c.Query(ParamChatroomId),
+			}
 
+			//Send Request
+			utils.SendRequest(c, utils.CoreService, FetchChatroomEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 		}
 
 	}
