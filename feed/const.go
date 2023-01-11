@@ -7,6 +7,7 @@ const SinglePostCommentEndPoint = "/post/%s/comment"
 const SinglePostPinEndPoint = "/post/%s/pin"
 const SinglePostSaveEndPoint = "/post/%s/save"
 const SingleCommentEndPoint = "/post/%s/comment/%s"
+const SingleCommentByIdEndPoint = "/comment/%s"
 const SingleCommentLikeEndPoint = "/post/%s/comment/%s/like"
 const SingleCommentReplyEndPoint = "/post/%s/comment/%s/comment"
 const FetchUserSavedPostsEndPoint = "/user/%s/save"
@@ -31,4 +32,11 @@ const (
 	LIKE_COMMENT_ACTION    = "like_comment"
 	CREATE_ACTIVITY_ACTION = "create_activity"
 	VIEW_ACTIVITY_ACTION   = "view_activity"
+	VIEW_REPORT_ENTITY     = "view_report_entity"
+)
+
+const (
+	POST_REPORT_TYPE    = 5
+	COMMENT_REPORT_TYPE = 6
+	REPLY_REPORT_TYPE   = 7
 )

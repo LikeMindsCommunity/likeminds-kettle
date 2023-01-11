@@ -2,6 +2,7 @@ package community
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/feed"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -56,7 +57,41 @@ func Report(c *gin.Context, method int) {
 		}
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchReportsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchReportsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+		if respBytes == nil {
+			return
+		}
+
+		//Validate response
+		apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+		if apiCR == nil {
+			return
+		}
+
+		//If flow succeeds
+		dataResponse := apiCR.Response
+		if reports, ok := dataResponse["reports"]; ok {
+			for _, report := range reports.([]map[string]interface{}) {
+				if typeValue, ok := report["type"]; ok {
+					if typeValue == feed.POST_REPORT_TYPE {
+						post_data := feed.GetPostInternal(c, userId, report["entity_id"].(string))
+						if post_data != nil {
+							report["entity_data"] = post_data
+						}
+					}
+
+					if typeValue == feed.COMMENT_REPORT_TYPE || typeValue == feed.REPLY_REPORT_TYPE {
+						comment_data := feed.FetchCommentByIdInternal(c, userId, report["entity_id"].(string))
+						if comment_data != nil {
+							report["entity_data"] = comment_data
+						}
+					}
+				}
+			}
+		}
+
+		//Generate response
+		utils.GenerateResponse(c, dataResponse)
 
 	case utils.POSTMethod:
 

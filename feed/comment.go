@@ -146,6 +146,83 @@ func getCommentInternal(c *gin.Context, userId string) {
 	utils.GenerateResponse(c, dataResponse)
 }
 
+func FetchCommentByIdInternal(c *gin.Context, userId string, commentId string) map[string]interface{} {
+	//Url generation
+	GetCommentByIdEndPoint := fmt.Sprintf(SingleCommentByIdEndPoint, commentId)
+
+	//Params to be sent in the /comment/<comment_id> request
+	params := map[string]string{
+		ParamPage:     c.Query(ParamPage),
+		ParamPageSize: c.Query(ParamPageSize),
+	}
+
+	//Fetch member access to view comment
+	success, response := user.FetchMemberAccess(c, VIEW_REPORT_ENTITY)
+	if !success {
+		return nil
+	}
+
+	//If not access
+	if !response.Access {
+		utils.MemberAccessFailError(c)
+		return nil
+	}
+
+	//Param updatiion
+	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
+
+	//Send Request
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, GetCommentByIdEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return nil
+	}
+
+	//If flow succeeds
+	dataResponse := apiCR.Response
+	if value, ok := dataResponse["comment"]; ok {
+		comment_data := value.(map[string]interface{})
+		user_ids := []string{}
+
+		//Fetch comment user id
+		if comment_user_unique_id, ok := comment_data["user_id"]; ok {
+			user_ids = append(user_ids, comment_user_unique_id.(string))
+		}
+
+		//Fetch replies user id
+		if replies, ok := comment_data["replies"]; ok {
+			for _, reply_data := range replies.([]interface{}) {
+				if user_unique_id, ok := reply_data.(map[string]interface{})["user_id"]; ok {
+					user_ids = append(user_ids, user_unique_id.(string))
+				}
+			}
+		}
+
+		//Fetch user data for given user_unique_ids
+		success, user_data := user.FetchMemberMeta(c, user_ids)
+		if !success {
+			return nil
+		}
+
+		//Validation of comment based on community member
+		if comment_user_unique_id, ok := comment_data["user_id"]; ok {
+			if comment_user, ok := user_data[comment_user_unique_id.(string)]; ok {
+				if comment_user.IsDeleted {
+					utils.GeneralBadRequestError(c, "Invalid comment_id sent!")
+					return nil
+				}
+			}
+		}
+
+		//Update users data in dataResponse
+		dataResponse["users"] = user_data
+	}
+
+	return dataResponse
+}
+
 func createCommentInternal(c *gin.Context, userId string) {
 	//Access query params and url generation
 	post_id := c.Param("post_id")
