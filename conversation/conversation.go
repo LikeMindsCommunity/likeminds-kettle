@@ -22,14 +22,14 @@ type ConversationPreview struct {
 }
 
 type CreateConversationRequest struct {
-	ChatroomID            string              `json:"chatroom_id"`
+	ChatroomID            int64               `json:"chatroom_id"`
 	Text                  string              `json:"text"`
 	PollType              int32               `json:"poll_type"`
 	AllowAddOption        bool                `json:"allow_add_option"`
 	ExpiryTime            int64               `json:"expiry_time"`
 	Polls                 []PollObject        `json:"polls"`
 	AttachmentsCount      int64               `json:"attachments_count"`
-	RepliedConversationId int64               `json:"replied_conversation_id"`
+	RepliedConversationId int64               `json:"replied_conversation_id,omitempty"`
 	InternalLink          string              `json:"internal_link"`
 	Preview               ConversationPreview `json:"preview"`
 	IsAnonymous           bool                `json:"is_anonymous"`
