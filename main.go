@@ -445,6 +445,7 @@ func enableCors() cors.Config {
 		"x-platform-code",
 		"x-platform-type",
 		"x-version-code",
+		"x-accept-version",
 		"x-username",
 		"x-password",
 		"x-device-id",
