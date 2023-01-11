@@ -71,20 +71,24 @@ func Report(c *gin.Context, method int) {
 		//If flow succeeds
 		dataResponse := apiCR.Response
 		if reports, ok := dataResponse["reports"]; ok {
-			for _, report := range reports.([]map[string]interface{}) {
-				if typeValue, ok := report["type"]; ok {
-					if typeValue == feed.POST_REPORT_TYPE {
-						post_data := feed.GetPostInternal(c, userId, report["entity_id"].(string))
-						if post_data != nil {
-							report["entity_data"] = post_data
+			for _, report := range reports.([]interface{}) {
+				if typeValue, ok := report.(map[string]interface{})["type"]; ok {
+					if int(typeValue.(float64)) == feed.POST_REPORT_TYPE {
+						post_data := feed.GetPostInternal(c, userId, report.(map[string]interface{})["entity_id"].(string))
+						if post_data == nil {
+							return
 						}
+
+						report.(map[string]interface{})["entity_data"] = post_data
 					}
 
-					if typeValue == feed.COMMENT_REPORT_TYPE || typeValue == feed.REPLY_REPORT_TYPE {
-						comment_data := feed.FetchCommentByIdInternal(c, userId, report["entity_id"].(string))
-						if comment_data != nil {
-							report["entity_data"] = comment_data
+					if int(typeValue.(float64)) == feed.COMMENT_REPORT_TYPE || int(typeValue.(float64)) == feed.REPLY_REPORT_TYPE {
+						comment_data := feed.FetchCommentByIdInternal(c, userId, report.(map[string]interface{})["entity_id"].(string))
+						if comment_data == nil {
+							return
 						}
+
+						report.(map[string]interface{})["entity_data"] = comment_data
 					}
 				}
 			}
