@@ -73,7 +73,14 @@ func Post(c *gin.Context, method int) {
 	//Send request
 	switch method {
 	case utils.GETMethod:
-		getPostInternal(c, userId)
+		postId := c.Param("post_id")
+		post_data := GetPostInternal(c, userId, postId)
+		if post_data == nil {
+			return
+		}
+
+		//Send response
+		utils.GenerateResponse(c, post_data)
 
 	case utils.POSTMethod:
 		createPostInternal(c, userId)
@@ -88,10 +95,9 @@ func Post(c *gin.Context, method int) {
 	}
 }
 
-func getPostInternal(c *gin.Context, userId string) {
-	//Access query params and url generation
-	post_id := c.Param("post_id")
-	GetPostEndPoint := fmt.Sprintf(SinglePostEndPoint, post_id)
+func GetPostInternal(c *gin.Context, userId string, postId string) map[string]interface{} {
+	//Url generation
+	GetPostEndPoint := fmt.Sprintf(SinglePostEndPoint, postId)
 
 	//Params to be sent in the /post/<post_id> GET request
 	params := map[string]string{
@@ -102,16 +108,16 @@ func getPostInternal(c *gin.Context, userId string) {
 	//Fetch member access to view post
 	success, response := user.FetchMemberAccess(c, VIEW_POST_ACTION)
 	if !success {
-		return
+		return nil
 	}
 
 	//If not access
 	if !response.Access {
 		utils.MemberAccessFailError(c)
-		return
+		return nil
 	}
 
-	//Param updatiion
+	//Param updation
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
 	//Send Request
@@ -120,7 +126,7 @@ func getPostInternal(c *gin.Context, userId string) {
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
 	if apiCR == nil {
-		return
+		return nil
 	}
 
 	//If flow succeeds
@@ -146,7 +152,7 @@ func getPostInternal(c *gin.Context, userId string) {
 		//Fetch user data for given user_unique_ids
 		success, user_data := user.FetchMemberMeta(c, user_ids)
 		if !success {
-			return
+			return nil
 		}
 
 		//Validation of post based on community member
@@ -154,7 +160,7 @@ func getPostInternal(c *gin.Context, userId string) {
 			if post_user, ok := user_data[post_user_unique_id.(string)]; ok {
 				if post_user.IsDeleted {
 					utils.GeneralBadRequestError(c, "Invalid post_id sent!")
-					return
+					return nil
 				}
 			}
 		}
@@ -163,8 +169,7 @@ func getPostInternal(c *gin.Context, userId string) {
 		dataResponse["users"] = user_data
 	}
 
-	//Send response
-	utils.GenerateResponse(c, dataResponse)
+	return dataResponse
 }
 
 func createPostInternal(c *gin.Context, userId string) {

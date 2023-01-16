@@ -48,7 +48,7 @@ func FetchUniversalFeed(c *gin.Context) {
 
 	//If flow succeeds
 	dataResponse := apiCR.Response
-	if value, ok := dataResponse["feed"]; ok {
+	if value, ok := dataResponse["posts"]; ok {
 		posts := value.([]interface{})
 		user_ids := []string{}
 
