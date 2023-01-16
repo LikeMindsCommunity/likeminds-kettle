@@ -22,14 +22,14 @@ type ConversationPreview struct {
 }
 
 type CreateConversationRequest struct {
-	ChatroomID            string              `json:"chatroom_id"`
-	Text                  string              `json:"reply"`
+	ChatroomID            int64               `json:"chatroom_id"`
+	Text                  string              `json:"text"`
 	PollType              int32               `json:"poll_type"`
 	AllowAddOption        bool                `json:"allow_add_option"`
 	ExpiryTime            int64               `json:"expiry_time"`
 	Polls                 []PollObject        `json:"polls"`
 	AttachmentsCount      int64               `json:"attachments_count"`
-	RepliedConversationId int64               `json:"replied_conversation_id"`
+	RepliedConversationId int64               `json:"replied_conversation_id,omitempty"`
 	InternalLink          string              `json:"internal_link"`
 	Preview               ConversationPreview `json:"preview"`
 	IsAnonymous           bool                `json:"is_anonymous"`
@@ -48,27 +48,27 @@ type DeleteConversationRequest struct {
 	Reason          string  `json:"reason" binding:"required"`
 }
 
-//CreateConversation is used to create a new conversation in chatroom
+// CreateConversation is used to create a new conversation in chatroom
 func CreateConversation(c *gin.Context) {
 	Conversation(c, utils.POSTMethod)
 }
 
-//EditConversation is used to edit a specific conversation
+// EditConversation is used to edit a specific conversation
 func EditConversation(c *gin.Context) {
 	Conversation(c, utils.PUTMethod)
 }
 
-//GetConversation is used to get conversation
+// GetConversation is used to get conversation
 func GetConversation(c *gin.Context) {
 	Conversation(c, utils.GETMethod)
 }
 
-//DeleteConversation is used to delete conversation
+// DeleteConversation is used to delete conversation
 func DeleteConversation(c *gin.Context) {
 	Conversation(c, utils.DELETEMethod)
 }
 
-//Conversation method handles conversation object
+// Conversation method handles conversation object
 func Conversation(c *gin.Context, method int) {
 
 	//Authorize User
