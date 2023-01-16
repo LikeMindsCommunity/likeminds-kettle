@@ -72,25 +72,7 @@ func Report(c *gin.Context, method int) {
 		dataResponse := apiCR.Response
 		if reports, ok := dataResponse["reports"]; ok {
 			for _, report := range reports.([]interface{}) {
-				if typeValue, ok := report.(map[string]interface{})["type"]; ok {
-					if int(typeValue.(float64)) == feed.POST_REPORT_TYPE {
-						post_data := feed.GetPostInternal(c, userId, report.(map[string]interface{})["entity_id"].(string))
-						if post_data == nil {
-							return
-						}
-
-						report.(map[string]interface{})["entity_data"] = post_data
-					}
-
-					if int(typeValue.(float64)) == feed.COMMENT_REPORT_TYPE || int(typeValue.(float64)) == feed.REPLY_REPORT_TYPE {
-						comment_data := feed.FetchCommentByIdInternal(c, userId, report.(map[string]interface{})["entity_id"].(string))
-						if comment_data == nil {
-							return
-						}
-
-						report.(map[string]interface{})["entity_data"] = comment_data
-					}
-				}
+				fetchReportEntityData(c, report, userId)
 			}
 		}
 
@@ -150,4 +132,27 @@ func parseCloseReportRequest(c *gin.Context) (*CloseReportRequest, error) {
 	}
 
 	return &crr, nil
+}
+
+func fetchReportEntityData(c *gin.Context, report interface{}, userId string) {
+	typeValue, ok := report.(map[string]interface{})["type"]
+	if ok {
+		if int(typeValue.(float64)) == feed.POST_REPORT_TYPE {
+			post_data := feed.GetPostInternal(c, userId, report.(map[string]interface{})["entity_id"].(string))
+			if post_data == nil {
+				return
+			}
+
+			report.(map[string]interface{})["entity_data"] = post_data
+		}
+
+		if int(typeValue.(float64)) == feed.COMMENT_REPORT_TYPE || int(typeValue.(float64)) == feed.REPLY_REPORT_TYPE {
+			comment_data := feed.FetchCommentByIdInternal(c, userId, report.(map[string]interface{})["entity_id"].(string))
+			if comment_data == nil {
+				return
+			}
+
+			report.(map[string]interface{})["entity_data"] = comment_data
+		}
+	}
 }

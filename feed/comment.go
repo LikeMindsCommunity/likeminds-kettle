@@ -206,14 +206,17 @@ func FetchCommentByIdInternal(c *gin.Context, userId string, commentId string) m
 			return nil
 		}
 
+		var comment_user user.MemberMeta
+
 		//Validation of comment based on community member
-		if comment_user_unique_id, ok := comment_data["user_id"]; ok {
-			if comment_user, ok := user_data[comment_user_unique_id.(string)]; ok {
-				if comment_user.IsDeleted {
-					utils.GeneralBadRequestError(c, "Invalid comment_id sent!")
-					return nil
-				}
-			}
+		comment_user_unique_id, ok := comment_data["user_id"]
+		if ok {
+			comment_user, ok = user_data[comment_user_unique_id.(string)]
+		}
+
+		if ok && comment_user.IsDeleted {
+			utils.GeneralBadRequestError(c, "Invalid comment_id sent!")
+			return nil
 		}
 
 		//Update users data in dataResponse
