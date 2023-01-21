@@ -13,6 +13,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/community"
 	"github.com/nateshr/likeminds-authentication/conversation"
 	"github.com/nateshr/likeminds-authentication/feed"
+	"github.com/nateshr/likeminds-authentication/feedroom"
 	"github.com/nateshr/likeminds-authentication/home"
 	"github.com/nateshr/likeminds-authentication/moderation"
 	"github.com/nateshr/likeminds-authentication/otp"
@@ -84,7 +85,7 @@ func main() {
 	router.PUT("/chatroom/files", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.UpdateFiles)
 	router.GET("/chatroom/mine", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.MyChatrooms)
 	router.PUT("/chatroom/seen", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.CollabcardSeen)
-	router.PUT("/chatroom/follow", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.CollabcardFollow)
+	router.PUT("/chatroom/follow", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ChatroomFollow)
 	router.PUT("/chatroom/mute", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.MuteChatroom)
 	router.PUT("/chatroom/rename", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.RenameChatroom)
 	router.GET("/chatroom/share", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.FetchShareUrl)
@@ -181,6 +182,27 @@ func main() {
 	router.GET("/feed/user/:user_id/post", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.FetchUserCreatedPosts)
 	router.POST("/feed/user/:user_id/activity", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CreateUserActivity)
 	router.GET("/feed/universal", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.FetchUniversalFeed)
+
+	//Feedroom Apis
+	router.POST("/feedroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.CreateFeedroom)
+	router.PUT("/feedroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.EditFeedroom)
+	router.DELETE("/feedroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.DeleteFeedroom)
+	router.GET("/feedroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.GetFeedroom)
+	router.GET("/feedroom/action", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.GetFeedroomMenu)
+	router.GET("/feedroom/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.GetFeedroomSettings)
+	router.PUT("/feedroom/type", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.ChangeFeedroomType)
+	router.GET("/feedroom/type", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.GetFeedroomTypeStatus)
+	router.PUT("/feedroom/enable_member_post", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.EnableMemberPost)
+	router.PUT("/feedroom/pin", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.PinFeedroom)
+	router.PUT("/feedroom/auto_join_members", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.AutoJoinMembers)
+	router.POST("/feedroom/participants", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.AddParticipants)
+	router.GET("/feedroom/participants", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.GetParticipants)
+	router.DELETE("/feedroom/participants", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.RemoveParticipants)
+	router.GET("/feedroom/cohort/access", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.GetCohortAccess)
+	router.PUT("/feedroom/cohort/access", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.EditCohortAccess)
+	router.GET("/feedroom/mine", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.MyFeedrooms)
+	router.PUT("/feedroom/follow", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.FeedroomFollow)
+	router.GET("/feedroom/tag", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.GetTaggingList)
 
 	log.Printf("application version: %s", AppVersion)
 	log.Fatal(router.Run(":8080"))

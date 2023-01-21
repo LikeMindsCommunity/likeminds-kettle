@@ -31,13 +31,18 @@ const DeleteCohortEndPoint = "/api/cohort/delete"
 const EditCohortEndPoint = "/api/cohort/update"
 const RemoveCohortMemberEndPoint = "/api/cohort/remove_member"
 const CommunityFetchFeedEndPoint = "/api/community_member/fetch_feed"
+const CommunityFetchPostFeedEndPoint = "/api/community_member/post_feed"
 const FeedNotificationSettingEndPoint = "/api/community/feed_notification_setting"
+const CommunityExcludedChatroomsEndPoint = "/api/community_member/excluded_chatrooms"
 
 const ParamPage = "page"
+const ParamPageSize = "page_size"
 const ParamMemberId = "member_id"
 const ParamUserId = "user_id"
 const MemberIds = "member_ids"
 const ChatroomIDParam = "chatroom_id"
+const ParamChatroomIds = "chatroom_ids"
+const ParamExcludedChatroomIds = "excluded_chatroom_ids"
 const RequestFromParam = "req_from"
 const SearchParam = "search"
 const SearchTypeParam = "search_type"
@@ -58,3 +63,15 @@ type CommunityObject struct {
 	MembersCount   int32  `json:"members_count"`
 	MemberState    int32  `json:"member_state"`
 }
+
+const (
+	ChatFeedType = 0
+	PostFeedType = 1
+)
+
+const (
+	OrderTypeNewest           = 0
+	OrderTypeRecentlyActive   = 1
+	OrderTypeMostMessages     = 2
+	OrderTypeMostParticipants = 3
+)

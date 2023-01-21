@@ -1,45 +1,47 @@
 package chatroom
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
 type CreateChatroomRequest struct {
-	Title                      string      `json:"title" binding:"required"`
-	Header                     string      `json:"header"`
-	ShareLink                  string      `json:"share_link"`
-	AttachmentCount            int64       `json:"attachment_count"`
-	PdfCount                   int64       `json:"pdf_count"`
-	ImageCount                 int64       `json:"image_count"`
-	VideoCount                 int64       `json:"video_count"`
-	AudioCount                 int64       `json:"audio_count"`
-	Type                       int32       `json:"type"`
-	DateTime                   int64       `json:"date_time"`
-	EndDate                    int64       `json:"end_date"`
-	Duration                   int64       `json:"duration"`
-	Location                   string      `json:"location"`
-	LocationLat                float64     `json:"location_lat"`
-	LocationLong               float64     `json:"location_long"`
-	About                      string      `json:"about"`
-	DraftID                    int64       `json:"draft_id"`
-	InternalLink               string      `json:"internal_link"`
-	Preview                    interface{} `json:"preview"`
-	CoHosts                    []int64     `json:"co_hosts"`
-	CohortIDs                  []int64     `json:"cohort_ids"`
-	OnlineLink                 string      `json:"online_link"`
-	IsSecret                   bool        `json:"is_secret"`
-	ChatroomParticipants       []int64     `json:"chatroom_participants"`
-	AutoFollowDone             bool        `json:"auto_follow_done"`
-	IncludeMembersLater        bool        `json:"include_members_later"`
-	SecretChatroomParticipants []int64     `json:"secret_chatroom_participants"`
-	ThirdPartyUniqueID         string      `json:"third_party_unique_id"`
-	ScheduleTime               int64       `json:"schedule_time"`
-	ScheduleTimeBefore         int64       `json:"schedule_time_before"`
-	EndTime                    int64       `json:"end_time"`
-	EndTimeAfter               int64       `json:"end_time_after"`
-	ChatroomImageUrl           string      `json:"chatroom_image_url"`
+	Title                      string        `json:"title" binding:"required"`
+	Header                     string        `json:"header"`
+	ShareLink                  string        `json:"share_link"`
+	AttachmentCount            int64         `json:"attachment_count"`
+	PdfCount                   int64         `json:"pdf_count"`
+	ImageCount                 int64         `json:"image_count"`
+	VideoCount                 int64         `json:"video_count"`
+	AudioCount                 int64         `json:"audio_count"`
+	Type                       int32         `json:"type"`
+	DateTime                   int64         `json:"date_time"`
+	EndDate                    int64         `json:"end_date"`
+	Duration                   int64         `json:"duration"`
+	Location                   string        `json:"location"`
+	LocationLat                float64       `json:"location_lat"`
+	LocationLong               float64       `json:"location_long"`
+	About                      string        `json:"about"`
+	DraftID                    int64         `json:"draft_id"`
+	InternalLink               string        `json:"internal_link"`
+	Preview                    interface{}   `json:"preview"`
+	CoHosts                    []int64       `json:"co_hosts"`
+	CohortIDs                  []int64       `json:"cohort_ids"`
+	OnlineLink                 string        `json:"online_link"`
+	IsSecret                   bool          `json:"is_secret"`
+	ChatroomParticipants       []interface{} `json:"chatroom_participants"`
+	AutoFollowDone             bool          `json:"auto_follow_done"`
+	IncludeMembersLater        bool          `json:"include_members_later"`
+	SecretChatroomParticipants []interface{} `json:"secret_chatroom_participants"`
+	ThirdPartyUniqueID         string        `json:"third_party_unique_id"`
+	ScheduleTime               int64         `json:"schedule_time"`
+	ScheduleTimeBefore         int64         `json:"schedule_time_before"`
+	EndTime                    int64         `json:"end_time"`
+	EndTimeAfter               int64         `json:"end_time_after"`
+	ChatroomImageUrl           string        `json:"chatroom_image_url"`
 }
 
 type EditChatroomRequest struct {
@@ -168,7 +170,7 @@ func getChatroomInternal(c *gin.Context, userId string) {
 				ParamChatroomId: chatroom_id,
 				ParamAJ:         c.Query(ParamAJ),
 				ParamSourceId:   c.Query(ParamSourceId),
-				ParamApiType:    c.Query(ParamApiType),
+				ParamApiType:    strconv.Itoa(SdkApiType),
 			}
 
 			//Send Request
