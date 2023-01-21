@@ -202,6 +202,7 @@ func main() {
 	router.PUT("/feedroom/cohort/access", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.EditCohortAccess)
 	router.GET("/feedroom/mine", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.MyFeedrooms)
 	router.PUT("/feedroom/follow", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.FeedroomFollow)
+	router.GET("/feedroom/tag", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.GetTaggingList)
 
 	log.Printf("application version: %s", AppVersion)
 	log.Fatal(router.Run(":8080"))

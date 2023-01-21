@@ -8,7 +8,7 @@ import (
 )
 
 type FeedroomTypeRequest struct {
-	FeedroomID int64 `json:"chatroom_id" binding:"required"`
+	FeedroomID int64 `json:"feedroom_id" binding:"required"`
 	IsSecret   *bool `json:"is_secret" binding:"required"`
 }
 

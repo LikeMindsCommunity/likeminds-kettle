@@ -1,6 +1,8 @@
 package feedroom
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/chatroom"
 	"github.com/nateshr/likeminds-authentication/user"
@@ -8,16 +10,15 @@ import (
 )
 
 type CreateFeedroomRequest struct {
-	Title                      string  `json:"title" binding:"required"`
-	Header                     string  `json:"header"`
-	Type                       int32   `json:"type"`
-	CohortIDs                  []int64 `json:"cohort_ids"`
-	IsSecret                   bool    `json:"is_secret"`
-	FeedroomParticipants       []int64 `json:"feedroom_participants"`
-	AutoFollowDone             bool    `json:"auto_follow_done"`
-	IncludeMembersLater        bool    `json:"include_members_later"`
-	SecretFeedroomParticipants []int64 `json:"secret_feedroom_participants"`
-	FeedroomImageUrl           string  `json:"feedroom_image_url"`
+	Title                      string        `json:"title" binding:"required"`
+	Header                     string        `json:"header"`
+	CohortIDs                  []int64       `json:"cohort_ids"`
+	IsSecret                   bool          `json:"is_secret"`
+	FeedroomParticipants       []interface{} `json:"feedroom_participants"`
+	AutoFollowDone             bool          `json:"auto_follow_done"`
+	IncludeMembersLater        bool          `json:"include_members_later"`
+	SecretFeedroomParticipants []interface{} `json:"secret_feedroom_participants"`
+	FeedroomImageUrl           string        `json:"feedroom_image_url"`
 }
 
 type EditFeedroomRequest struct {
@@ -128,6 +129,7 @@ func getFeedroomInternal(c *gin.Context, userId string) {
 		//Params to be sent in the api/chatroom/fetch_all request
 		params := map[string]string{
 			chatroom.ParamPage: c.Query(chatroom.ParamPage),
+			chatroom.ParamType: strconv.Itoa(FeedChatroomType),
 		}
 
 		//Send Request
@@ -158,7 +160,7 @@ func createFeedroomInternal(c *gin.Context, userId string) {
 	createChatroomRequest := chatroom.CreateChatroomRequest{
 		Title:                      createFeedroomRequest.Title,
 		Header:                     createFeedroomRequest.Header,
-		Type:                       createFeedroomRequest.Type,
+		Type:                       FeedChatroomType,
 		CohortIDs:                  createFeedroomRequest.CohortIDs,
 		IsSecret:                   createFeedroomRequest.IsSecret,
 		ChatroomParticipants:       createFeedroomRequest.FeedroomParticipants,
