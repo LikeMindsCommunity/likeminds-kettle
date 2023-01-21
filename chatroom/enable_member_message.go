@@ -6,13 +6,13 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//EnableMemberMessageRequest | member message setting schema
+// EnableMemberMessageRequest | member message setting schema
 type EnableMemberMessageRequest struct {
-	ChatroomId int32 `json:"chatroom_id" binding:"required"`
+	ChatroomId int64 `json:"chatroom_id" binding:"required"`
 	Value      *bool `json:"value" binding:"required"`
 }
 
-//EnableMemberMessage is used to enable member message settings in chatroom
+// EnableMemberMessage is used to enable member message settings in chatroom
 func EnableMemberMessage(c *gin.Context) {
 
 	//Authorize User

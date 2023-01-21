@@ -7,21 +7,21 @@ import (
 )
 
 type ChatroomTypeRequest struct {
-	ChatroomID *int32 `json:"chatroom_id" binding:"required"`
-	IsSecret   *bool  `json:"is_secret" binding:"required"`
+	ChatroomID int64 `json:"chatroom_id" binding:"required"`
+	IsSecret   *bool `json:"is_secret" binding:"required"`
 }
 
-//ChangeChatroomType is used to change chatroom type
+// ChangeChatroomType is used to change chatroom type
 func ChangeChatroomType(c *gin.Context) {
 	ChatroomType(c, utils.PUTMethod)
 }
 
-//GetChatroomTypeStatus is used to get chatroom conversion status
+// GetChatroomTypeStatus is used to get chatroom conversion status
 func GetChatroomTypeStatus(c *gin.Context) {
 	ChatroomType(c, utils.GETMethod)
 }
 
-//ChatroomType is used to change the type of chatroom
+// ChatroomType is used to change the type of chatroom
 func ChatroomType(c *gin.Context, method int) {
 
 	//Authorize User

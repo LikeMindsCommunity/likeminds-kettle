@@ -2,8 +2,10 @@ package feed
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/chatroom"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -18,6 +20,7 @@ type AttachmentRequest struct {
 type CreatePostRequest struct {
 	Text        string              `json:"text" binding:"required"`
 	Attachments []AttachmentRequest `json:"attachments"`
+	FeedroomID  int                 `json:"feedroom_id"`
 }
 
 type DeletePostRequest struct {
@@ -194,7 +197,26 @@ func createPostInternal(c *gin.Context, userId string) {
 	}
 
 	//Send Request
-	utils.SendRequest(c, utils.SwarmService, CreatePostEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createPostRequest)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, CreatePostEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createPostRequest)
+
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	//If flow succeeds
+	if createPostRequest.FeedroomID != 0 {
+		//Params to be sent in the api/collabcard_follow request
+		params := map[string]string{
+			chatroom.ParamCollabcardId: strconv.Itoa(createPostRequest.FeedroomID),
+			chatroom.ParamMemberId:     userId,
+			chatroom.ParamValue:        "true",
+		}
+
+		//Send Request to follow the chatroom for the post creator
+		utils.SendRequest(c, utils.CoreService, chatroom.CollabcardFollowEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	}
 }
 
 func deletePostInternal(c *gin.Context, userId string) {

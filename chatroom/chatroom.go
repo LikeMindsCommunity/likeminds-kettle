@@ -1,6 +1,8 @@
 package chatroom
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -168,7 +170,7 @@ func getChatroomInternal(c *gin.Context, userId string) {
 				ParamChatroomId: chatroom_id,
 				ParamAJ:         c.Query(ParamAJ),
 				ParamSourceId:   c.Query(ParamSourceId),
-				ParamApiType:    c.Query(ParamApiType),
+				ParamApiType:    strconv.Itoa(SdkApiType),
 			}
 
 			//Send Request
