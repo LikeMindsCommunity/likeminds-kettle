@@ -33,6 +33,7 @@ const RemoveCohortMemberEndPoint = "/api/cohort/remove_member"
 const CommunityFetchFeedEndPoint = "/api/community_member/fetch_feed"
 
 const ParamPage = "page"
+const ParamPageSize = "page_size"
 const ParamMemberId = "member_id"
 const ParamUserId = "user_id"
 const MemberIds = "member_ids"
