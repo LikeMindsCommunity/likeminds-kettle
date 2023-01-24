@@ -171,11 +171,7 @@ func getChatroomInternal(c *gin.Context, userId string) {
 				ParamChatroomId: chatroom_id,
 				ParamAJ:         c.Query(ParamAJ),
 				ParamSourceId:   c.Query(ParamSourceId),
-<<<<<<< HEAD
 				ParamApiType:    strconv.Itoa(SdkApiType),
-=======
-				ParamApiType:    c.Query(ParamApiType),
->>>>>>> 95c0424192ecd51aab52cc569b93af614ed842a2
 			}
 
 			//Send Request
