@@ -2,6 +2,7 @@ package environment
 
 import (
 	"log"
+	"os"
 	"path/filepath"
 
 	"github.com/joho/godotenv"
@@ -10,7 +11,7 @@ import (
 // GoDotEnvVariable to load/read the .env file and return the value of the key
 func GoDotEnvVariable(key string) string {
 	// load .env file
-	dir, err := filepath.Abs(filepath.Dir("./"))
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		log.Fatal(err)
 	}
