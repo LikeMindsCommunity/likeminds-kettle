@@ -1,6 +1,9 @@
 package chatroom
 
 import (
+	"reflect"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -50,9 +53,9 @@ type EditChatroomRequest struct {
 }
 
 type DeleteChatroomRequest struct {
-	ChatroomID int64  `json:"chatroom_id" binding:"required"`
-	TagID      int32  `json:"tag_id"`
-	Reason     string `json:"reason"`
+	ChatroomID interface{} `json:"chatroom_id" binding:"required"`
+	TagID      int32       `json:"tag_id"`
+	Reason     string      `json:"reason"`
 }
 
 // CreateChatroom is used to create a new chatroom
@@ -224,6 +227,10 @@ func deleteChatroomInternal(c *gin.Context, userId string) {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
 		return
+	}
+
+	if reflect.TypeOf(deleteChatroomRequest.ChatroomID).String() == "float64" {
+		deleteChatroomRequest.ChatroomID = strconv.Itoa(int(deleteChatroomRequest.ChatroomID.(float64)))
 	}
 
 	//Send Request
