@@ -18,6 +18,8 @@ func MemberSearch(c *gin.Context) {
 	requestParams := map[string]string{
 		SearchParam:     c.Query(SearchParam),
 		SearchTypeParam: c.Query(SearchTypeParam),
+		ParamPage:       c.Query(ParamPage),
+		ParamPageSize:   c.Query(ParamPageSize),
 	}
 
 	// Send Request
