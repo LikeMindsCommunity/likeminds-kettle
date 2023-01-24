@@ -61,6 +61,7 @@ const ParamValue = "value"
 const ParamApiType = "api_type"
 const ParamPage = "page"
 const ParamIsSecret = "is_secret"
+const ParamParticipantName = "participant_name"
 const ParamChatroomParticipants = "chatroom_participants"
 const ParamIsDiff = "is_diff"
 const ParamRequestDM = "request_dm"
@@ -70,3 +71,8 @@ const ParamSearchType = "search_type"
 const ResponseUser = "user"
 const ResponseId = "id"
 const ParamDMLimit = "dm_limit"
+const ParamType = "type"
+
+const (
+	SdkApiType = 1
+)

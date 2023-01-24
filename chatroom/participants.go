@@ -8,21 +8,21 @@ import (
 )
 
 type ParticipantRequest struct {
-	ChatroomID           int64   `json:"chatroom_id"`
-	ChatroomParticipants []int64 `json:"chatroom_participants"`
-	IsSecret             bool    `json:"is_secret"`
+	ChatroomID           int64         `json:"chatroom_id"`
+	ChatroomParticipants []interface{} `json:"chatroom_participants"`
+	IsSecret             bool          `json:"is_secret"`
 }
 
 type InternalParticipantRequest struct {
-	ChatroomID                 int64   `json:"chatroom_id"`
-	SecretChatroomParticipants []int64 `json:"secret_chatroom_participants"`
+	ChatroomID                 int64         `json:"chatroom_id"`
+	SecretChatroomParticipants []interface{} `json:"secret_chatroom_participants"`
 }
 
 type RemoveParticipantRequest struct {
-	ChatroomID     int   `json:"chatroom_id"`
-	MemberID       int   `json:"member_id"`
-	RemovedMembers []int `json:"removed_members"`
-	IsSecret       bool  `json:"is_secret"`
+	ChatroomID     int           `json:"chatroom_id"`
+	MemberID       interface{}   `json:"member_id"`
+	RemovedMembers []interface{} `json:"removed_members"`
+	IsSecret       bool          `json:"is_secret"`
 }
 
 // AddParticipants is used to add participants in chatroom
@@ -109,19 +109,23 @@ func getParticipantsInternal(c *gin.Context, userId string) {
 
 	//Params to be sent in the fetch_participants_meta request
 	params := map[string]string{
-		ParamChatroomId: c.Query(ParamChatroomId),
+		ParamChatroomId:      c.Query(ParamChatroomId),
+		ParamParticipantName: c.Query(ParamParticipantName),
+		ParamPage:            c.Query(ParamPage),
+		ParamPageSize:        c.Query(ParamPageSize),
 	}
 
-	if is_secret == "" || is_secret == "false" {
-		//If is_secret is missing or false, call api/chatroom/fetch_participants_meta api internally
-
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchParticipantsMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
-	} else {
-		//else, call api/chatroom/secret/fetch_participants_meta api internally
+	if is_secret == "true" {
+		//If is_secret is true, call api/chatroom/secret/fetch_participants_meta api internally
 
 		//Send Request
 		utils.SendRequest(c, utils.CoreService, FetchSecretParticipantsMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
+	} else {
+		//else, call api/chatroom/fetch_participants_meta api internally
+
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, FetchParticipantsMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 	}
 }
 
@@ -170,7 +174,7 @@ func removeParticipantsInternal(c *gin.Context, userId string) {
 
 	} else {
 		// Updated body according to secret participant remove request
-		removeParticipantRequest.RemovedMembers = []int{removeParticipantRequest.MemberID}
+		removeParticipantRequest.RemovedMembers = []interface{}{removeParticipantRequest.MemberID}
 
 		//Send Request
 		utils.SendRequest(c, utils.CoreService, RemoveOpenParticipantsEndpoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, removeParticipantRequest)

@@ -14,6 +14,7 @@ const FetchUserSavedPostsEndPoint = "/user/%s/save"
 const FetchUserCreatedPostsEndPoint = "/user/%s/post"
 const SingleUserActivityEndPoint = "/user/%s/activity"
 const FetchUniversalFeedEndPoint = "/feed/universal"
+const FeedExploreEndPoint = "/feed/explore"
 
 const ParamPage = "page"
 const ParamPageSize = "page_size"

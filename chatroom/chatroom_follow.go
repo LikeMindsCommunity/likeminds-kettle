@@ -6,8 +6,8 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//CollabcardFollow is used to follow a specific chatroom
-func CollabcardFollow(c *gin.Context) {
+// ChatroomFollow is used to follow a specific chatroom
+func ChatroomFollow(c *gin.Context) {
 
 	//Authorize User
 	userId := user.GetRequestingUserId(c)
