@@ -15,10 +15,12 @@ const FetchUserCreatedPostsEndPoint = "/user/%s/post"
 const SingleUserActivityEndPoint = "/user/%s/activity"
 const FetchUniversalFeedEndPoint = "/feed/universal"
 const FeedExploreEndPoint = "/feed/explore"
+const FetchGroupFeedEndPoint = "/feed/group"
 
 const ParamPage = "page"
 const ParamPageSize = "page_size"
 const ParamUserIsCm = "user_is_cm"
+const ParamFeedroomId = "feedroom_id"
 
 const (
 	CREATE_POST_ACTION     = "create_post"

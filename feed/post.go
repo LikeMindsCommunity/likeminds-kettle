@@ -10,15 +10,30 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
+type OGTags struct {
+	Title       string `json:"title"`
+	Image       string `json:"image"`
+	Description string `json:"description"`
+	Url         string `json:"url"`
+}
+
+type AttachmentMeta struct {
+	Url       string `json:"url"`
+	Format    string `json:"format"`
+	Size      int    `json:"size"`
+	Duration  int    `json:"duration"`
+	PageCount int    `json:"page_count"`
+	OgTags    OGTags `json:"og_tags"`
+}
+
 type AttachmentRequest struct {
-	FileType   int    `json:"file_type" binding:"required"`
-	FileUrl    string `json:"file_url"`
-	FileFormat string `json:"file_format"`
-	FileSize   string `json:"file_size"`
+	AttachmentType int            `json:"attachment_type" binding:"required"`
+	AttachmentMeta AttachmentMeta `json:"attachment_meta"`
 }
 
 type CreatePostRequest struct {
 	Text        string              `json:"text" binding:"required"`
+	Heading     string              `json:"heading"`
 	Attachments []AttachmentRequest `json:"attachments"`
 	FeedroomID  int                 `json:"feedroom_id"`
 }
@@ -216,6 +231,9 @@ func createPostInternal(c *gin.Context, userId string) {
 
 		//Send Request to follow the chatroom for the post creator
 		utils.SendRequest(c, utils.CoreService, chatroom.CollabcardFollowEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	} else {
+		//Generate Response
+		utils.GenerateResponse(c, apiCR.Response)
 	}
 }
 

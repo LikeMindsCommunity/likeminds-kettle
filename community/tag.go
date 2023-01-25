@@ -1,4 +1,4 @@
-package feedroom
+package community
 
 import (
 	"github.com/gin-gonic/gin"
@@ -18,16 +18,15 @@ func GetTaggingList(c *gin.Context) {
 
 	//Params to be sent in the get tag list api internally
 	params := map[string]string{
-		chatroom.ParamChatroomId: c.Query(ParamFeedroomId),
+		ChatroomIDParam: c.Query(ChatroomIDParam),
 	}
 
 	//Params Validation
 	if params[chatroom.ParamChatroomId] == "" {
-		//If GET params are missing
-		utils.GETQueryParamsMissingError(c)
-		return
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, FetchMembersMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+	} else {
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, chatroom.GetTaggingListEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 	}
-
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, chatroom.GetTaggingListEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 }

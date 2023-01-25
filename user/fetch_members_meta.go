@@ -15,6 +15,7 @@ type MemberMeta struct {
 	UserUniqueId string `json:"user_unique_id"`
 	IsGuest      bool   `json:"is_guest"`
 	IsDeleted    bool   `json:"is_deleted"`
+	CustomTitle  string `json:"custom_title"`
 }
 
 type MemberMetaResponse struct {
@@ -29,6 +30,12 @@ func FetchMemberMeta(c *gin.Context, member_ids []string) (bool, map[string]Memb
 	userId := GetRequestingUserId(c)
 	if userId == "" {
 		return false, nil
+	}
+
+	response := map[string]MemberMeta{}
+
+	if len(member_ids) == 0 {
+		return true, response
 	}
 
 	temp_params, _ := json.Marshal(member_ids)
@@ -56,7 +63,6 @@ func FetchMemberMeta(c *gin.Context, member_ids []string) (bool, map[string]Memb
 	}
 
 	//Generate user data for received data
-	response := map[string]MemberMeta{}
 	for _, memberData := range membersMetaResponse.Members {
 		response[memberData.UserUniqueId] = memberData
 	}
