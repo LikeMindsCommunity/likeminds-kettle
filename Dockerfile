@@ -11,6 +11,6 @@ COPY . ./
 
 ADD https://beta-likeminds-media.s3.ap-south-1.amazonaws.com/environment/beta-environment ./.env
 
-RUN go build -o /kettle
+RUN go build -o ./kettle
 
-CMD [ "/kettle" ]
+CMD [ "./kettle" ]
