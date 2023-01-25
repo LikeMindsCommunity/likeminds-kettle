@@ -1,10 +1,7 @@
 version: "1.0"
 services:
   kettle:
-    build: 
-      context: "."
-      args:
-       - APPLICATION_ENV=BETA
+    build: "."
     expose:
       - "8080"
 
