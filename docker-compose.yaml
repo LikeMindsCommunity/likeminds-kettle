@@ -1,0 +1,13 @@
+version: "1.0"
+services:
+  kettle:
+    build: "."
+    expose:
+      - "8080"
+
+  nginx:
+    build: "./scripts/nginx"
+    ports:
+      - "80:80"
+    depends_on:
+      - "kettle"

@@ -1,0 +1,8 @@
+server {
+    server_name betaauth.likeminds.community;
+
+    listen 80;
+    location / {
+        proxy_pass http://localhost:8080/;
+    }
+}

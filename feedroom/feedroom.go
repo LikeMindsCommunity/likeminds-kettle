@@ -22,14 +22,14 @@ type CreateFeedroomRequest struct {
 }
 
 type EditFeedroomRequest struct {
-	FeedroomID       int64  `json:"feedroom_id"`
-	Title            string `json:"title"`
-	Header           string `json:"header"`
-	FeedroomImageUrl string `json:"feedroom_image_url"`
+	FeedroomID       interface{} `json:"feedroom_id"`
+	Title            string      `json:"title"`
+	Header           string      `json:"header"`
+	FeedroomImageUrl string      `json:"feedroom_image_url"`
 }
 
 type DeleteFeedroomRequest struct {
-	FeedroomID int64 `json:"feedroom_id" binding:"required"`
+	FeedroomID interface{} `json:"feedroom_id" binding:"required"`
 }
 
 // CreateFeedroom is used to create a new feedroom

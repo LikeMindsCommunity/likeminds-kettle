@@ -1,10 +1,11 @@
 package environment
 
 import (
-	"github.com/joho/godotenv"
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/joho/godotenv"
 )
 
 // GoDotEnvVariable to load/read the .env file and return the value of the key
