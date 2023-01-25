@@ -22,10 +22,10 @@ type CreateFeedroomRequest struct {
 }
 
 type EditFeedroomRequest struct {
-	FeedroomID       interface{} `json:"feedroom_id"`
-	Title            string      `json:"title"`
-	Header           string      `json:"header"`
-	FeedroomImageUrl string      `json:"feedroom_image_url"`
+	FeedroomID       int64  `json:"feedroom_id"`
+	Title            string `json:"title"`
+	Header           string `json:"header"`
+	FeedroomImageUrl string `json:"feedroom_image_url"`
 }
 
 type DeleteFeedroomRequest struct {
