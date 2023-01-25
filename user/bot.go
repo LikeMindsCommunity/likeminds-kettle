@@ -13,17 +13,17 @@ type BotRequest struct {
 	CommunityName string `json:"name"`
 }
 
-//CreateBot is used to create bot of a community
+// CreateBot is used to create bot of a community
 func CreateBot(c *gin.Context) {
 	Bot(c, utils.POSTMethod)
 }
 
-//GetBot is used to get bot of a community
+// GetBot is used to get bot of a community
 func GetBot(c *gin.Context) {
 	Bot(c, utils.GETMethod)
 }
 
-//Bot used to create/edit/get bot details of a community
+// Bot used to create/edit/get bot details of a community
 func Bot(c *gin.Context, method int) {
 
 	//Authorize User
@@ -38,7 +38,7 @@ func Bot(c *gin.Context, method int) {
 	}
 }
 
-//GetBotResponse used to get response when api/user/bot is hit internally
+// GetBotResponse used to get response when api/user/bot is hit internally
 func GetBotResponse(c *gin.Context, method int) *utils.Response {
 
 	//Send request
@@ -82,7 +82,7 @@ func GetBotResponse(c *gin.Context, method int) *utils.Response {
 	if createToken {
 		userID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
 		//Create login and refresh token
-		ltm, rtm, err := token.CreateLTMAndRTM(userID)
+		ltm, rtm, err := token.CreateLTMAndRTM(userID, "")
 		if err != nil {
 			//If token creation fails
 			utils.GeneralAPIError(c, err.Error())

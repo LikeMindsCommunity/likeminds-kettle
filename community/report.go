@@ -2,6 +2,7 @@ package community
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/feed"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -10,6 +11,9 @@ type PushReportRequest struct {
 	ReportedMemberID int    `json:"reported_member_id"`
 	ConversationID   int    `json:"conversation_id"`
 	ChatroomID       int    `json:"collabcard_id"`
+	EntityId         string `json:"entity_id"`
+	EntityCreatorId  string `json:"entity_creator_id"`
+	EntityType       int    `json:"entity_type"`
 	Link             string `json:"link"`
 	TagId            int    `json:"tag_id"`
 	Reason           string `json:"reason"`
@@ -53,7 +57,30 @@ func Report(c *gin.Context, method int) {
 		}
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchReportsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchReportsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+		if respBytes == nil {
+			return
+		}
+
+		//Validate response
+		apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+		if apiCR == nil {
+			return
+		}
+
+		//If flow succeeds
+		dataResponse := apiCR.Response
+		if reports, ok := dataResponse["reports"]; ok {
+			for _, report := range reports.([]interface{}) {
+				report := fetchReportEntityData(c, report, userId)
+				if report == nil {
+					return
+				}
+			}
+		}
+
+		//Generate response
+		utils.GenerateResponse(c, dataResponse)
 
 	case utils.POSTMethod:
 
@@ -108,4 +135,29 @@ func parseCloseReportRequest(c *gin.Context) (*CloseReportRequest, error) {
 	}
 
 	return &crr, nil
+}
+
+func fetchReportEntityData(c *gin.Context, report interface{}, userId string) interface{} {
+	typeValue, ok := report.(map[string]interface{})["type"]
+	if ok {
+		if int(typeValue.(float64)) == feed.POST_REPORT_TYPE {
+			post_data := feed.GetPostInternal(c, userId, report.(map[string]interface{})["entity_id"].(string))
+			if post_data == nil {
+				return nil
+			}
+
+			report.(map[string]interface{})["entity_data"] = post_data
+		}
+
+		if int(typeValue.(float64)) == feed.COMMENT_REPORT_TYPE || int(typeValue.(float64)) == feed.REPLY_REPORT_TYPE {
+			comment_data := feed.FetchCommentByIdInternal(c, userId, report.(map[string]interface{})["entity_id"].(string))
+			if comment_data == nil {
+				return nil
+			}
+
+			report.(map[string]interface{})["entity_data"] = comment_data
+		}
+	}
+
+	return report
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//GetRequestingUserId returns the User Unique ID of user based on request
+// GetRequestingUserId returns the User Unique ID of user based on request
 func GetRequestingUserId(c *gin.Context) string {
 
 	var userUniqueId string = ""

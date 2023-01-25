@@ -6,7 +6,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//MyChatrooms is used to fetch a all the chatrooms for a user
+// MyChatrooms is used to fetch all the chatrooms for a user
 func MyChatrooms(c *gin.Context) {
 
 	//Authorize User
