@@ -9,7 +9,7 @@ RUN go mod download
 
 COPY . ./
 
-ADD https://beta-likeminds-media.s3.ap-south-1.amazonaws.com/environment/beta-environment ./.env
+ADD https://beta-likeminds-media.s3.ap-south-1.amazonaws.com/environment/Kettle-Beta-Dot-Env/.env ./.env
 
 RUN go build -o ./kettle
 
