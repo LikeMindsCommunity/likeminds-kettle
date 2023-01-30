@@ -8,10 +8,10 @@ import (
 
 type MuteChatroomRequest struct {
 	ChatroomID int64 `json:"chatroom_id" binding:"required"`
-	Value      bool  `json:"value" binding:"required"`
+	Value      *bool `json:"value" binding:"required"`
 }
 
-//MuteChatroom is used to mute a specifid chatroom
+// MuteChatroom is used to mute a specifid chatroom
 func MuteChatroom(c *gin.Context) {
 
 	//Authorize User
