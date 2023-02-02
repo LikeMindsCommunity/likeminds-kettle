@@ -18,6 +18,7 @@ type OGTags struct {
 }
 
 type AttachmentMeta struct {
+	Name      string `json:"name"`
 	Url       string `json:"url"`
 	Format    string `json:"format"`
 	Size      int    `json:"size"`
