@@ -18,6 +18,9 @@ func GetTaggingList(c *gin.Context) {
 	//Params to be sent in the get tag list api internally
 	params := map[string]string{
 		ParamChatroomId: c.Query(ParamChatroomId),
+		ParamPage:       c.Query(ParamPage),
+		ParamPageSize:   c.Query(ParamPageSize),
+		ParamSearchName: c.Query(ParamSearchName),
 	}
 
 	//Params Validation
