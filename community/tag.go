@@ -16,9 +16,14 @@ func GetTaggingList(c *gin.Context) {
 		return
 	}
 
+	chatroomId := c.Query(ChatroomIDParam)
+	if c.Query(FeedroomIDParam) != "" {
+		chatroomId = c.Query(FeedroomIDParam)
+	}
+
 	//Params to be sent in the get tag list api internally
 	params := map[string]string{
-		ChatroomIDParam: c.Query(ChatroomIDParam),
+		ChatroomIDParam: chatroomId,
 	}
 
 	//Params Validation
