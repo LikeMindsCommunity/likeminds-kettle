@@ -72,6 +72,7 @@ const ResponseUser = "user"
 const ResponseId = "id"
 const ParamDMLimit = "dm_limit"
 const ParamType = "type"
+const ParamSearchName = "search_name"
 
 const (
 	SdkApiType = 1
