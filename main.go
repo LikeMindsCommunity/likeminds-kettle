@@ -104,6 +104,7 @@ func main() {
 	router.GET("/chatroom/cohort/access", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetCohortAccess)
 	router.PUT("/chatroom/cohort/access", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EditCohortAccess)
 	router.GET("/chatroom/home", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetChatroomHome)
+	router.POST("/chatroom/mark_read", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ChatroomMarkRead)
 
 	//Community Apis
 	router.POST("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditQuestions)
