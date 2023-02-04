@@ -15,6 +15,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/feed"
 	"github.com/nateshr/likeminds-authentication/feedroom"
 	"github.com/nateshr/likeminds-authentication/home"
+	"github.com/nateshr/likeminds-authentication/media"
 	"github.com/nateshr/likeminds-authentication/moderation"
 	"github.com/nateshr/likeminds-authentication/otp"
 	"github.com/nateshr/likeminds-authentication/sdk"
@@ -211,6 +212,9 @@ func main() {
 	router.GET("/feedroom/mine", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.MyFeedrooms)
 	router.PUT("/feedroom/follow", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.FeedroomFollow)
 	router.GET("/feedroom/tag", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.GetTaggingList)
+
+	// Media Apis
+	router.POST("/media/upload_files", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), media.UploadFiles)
 
 	log.Printf("application version: %s", AppVersion)
 	log.Fatal(router.Run(":8080"))
