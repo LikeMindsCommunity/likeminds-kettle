@@ -103,6 +103,8 @@ func main() {
 	router.DELETE("/chatroom/cohort", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.RemoveCohortFromChatroom)
 	router.GET("/chatroom/cohort/access", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetCohortAccess)
 	router.PUT("/chatroom/cohort/access", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EditCohortAccess)
+	router.GET("/chatroom/home", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetChatroomHome)
+	router.POST("/chatroom/mark_read", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ChatroomMarkRead)
 
 	//Community Apis
 	router.POST("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditQuestions)
@@ -188,6 +190,7 @@ func main() {
 
 	//Utility Apis
 	router.GET("/helper/url", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), utility.DecodeUrl)
+	router.POST("/helper/media/upload", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), utility.UploadFiles)
 
 	//Feedroom Apis
 	router.POST("/feedroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.CreateFeedroom)
