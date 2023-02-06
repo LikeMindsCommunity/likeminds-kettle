@@ -15,7 +15,7 @@ func GetChatroomHome(c *gin.Context) {
 		return
 	}
 
-	//Params to be sent in the collabcard seen api internally
+	//Params to be sent in the api/community_member/fetch_chatroom_home api
 	params := map[string]string{
 		ParamChatroomId: c.Query(ParamChatroomId),
 	}
