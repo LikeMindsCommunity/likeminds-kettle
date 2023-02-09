@@ -1,7 +1,7 @@
 package feedroom
 
 import (
-	"strconv"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/chatroom"
@@ -128,8 +128,8 @@ func getFeedroomInternal(c *gin.Context, userId string) {
 
 		//Params to be sent in the api/chatroom/fetch_all request
 		params := map[string]string{
-			chatroom.ParamPage: c.Query(chatroom.ParamPage),
-			chatroom.ParamType: strconv.Itoa(FeedChatroomType),
+			chatroom.ParamPage:       c.Query(chatroom.ParamPage),
+			chatroom.ParamFilterType: fmt.Sprintf("[%d]", FeedChatroomType),
 		}
 
 		//Send Request
