@@ -95,11 +95,10 @@ func fetchPostDependentFeed(c *gin.Context, userId string, params map[string]str
 
 	chatrooms, ok := dataResponse["chatrooms"]
 	if ok {
-		for _, chatroom := range chatrooms.([]map[string]interface{}) {
-			chatroom_id, ok := chatroom["id"]
+		for _, chatroom := range chatrooms.([]interface{}) {
+			chatroom_id, ok := chatroom.(map[string]interface{})["id"]
 			if ok {
-				convertedChatroomId, _ := strconv.Atoi(chatroom_id.(string))
-				chatroom_ids = append(chatroom_ids, convertedChatroomId)
+				chatroom_ids = append(chatroom_ids, int(chatroom_id.(float64)))
 			}
 		}
 	}
@@ -146,7 +145,9 @@ func fetchPostIndependentFeed(c *gin.Context, userId string, params map[string]s
 
 	chatroomIds, ok := dataResponse["chatroom_ids"]
 	if ok {
-		excludedChatroomIds = chatroomIds.([]int)
+		for _, chatroomId := range chatroomIds.([]interface{}) {
+			excludedChatroomIds = append(excludedChatroomIds, int(chatroomId.(float64)))
+		}
 	}
 
 	temp_params, _ := json.Marshal(excludedChatroomIds)
@@ -174,7 +175,9 @@ func fetchPostIndependentFeed(c *gin.Context, userId string, params map[string]s
 
 	chatroomIds, ok = swarmDataResponse["chatroom_ids"]
 	if ok {
-		selectedChatroomIds = chatroomIds.([]int)
+		for _, chatroomId := range chatroomIds.([]interface{}) {
+			selectedChatroomIds = append(selectedChatroomIds, int(chatroomId.(float64)))
+		}
 	}
 
 	temp_params, _ = json.Marshal(selectedChatroomIds)
