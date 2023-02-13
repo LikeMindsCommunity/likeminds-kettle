@@ -134,19 +134,25 @@ func getConversationInternal(c *gin.Context, userId string) {
 
 	//GET Request params
 	meta := c.Query(ParamMeta)
-	params := map[string]string{
-		ParamChatroomId:     c.Query(ParamChatroomId),
-		ParamConversationId: c.Query(ParamConversationId),
-	}
 
 	if meta == "" || meta == "false" {
 		//If meta is missing, call api/conversation/fetch api internally
-
+		params := map[string]string{
+			ParamChatroomId:                 c.Query(ParamChatroomId),
+			ParamConversationId:             c.Query(ParamConversationId),
+			ParamPaginateBy:                 c.Query(ParamPaginateBy),
+			ParamScrollDirection:            c.Query(ParamScrollDirection),
+			ParamIncludeConversationId:      c.Query(ParamIncludeConversationId),
+			ParamExcludedConversationStates: c.Query(ParamExcludedConversationStates),
+		}
 		//Send Request
 		utils.SendRequest(c, utils.CoreService, FetchConversationEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 	} else {
 		//else, call api/conversation_meta api internally
-
+		params := map[string]string{
+			ParamChatroomId:     c.Query(ParamChatroomId),
+			ParamConversationId: c.Query(ParamConversationId),
+		}
 		//Send Request
 		utils.SendRequest(c, utils.CoreService, ConversationMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 	}
