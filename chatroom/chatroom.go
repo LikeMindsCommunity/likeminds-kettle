@@ -1,6 +1,7 @@
 package chatroom
 
 import (
+	"fmt"
 	"reflect"
 	"strconv"
 
@@ -154,7 +155,8 @@ func getChatroomInternal(c *gin.Context, userId string) {
 
 		//Params to be sent in the api/chatroom/fetch_all request
 		params := map[string]string{
-			ParamPage: c.Query(ParamPage),
+			ParamPage:         c.Query(ParamPage),
+			ParamExcludedType: fmt.Sprintf("[%d]", FeedChatroomType),
 		}
 
 		//Send Request
