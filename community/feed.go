@@ -92,6 +92,7 @@ func fetchPostDependentFeed(c *gin.Context, userId string, params map[string]str
 	//If flow succeeds
 	dataResponse := apiCR.Response
 	chatroom_ids := []int{}
+	post_counts := map[string]int{}
 
 	chatrooms, ok := dataResponse["chatrooms"]
 	if ok {
@@ -99,6 +100,7 @@ func fetchPostDependentFeed(c *gin.Context, userId string, params map[string]str
 			chatroom_id, ok := chatroom.(map[string]interface{})["id"]
 			if ok {
 				chatroom_ids = append(chatroom_ids, int(chatroom_id.(float64)))
+				post_counts[strconv.Itoa(int(chatroom_id.(float64)))] = 0
 			}
 		}
 	}
@@ -123,8 +125,12 @@ func fetchPostDependentFeed(c *gin.Context, userId string, params map[string]str
 	//If flow succeeds
 	swarmDataResponse := apiCR.Response
 	if postCounts, ok := swarmDataResponse["post_counts"]; ok {
-		dataResponse["post_counts"] = postCounts
+		for chatroom_id, post_count := range postCounts.(map[string]interface{}) {
+			post_counts[chatroom_id] = int(post_count.(float64))
+		}
 	}
+
+	dataResponse["post_counts"] = post_counts
 
 	return dataResponse
 }
@@ -172,11 +178,13 @@ func fetchPostIndependentFeed(c *gin.Context, userId string, params map[string]s
 	//If flow succeeds
 	swarmDataResponse := apiCR.Response
 	selectedChatroomIds := []int{}
+	post_counts := map[string]int{}
 
 	chatroomIds, ok = swarmDataResponse["chatroom_ids"]
 	if ok {
 		for _, chatroomId := range chatroomIds.([]interface{}) {
 			selectedChatroomIds = append(selectedChatroomIds, int(chatroomId.(float64)))
+			post_counts[strconv.Itoa(int(chatroomId.(float64)))] = 0
 		}
 	}
 
@@ -200,8 +208,12 @@ func fetchPostIndependentFeed(c *gin.Context, userId string, params map[string]s
 	//If flow succeeds
 	caravanDataResponse := apiCR.Response
 	if postCounts, ok := swarmDataResponse["post_counts"]; ok {
-		caravanDataResponse["post_counts"] = postCounts
+		for chatroom_id, post_count := range postCounts.(map[string]interface{}) {
+			post_counts[chatroom_id] = int(post_count.(float64))
+		}
 	}
+
+	caravanDataResponse["post_counts"] = post_counts
 
 	return caravanDataResponse
 }

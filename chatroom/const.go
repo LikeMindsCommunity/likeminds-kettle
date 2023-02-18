@@ -83,3 +83,7 @@ const ParamChatroomTypes = "chatroom_types"
 const (
 	SdkApiType = 1
 )
+
+const (
+	FeedChatroomType = 11
+)
