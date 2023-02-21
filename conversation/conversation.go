@@ -28,12 +28,13 @@ type CreateConversationRequest struct {
 	AllowAddOption        bool                `json:"allow_add_option"`
 	ExpiryTime            int64               `json:"expiry_time"`
 	Polls                 []PollObject        `json:"polls"`
-	AttachmentsCount      int64               `json:"attachments_count"`
+	AttachmentCount       int64               `json:"attachment_count"`
 	RepliedConversationId int64               `json:"replied_conversation_id,omitempty"`
 	InternalLink          string              `json:"internal_link"`
 	Preview               ConversationPreview `json:"preview"`
 	IsAnonymous           bool                `json:"is_anonymous"`
 	State                 int32               `json:"state"`
+	HasFiles              bool                `json:"has_files"`
 }
 
 type EditConversationRequest struct {
