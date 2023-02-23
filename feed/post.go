@@ -241,32 +241,59 @@ func createPostInternal(c *gin.Context, userId string) {
 func deletePostInternal(c *gin.Context, userId string) {
 	post_id := c.Param("post_id")
 	DeletePostEndPoint := fmt.Sprintf(SinglePostEndPoint, post_id)
+	GetPostEndPoint := fmt.Sprintf(SinglePostEndPoint, post_id)
+
+	//Send Request
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, GetPostEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	//If flow succeeds
+	dataResponse := apiCR.Response
+	if _, ok := dataResponse["post"]; !ok {
+		utils.GeneralBadRequestError(c, "Invalid post_id sent!")
+		return
+	}
+
+	//Fetch post user id
+	post_data := dataResponse["post"].(map[string]interface{})
+	post_user_unique_id := post_data["user_id"]
 
 	//Body to be sent in the /post/<post_id> DELETE request
 	deletePostRequest, err := parseDeletePostRequest(c)
-
 	if err != nil {
-		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
-		return
+		//If body is not present
+		if err.Error() == "EOF" {
+			deletePostRequest = &DeletePostRequest{}
+		} else {
+			//If POST body params are missing
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
 	}
 
-	//Fetch member access to delete post
-	success, response := user.FetchMemberAccess(c, DELETE_POST_ACTION)
-	if !success {
-		return
-	}
+	//If the user is not the post creator
+	if post_user_unique_id != userId {
+		//Fetch member access to delete post
+		success, response := user.FetchMemberAccess(c, DELETE_POST_ACTION)
+		if !success {
+			return
+		}
 
-	//If not access
-	if !response.Access {
-		utils.MemberAccessFailError(c)
-		return
-	}
+		//If not access
+		if !response.Access {
+			utils.MemberAccessFailError(c)
+			return
+		}
 
-	//Update requests body
-	deletePostRequest.UserIsCm = response.IsCm
+		//Update requests body
+		deletePostRequest.UserIsCm = response.IsCm
+	}
 
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, DeletePostEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, deletePostRequest)
-
 }
