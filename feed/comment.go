@@ -128,16 +128,6 @@ func getCommentInternal(c *gin.Context, userId string) {
 			return
 		}
 
-		//Validation of comment based on community member
-		if comment_user_unique_id, ok := comment_data["user_id"]; ok {
-			if comment_user, ok := user_data[comment_user_unique_id.(string)]; ok {
-				if comment_user.IsDeleted {
-					utils.GeneralBadRequestError(c, "Invalid comment_id sent!")
-					return
-				}
-			}
-		}
-
 		//Update users data in dataResponse
 		dataResponse["users"] = user_data
 	}

@@ -174,16 +174,6 @@ func GetPostInternal(c *gin.Context, userId string, postId string) map[string]in
 			return nil
 		}
 
-		//Validation of post based on community member
-		if post_user_unique_id, ok := post_data["user_id"]; ok {
-			if post_user, ok := user_data[post_user_unique_id.(string)]; ok {
-				if post_user.IsDeleted {
-					utils.GeneralBadRequestError(c, "Invalid post_id sent!")
-					return nil
-				}
-			}
-		}
-
 		//Update user data in dataResponse
 		dataResponse["users"] = user_data
 	}
