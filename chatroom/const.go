@@ -87,3 +87,7 @@ const (
 const (
 	FeedChatroomType = 11
 )
+
+const (
+	NormalChatroomType = 0
+)
