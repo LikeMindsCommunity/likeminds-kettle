@@ -21,15 +21,18 @@ func GetTaggingList(c *gin.Context) {
 		chatroomId = c.Query(FeedroomIDParam)
 	}
 
-	//Params to be sent in the get tag list api internally
+	//Params to be sent with pagination and search support in APIs internally
 	params := map[string]string{
 		ChatroomIDParam: chatroomId,
+		ParamPage:       c.Query(ParamPage),
+		ParamPageSize:   c.Query(ParamPageSize),
+		SearchName:      c.Query(SearchName),
 	}
 
 	//Params Validation
 	if params[chatroom.ParamChatroomId] == "" {
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchMembersMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+		utils.SendRequest(c, utils.CoreService, FetchMembersMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 	} else {
 		//Send Request
 		utils.SendRequest(c, utils.CoreService, chatroom.GetTaggingListEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
