@@ -21,7 +21,7 @@ func GetTaggingList(c *gin.Context) {
 		chatroomId = c.Query(FeedroomIDParam)
 	}
 
-	//Params to be sent in the get tag list api internally
+	//Params to be sent with pagination and search support in APIs internally
 	params := map[string]string{
 		ChatroomIDParam: chatroomId,
 		ParamPage:       c.Query(ParamPage),
