@@ -261,30 +261,58 @@ func deleteCommentInternal(c *gin.Context, userId string) {
 	post_id := c.Param("post_id")
 	comment_id := c.Param("comment_id")
 	DeleteCommentEndPoint := fmt.Sprintf(SingleCommentEndPoint, post_id, comment_id)
+	GetCommentEndPoint := fmt.Sprintf(SingleCommentEndPoint, post_id, comment_id)
 
-	//Body to be sent in the /post/<post_id> DELETE request
+	//Send Request
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, GetCommentEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	//If flow succeeds
+	dataResponse := apiCR.Response
+	if _, ok := dataResponse["comment"]; !ok {
+		utils.GeneralBadRequestError(c, "Invalid comment_id sent!")
+		return
+	}
+
+	//Fetch comment user id
+	comment_data := dataResponse["comment"].(map[string]interface{})
+	comment_user_unique_id := comment_data["user_id"]
+
+	//Body to be sent in the /post/<post_id>/comment/<comment_id> DELETE request
 	deleteCommentRequest, err := parseDeleteCommentRequest(c)
-
 	if err != nil {
-		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
-		return
+		//If body is not present
+		if err.Error() == "EOF" {
+			deleteCommentRequest = &DeleteCommentRequest{}
+		} else {
+			//If POST body params are missing
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
 	}
 
-	//Fetch member access to delete post
-	success, response := user.FetchMemberAccess(c, DELETE_COMMENT_ACTION)
-	if !success {
-		return
-	}
+	//If the user is not the comment creator
+	if comment_user_unique_id != userId {
+		//Fetch member access to delete comment
+		success, response := user.FetchMemberAccess(c, DELETE_COMMENT_ACTION)
+		if !success {
+			return
+		}
 
-	//If not access
-	if !response.Access {
-		utils.MemberAccessFailError(c)
-		return
-	}
+		//If not access
+		if !response.Access {
+			utils.MemberAccessFailError(c)
+			return
+		}
 
-	//Update requests body
-	deleteCommentRequest.UserIsCm = response.IsCm
+		//Update requests body
+		deleteCommentRequest.UserIsCm = response.IsCm
+	}
 
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, DeleteCommentEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, deleteCommentRequest)
