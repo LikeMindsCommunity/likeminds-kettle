@@ -54,8 +54,6 @@ func ChannelInvites(c *gin.Context, method int) {
 			channel_type = strconv.Itoa(chatroom.FeedChatroomType)
 		}
 
-		fmt.Println(channel_type)
-
 		//Params to be sent in the api/chatroom/invites request
 		params := map[string]string{
 			chatroom.ParamPage:          c.Query(chatroom.ParamPage),
