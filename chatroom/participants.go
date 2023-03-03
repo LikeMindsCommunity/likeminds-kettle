@@ -11,11 +11,13 @@ type ParticipantRequest struct {
 	ChatroomID           int64         `json:"chatroom_id"`
 	ChatroomParticipants []interface{} `json:"chatroom_participants"`
 	IsSecret             bool          `json:"is_secret"`
+	IsChannelInvite      bool          `json:"is_channel_invite"`
 }
 
 type InternalParticipantRequest struct {
 	ChatroomID                 int64         `json:"chatroom_id"`
 	SecretChatroomParticipants []interface{} `json:"secret_chatroom_participants"`
+	IsChannelInvite            bool          `json:"is_channel_invite"`
 }
 
 type RemoveParticipantRequest struct {
@@ -76,6 +78,7 @@ func updateParticipantsRequest(pr *ParticipantRequest) *InternalParticipantReque
 
 	ipr.ChatroomID = pr.ChatroomID
 	ipr.SecretChatroomParticipants = pr.ChatroomParticipants
+	ipr.IsChannelInvite = pr.IsChannelInvite
 
 	return &ipr
 }

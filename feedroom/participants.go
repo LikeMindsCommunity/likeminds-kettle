@@ -9,9 +9,10 @@ import (
 )
 
 type AddParticipantRequest struct {
-	FeedroomID   int64         `json:"feedroom_id" binding:"required"`
-	Participants []interface{} `json:"participants" binding:"required"`
-	IsSecret     bool          `json:"is_secret"`
+	FeedroomID      int64         `json:"feedroom_id" binding:"required"`
+	Participants    []interface{} `json:"participants" binding:"required"`
+	IsSecret        bool          `json:"is_secret"`
+	IsChannelInvite bool          `json:"is_channel_invite"`
 }
 
 type RemoveParticipantRequest struct {
@@ -120,6 +121,7 @@ func addParticipantsInternal(c *gin.Context, userId string) {
 		addSecretParticipantRequest := chatroom.InternalParticipantRequest{
 			ChatroomID:                 addParticipantRequest.FeedroomID,
 			SecretChatroomParticipants: addParticipantRequest.Participants,
+			IsChannelInvite:            addParticipantRequest.IsChannelInvite,
 		}
 
 		//Send Request

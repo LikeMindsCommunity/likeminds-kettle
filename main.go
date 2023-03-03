@@ -216,8 +216,10 @@ func main() {
 	router.PUT("/feedroom/follow", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.FeedroomFollow)
 	router.GET("/feedroom/tag", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.GetTaggingList)
 
-	//Channel Apis
+	// Channel Apis
 	router.GET("/channel", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), channel.FetchChannel)
+	router.GET("/channel/invites", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), channel.GetChannelInvites)
+	router.PUT("/channel/invite", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), channel.UpdateChannelInvite)
 
 	log.Printf("application version: %s", AppVersion)
 	log.Fatal(router.Run(":8080"))
