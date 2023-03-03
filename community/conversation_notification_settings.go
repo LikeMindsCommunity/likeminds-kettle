@@ -6,14 +6,17 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
+// Request Body Struct for Edit conversation notification settings
 type EditConversationNotificationSettingsRequest struct {
 	NotificationState int `json:"noti_state"`
 }
 
+// GetConversationNotificationSettings method to get conversation notification settings
 func GetConversationNotificationSettings(c *gin.Context) {
 	CommunityNotificationSettings(c, utils.GETMethod)
 }
 
+// EditConversationNotificationSettings method to update conversation notification settings
 func EditConversationNotificationSettings(c *gin.Context) {
 	CommunityNotificationSettings(c, utils.PUTMethod)
 }
@@ -29,6 +32,7 @@ func parseEditConversationNotificationSettingsRequest(c *gin.Context) (*EditConv
 	return &ecnsr, nil
 }
 
+// CommunityNotificationSettings method to handle community conversation notification settings
 func CommunityNotificationSettings(c *gin.Context, method int) {
 
 	//Authorize User
