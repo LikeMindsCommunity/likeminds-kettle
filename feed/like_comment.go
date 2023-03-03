@@ -51,7 +51,7 @@ func getCommentLikesInternal(c *gin.Context, userId string, endPoint string) {
 	}
 
 	//Fetch member access to view post likes
-	success, response := user.FetchMemberAccess(c, VIEW_COMMENT_ACTION)
+	success, response := user.FetchMemberAccess(c, VIEW_COMMENT_ACTION, userId)
 	if !success {
 		return
 	}
@@ -100,7 +100,7 @@ func getCommentLikesInternal(c *gin.Context, userId string, endPoint string) {
 
 func createCommentLikeInternal(c *gin.Context, userId string, endPoint string) {
 	//Fetch member access to create post
-	success, response := user.FetchMemberAccess(c, LIKE_COMMENT_ACTION)
+	success, response := user.FetchMemberAccess(c, LIKE_COMMENT_ACTION, userId)
 	if !success {
 		return
 	}

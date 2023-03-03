@@ -43,7 +43,7 @@ func CommentPost(c *gin.Context) {
 	}
 
 	//Fetch member access to view post
-	success, response := user.FetchMemberAccess(c, CREATE_COMMENT_ACTION)
+	success, response := user.FetchMemberAccess(c, CREATE_COMMENT_ACTION, userId)
 	if !success {
 		return
 	}
