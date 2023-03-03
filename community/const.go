@@ -32,6 +32,7 @@ const EditCohortEndPoint = "/api/cohort/update"
 const RemoveCohortMemberEndPoint = "/api/cohort/remove_member"
 const CommunityFetchFeedEndPoint = "/api/community_member/fetch_feed"
 const CommunityFetchPostFeedEndPoint = "/api/community_member/post_feed"
+const ConversationNotificationSettingsEndPoint = "/api/community/notification_settings"
 const FeedNotificationSettingEndPoint = "/api/community/feed_notification_setting"
 const CommunityExcludedChatroomsEndPoint = "/api/community_member/excluded_chatrooms"
 

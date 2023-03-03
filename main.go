@@ -138,6 +138,8 @@ func main() {
 	router.PUT("/community/cohort", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditCohort)
 	router.DELETE("/community/cohort/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.RemoveCohortMember)
 	router.GET("/community/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityFeed)
+	router.GET("/community/settings/notification/conversation", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetConversationNotificationSettings)
+	router.PUT("/community/settings/notification/conversation", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditConversationNotificationSettings)
 	router.GET("/community/settings/notification/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetFeedNotificationSettings)
 	router.PUT("/community/settings/notification/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditFeedNotificationSettings)
 	router.GET("/community/tag", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetTaggingList)
