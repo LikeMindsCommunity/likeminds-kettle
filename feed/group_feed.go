@@ -24,7 +24,7 @@ func FetchGroupFeed(c *gin.Context) {
 	}
 
 	//Fetch member access to view post
-	success, response := user.FetchMemberAccess(c, VIEW_POST_ACTION)
+	success, response := user.FetchMemberAccess(c, VIEW_POST_ACTION, userId)
 	if !success {
 		return
 	}
