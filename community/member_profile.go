@@ -19,24 +19,26 @@ type QuestionAnswerWithInt struct {
 type MemberProfileRequest struct {
 	QuestionAnswers []QuestionAnswer `json:"question_answers"`
 	ImageUrl        string           `json:"image_url"`
+	Name            string           `json:"name"`
 }
 
 type MemberProfileRequestWithInt struct {
 	QuestionAnswers []QuestionAnswerWithInt `json:"question_answers"`
 	ImageUrl        string                  `json:"image_url"`
+	Name            string                  `json:"name"`
 }
 
-//GetProfile is used to get member profile
+// GetProfile is used to get member profile
 func GetMemberProfile(c *gin.Context) {
 	Profile(c, utils.GETMethod)
 }
 
-//EditProfile is used to update a member profile in community
+// EditProfile is used to update a member profile in community
 func EditMemberProfile(c *gin.Context) {
 	Profile(c, utils.PUTMethod)
 }
 
-//Profile method handles community member profile
+// Profile method handles community member profile
 func Profile(c *gin.Context, method int) {
 
 	//Authorize User
