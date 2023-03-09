@@ -22,10 +22,10 @@ func DMStatus(c *gin.Context) {
 		ChatroomIDParam:  c.Query(ChatroomIDParam),
 	}
 
-	if requestParams[RequestFromParam] == "user_channel" {
+	if requestParams[RequestFromParam] == UserChannelReqFrom {
 
 		// set req_from to member_profile
-		requestParams[RequestFromParam] = "member_profile"
+		requestParams[RequestFromParam] = MemberProfileReqFrom
 
 		// Internally call api/community_member/can_dm
 		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, UserCanDMEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), requestParams, nil)
@@ -42,10 +42,10 @@ func DMStatus(c *gin.Context) {
 		dataResponse := apiCR.Response
 
 		// if show_dm is true
-		if dataResponse["show_dm"] != nil && dataResponse["show_dm"] == true {
+		if dataResponse[showDmResponse] != nil && dataResponse[showDmResponse] == true {
 
 			//Body to be sent in the /chatroom/create_dm POST request
-			createDMbody := map[string]interface{}{
+			createDMbody := map[string]string{
 				"member_id": c.Query(ParamMemberId),
 			}
 
@@ -54,7 +54,7 @@ func DMStatus(c *gin.Context) {
 
 		} else {
 
-			utils.GeneralBadRequestError(c, "User cannot DM")
+			utils.GeneralBadRequestError(c, utils.ErrorUserCannotDm)
 		}
 
 	} else {
