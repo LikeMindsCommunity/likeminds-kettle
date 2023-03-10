@@ -2,6 +2,8 @@ package feedroom
 
 import (
 	"fmt"
+	"reflect"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/chatroom"
@@ -207,6 +209,10 @@ func deleteFeedroomInternal(c *gin.Context, userId string) {
 
 	deleteChatroomRequest := chatroom.DeleteChatroomRequest{
 		ChatroomID: deleteFeedroomRequest.FeedroomID,
+	}
+
+	if reflect.TypeOf(deleteChatroomRequest.ChatroomID).String() == "float64" {
+		deleteChatroomRequest.ChatroomID = strconv.Itoa(int(deleteChatroomRequest.ChatroomID.(float64)))
 	}
 
 	//Send Request
