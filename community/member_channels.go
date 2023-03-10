@@ -1,9 +1,7 @@
 package community
 
 import (
-	"fmt"
 	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/channel"
@@ -22,32 +20,33 @@ func GetMemberChannels(c *gin.Context) {
 
 	channel_type := c.Query(channel.ParamChannelType)
 
-	var chatroom_types string
+	var chatroom_types []interface{}
 
 	// Get chatroom types based on channel type
 	if channel_type == strconv.Itoa(channel.CHAT_BASED_CHANNEL) {
 
-		chatroom_types = strings.Join([]string{
-			strconv.Itoa(chatroom.NormalChatroomType),
-			strconv.Itoa(chatroom.AnnouncementChatroomType)},
-			",")
+		chatroom_types = append(chatroom_types,
+			chatroom.NormalChatroomType,
+			chatroom.AnnouncementChatroomType)
 
 	} else if channel_type == strconv.Itoa(channel.FEED_BASED_CHANNEL) {
 
-		chatroom_types = strings.Join([]string{
-			strconv.Itoa(chatroom.FeedChatroomType)},
-			",")
+		chatroom_types = append(chatroom_types,
+			chatroom.FeedChatroomType)
 
 	} else {
 
 		// If channel type is invalid return error
-		utils.GeneralBadRequestError(c, "Invalid channel type sent!")
+		utils.GeneralBadRequestError(c, utils.ErrorInvalidChannelType)
 		return
 	}
 
+	// Parse Array to String to send in request
+	temp_chatroom_types := utils.ParseArrayToString(chatroom_types)
+
 	requestParams := map[string]string{
 		ParamUserId:                 c.Query(ParamUserId),
-		chatroom.ParamChatroomTypes: fmt.Sprintf("[%s]", chatroom_types),
+		chatroom.ParamChatroomTypes: temp_chatroom_types,
 	}
 
 	//Send Request
