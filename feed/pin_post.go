@@ -21,7 +21,7 @@ func PinPost(c *gin.Context) {
 	PinPostEndPoint := fmt.Sprintf(SinglePostPinEndPoint, post_id)
 
 	//Fetch member access to view post
-	success, response := user.FetchMemberAccess(c, PIN_POST_ACTION)
+	success, response := user.FetchMemberAccess(c, PIN_POST_ACTION, userId)
 	if !success {
 		return
 	}

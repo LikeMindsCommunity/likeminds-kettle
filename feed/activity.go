@@ -57,7 +57,7 @@ func createUserActivityInternal(c *gin.Context, userId string, EndPoint string) 
 	}
 
 	//Fetch member access to create post
-	success, response := user.FetchMemberAccess(c, CREATE_ACTIVITY_ACTION)
+	success, response := user.FetchMemberAccess(c, CREATE_ACTIVITY_ACTION, userId)
 	if !success {
 		return
 	}

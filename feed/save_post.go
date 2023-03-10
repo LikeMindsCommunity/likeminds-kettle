@@ -49,7 +49,7 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 	}
 
 	//Fetch member access to view post likes
-	success, response := user.FetchMemberAccess(c, VIEW_POST_ACTION)
+	success, response := user.FetchMemberAccess(c, VIEW_POST_ACTION, userId)
 	if !success {
 		return
 	}
@@ -105,7 +105,7 @@ func createSavePostInternal(c *gin.Context, userId string) {
 	SavePostEndPoint := fmt.Sprintf(SinglePostSaveEndPoint, post_id)
 
 	//Fetch member access to create post
-	success, response := user.FetchMemberAccess(c, SAVE_POST_ACTION)
+	success, response := user.FetchMemberAccess(c, SAVE_POST_ACTION, userId)
 	if !success {
 		return
 	}

@@ -33,7 +33,7 @@ type AttachmentRequest struct {
 }
 
 type CreatePostRequest struct {
-	Text        string              `json:"text" binding:"required"`
+	Text        string              `json:"text"`
 	Heading     string              `json:"heading"`
 	Attachments []AttachmentRequest `json:"attachments"`
 	FeedroomID  int                 `json:"feedroom_id"`
@@ -125,7 +125,7 @@ func GetPostInternal(c *gin.Context, userId string, postId string) map[string]in
 	}
 
 	//Fetch member access to view post
-	success, response := user.FetchMemberAccess(c, VIEW_POST_ACTION)
+	success, response := user.FetchMemberAccess(c, VIEW_POST_ACTION, userId)
 	if !success {
 		return nil
 	}
@@ -201,7 +201,7 @@ func createPostInternal(c *gin.Context, userId string) {
 	}
 
 	//Fetch member access to create post
-	success, response := user.FetchMemberAccess(c, CREATE_POST_ACTION)
+	success, response := user.FetchMemberAccess(c, CREATE_POST_ACTION, userId)
 	if !success {
 		return
 	}
@@ -279,7 +279,7 @@ func deletePostInternal(c *gin.Context, userId string) {
 	//If the user is not the post creator
 	if post_user_unique_id != userId {
 		//Fetch member access to delete post
-		success, response := user.FetchMemberAccess(c, DELETE_POST_ACTION)
+		success, response := user.FetchMemberAccess(c, DELETE_POST_ACTION, userId)
 		if !success {
 			return
 		}

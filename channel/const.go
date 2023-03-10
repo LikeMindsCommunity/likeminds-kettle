@@ -1,5 +1,7 @@
 package channel
 
+const ChatroomInvitesEndppoint = "/api/chatroom/invites"
+
 const ParamPage = "page"
 const ParamChannelType = "channel_type"
 const ParamChannelId = "channel_id"

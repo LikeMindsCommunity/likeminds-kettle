@@ -79,7 +79,7 @@ func getCommentInternal(c *gin.Context, userId string) {
 	}
 
 	//Fetch member access to view comment
-	success, response := user.FetchMemberAccess(c, VIEW_COMMENT_ACTION)
+	success, response := user.FetchMemberAccess(c, VIEW_COMMENT_ACTION, userId)
 	if !success {
 		return
 	}
@@ -157,7 +157,7 @@ func FetchCommentByIdInternal(c *gin.Context, userId string, commentId string) m
 	}
 
 	//Fetch member access to view comment
-	success, response := user.FetchMemberAccess(c, VIEW_REPORT_ENTITY)
+	success, response := user.FetchMemberAccess(c, VIEW_REPORT_ENTITY, userId)
 	if !success {
 		return nil
 	}
@@ -241,7 +241,7 @@ func createCommentInternal(c *gin.Context, userId string) {
 	}
 
 	//Fetch member access to create post
-	success, response := user.FetchMemberAccess(c, CREATE_COMMENT_ACTION)
+	success, response := user.FetchMemberAccess(c, CREATE_COMMENT_ACTION, userId)
 	if !success {
 		return
 	}
@@ -299,7 +299,7 @@ func deleteCommentInternal(c *gin.Context, userId string) {
 	//If the user is not the comment creator
 	if comment_user_unique_id != userId {
 		//Fetch member access to delete comment
-		success, response := user.FetchMemberAccess(c, DELETE_COMMENT_ACTION)
+		success, response := user.FetchMemberAccess(c, DELETE_COMMENT_ACTION, userId)
 		if !success {
 			return
 		}
