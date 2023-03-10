@@ -35,6 +35,7 @@ const CommunityFetchPostFeedEndPoint = "/api/community_member/post_feed"
 const ConversationNotificationSettingsEndPoint = "/api/community/notification_settings"
 const FeedNotificationSettingEndPoint = "/api/community/feed_notification_setting"
 const CommunityExcludedChatroomsEndPoint = "/api/community_member/excluded_chatrooms"
+const GetMemberChatroomsEndPoint = "api/community_member/chatroom/status"
 
 const ParamPage = "page"
 const ParamPageSize = "page_size"
