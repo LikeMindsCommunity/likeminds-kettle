@@ -19,13 +19,13 @@ type QuestionAnswerWithInt struct {
 type MemberProfileRequest struct {
 	QuestionAnswers []QuestionAnswer `json:"question_answers"`
 	ImageUrl        string           `json:"image_url"`
-	Name            string           `json:"name"`
+	Name            *string          `json:"name"`
 }
 
 type MemberProfileRequestWithInt struct {
 	QuestionAnswers []QuestionAnswerWithInt `json:"question_answers"`
 	ImageUrl        string                  `json:"image_url"`
-	Name            string                  `json:"name"`
+	Name            *string                 `json:"name"`
 }
 
 // GetProfile is used to get member profile
