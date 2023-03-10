@@ -55,6 +55,11 @@ const ParamCohortID = "cohort_id"
 const ParamPinned = "pinned"
 const ParamOrderType = "order_type"
 
+const UserChannelReqFrom = "user_channel"
+const MemberProfileReqFrom = "member_profile"
+
+const showDmResponse = "show_dm"
+
 type CommunityObject struct {
 	ID             int64  `json:"id"`
 	Name           string `json:"name"`
