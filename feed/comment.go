@@ -157,7 +157,7 @@ func FetchCommentByIdInternal(c *gin.Context, userId string, commentId string) m
 	}
 
 	//Fetch member access to view comment
-	success, response := user.FetchMemberAccess(c, VIEW_REPORT_ENTITY, userId)
+	success, response := user.FetchMemberAccess(c, VIEW_COMMENT_ACTION, userId)
 	if !success {
 		return nil
 	}
