@@ -85,6 +85,7 @@ const (
 )
 
 const (
-	FeedChatroomType   = 11
-	NormalChatroomType = 0
+	NormalChatroomType       = 0
+	AnnouncementChatroomType = 7
+	FeedChatroomType         = 11
 )
