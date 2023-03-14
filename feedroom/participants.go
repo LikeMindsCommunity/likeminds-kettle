@@ -121,7 +121,7 @@ func addParticipantsInternal(c *gin.Context, userId string) {
 		addSecretParticipantRequest := chatroom.InternalParticipantRequest{
 			ChatroomID:                 addParticipantRequest.FeedroomID,
 			SecretChatroomParticipants: addParticipantRequest.Participants,
-			IsChannelInvite:            true,
+			IsChannelInvite:            addParticipantRequest.IsChannelInvite,
 		}
 
 		//Send Request

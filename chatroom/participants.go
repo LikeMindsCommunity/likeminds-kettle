@@ -78,7 +78,7 @@ func updateParticipantsRequest(pr *ParticipantRequest) *InternalParticipantReque
 
 	ipr.ChatroomID = pr.ChatroomID
 	ipr.SecretChatroomParticipants = pr.ChatroomParticipants
-	ipr.IsChannelInvite = true
+	ipr.IsChannelInvite = pr.IsChannelInvite
 
 	return &ipr
 }
