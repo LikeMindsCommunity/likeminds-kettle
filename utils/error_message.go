@@ -17,6 +17,8 @@ const ErrorRedisFailed = "Unable to initialize Redis!"
 const ErrorInvalidAPIKey = "Invalid API key!"
 const ErrorGuestAccessDenied = "Login required!"
 const ErrorMemeberAccessFail = "You are not authorized to perform this operation!"
+const ErrorUserCannotDm = "User cannot DM"
+const ErrorInvalidChannelType = "Invalid channel type!"
 
 func GeneralAPIError(c *gin.Context, errorMessage string) {
 	c.JSON(http.StatusInternalServerError, Response{

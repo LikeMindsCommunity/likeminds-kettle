@@ -32,7 +32,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "1.15.1"
+	var AppVersion string = "1.16.0"
 
 	initGin()
 	client = cache.InitRedis()
@@ -132,6 +132,7 @@ func main() {
 	router.GET("/community/member/profile", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetMemberProfile)
 	router.PUT("/community/member/profile", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditMemberProfile)
 	router.GET("/community/member/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.MemberChatroom)
+	router.GET("/community/member/channel/status", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetMemberChannels)
 	router.POST("/community/cohort", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.CreateCohort)
 	router.GET("/community/cohort", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCohort)
 	router.DELETE("/community/cohort", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.DeleteCohort)
