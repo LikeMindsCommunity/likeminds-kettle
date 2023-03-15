@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -23,13 +22,13 @@ type MemberMetaResponse struct {
 	Members []MemberMeta `json:"members"`
 }
 
-// FetchMemberMeta | fetch member meta for sent ids
-func FetchMemberMeta(c *gin.Context, member_ids []string, userId string) (bool, map[string]MemberMeta) {
+// FetchMemberMeta without context | fetch member meta for sent ids
+func FetchMemberMeta(headers map[string]interface{}, member_ids []string) (map[string]MemberMeta, error) {
 
 	response := map[string]MemberMeta{}
 
 	if len(member_ids) == 0 {
-		return true, response
+		return response, nil
 	}
 
 	temp_params, _ := json.Marshal(member_ids)
@@ -40,20 +39,16 @@ func FetchMemberMeta(c *gin.Context, member_ids []string, userId string) (bool, 
 	}
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchMembersMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.CoreService, FetchMembersMetaEndPoint, utils.GETRequest, headers, params, nil)
 
-	//Validate response
-	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
-	if apiCR == nil {
-		return false, nil
+	if err != nil {
+		return nil, err
 	}
 
 	//Parse response
 	var membersMetaResponse MemberMetaResponse
 	if err := json.Unmarshal(respBytes, &membersMetaResponse); err != nil {
-		//Internal unmarshal error
-		utils.GeneralAPIError(c, err.Error())
-		return false, nil
+		return nil, err
 	}
 
 	//Generate user data for received data
@@ -70,5 +65,5 @@ func FetchMemberMeta(c *gin.Context, member_ids []string, userId string) (bool, 
 		}
 	}
 
-	return true, response
+	return response, err
 }
