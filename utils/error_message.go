@@ -19,6 +19,7 @@ const ErrorGuestAccessDenied = "Login required!"
 const ErrorMemeberAccessFail = "You are not authorized to perform this operation!"
 const ErrorUserCannotDm = "User cannot DM"
 const ErrorInvalidChannelType = "Invalid channel type!"
+const ErrorFetchingUserData = "Error while fetching user data!"
 
 func GeneralAPIError(c *gin.Context, errorMessage string) {
 	c.JSON(http.StatusInternalServerError, Response{
