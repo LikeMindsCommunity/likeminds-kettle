@@ -123,8 +123,9 @@ func getCommentInternal(c *gin.Context, userId string) {
 		}
 
 		//Fetch user data for given user_unique_ids
-		success, user_data := user.FetchMemberMeta(c, user_ids)
-		if !success {
+		user_data, err := user.FetchMemberMeta(utils.CreateHeaders(c, userId), user_ids)
+		if err != nil {
+			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 			return
 		}
 
@@ -201,8 +202,9 @@ func FetchCommentByIdInternal(c *gin.Context, userId string, commentId string) m
 		}
 
 		//Fetch user data for given user_unique_ids
-		success, user_data := user.FetchMemberMeta(c, user_ids)
-		if !success {
+		user_data, err := user.FetchMemberMeta(utils.CreateHeaders(c, userId), user_ids)
+		if err != nil {
+			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 			return nil
 		}
 
