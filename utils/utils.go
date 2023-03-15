@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -65,6 +66,23 @@ func ValidateClientResponse(c *gin.Context, respBytes []byte, statusCode int) *a
 	}
 
 	return &apiCR
+}
+
+func ValidateClientResponseWithoutContext(respBytes []byte) (*api_client.APIClientResponse, error) {
+	//Parse response
+	var apiCR api_client.APIClientResponse
+	err := api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
+
+	if err != nil {
+		//Internal unmarshal error
+		return nil, err
+	}
+	if !apiCR.Success {
+		//If internal api returns success as false
+		return nil, fmt.Errorf(apiCR.ErrorMessage)
+	}
+	return &apiCR, nil
+
 }
 
 // ParseResponse from request sent internally
