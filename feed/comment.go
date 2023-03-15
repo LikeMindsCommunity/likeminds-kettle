@@ -320,3 +320,69 @@ func deleteCommentInternal(c *gin.Context, userId string) {
 	utils.SendRequest(c, utils.SwarmService, DeleteCommentEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, deleteCommentRequest)
 
 }
+
+func GetCommentWithoutContext(headers map[string]interface{}, params map[string]string, commentId string, IsCm bool) (map[string]interface{}, error) {
+
+	//Url generation
+	GetCommentByIdEndPoint := fmt.Sprintf(SingleCommentByIdEndPoint, commentId)
+
+	//Param updatiion for isCm
+	params[ParamUserIsCm] = fmt.Sprint(IsCm)
+
+	//Send Request internally without context
+	respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, GetCommentByIdEndPoint, utils.GETRequest, headers, params, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Validate & unmarshal response
+	apiCR, err := utils.ValidateClientResponseWithoutContext(respBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	//If flow succeeds
+	dataResponse := apiCR.Response
+	if value, ok := dataResponse["comment"]; ok {
+		comment_data := value.(map[string]interface{})
+		user_ids := []string{}
+
+		//Fetch comment user id
+		if comment_user_unique_id, ok := comment_data["user_id"]; ok {
+			user_ids = append(user_ids, comment_user_unique_id.(string))
+		}
+
+		//Fetch replies user id
+		if replies, ok := comment_data["replies"]; ok {
+			for _, reply_data := range replies.([]interface{}) {
+				if user_unique_id, ok := reply_data.(map[string]interface{})["user_id"]; ok {
+					user_ids = append(user_ids, user_unique_id.(string))
+				}
+			}
+		}
+
+		//Fetch user data for given user_unique_ids
+		user_data, err := user.FetchMemberMeta(headers, user_ids)
+		if err != nil {
+			return nil, err
+		}
+
+		var comment_user user.MemberMeta
+
+		//Validation of comment based on community member
+		comment_user_unique_id, ok := comment_data["user_id"]
+		if ok {
+			comment_user, ok = user_data[comment_user_unique_id.(string)]
+		}
+
+		if ok && comment_user.IsDeleted {
+			return nil, fmt.Errorf("invalid comment_id sent")
+		}
+
+		//Update users data in dataResponse
+		dataResponse["users"] = user_data
+	}
+
+	return dataResponse, nil
+
+}
