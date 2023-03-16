@@ -1,6 +1,7 @@
 package feed
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -350,7 +351,7 @@ func GetPostWithoutContext(headers map[string]interface{}, params map[string]str
 		if post_user_unique_id, ok := post_data["user_id"]; ok {
 			if post_user, ok := user_data[post_user_unique_id.(string)]; ok {
 				if post_user.IsDeleted {
-					return nil, fmt.Errorf("invalid post_id sent")
+					return nil, errors.New("invalid post_id sent")
 				}
 			}
 		}

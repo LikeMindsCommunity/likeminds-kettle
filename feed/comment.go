@@ -1,6 +1,7 @@
 package feed
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -376,7 +377,7 @@ func GetCommentWithoutContext(headers map[string]interface{}, params map[string]
 		}
 
 		if ok && comment_user.IsDeleted {
-			return nil, fmt.Errorf("invalid comment_id sent")
+			return nil, errors.New("invalid comment_id sent")
 		}
 
 		//Update users data in dataResponse

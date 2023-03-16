@@ -2,7 +2,7 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -79,7 +79,7 @@ func ValidateClientResponseWithoutContext(respBytes []byte) (*api_client.APIClie
 	}
 	if !apiCR.Success {
 		//If internal api returns success as false
-		return nil, fmt.Errorf(apiCR.ErrorMessage)
+		return nil, errors.New(apiCR.ErrorMessage)
 	}
 	return &apiCR, nil
 
