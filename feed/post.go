@@ -66,6 +66,48 @@ func parseDeletePostRequest(c *gin.Context) (*DeletePostRequest, error) {
 	return &dpr, nil
 }
 
+func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{}) map[string]interface{} {
+	if value, ok := dataResponse["post"]; ok {
+		post_data := value.(map[string]interface{})
+		user_ids := []string{}
+
+		//Fetch post user id
+		if post_user_unique_id, ok := post_data["user_id"]; ok {
+			user_ids = append(user_ids, post_user_unique_id.(string))
+		}
+
+		//Fetch replies user id
+		if replies, ok := post_data["replies"]; ok {
+			for _, reply_data := range replies.([]interface{}) {
+				if user_unique_id, ok := reply_data.(map[string]interface{})["user_id"]; ok {
+					user_ids = append(user_ids, user_unique_id.(string))
+				}
+			}
+		}
+
+		//Fetch user data for given user_unique_ids
+		success, user_data := user.FetchMemberMeta(c, user_ids)
+		if !success {
+			return nil
+		}
+
+		//Validation of post based on community member
+		if post_user_unique_id, ok := post_data["user_id"]; ok {
+			if post_user, ok := user_data[post_user_unique_id.(string)]; ok {
+				if post_user.IsDeleted {
+					utils.GeneralBadRequestError(c, "Invalid post_id sent!")
+					return nil
+				}
+			}
+		}
+
+		//Update user data in dataResponse
+		dataResponse["users"] = user_data
+	}
+
+	return dataResponse
+}
+
 // CreatePost is used to create a new post
 func CreatePost(c *gin.Context) {
 	Post(c, utils.POSTMethod)
@@ -150,43 +192,7 @@ func GetPostInternal(c *gin.Context, userId string, postId string) map[string]in
 
 	//If flow succeeds
 	dataResponse := apiCR.Response
-	if value, ok := dataResponse["post"]; ok {
-		post_data := value.(map[string]interface{})
-		user_ids := []string{}
-
-		//Fetch post user id
-		if post_user_unique_id, ok := post_data["user_id"]; ok {
-			user_ids = append(user_ids, post_user_unique_id.(string))
-		}
-
-		//Fetch replies user id
-		if replies, ok := post_data["replies"]; ok {
-			for _, reply_data := range replies.([]interface{}) {
-				if user_unique_id, ok := reply_data.(map[string]interface{})["user_id"]; ok {
-					user_ids = append(user_ids, user_unique_id.(string))
-				}
-			}
-		}
-
-		//Fetch user data for given user_unique_ids
-		success, user_data := user.FetchMemberMeta(c, user_ids)
-		if !success {
-			return nil
-		}
-
-		//Validation of post based on community member
-		if post_user_unique_id, ok := post_data["user_id"]; ok {
-			if post_user, ok := user_data[post_user_unique_id.(string)]; ok {
-				if post_user.IsDeleted {
-					utils.GeneralBadRequestError(c, "Invalid post_id sent!")
-					return nil
-				}
-			}
-		}
-
-		//Update user data in dataResponse
-		dataResponse["users"] = user_data
-	}
+	dataResponse = populatePostDataResponse(c, dataResponse)
 
 	return dataResponse
 }
@@ -222,6 +228,10 @@ func createPostInternal(c *gin.Context, userId string) {
 	}
 
 	//If flow succeeds
+	dataResponse := apiCR.Response
+	dataResponse = populatePostDataResponse(c, dataResponse)
+
+	//If flow succeeds
 	if createPostRequest.FeedroomID != 0 {
 		//Params to be sent in the api/collabcard_follow request
 		params := map[string]string{
@@ -231,11 +241,11 @@ func createPostInternal(c *gin.Context, userId string) {
 		}
 
 		//Send Request to follow the chatroom for the post creator
-		utils.SendRequest(c, utils.CoreService, chatroom.CollabcardFollowEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
-	} else {
-		//Generate Response
-		utils.GenerateResponse(c, apiCR.Response)
+		utils.GetRequestResponseWithoutContext(utils.CoreService, chatroom.CollabcardFollowEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 	}
+
+	//Generate Response
+	utils.GenerateResponse(c, dataResponse)
 }
 
 func deletePostInternal(c *gin.Context, userId string) {

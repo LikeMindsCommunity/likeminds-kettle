@@ -24,6 +24,51 @@ func parseDeleteCommentRequest(c *gin.Context) (*DeleteCommentRequest, error) {
 	return &dcr, nil
 }
 
+func populateCommentDataResponse(c *gin.Context, dataResponse map[string]interface{}) map[string]interface{} {
+	if value, ok := dataResponse["comment"]; ok {
+		comment_data := value.(map[string]interface{})
+		user_ids := []string{}
+
+		//Fetch comment user id
+		if comment_user_unique_id, ok := comment_data["user_id"]; ok {
+			user_ids = append(user_ids, comment_user_unique_id.(string))
+		}
+
+		//Fetch replies user id
+		if replies, ok := comment_data["replies"]; ok {
+			for _, reply_data := range replies.([]interface{}) {
+				if user_unique_id, ok := reply_data.(map[string]interface{})["user_id"]; ok {
+					user_ids = append(user_ids, user_unique_id.(string))
+				}
+			}
+		}
+
+		//Fetch user data for given user_unique_ids
+		success, user_data := user.FetchMemberMeta(c, user_ids)
+		if !success {
+			return nil
+		}
+
+		var comment_user user.MemberMeta
+
+		//Validation of comment based on community member
+		comment_user_unique_id, ok := comment_data["user_id"]
+		if ok {
+			comment_user, ok = user_data[comment_user_unique_id.(string)]
+		}
+
+		if ok && comment_user.IsDeleted {
+			utils.GeneralBadRequestError(c, "Invalid comment_id sent!")
+			return nil
+		}
+
+		//Update users data in dataResponse
+		dataResponse["users"] = user_data
+	}
+
+	return dataResponse
+}
+
 // CreateCommentReply is used to create a new reply on a comment
 func CreateCommentReply(c *gin.Context) {
 	Comment(c, utils.POSTMethod)
@@ -104,43 +149,7 @@ func getCommentInternal(c *gin.Context, userId string) {
 
 	//If flow succeeds
 	dataResponse := apiCR.Response
-	if value, ok := dataResponse["comment"]; ok {
-		comment_data := value.(map[string]interface{})
-		user_ids := []string{}
-
-		//Fetch comment user id
-		if comment_user_unique_id, ok := comment_data["user_id"]; ok {
-			user_ids = append(user_ids, comment_user_unique_id.(string))
-		}
-
-		//Fetch replies user id
-		if replies, ok := comment_data["replies"]; ok {
-			for _, reply_data := range replies.([]interface{}) {
-				if user_unique_id, ok := reply_data.(map[string]interface{})["user_id"]; ok {
-					user_ids = append(user_ids, user_unique_id.(string))
-				}
-			}
-		}
-
-		//Fetch user data for given user_unique_ids
-		success, user_data := user.FetchMemberMeta(c, user_ids)
-		if !success {
-			return
-		}
-
-		//Validation of comment based on community member
-		if comment_user_unique_id, ok := comment_data["user_id"]; ok {
-			if comment_user, ok := user_data[comment_user_unique_id.(string)]; ok {
-				if comment_user.IsDeleted {
-					utils.GeneralBadRequestError(c, "Invalid comment_id sent!")
-					return
-				}
-			}
-		}
-
-		//Update users data in dataResponse
-		dataResponse["users"] = user_data
-	}
+	dataResponse = populateCommentDataResponse(c, dataResponse)
 
 	//Send response
 	utils.GenerateResponse(c, dataResponse)
@@ -182,46 +191,7 @@ func FetchCommentByIdInternal(c *gin.Context, userId string, commentId string) m
 
 	//If flow succeeds
 	dataResponse := apiCR.Response
-	if value, ok := dataResponse["comment"]; ok {
-		comment_data := value.(map[string]interface{})
-		user_ids := []string{}
-
-		//Fetch comment user id
-		if comment_user_unique_id, ok := comment_data["user_id"]; ok {
-			user_ids = append(user_ids, comment_user_unique_id.(string))
-		}
-
-		//Fetch replies user id
-		if replies, ok := comment_data["replies"]; ok {
-			for _, reply_data := range replies.([]interface{}) {
-				if user_unique_id, ok := reply_data.(map[string]interface{})["user_id"]; ok {
-					user_ids = append(user_ids, user_unique_id.(string))
-				}
-			}
-		}
-
-		//Fetch user data for given user_unique_ids
-		success, user_data := user.FetchMemberMeta(c, user_ids)
-		if !success {
-			return nil
-		}
-
-		var comment_user user.MemberMeta
-
-		//Validation of comment based on community member
-		comment_user_unique_id, ok := comment_data["user_id"]
-		if ok {
-			comment_user, ok = user_data[comment_user_unique_id.(string)]
-		}
-
-		if ok && comment_user.IsDeleted {
-			utils.GeneralBadRequestError(c, "Invalid comment_id sent!")
-			return nil
-		}
-
-		//Update users data in dataResponse
-		dataResponse["users"] = user_data
-	}
+	dataResponse = populateCommentDataResponse(c, dataResponse)
 
 	return dataResponse
 }
@@ -253,7 +223,20 @@ func createCommentInternal(c *gin.Context, userId string) {
 	}
 
 	//Send Request
-	utils.SendRequest(c, utils.SwarmService, CreateCommentEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createCommentReplyRequest)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, CreateCommentEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createCommentReplyRequest)
+
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	//If flow succeeds
+	dataResponse := apiCR.Response
+	dataResponse = populateCommentDataResponse(c, dataResponse)
+
+	//Generate Response
+	utils.GenerateResponse(c, dataResponse)
 }
 
 func deleteCommentInternal(c *gin.Context, userId string) {
