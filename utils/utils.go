@@ -77,7 +77,8 @@ func ParseResponse(c *gin.Context, respBytes []byte, statusCode int) {
 	}
 }
 
-func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) ([]byte, int) {
+// Method to Send Request
+func GetRequestResponseWithoutContext(serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) ([]byte, int, error) {
 	//Create internal API client
 	client := api_client.NewAPIClient()
 	var baseUrl string
@@ -152,6 +153,12 @@ func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, req
 		respBytes, statusCode, err = client.DeleteRequest(&options)
 	}
 
+	return respBytes, statusCode, err
+}
+
+func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) ([]byte, int) {
+
+	respBytes, statusCode, err := GetRequestResponseWithoutContext(serviceType, url, requestType, headers, params, body)
 	if err != nil {
 		//If API fails or any other error
 		GeneralAPIError(c, err.Error())
