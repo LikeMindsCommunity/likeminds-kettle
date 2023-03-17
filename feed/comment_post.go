@@ -55,5 +55,18 @@ func CommentPost(c *gin.Context) {
 	}
 
 	//Send Request
-	utils.SendRequest(c, utils.SwarmService, CommentPostEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createPostCommentRequest)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, CommentPostEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createPostCommentRequest)
+
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	//If flow succeeds
+	dataResponse := apiCR.Response
+	dataResponse = populateCommentDataResponse(c, dataResponse)
+
+	//Generate Response
+	utils.GenerateResponse(c, dataResponse)
 }
