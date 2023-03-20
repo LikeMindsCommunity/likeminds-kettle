@@ -1,13 +1,16 @@
 package community
 
 import (
+	"reflect"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
 type RemoveCommunityManagerRequest struct {
-	UserId int64 `json:"user_id" binding:"required"`
+	UserId interface{} `json:"user_id" binding:"required"`
 }
 
 //RemoveCommunityManager is used to remove a CM from community
@@ -30,6 +33,10 @@ func RemoveCommunityManager(c *gin.Context) {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
 		return
+	}
+
+	if reflect.TypeOf(removeCMRequest.UserId).String() == "float64" {
+		removeCMRequest.UserId = strconv.Itoa(int(removeCMRequest.UserId.(float64)))
 	}
 
 	//Send Request
