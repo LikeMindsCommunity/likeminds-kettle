@@ -1,0 +1,20 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "kettle"
+  namespace: "app-deploy"
+  labels:
+    app: "kettle"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "kettle"
+  template:
+    metadata:
+      labels:
+        app: "kettle"
+    spec:
+      containers:
+      - name: "likeminds-authentication-1"
+        image: "asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/nateshr/likeminds-authentication/kettle:58b0e06"
