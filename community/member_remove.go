@@ -7,7 +7,7 @@ import (
 )
 
 type RemoveMemberRequest struct {
-	MemberIds []string `json:"member_ids"`
+	MemberIds []string `json:"member_ids,omitempty"`
 	TagID     int32    `json:"tag_id"`
 	Reason    string   `json:"reason"`
 }
