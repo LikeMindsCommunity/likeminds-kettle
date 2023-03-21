@@ -36,15 +36,16 @@ func GeneralSearch(c *gin.Context) {
 
 	//Params to be sent in the general post search api internally
 	params := map[string]string{
-		ParamSearch:   c.Query(ParamSearch),
-		ParamPage:     c.Query(ParamPage),
-		ParamPageSize: c.Query(ParamPageSize),
-		ParamUserIsCm: fmt.Sprint(response.IsCm),
+		ParamSearch:                c.Query(ParamSearch),
+		ParamPage:                  c.Query(ParamPage),
+		ParamPageSize:              c.Query(ParamPageSize),
+		ParamUserIsCm:              fmt.Sprint(response.IsCm),
+		chatroom.ParamFollowStatus: c.Query(chatroom.ParamFollowStatus),
 	}
 
-	var apiCR api_client.APIClientResponse
-	dataResponse := apiCR.Response
+	dataResponse := map[string]interface{}{}
 
+	params[ParamSearchType] = "title"
 	//Send Request to fetch the chatroom search results
 	respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.CoreService, chatroom.ChatroomSearchEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 
@@ -60,7 +61,7 @@ func GeneralSearch(c *gin.Context) {
 	var apiCR2 api_client.APIClientResponse
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR2)
 	if err == nil {
-		dataResponse["conversations"] = apiCR1.Response["conversations"]
+		dataResponse["conversations"] = apiCR2.Response["conversations"]
 	}
 
 	//Send Request to fetch the post search results
@@ -81,6 +82,7 @@ func GeneralSearch(c *gin.Context) {
 
 		temp_params, _ := json.Marshal(excludedChatroomIds)
 
+		params[ParamSearchType] = "text"
 		params[ParamExcludedChatroomIds] = fmt.Sprintf("%v", string(temp_params))
 		params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
@@ -89,7 +91,7 @@ func GeneralSearch(c *gin.Context) {
 		var apiCR4 api_client.APIClientResponse
 		err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR4)
 		if err == nil {
-			dataResponse["posts"] = apiCR1.Response["posts"]
+			dataResponse["posts"] = apiCR4.Response["posts"]
 		}
 	}
 

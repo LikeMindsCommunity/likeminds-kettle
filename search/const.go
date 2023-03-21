@@ -1,7 +1,7 @@
 package search
 
 const PostSearchEndPoint = "/post/search"
-const CreatedPostSearchEndPoint = "/post/serach/user/%s"
+const CreatedPostSearchEndPoint = "/post/search/user/%s"
 
 const ParamSearch = "search"
 const ParamSearchType = "search_type"
