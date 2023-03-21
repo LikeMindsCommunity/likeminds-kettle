@@ -19,6 +19,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/moderation"
 	"github.com/nateshr/likeminds-authentication/otp"
 	"github.com/nateshr/likeminds-authentication/sdk"
+	"github.com/nateshr/likeminds-authentication/search"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utility"
@@ -221,6 +222,13 @@ func main() {
 	router.GET("/channel", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), channel.FetchChannel)
 	router.GET("/channel/invites", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), channel.GetChannelInvites)
 	router.PUT("/channel/invite", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), channel.UpdateChannelInvite)
+
+	// Search Apis
+	router.GET("/search/channel", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.ChannelSearch)
+	router.GET("/search/message", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.MessageSearch)
+	router.GET("/search/post", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.PostSearch)
+	router.GET("/search/post/user/:user_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.UserCreatedPostSearch)
+	router.GET("/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.GeneralSearch)
 
 	log.Printf("application version: %s", AppVersion)
 	log.Fatal(router.Run(":8080"))
