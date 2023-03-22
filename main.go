@@ -33,7 +33,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "1.16.0"
+	var AppVersion string = "1.18.0"
 
 	initGin()
 	client = cache.InitRedis()
