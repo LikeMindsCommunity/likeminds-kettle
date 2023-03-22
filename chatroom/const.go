@@ -44,6 +44,7 @@ const GetCohortAccessEndPoint = "/api/cohort/fetch_cohort_access"
 const EditCohortAccessEndPoint = "/api/cohort/update_cohort_access"
 const FetchChatroomHomeEndPoint = "/api/community_member/fetch_chatroom_home"
 const ChatroomMarkReadEndPoint = "/api/mark_read"
+const EditChatroomSettingsEndPoint = "/api/chatroom/settings"
 
 const ParamCommunityId = "community_id"
 const ParamChatroomId = "chatroom_id"
