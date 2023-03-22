@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/feed"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -38,10 +39,10 @@ func RemoveMember(c *gin.Context) {
 	}
 
 	//Send Request to Main service to remove member
-	respbytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, RemoveMemberEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeMemberRequest)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, RemoveMemberEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeMemberRequest)
 
 	// Validate response and if false then return
-	apiCr := utils.ValidateClientResponse(c, respbytes, statusCode)
+	apiCr := utils.ValidateClientResponse(c, respBytes, statusCode)
 	if apiCr == nil {
 		return
 	}
@@ -57,14 +58,14 @@ func RemoveMember(c *gin.Context) {
 	// create body for user data
 	postBody := map[string]interface{}{
 		"user_ids":   user_ids,
-		"is_user_cm": true,
+		"user_is_cm": true,
 	}
 
 	// Send request internally to delete user data
-	_, _, err = utils.GetRequestResponseWithoutContext(utils.SwarmService, feed.DeleteUserDataEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, postBody)
-	if err != nil {
-		log.Println("Error while deleting user data from Swarm: ", err)
-	}
+	respBytes, _, err = utils.GetRequestResponseWithoutContext(utils.SwarmService, feed.DeleteUserDataEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, postBody)
+
+	// Validate response and log if error
+	validateDeleteUserDataReponse(respBytes, err)
 
 	//Generate response
 	utils.GenerateResponse(c, apiCr.Response)
@@ -79,4 +80,27 @@ func parseRemoveMemberRequest(c *gin.Context) (*RemoveMemberRequest, error) {
 	}
 
 	return &rmr, nil
+}
+
+func validateDeleteUserDataReponse(respBytes []byte, err error) {
+
+	//If API fails or any other error
+	if err != nil {
+		log.Println("Error while deleting user data from Swarm: ", err.Error())
+	}
+
+	//Parse response
+	var apiCR api_client.APIClientResponse
+	marshal_err := api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
+
+	if marshal_err != nil {
+		//Internal unmarshal error
+		log.Println("Error while Umarshalling: ", marshal_err.Error())
+	}
+
+	if !apiCR.Success {
+		//If internal api returns success as false
+		log.Println("Error while deleting user data from Swarm: ", apiCR.ErrorMessage)
+	}
+
 }
