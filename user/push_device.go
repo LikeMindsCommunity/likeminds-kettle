@@ -1,8 +1,6 @@
 package user
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -30,8 +28,6 @@ func PushUserToken(c *gin.Context) {
 		ParamDeviceId: c.GetHeader(utils.HeadersDeviceId),
 		ParamToken:    usrToken.Token,
 	}
-
-	fmt.Println(params)
 
 	// Send Request
 	utils.SendRequest(c, utils.CoreService, PushUserTokenEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
