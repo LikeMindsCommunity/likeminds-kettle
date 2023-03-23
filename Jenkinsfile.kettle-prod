@@ -33,7 +33,7 @@ pipeline {
         stage('Deploy to GKE') {
             steps{
                 
-                sh "sed 's/kettle:.*/kettle:${BUILD_NUMBER}/g' deployment-kettle.yaml"
+                sh "sed 's/kettle:.*/kettle:${BUILD_NUMBER}/g' deployment-authentication-prod.yaml"
                 sh "gcloud container clusters get-credentials ${env.CLUSTER_NAME} --region ${env.LOCATION} --project ${env.PROJECT_ID} --internal-ip"
                 sh "pwd" 
             }
