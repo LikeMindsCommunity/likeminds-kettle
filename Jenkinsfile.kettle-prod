@@ -35,7 +35,8 @@ pipeline {
                 
                 sh "sed 's/kettle:.*/kettle:${BUILD_NUMBER}/g' deployment-authentication-prod.yaml"
                 sh "gcloud container clusters get-credentials ${env.CLUSTER_NAME} --region ${env.LOCATION} --project ${env.PROJECT_ID} --internal-ip"
-                sh "pwd" 
+                sh 'kubectl apply -f /var/lib/jenkins/workspace//var/lib/jenkins/workspace/likeminds-kettle-prod/deployment-authentication-prod.yaml'
+                
             }
         }
     }  
