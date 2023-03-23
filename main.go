@@ -19,6 +19,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/moderation"
 	"github.com/nateshr/likeminds-authentication/otp"
 	"github.com/nateshr/likeminds-authentication/sdk"
+	"github.com/nateshr/likeminds-authentication/search"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utility"
@@ -32,7 +33,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "1.16.0"
+	var AppVersion string = "1.18.0"
 
 	initGin()
 	client = cache.InitRedis()
@@ -51,6 +52,7 @@ func main() {
 	router.POST("/user/merge_account", LTMValidationMiddleware(client, true), user.MergeAccount)
 	router.GET("/user/config", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.Config)
 	router.GET("/user/bot", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.GetBot)
+	router.POST("/user/device/push", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.PushUserToken)
 	router.POST("/user/subscription/whatsapp", user.WASubscription)
 
 	//Home Apis
@@ -82,6 +84,7 @@ func main() {
 	router.POST("/chatroom/participants", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.AddParticipants)
 	router.DELETE("/chatroom/participants", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.RemoveParticipants)
 	router.GET("/chatroom/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetChatroomSettings)
+	router.PUT("/chatroom/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EditChatroomSettings)
 	router.PUT("/chatroom/enable_member_message", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EnableMemberMessage)
 	router.PUT("/chatroom/auto_follow_members", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.AutoFollowMembers)
 	router.PUT("/chatroom/files", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.UpdateFiles)
@@ -221,6 +224,13 @@ func main() {
 	router.GET("/channel", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), channel.FetchChannel)
 	router.GET("/channel/invites", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), channel.GetChannelInvites)
 	router.PUT("/channel/invite", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), channel.UpdateChannelInvite)
+
+	// Search Apis
+	router.GET("/search/channel", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.ChannelSearch)
+	router.GET("/search/message", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.MessageSearch)
+	router.GET("/search/post", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.PostSearch)
+	router.GET("/search/post/user/:user_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.UserCreatedPostSearch)
+	router.GET("/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.GeneralSearch)
 
 	log.Printf("application version: %s", AppVersion)
 	log.Fatal(router.Run(":8080"))

@@ -16,6 +16,7 @@ const SingleUserActivityEndPoint = "/user/%s/activity"
 const FetchUniversalFeedEndPoint = "/feed/universal"
 const FeedExploreEndPoint = "/feed/explore"
 const FetchGroupFeedEndPoint = "/feed/group"
+const DeleteUserDataEndPoint = "/user"
 
 const ParamPage = "page"
 const ParamPageSize = "page_size"
