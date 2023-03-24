@@ -1,0 +1,57 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "kettle"
+  namespace: "app-deploy"
+  labels:
+    app: "kettle"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "kettle"
+  minReadySeconds: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: "kettle"
+    spec:
+      containers:
+      - name: "likeminds-authentication-1"
+        image: "asia.gcr.io/likeminds-prod-prj-5464/likeminds-authentication/kettle:d874abb"
+        resources:
+          requests:
+            memory: "1000Mi"
+            cpu: "2000m"
+          limits:
+            memory: "3000Mi"
+            cpu: "2500m"
+
+---
+
+apiVersion: "autoscaling/v2"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "kettle"
+  namespace: "app-deploy"
+  labels:
+    app: "kettle"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "kettle"
+    apiVersion: "apps/v1"
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      target:
+        type: "Utilization"
+        averageUtilization: 75
