@@ -17,11 +17,7 @@ pipeline {
             steps{
                 script{
                     sh 'gcloud auth configure-docker asia.gcr.io'
-<<<<<<< HEAD
                     sh 'docker build -f Dockerfile.kettle-beta -t asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/nateshr/likeminds-authentication/kettle:${BUILD_NUMBER} . '
-=======
-                    sh 'docker build -f Dockerfile.kettle-beta -t asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/nateshr/likeminds-authentication/authentication-beta:${BUILD_NUMBER} . '
->>>>>>> 47ca5b7c3da65f27c0ddc081274fdf2ca0a8804c
                     }
                 }
             }
