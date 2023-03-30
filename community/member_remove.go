@@ -11,9 +11,9 @@ import (
 )
 
 type RemoveMemberRequest struct {
-	MemberIds []string `json:"member_ids,omitempty"`
-	TagID     int32    `json:"tag_id"`
-	Reason    string   `json:"reason"`
+	MemberIds interface{} `json:"member_ids,omitempty"`
+	TagID     int32       `json:"tag_id"`
+	Reason    string      `json:"reason"`
 }
 
 // RemoveMember is used to remove a member from community
@@ -38,6 +38,11 @@ func RemoveMember(c *gin.Context) {
 		return
 	}
 
+	// If response is successfull
+	user_ids := removeMemberRequest.MemberIds.([]interface{})
+
+	removeMemberRequest.MemberIds = utils.ParseArrayToString(removeMemberRequest.MemberIds.([]interface{}))
+
 	//Send Request to Main service to remove member
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, RemoveMemberEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeMemberRequest)
 
@@ -46,9 +51,6 @@ func RemoveMember(c *gin.Context) {
 	if apiCr == nil {
 		return
 	}
-
-	// If response is successfull
-	user_ids := removeMemberRequest.MemberIds
 
 	// If request is for self removal, then add user id to the list
 	if len(user_ids) == 0 {
