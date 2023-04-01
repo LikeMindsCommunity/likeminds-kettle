@@ -86,7 +86,7 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 		}
 
 		//Fetch user data for given user_unique_ids
-		success, user_data := user.FetchMemberMeta(c, user_ids)
+		success, user_data := user.FetchMemberMeta(c, user_ids, userId)
 		if !success {
 			return
 		}

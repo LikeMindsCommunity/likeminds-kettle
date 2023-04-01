@@ -85,8 +85,11 @@ func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{
 			}
 		}
 
+		// Get UserId
+		userId := user.GetRequestingUserId(c)
+
 		//Fetch user data for given user_unique_ids
-		success, user_data := user.FetchMemberMeta(c, user_ids)
+		success, user_data := user.FetchMemberMeta(c, user_ids, userId)
 		if !success {
 			return nil
 		}

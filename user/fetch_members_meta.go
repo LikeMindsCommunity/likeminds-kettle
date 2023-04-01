@@ -24,13 +24,7 @@ type MemberMetaResponse struct {
 }
 
 // FetchMemberMeta | fetch member meta for sent ids
-func FetchMemberMeta(c *gin.Context, member_ids []string) (bool, map[string]MemberMeta) {
-
-	//Authorize User
-	userId := GetRequestingUserId(c)
-	if userId == "" {
-		return false, nil
-	}
+func FetchMemberMeta(c *gin.Context, member_ids []string, userId string) (bool, map[string]MemberMeta) {
 
 	response := map[string]MemberMeta{}
 
