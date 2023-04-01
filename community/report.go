@@ -51,36 +51,7 @@ func Report(c *gin.Context, method int) {
 	switch method {
 	case utils.GETMethod:
 
-		botId := user.GetBotId(c)
-		if botId != "" {
-			userId = botId
-		}
-
-		//Send Request
-		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchReportsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
-		if respBytes == nil {
-			return
-		}
-
-		//Validate response
-		apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
-		if apiCR == nil {
-			return
-		}
-
-		//If flow succeeds
-		dataResponse := apiCR.Response
-		if reports, ok := dataResponse["reports"]; ok {
-			for _, report := range reports.([]interface{}) {
-				report := fetchReportEntityData(c, report, userId)
-				if report == nil {
-					return
-				}
-			}
-		}
-
-		//Generate response
-		utils.GenerateResponse(c, dataResponse)
+		getReportsInternal(c, userId)
 
 	case utils.POSTMethod:
 
@@ -115,6 +86,51 @@ func Report(c *gin.Context, method int) {
 	}
 }
 
+func getReportsInternal(c *gin.Context, userId string) {
+
+	// Get Bot Id if request from dashboard
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
+	}
+
+	// Send Request to caravan service to fetch reports
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchReportsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+	if respBytes == nil {
+		return
+	}
+
+	//Validate response and return if not successfull
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	dataResponse := apiCR.Response
+
+	// Iterate over reports and check if any of the reports are of type post or comment
+	if reports, ok := dataResponse["reports"]; ok {
+
+		// Get Posts & comments data for the reports
+		posts, comments, users := fetchReportsEntityData(c, userId, reports.([]interface{}))
+
+		// Add data to response if not empty
+		if posts != nil {
+			dataResponse["posts"] = posts
+		}
+		if comments != nil {
+			dataResponse["comments"] = comments
+		}
+		if users != nil {
+			dataResponse["users"] = users
+		}
+
+	}
+
+	//Generate response
+	utils.GenerateResponse(c, dataResponse)
+}
+
 func parsePushReportRequest(c *gin.Context) (*PushReportRequest, error) {
 	//POST body params
 	var prr PushReportRequest
@@ -137,27 +153,94 @@ func parseCloseReportRequest(c *gin.Context) (*CloseReportRequest, error) {
 	return &crr, nil
 }
 
-func fetchReportEntityData(c *gin.Context, report interface{}, userId string) interface{} {
-	typeValue, ok := report.(map[string]interface{})["type"]
-	if ok {
-		if int(typeValue.(float64)) == feed.POST_REPORT_TYPE {
-			post_data := feed.GetPostInternal(c, userId, report.(map[string]interface{})["entity_id"].(string))
-			if post_data == nil {
-				return nil
+// Internal method to fetch posts and comments data for the reports
+func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}) (map[string]interface{}, map[string]interface{}, map[string]user.MemberMeta) {
+
+	var post_ids []interface{}
+	var comment_ids []interface{}
+	var user_ids []string
+
+	var posts map[string]interface{}
+	var comments map[string]interface{}
+	var users map[string]user.MemberMeta
+
+	// Iterate over reports and get post and comment ids
+	for _, report := range reports {
+
+		typeValue, ok := report.(map[string]interface{})["type"]
+
+		if ok {
+			if int(typeValue.(float64)) == feed.POST_REPORT_TYPE {
+				post_ids = append(post_ids, report.(map[string]interface{})["entity_id"].(string))
 			}
 
-			report.(map[string]interface{})["entity_data"] = post_data
-		}
-
-		if int(typeValue.(float64)) == feed.COMMENT_REPORT_TYPE || int(typeValue.(float64)) == feed.REPLY_REPORT_TYPE {
-			comment_data := feed.FetchCommentByIdInternal(c, userId, report.(map[string]interface{})["entity_id"].(string))
-			if comment_data == nil {
-				return nil
+			if int(typeValue.(float64)) == feed.COMMENT_REPORT_TYPE || int(typeValue.(float64)) == feed.REPLY_REPORT_TYPE {
+				comment_ids = append(comment_ids, report.(map[string]interface{})["entity_id"].(string))
 			}
 
-			report.(map[string]interface{})["entity_data"] = comment_data
 		}
 	}
 
-	return report
+	// if post_ids are not empty then fetch posts data
+	if len(post_ids) > 0 {
+
+		// create params for the request
+		params := map[string]string{
+			feed.ParamPostIds:  utils.ParseArrayToString(post_ids),
+			feed.ParamUserIsCm: "true",
+		}
+
+		//Send request to swarm service
+		respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, feed.FetchMultiplePostsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
+		//Validate and parse response
+		response := utils.ValidateAndParseResponse(respBytes, err)
+		if response != nil {
+			posts = response["posts"].(map[string]interface{})
+
+			// Iterate over posts and get user ids
+			for _, post := range posts {
+				user_ids = append(user_ids, post.(map[string]interface{})["user_id"].(string))
+			}
+		}
+
+	}
+
+	// if comment_ids are not empty then fetch comments data
+	if len(comment_ids) > 0 {
+
+		// create params for the request
+		params := map[string]string{
+			feed.ParamCommentIds: utils.ParseArrayToString(comment_ids),
+			feed.ParamUserIsCm:   "true",
+		}
+
+		//Send Request to swarm service
+		respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, feed.FetchMultipleCommentsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		if respBytes != nil {
+
+			//Validate and parse response
+			response := utils.ValidateAndParseResponse(respBytes, err)
+			if response != nil {
+				comments = response["comments"].(map[string]interface{})
+
+				// Get user ids from comments
+				for _, comment := range comments {
+					user_ids = append(user_ids, comment.(map[string]interface{})["user_id"].(string))
+				}
+
+			}
+		}
+	}
+
+	// If user_ids are not empty, get users data
+	if len(user_ids) > 0 {
+
+		// Call Internal method tp fetch users data
+		_, users = user.FetchMemberMeta(c, user_ids, userId)
+
+	}
+
+	return posts, comments, users
+
 }
