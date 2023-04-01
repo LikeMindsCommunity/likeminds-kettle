@@ -55,6 +55,8 @@ const ParamType = "type"
 const ParamCohortID = "cohort_id"
 const ParamPinned = "pinned"
 const ParamOrderType = "order_type"
+const ParamIsClosed = "is_closed"
+const ParamFilterType = "filter_type"
 
 const UserChannelReqFrom = "user_channel"
 const MemberProfileReqFrom = "member_profile"

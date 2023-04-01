@@ -94,8 +94,16 @@ func getReportsInternal(c *gin.Context, userId string) {
 		userId = botId
 	}
 
+	//Params to be sent with pagination and filter support in API
+	params := map[string]string{
+		ParamPage:       c.Query(ParamPage),
+		ParamPageSize:   c.Query(ParamPageSize),
+		ParamFilterType: c.Query(ParamFilterType),
+		ParamIsClosed:   c.Query(ParamIsClosed),
+	}
+
 	// Send Request to caravan service to fetch reports
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchReportsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchReportsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 	if respBytes == nil {
 		return
 	}
