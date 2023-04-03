@@ -32,6 +32,7 @@ const (
 	LIKE_POST_ACTION       = "like_post"
 	SAVE_POST_ACTION       = "save_post"
 	CREATE_COMMENT_ACTION  = "create_comment"
+	EDIT_COMMENT_ACTION    = "edit_comment"
 	VIEW_COMMENT_ACTION    = "view_comment"
 	DELETE_COMMENT_ACTION  = "delete_comment"
 	LIKE_COMMENT_ACTION    = "like_comment"
