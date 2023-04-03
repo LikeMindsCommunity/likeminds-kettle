@@ -39,6 +39,13 @@ type CreatePostRequest struct {
 	FeedroomID  int                 `json:"feedroom_id"`
 }
 
+type EditPostRequest struct {
+	Text        string              `json:"text,omitempty"`
+	Heading     string              `json:"heading,omitempty"`
+	Attachments []AttachmentRequest `json:"attachments,omitempty"`
+	UserIsCm    bool                `json:"user_is_cm,omitempty"`
+}
+
 type DeletePostRequest struct {
 	DeleteReason string `json:"delete_reason"`
 	UserIsCm     bool   `json:"user_is_cm"`
@@ -47,6 +54,16 @@ type DeletePostRequest struct {
 func parseCreatePostRequest(c *gin.Context) (*CreatePostRequest, error) {
 	//POST body params
 	var cpr CreatePostRequest
+
+	if err := c.ShouldBindJSON(&cpr); err != nil {
+		return nil, err
+	}
+
+	return &cpr, nil
+}
+func parseEditPostRequest(c *gin.Context) (*EditPostRequest, error) {
+	//POST body params
+	var cpr EditPostRequest
 
 	if err := c.ShouldBindJSON(&cpr); err != nil {
 		return nil, err
@@ -123,6 +140,11 @@ func DeletePost(c *gin.Context) {
 	Post(c, utils.DELETEMethod)
 }
 
+// EditPost is used to edit an existing post
+func EditPost(c *gin.Context) {
+	Post(c, utils.PUTMethod)
+}
+
 // Post method handles post objects
 func Post(c *gin.Context, method int) {
 	//Authorize User
@@ -145,6 +167,9 @@ func Post(c *gin.Context, method int) {
 
 	case utils.POSTMethod:
 		createPostInternal(c, userId)
+
+	case utils.PUTMethod:
+		editPostInternal(c, userId)
 
 	case utils.DELETEMethod:
 		botId := user.GetBotId(c)
@@ -243,6 +268,51 @@ func createPostInternal(c *gin.Context, userId string) {
 		//Send Request to follow the chatroom for the post creator
 		utils.GetRequestResponseWithoutContext(utils.CoreService, chatroom.CollabcardFollowEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 	}
+
+	//Generate Response
+	utils.GenerateResponse(c, dataResponse)
+}
+
+func editPostInternal(c *gin.Context, userId string) {
+
+	post_id := c.Param("post_id")
+	EditPostEndPoint := fmt.Sprintf(SinglePostEndPoint, post_id)
+
+	//Body to be sent in the /post/<post_id> PUT request
+	editPostRequest, err := parseEditPostRequest(c)
+	if err != nil {
+		//If POST body params are missing
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	// Fetch member access to edit post
+	success, response := user.FetchMemberAccess(c, EDIT_POST_ACTION, userId)
+	if !success {
+		return
+	}
+
+	// If not access
+	if !response.Access {
+		utils.MemberAccessFailError(c)
+		return
+	}
+
+	// Update user_is_cm in request
+	editPostRequest.UserIsCm = response.IsCm
+
+	//Send Request
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, EditPostEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, editPostRequest)
+
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	//If flow succeeds populate post data
+	dataResponse := apiCR.Response
+	dataResponse = populatePostDataResponse(c, dataResponse)
 
 	//Generate Response
 	utils.GenerateResponse(c, dataResponse)

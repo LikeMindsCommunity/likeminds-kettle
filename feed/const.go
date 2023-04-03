@@ -25,6 +25,7 @@ const ParamFeedroomId = "feedroom_id"
 
 const (
 	CREATE_POST_ACTION     = "create_post"
+	EDIT_POST_ACTION       = "edit_post"
 	VIEW_POST_ACTION       = "view_post"
 	DELETE_POST_ACTION     = "delete_post"
 	PIN_POST_ACTION        = "pin_post"
