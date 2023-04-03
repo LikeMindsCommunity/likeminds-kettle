@@ -189,6 +189,43 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 		}
 	}
 
+	// if comment_ids are not empty then fetch comments data
+	if len(comment_ids) > 0 {
+
+		// create params for the request
+		params := map[string]string{
+			feed.ParamCommentIds: utils.ParseArrayToString(comment_ids),
+			feed.ParamUserIsCm:   "true",
+		}
+
+		//Send Request to swarm service
+		respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, feed.FetchMultipleCommentsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		if respBytes != nil {
+
+			//Validate and parse response
+			response := utils.ValidateAndParseResponse(respBytes, err)
+			if response != nil {
+				comments = response["comments"].(map[string]interface{})
+
+				// Get user_ids and post_ids from comments
+				for _, comment := range comments {
+					user_ids = append(user_ids, comment.(map[string]interface{})["user_id"].(string))
+
+					// If comment is reply then get parent comment's user id
+					if parentComment, ok := comment.(map[string]interface{})["parent_comment"]; ok {
+						if parentComment != nil {
+							user_ids = append(user_ids, parentComment.(map[string]interface{})["user_id"].(string))
+						}
+					}
+
+					// Get post_id from comments
+					post_ids = append(post_ids, comment.(map[string]interface{})["post_id"].(string))
+				}
+
+			}
+		}
+	}
+
 	// if post_ids are not empty then fetch posts data
 	if len(post_ids) > 0 {
 
@@ -214,37 +251,10 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 
 	}
 
-	// if comment_ids are not empty then fetch comments data
-	if len(comment_ids) > 0 {
-
-		// create params for the request
-		params := map[string]string{
-			feed.ParamCommentIds: utils.ParseArrayToString(comment_ids),
-			feed.ParamUserIsCm:   "true",
-		}
-
-		//Send Request to swarm service
-		respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, feed.FetchMultipleCommentsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
-		if respBytes != nil {
-
-			//Validate and parse response
-			response := utils.ValidateAndParseResponse(respBytes, err)
-			if response != nil {
-				comments = response["comments"].(map[string]interface{})
-
-				// Get user ids from comments
-				for _, comment := range comments {
-					user_ids = append(user_ids, comment.(map[string]interface{})["user_id"].(string))
-				}
-
-			}
-		}
-	}
-
 	// If user_ids are not empty, get users data
 	if len(user_ids) > 0 {
 
-		// Call Internal method tp fetch users data
+		// Call Internal method to fetch users data
 		_, users = user.FetchMemberMeta(c, user_ids, userId)
 
 	}
