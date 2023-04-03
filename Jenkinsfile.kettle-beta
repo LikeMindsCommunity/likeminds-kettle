@@ -17,7 +17,7 @@ pipeline {
             steps{
                 script{
                     sh 'gcloud auth configure-docker asia.gcr.io'
-                    sh 'docker build -f Dockerfile.kettle-beta -t asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/nateshr/likeminds-authentication/authentication-beta:${BUILD_NUMBER} . '
+                    sh 'docker build -f Dockerfile.kettle-beta -t asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/nateshr/likeminds-authentication/kettle:${BUILD_NUMBER} . '
                     }
                 }
             }
@@ -25,7 +25,7 @@ pipeline {
             steps{
                 script{
                     sh 'gcloud auth configure-docker asia.gcr.io'
-                    sh 'docker push asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/nateshr/likeminds-authentication/authentication-beta:${BUILD_NUMBER}'
+                    sh 'docker push asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/nateshr/likeminds-authentication/kettle:${BUILD_NUMBER}'
                       }
                  }
             }
@@ -33,9 +33,9 @@ pipeline {
         stage('Deploy to GKE') {
             steps{
                 sh '''
-                sed -i 's/authentication-beta:.*/authentication-beta:'${BUILD_NUMBER}'"/g' deployment-authentication-beta.yaml
+                sed -i 's/kettle:.*/kettle:'${BUILD_NUMBER}'"/g' deployment-kettle-beta.yaml
                 gcloud container clusters get-credentials ${CLUSTER_NAME} --region ${LOCATION} --project ${PROJECT_ID} --internal-ip
-                kubectl apply -f /var/lib/jenkins/workspace/likeminds-kettle-beta/deployment-authentication-beta.yaml
+                kubectl apply -f /var/lib/jenkins/workspace/likeminds-kettle-beta/deployment-kettle-beta.yaml
                 '''
             }
         }
