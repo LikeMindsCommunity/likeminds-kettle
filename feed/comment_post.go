@@ -11,10 +11,24 @@ import (
 type CreatePostCommentRequest struct {
 	Text string `json:"text" binding:"required"`
 }
+type EditCommentRequest struct {
+	Text     string `json:"text" binding:"required"`
+	UserIsCm bool   `json:"user_is_cm"`
+}
 
 func parseCreateCommentRequest(c *gin.Context) (*CreatePostCommentRequest, error) {
 	//POST body params
 	var cpcr CreatePostCommentRequest
+
+	if err := c.ShouldBindJSON(&cpcr); err != nil {
+		return nil, err
+	}
+
+	return &cpcr, nil
+}
+func parseEditCommentRequest(c *gin.Context) (*EditCommentRequest, error) {
+	//POST body params
+	var cpcr EditCommentRequest
 
 	if err := c.ShouldBindJSON(&cpcr); err != nil {
 		return nil, err
@@ -56,6 +70,58 @@ func CommentPost(c *gin.Context) {
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, CommentPostEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createPostCommentRequest)
+
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	//If flow succeeds
+	dataResponse := apiCR.Response
+	dataResponse = populateCommentDataResponse(c, dataResponse)
+
+	//Generate Response
+	utils.GenerateResponse(c, dataResponse)
+}
+
+// EditPostComment is used to edit a comment on a post
+func EditCommentPost(c *gin.Context) {
+	//Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
+		return
+	}
+
+	//Access query params and url generation
+	post_id := c.Param("post_id")
+	comment_id := c.Param("comment_id")
+	editPostCommentEndPoint := fmt.Sprintf(SingleCommentEndPoint, post_id, comment_id)
+
+	//Body to be sent in the /post/<post_id>/comment/<comment_id> PUT request
+	editCommentRequest, err := parseEditCommentRequest(c)
+	if err != nil {
+		//If POST body params are missing
+		utils.GeneralAPIError(c, err.Error())
+	}
+
+	//Fetch member access to view post
+	success, response := user.FetchMemberAccess(c, EDIT_COMMENT_ACTION, userId)
+	if !success {
+		return
+	}
+
+	//If not access
+	if !response.Access {
+		utils.MemberAccessFailError(c)
+		return
+	}
+
+	// If user is CM, set user_is_cm to true
+	editCommentRequest.UserIsCm = response.IsCm
+
+	//Send Request
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, editPostCommentEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, editCommentRequest)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
