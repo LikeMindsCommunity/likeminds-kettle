@@ -40,10 +40,10 @@ type CreatePostRequest struct {
 }
 
 type EditPostRequest struct {
-	Text        string              `json:"text,omitempty"`
+	Text        string              `json:"text"`
 	Heading     string              `json:"heading,omitempty"`
-	Attachments []AttachmentRequest `json:"attachments,omitempty"`
-	UserIsCm    bool                `json:"user_is_cm,omitempty"`
+	Attachments []AttachmentRequest `json:"attachments"`
+	UserIsCm    bool                `json:"user_is_cm"`
 }
 
 type DeletePostRequest struct {

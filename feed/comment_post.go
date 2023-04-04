@@ -11,9 +11,9 @@ import (
 type CreatePostCommentRequest struct {
 	Text string `json:"text" binding:"required"`
 }
-type EditPostCommentRequest struct {
+type EditCommentRequest struct {
 	Text     string `json:"text" binding:"required"`
-	UserIsCm bool   `json:"user_is_cm,omitempty"`
+	UserIsCm bool   `json:"user_is_cm"`
 }
 
 func parseCreateCommentRequest(c *gin.Context) (*CreatePostCommentRequest, error) {
@@ -26,9 +26,9 @@ func parseCreateCommentRequest(c *gin.Context) (*CreatePostCommentRequest, error
 
 	return &cpcr, nil
 }
-func parseEditCommentRequest(c *gin.Context) (*EditPostCommentRequest, error) {
+func parseEditCommentRequest(c *gin.Context) (*EditCommentRequest, error) {
 	//POST body params
-	var cpcr EditPostCommentRequest
+	var cpcr EditCommentRequest
 
 	if err := c.ShouldBindJSON(&cpcr); err != nil {
 		return nil, err
@@ -59,13 +59,13 @@ func CommentPost(c *gin.Context) {
 	//Fetch member access to view post
 	success, response := user.FetchMemberAccess(c, CREATE_COMMENT_ACTION, userId)
 	if !success {
-		// return
+		return
 	}
 
 	//If not access
 	if !response.Access {
-		// utils.MemberAccessFailError(c)
-		// return
+		utils.MemberAccessFailError(c)
+		return
 	}
 
 	//Send Request
@@ -96,10 +96,10 @@ func EditCommentPost(c *gin.Context) {
 	//Access query params and url generation
 	post_id := c.Param("post_id")
 	comment_id := c.Param("comment_id")
-	EditPostCommentEndPoint := fmt.Sprintf(SingleCommentEndPoint, post_id, comment_id)
+	editPostCommentEndPoint := fmt.Sprintf(SingleCommentEndPoint, post_id, comment_id)
 
 	//Body to be sent in the /post/<post_id>/comment/<comment_id> PUT request
-	createPostCommentRequest, err := parseEditCommentRequest(c)
+	editCommentRequest, err := parseEditCommentRequest(c)
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
@@ -118,10 +118,10 @@ func EditCommentPost(c *gin.Context) {
 	}
 
 	// If user is CM, set user_is_cm to true
-	createPostCommentRequest.UserIsCm = response.IsCm
+	editCommentRequest.UserIsCm = response.IsCm
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, EditPostCommentEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, createPostCommentRequest)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, editPostCommentEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, editCommentRequest)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
