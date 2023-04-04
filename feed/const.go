@@ -17,11 +17,15 @@ const FetchUniversalFeedEndPoint = "/feed/universal"
 const FeedExploreEndPoint = "/feed/explore"
 const FetchGroupFeedEndPoint = "/feed/group"
 const DeleteUserDataEndPoint = "/user"
+const FetchPostsEndpoint = "/post"
+const FetchCommentsEndpoint = "/comment"
 
 const ParamPage = "page"
 const ParamPageSize = "page_size"
 const ParamUserIsCm = "user_is_cm"
 const ParamFeedroomId = "feedroom_id"
+const ParamPostIds = "post_ids"
+const ParamCommentIds = "comment_ids"
 
 const (
 	CREATE_POST_ACTION     = "create_post"
