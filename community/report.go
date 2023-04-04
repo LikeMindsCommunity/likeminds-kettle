@@ -1,6 +1,8 @@
 package community
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/feed"
 	"github.com/nateshr/likeminds-authentication/user"
@@ -164,8 +166,8 @@ func parseCloseReportRequest(c *gin.Context) (*CloseReportRequest, error) {
 // Internal method to fetch posts and comments data for the reports
 func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}) (map[string]interface{}, map[string]interface{}, map[string]user.MemberMeta) {
 
-	var post_ids []interface{}
-	var comment_ids []interface{}
+	var post_ids []string
+	var comment_ids []string
 	var user_ids []string
 
 	var posts map[string]interface{}
@@ -194,16 +196,16 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 
 		// create params for the request
 		params := map[string]string{
-			feed.ParamCommentIds: utils.ParseArrayToString(comment_ids),
+			feed.ParamCommentIds: utils.ParseStringArrayToString(comment_ids),
 			feed.ParamUserIsCm:   "true",
 		}
 
 		//Send Request to swarm service
-		respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, feed.FetchMultipleCommentsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, feed.FetchCommentsEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 		if respBytes != nil {
 
 			//Validate and parse response
-			response := utils.ValidateAndParseResponse(respBytes, err)
+			response := utils.ValidateClientResponseWithoutContext(respBytes, statusCode, err)
 			if response != nil {
 				comments = response["comments"].(map[string]interface{})
 
@@ -231,15 +233,15 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 
 		// create params for the request
 		params := map[string]string{
-			feed.ParamPostIds:  utils.ParseArrayToString(post_ids),
+			feed.ParamPostIds:  utils.ParseStringArrayToString(post_ids),
 			feed.ParamUserIsCm: "true",
 		}
 
 		//Send request to swarm service
-		respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, feed.FetchMultiplePostsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, feed.FetchPostsEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 
 		//Validate and parse response
-		response := utils.ValidateAndParseResponse(respBytes, err)
+		response := utils.ValidateClientResponseWithoutContext(respBytes, statusCode, err)
 		if response != nil {
 			posts = response["posts"].(map[string]interface{})
 
@@ -253,10 +255,13 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 
 	// If user_ids are not empty, get users data
 	if len(user_ids) > 0 {
+		var err error
 
 		// Call Internal method to fetch users data
-		_, users = user.FetchMemberMeta(c, user_ids, userId)
-
+		users, err = user.FetchMemberMeta(utils.CreateHeaders(c, userId), user_ids)
+		if err != nil {
+			log.Println("Error while fetching users data for reports:", err)
+		}
 	}
 
 	return posts, comments, users

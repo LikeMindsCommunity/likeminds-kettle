@@ -69,11 +69,11 @@ func ValidateClientResponse(c *gin.Context, respBytes []byte, statusCode int) *a
 }
 
 // Validate & Parse Response for request sent internally
-func ValidateAndParseResponse(respBytes []byte, err error) map[string]interface{} {
+func ValidateClientResponseWithoutContext(respBytes []byte, statuscode int, err error) map[string]interface{} {
 
 	//If API fails or any other error
 	if err != nil {
-		log.Println("Error Occured: ", err.Error())
+		log.Printf("Error Occured : %s", err.Error())
 		return nil
 	}
 
@@ -89,6 +89,7 @@ func ValidateAndParseResponse(respBytes []byte, err error) map[string]interface{
 
 	if !apiCR.Success {
 		//If internal api returns success as false
+		log.Printf("Error Occured :(%d) %s", statuscode, apiCR.ErrorMessage)
 		return nil
 	}
 
