@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -65,6 +66,34 @@ func ValidateClientResponse(c *gin.Context, respBytes []byte, statusCode int) *a
 	}
 
 	return &apiCR
+}
+
+// Validate & Parse Response for request sent internally
+func ValidateClientResponseWithoutContext(respBytes []byte, statuscode int, err error) map[string]interface{} {
+
+	//If API fails or any other error
+	if err != nil {
+		log.Printf("Error Occured : %s", err.Error())
+		return nil
+	}
+
+	//Parse response
+	var apiCR api_client.APIClientResponse
+	marshal_err := api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
+
+	if marshal_err != nil {
+		//Internal unmarshal error
+		log.Println("Error while Umarshalling: ", marshal_err.Error())
+		return nil
+	}
+
+	if !apiCR.Success {
+		//If internal api returns success as false
+		log.Printf("Error Occured :(%d) %s", statuscode, apiCR.ErrorMessage)
+		return nil
+	}
+
+	return apiCR.Response
 }
 
 // ParseResponse from request sent internally

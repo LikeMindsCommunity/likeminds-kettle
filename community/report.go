@@ -1,6 +1,8 @@
 package community
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/feed"
 	"github.com/nateshr/likeminds-authentication/user"
@@ -51,36 +53,7 @@ func Report(c *gin.Context, method int) {
 	switch method {
 	case utils.GETMethod:
 
-		botId := user.GetBotId(c)
-		if botId != "" {
-			userId = botId
-		}
-
-		//Send Request
-		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchReportsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
-		if respBytes == nil {
-			return
-		}
-
-		//Validate response
-		apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
-		if apiCR == nil {
-			return
-		}
-
-		//If flow succeeds
-		dataResponse := apiCR.Response
-		if reports, ok := dataResponse["reports"]; ok {
-			for _, report := range reports.([]interface{}) {
-				report := fetchReportEntityData(c, report, userId)
-				if report == nil {
-					return
-				}
-			}
-		}
-
-		//Generate response
-		utils.GenerateResponse(c, dataResponse)
+		getReportsInternal(c, userId)
 
 	case utils.POSTMethod:
 
@@ -115,6 +88,59 @@ func Report(c *gin.Context, method int) {
 	}
 }
 
+func getReportsInternal(c *gin.Context, userId string) {
+
+	// Get Bot Id if request from dashboard
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
+	}
+
+	//Params to be sent with pagination and filter support in API
+	params := map[string]string{
+		ParamPage:       c.Query(ParamPage),
+		ParamPageSize:   c.Query(ParamPageSize),
+		ParamFilterType: c.Query(ParamFilterType),
+		ParamIsClosed:   c.Query(ParamIsClosed),
+	}
+
+	// Send Request to caravan service to fetch reports
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchReportsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	if respBytes == nil {
+		return
+	}
+
+	//Validate response and return if not successfull
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	dataResponse := apiCR.Response
+
+	// Iterate over reports and check if any of the reports are of type post or comment
+	if reports, ok := dataResponse["reports"]; ok {
+
+		// Get Posts & comments data for the reports
+		posts, comments, users := fetchReportsEntityData(c, userId, reports.([]interface{}))
+
+		// Add data to response if not empty
+		if posts != nil {
+			dataResponse["posts"] = posts
+		}
+		if comments != nil {
+			dataResponse["comments"] = comments
+		}
+		if users != nil {
+			dataResponse["users"] = users
+		}
+
+	}
+
+	//Generate response
+	utils.GenerateResponse(c, dataResponse)
+}
+
 func parsePushReportRequest(c *gin.Context) (*PushReportRequest, error) {
 	//POST body params
 	var prr PushReportRequest
@@ -137,27 +163,107 @@ func parseCloseReportRequest(c *gin.Context) (*CloseReportRequest, error) {
 	return &crr, nil
 }
 
-func fetchReportEntityData(c *gin.Context, report interface{}, userId string) interface{} {
-	typeValue, ok := report.(map[string]interface{})["type"]
-	if ok {
-		if int(typeValue.(float64)) == feed.POST_REPORT_TYPE {
-			post_data := feed.GetPostInternal(c, userId, report.(map[string]interface{})["entity_id"].(string))
-			if post_data == nil {
-				return nil
+// Internal method to fetch posts and comments data for the reports
+func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}) (map[string]interface{}, map[string]interface{}, map[string]user.MemberMeta) {
+
+	var post_ids []string
+	var comment_ids []string
+	var user_ids []string
+
+	var posts map[string]interface{}
+	var comments map[string]interface{}
+	var users map[string]user.MemberMeta
+
+	// Iterate over reports and get post and comment ids
+	for _, report := range reports {
+
+		typeValue, ok := report.(map[string]interface{})["type"]
+
+		if ok {
+			if int(typeValue.(float64)) == feed.POST_REPORT_TYPE {
+				post_ids = append(post_ids, report.(map[string]interface{})["entity_id"].(string))
 			}
 
-			report.(map[string]interface{})["entity_data"] = post_data
-		}
-
-		if int(typeValue.(float64)) == feed.COMMENT_REPORT_TYPE || int(typeValue.(float64)) == feed.REPLY_REPORT_TYPE {
-			comment_data := feed.FetchCommentByIdInternal(c, userId, report.(map[string]interface{})["entity_id"].(string))
-			if comment_data == nil {
-				return nil
+			if int(typeValue.(float64)) == feed.COMMENT_REPORT_TYPE || int(typeValue.(float64)) == feed.REPLY_REPORT_TYPE {
+				comment_ids = append(comment_ids, report.(map[string]interface{})["entity_id"].(string))
 			}
 
-			report.(map[string]interface{})["entity_data"] = comment_data
 		}
 	}
 
-	return report
+	// if comment_ids are not empty then fetch comments data
+	if len(comment_ids) > 0 {
+
+		// create params for the request
+		params := map[string]string{
+			feed.ParamCommentIds: utils.ParseStringArrayToString(comment_ids),
+			feed.ParamUserIsCm:   "true",
+		}
+
+		//Send Request to swarm service
+		respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, feed.FetchCommentsEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		if respBytes != nil {
+
+			//Validate and parse response
+			response := utils.ValidateClientResponseWithoutContext(respBytes, statusCode, err)
+			if response != nil {
+				comments = response["comments"].(map[string]interface{})
+
+				// Get user_ids and post_ids from comments
+				for _, comment := range comments {
+					user_ids = append(user_ids, comment.(map[string]interface{})["user_id"].(string))
+
+					// If comment is reply then get parent comment's user id
+					if parentComment, ok := comment.(map[string]interface{})["parent_comment"]; ok {
+						if parentComment != nil {
+							user_ids = append(user_ids, parentComment.(map[string]interface{})["user_id"].(string))
+						}
+					}
+
+					// Get post_id from comments
+					post_ids = append(post_ids, comment.(map[string]interface{})["post_id"].(string))
+				}
+
+			}
+		}
+	}
+
+	// if post_ids are not empty then fetch posts data
+	if len(post_ids) > 0 {
+
+		// create params for the request
+		params := map[string]string{
+			feed.ParamPostIds:  utils.ParseStringArrayToString(post_ids),
+			feed.ParamUserIsCm: "true",
+		}
+
+		//Send request to swarm service
+		respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, feed.FetchPostsEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
+		//Validate and parse response
+		response := utils.ValidateClientResponseWithoutContext(respBytes, statusCode, err)
+		if response != nil {
+			posts = response["posts"].(map[string]interface{})
+
+			// Iterate over posts and get user ids
+			for _, post := range posts {
+				user_ids = append(user_ids, post.(map[string]interface{})["user_id"].(string))
+			}
+		}
+
+	}
+
+	// If user_ids are not empty, get users data
+	if len(user_ids) > 0 {
+		var err error
+
+		// Call Internal method to fetch users data
+		users, err = user.FetchMemberMeta(utils.CreateHeaders(c, userId), user_ids)
+		if err != nil {
+			log.Println("Error while fetching users data for reports:", err)
+		}
+	}
+
+	return posts, comments, users
+
 }

@@ -33,7 +33,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "1.18.1"
+	var AppVersion string = "1.19.0"
 
 	initGin()
 	client = cache.InitRedis()
@@ -178,12 +178,14 @@ func main() {
 	//Feed Apis
 	router.POST("/feed/post", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CreatePost)
 	router.GET("/feed/post/:post_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.GetPost)
+	router.PUT("/feed/post/:post_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.EditPost)
 	router.DELETE("/feed/post/:post_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.DeletePost)
 	router.PUT("/feed/post/:post_id/like", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CreatePostLike)
 	router.GET("/feed/post/:post_id/like", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.GetPostLikes)
 	router.PUT("/feed/post/:post_id/pin", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.PinPost)
 	router.PUT("/feed/post/:post_id/save", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CreateSavePost)
 	router.POST("/feed/post/:post_id/comment", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CommentPost)
+	router.PUT("/feed/post/:post_id/comment/:comment_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.EditCommentPost)
 	router.POST("/feed/post/:post_id/comment/:comment_id/comment", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CreateCommentReply)
 	router.GET("/feed/post/:post_id/comment/:comment_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.GetComment)
 	router.DELETE("/feed/post/:post_id/comment/:comment_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.DeleteComment)
