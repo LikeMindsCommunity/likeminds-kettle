@@ -5,9 +5,9 @@ import (
 	"fmt"
 )
 
-func ParseArrayToString(array []interface{}) string {
+func ParseStringArrayToString(array []string) string {
 	/*
-		This function is used to parse array to string using json marshal
+		This function is used to parse String array to json string using json marshal
 	*/
 
 	temp_params, _ := json.Marshal(array)
