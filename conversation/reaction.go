@@ -56,9 +56,14 @@ func parseAddReactionRequest(c *gin.Context) (*AddReactionRequest, error) {
 		return nil, err
 	}
 
-	// Parse ConversationId and ChatroomId to string
-	arr.ConversationID = utils.ParseInterfaceToString(arr.ConversationID)
-	arr.ChatroomID = utils.ParseInterfaceToString(arr.ChatroomID)
+	// Parse ConversationId and ChatroomId to string if not null
+	if arr.ConversationID != nil {
+		arr.ConversationID = utils.ParseInterfaceToString(arr.ConversationID)
+	}
+
+	if arr.ChatroomID != nil {
+		arr.ChatroomID = utils.ParseInterfaceToString(arr.ChatroomID)
+	}
 
 	return &arr, nil
 }
