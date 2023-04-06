@@ -7,9 +7,9 @@ import (
 )
 
 type AddReactionRequest struct {
-	ChatroomID     int64  `json:"chatroom_id"`
-	Reaction       string `json:"reaction"`
-	ConversationID int64  `json:"conversation_id"`
+	ChatroomID     interface{} `json:"chatroom_id"`
+	Reaction       string      `json:"reaction"`
+	ConversationID interface{} `json:"conversation_id"`
 }
 
 type RemoveReactionRequest struct {
@@ -17,17 +17,17 @@ type RemoveReactionRequest struct {
 	ConversationID int64 `json:"conversation_id"`
 }
 
-//AddReaction is used to add reaction to specific conversation
+// AddReaction is used to add reaction to specific conversation
 func AddReaction(c *gin.Context) {
 	Reaction(c, utils.PUTMethod)
 }
 
-//RemoveReaction is used to delete reaction from a specific conversation
+// RemoveReaction is used to delete reaction from a specific conversation
 func RemoveReaction(c *gin.Context) {
 	Reaction(c, utils.DELETEMethod)
 }
 
-//Reaction method handles reaction on a conversation object
+// Reaction method handles reaction on a conversation object
 func Reaction(c *gin.Context, method int) {
 
 	//Authorize User
@@ -55,6 +55,10 @@ func parseAddReactionRequest(c *gin.Context) (*AddReactionRequest, error) {
 	if err := c.ShouldBindJSON(&arr); err != nil {
 		return nil, err
 	}
+
+	// Parse ConversationId and ChatroomId to string
+	arr.ConversationID = utils.ParseInterfaceToString(arr.ConversationID)
+	arr.ChatroomID = utils.ParseInterfaceToString(arr.ChatroomID)
 
 	return &arr, nil
 }
