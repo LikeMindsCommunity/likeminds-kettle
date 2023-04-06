@@ -16,7 +16,7 @@ type AddParticipantRequest struct {
 }
 
 type RemoveParticipantRequest struct {
-	FeedroomID    int         `json:"feedroom_id" binding:"required"`
+	FeedroomID    interface{} `json:"feedroom_id" binding:"required"`
 	ParticipantID interface{} `json:"participant_id" binding:"required"`
 	IsSecret      bool        `json:"is_secret"`
 }
@@ -184,6 +184,9 @@ func parseRemoveParticipantRequest(c *gin.Context) (*RemoveParticipantRequest, e
 	if err := c.ShouldBindBodyWith(&rpr, binding.JSON); err != nil {
 		return nil, err
 	}
+
+	// Parse feedroom_id to string
+	rpr.FeedroomID = utils.ParseInterfaceToString(rpr.FeedroomID)
 
 	return &rpr, nil
 }
