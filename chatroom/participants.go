@@ -21,7 +21,7 @@ type InternalParticipantRequest struct {
 }
 
 type RemoveParticipantRequest struct {
-	ChatroomID     int           `json:"chatroom_id"`
+	ChatroomID     interface{}   `json:"chatroom_id"`
 	MemberID       interface{}   `json:"member_id"`
 	RemovedMembers []interface{} `json:"removed_members"`
 	IsSecret       bool          `json:"is_secret"`
@@ -103,6 +103,9 @@ func parseRemoveParticipantsRequest(c *gin.Context) (*RemoveParticipantRequest, 
 	if err := c.ShouldBindBodyWith(&rpr, binding.JSON); err != nil {
 		return nil, err
 	}
+
+	// parse chatroom_id to string
+	rpr.ChatroomID = utils.ParseInterfaceToString(rpr.ChatroomID)
 
 	return &rpr, nil
 }
