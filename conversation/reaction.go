@@ -7,9 +7,9 @@ import (
 )
 
 type AddReactionRequest struct {
-	ChatroomID     interface{} `json:"chatroom_id"`
+	ChatroomID     interface{} `json:"chatroom_id,omitempty"`
 	Reaction       string      `json:"reaction"`
-	ConversationID interface{} `json:"conversation_id"`
+	ConversationID interface{} `json:"conversation_id,omitempty"`
 }
 
 type RemoveReactionRequest struct {
