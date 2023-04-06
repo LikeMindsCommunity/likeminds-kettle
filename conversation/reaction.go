@@ -13,8 +13,8 @@ type AddReactionRequest struct {
 }
 
 type RemoveReactionRequest struct {
-	ChatroomID     int64 `json:"chatroom_id"`
-	ConversationID int64 `json:"conversation_id"`
+	ChatroomID     interface{} `json:"chatroom_id,omitempty"`
+	ConversationID interface{} `json:"conversation_id,omitempty"`
 }
 
 // AddReaction is used to add reaction to specific conversation
@@ -74,6 +74,14 @@ func parseRemoveReactionRequest(c *gin.Context) (*RemoveReactionRequest, error) 
 
 	if err := c.ShouldBindJSON(&rrr); err != nil {
 		return nil, err
+	}
+
+	if rrr.ConversationID != nil {
+		rrr.ConversationID = utils.ParseInterfaceToString(rrr.ConversationID)
+	}
+
+	if rrr.ChatroomID != nil {
+		rrr.ChatroomID = utils.ParseInterfaceToString(rrr.ChatroomID)
 	}
 
 	return &rrr, nil
