@@ -9,7 +9,7 @@ import (
 )
 
 type AddParticipantRequest struct {
-	FeedroomID      int64         `json:"feedroom_id" binding:"required"`
+	FeedroomID      interface{}   `json:"feedroom_id" binding:"required"`
 	Participants    []interface{} `json:"participants" binding:"required"`
 	IsSecret        bool          `json:"is_secret"`
 	IsChannelInvite bool          `json:"is_channel_invite"`
@@ -171,6 +171,8 @@ func parseAddParticipantRequest(c *gin.Context) (*AddParticipantRequest, error) 
 	if err := c.ShouldBindBodyWith(&apr, binding.JSON); err != nil {
 		return nil, err
 	}
+
+	apr.FeedroomID = utils.ParseInterfaceToString(apr.FeedroomID)
 
 	return &apr, nil
 }

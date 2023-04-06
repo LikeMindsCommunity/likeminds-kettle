@@ -8,14 +8,14 @@ import (
 )
 
 type ParticipantRequest struct {
-	ChatroomID           int64         `json:"chatroom_id"`
+	ChatroomID           interface{}   `json:"chatroom_id"`
 	ChatroomParticipants []interface{} `json:"chatroom_participants"`
 	IsSecret             bool          `json:"is_secret"`
 	IsChannelInvite      bool          `json:"is_channel_invite"`
 }
 
 type InternalParticipantRequest struct {
-	ChatroomID                 int64         `json:"chatroom_id"`
+	ChatroomID                 interface{}   `json:"chatroom_id"`
 	SecretChatroomParticipants []interface{} `json:"secret_chatroom_participants"`
 	IsChannelInvite            bool          `json:"is_channel_invite"`
 }
@@ -90,6 +90,8 @@ func parseParticipantsRequest(c *gin.Context) (*ParticipantRequest, error) {
 	if err := c.ShouldBindBodyWith(&pr, binding.JSON); err != nil {
 		return nil, err
 	}
+
+	pr.ChatroomID = utils.ParseInterfaceToString(pr.ChatroomID)
 
 	return &pr, nil
 }
