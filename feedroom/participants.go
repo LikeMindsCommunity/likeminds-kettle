@@ -9,14 +9,14 @@ import (
 )
 
 type AddParticipantRequest struct {
-	FeedroomID      int64         `json:"feedroom_id" binding:"required"`
+	FeedroomID      interface{}   `json:"feedroom_id" binding:"required"`
 	Participants    []interface{} `json:"participants" binding:"required"`
 	IsSecret        bool          `json:"is_secret"`
 	IsChannelInvite bool          `json:"is_channel_invite"`
 }
 
 type RemoveParticipantRequest struct {
-	FeedroomID    int         `json:"feedroom_id" binding:"required"`
+	FeedroomID    interface{} `json:"feedroom_id" binding:"required"`
 	ParticipantID interface{} `json:"participant_id" binding:"required"`
 	IsSecret      bool        `json:"is_secret"`
 }
@@ -172,6 +172,8 @@ func parseAddParticipantRequest(c *gin.Context) (*AddParticipantRequest, error) 
 		return nil, err
 	}
 
+	apr.FeedroomID = utils.ParseInterfaceToString(apr.FeedroomID)
+
 	return &apr, nil
 }
 
@@ -182,6 +184,9 @@ func parseRemoveParticipantRequest(c *gin.Context) (*RemoveParticipantRequest, e
 	if err := c.ShouldBindBodyWith(&rpr, binding.JSON); err != nil {
 		return nil, err
 	}
+
+	// Parse feedroom_id to string
+	rpr.FeedroomID = utils.ParseInterfaceToString(rpr.FeedroomID)
 
 	return &rpr, nil
 }
