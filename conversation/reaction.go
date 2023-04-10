@@ -7,27 +7,27 @@ import (
 )
 
 type AddReactionRequest struct {
-	ChatroomID     int64  `json:"chatroom_id"`
-	Reaction       string `json:"reaction"`
-	ConversationID int64  `json:"conversation_id"`
+	ChatroomID     interface{} `json:"chatroom_id,omitempty"`
+	Reaction       string      `json:"reaction"`
+	ConversationID interface{} `json:"conversation_id,omitempty"`
 }
 
 type RemoveReactionRequest struct {
-	ChatroomID     int64 `json:"chatroom_id"`
-	ConversationID int64 `json:"conversation_id"`
+	ChatroomID     interface{} `json:"chatroom_id,omitempty"`
+	ConversationID interface{} `json:"conversation_id,omitempty"`
 }
 
-//AddReaction is used to add reaction to specific conversation
+// AddReaction is used to add reaction to specific conversation
 func AddReaction(c *gin.Context) {
 	Reaction(c, utils.PUTMethod)
 }
 
-//RemoveReaction is used to delete reaction from a specific conversation
+// RemoveReaction is used to delete reaction from a specific conversation
 func RemoveReaction(c *gin.Context) {
 	Reaction(c, utils.DELETEMethod)
 }
 
-//Reaction method handles reaction on a conversation object
+// Reaction method handles reaction on a conversation object
 func Reaction(c *gin.Context, method int) {
 
 	//Authorize User
@@ -56,6 +56,15 @@ func parseAddReactionRequest(c *gin.Context) (*AddReactionRequest, error) {
 		return nil, err
 	}
 
+	// Parse ConversationId and ChatroomId to string if not null
+	if arr.ConversationID != nil {
+		arr.ConversationID = utils.ParseInterfaceToString(arr.ConversationID)
+	}
+
+	if arr.ChatroomID != nil {
+		arr.ChatroomID = utils.ParseInterfaceToString(arr.ChatroomID)
+	}
+
 	return &arr, nil
 }
 
@@ -65,6 +74,14 @@ func parseRemoveReactionRequest(c *gin.Context) (*RemoveReactionRequest, error) 
 
 	if err := c.ShouldBindJSON(&rrr); err != nil {
 		return nil, err
+	}
+
+	if rrr.ConversationID != nil {
+		rrr.ConversationID = utils.ParseInterfaceToString(rrr.ConversationID)
+	}
+
+	if rrr.ChatroomID != nil {
+		rrr.ChatroomID = utils.ParseInterfaceToString(rrr.ChatroomID)
 	}
 
 	return &rrr, nil
