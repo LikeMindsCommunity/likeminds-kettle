@@ -62,6 +62,8 @@ func RemoveMember(c *gin.Context) {
 	// If request is for self removal, then add user id to the list
 	if len(user_unique_ids.([]interface{})) == 0 {
 		user_ids = append(user_unique_ids.([]interface{}), userId)
+	} else {
+		user_ids = user_unique_ids.([]interface{})
 	}
 
 	// create body for user data
