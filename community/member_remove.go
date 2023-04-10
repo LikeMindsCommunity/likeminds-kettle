@@ -54,7 +54,11 @@ func RemoveMember(c *gin.Context) {
 
 	}
 
-	removeMemberRequest.MemberIds = utils.ParseArrayToString(user_unique_ids)
+	request_member_ids := utils.ParseArrayToString(user_unique_ids)
+
+	if request_member_ids != "null" {
+		removeMemberRequest.MemberIds = utils.ParseArrayToString(user_unique_ids)
+	}
 
 	// Send Request to Main service to remove member
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, RemoveMemberEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeMemberRequest)
