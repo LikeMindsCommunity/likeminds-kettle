@@ -39,13 +39,22 @@ func RemoveMember(c *gin.Context) {
 		return
 	}
 
-	user_unique_ids, err := utility.GetUsersInfo(c, removeMemberRequest.MemberIds.([]interface{}), true)
+	var user_unique_ids []interface{}
 
-	if err != nil {
-		return
+	if removeMemberRequest.MemberIds != nil {
+		user_unique_ids_info, err := utility.GetUsersInfo(c, removeMemberRequest.MemberIds.([]interface{}), true)
+
+		if err != nil {
+			return
+		}
+
+		if user_unique_ids_info != nil {
+			user_unique_ids = user_unique_ids_info.([]interface{})
+		}
+
 	}
 
-	removeMemberRequest.MemberIds = utils.ParseArrayToString(user_unique_ids.([]interface{}))
+	removeMemberRequest.MemberIds = utils.ParseArrayToString(user_unique_ids)
 
 	// Send Request to Main service to remove member
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, RemoveMemberEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeMemberRequest)
@@ -60,10 +69,10 @@ func RemoveMember(c *gin.Context) {
 	var user_ids []interface{}
 
 	// If request is for self removal, then add user id to the list
-	if len(user_unique_ids.([]interface{})) == 0 {
-		user_ids = append(user_unique_ids.([]interface{}), userId)
+	if len(user_unique_ids) == 0 {
+		user_ids = append(user_unique_ids, userId)
 	} else {
-		user_ids = user_unique_ids.([]interface{})
+		user_ids = user_unique_ids
 	}
 
 	// create body for user data
