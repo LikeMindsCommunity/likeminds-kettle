@@ -22,6 +22,7 @@ func SyncConversation(c *gin.Context) {
 		ParamMaxTimeStamp: c.Query(ParamMaxTimeStamp),
 		ParamMinTimeStamp: c.Query(ParamMinTimeStamp),
 		ParamChatroomId:   c.Query(ParamChatroomId),
+		ParamIsLocalDb:    c.Query(ParamIsLocalDb),
 	}
 
 	//Send Request
