@@ -38,15 +38,21 @@ const (
 )
 
 const (
-	PlatformAndroid string = "an"
-	PlatformWeb     string = "web"
-	PlatformIoS     string = "ios"
+	PlatformAndroid     string = "an"
+	PlatformWeb         string = "web"
+	PlatformIoS         string = "ios"
+	PlatformFlutter     string = "fl"
+	PlatformReact       string = "rt"
+	PlatformReactNative string = "rn"
 )
 
 var MaxVersion int = 9999
 
 var QuestionIdVersions = map[string]int{
-	PlatformAndroid: 202,
-	PlatformWeb:     MaxVersion,
-	PlatformIoS:     363,
+	PlatformAndroid:     202,
+	PlatformWeb:         MaxVersion,
+	PlatformIoS:         363,
+	PlatformFlutter:     MaxVersion,
+	PlatformReact:       MaxVersion,
+	PlatformReactNative: MaxVersion,
 }
