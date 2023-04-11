@@ -1,7 +1,7 @@
 package utility
 
 import (
-	"encoding/json"
+	"errors"
 
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -30,27 +30,39 @@ func GetUsersInfo(headers map[string]interface{}, member_ids []interface{}, only
 	}
 
 	// Internally call /api/community/users
-	respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.CoreService, UserMetaInfoEndpoint, utils.GETRequest, headers, params, nil)
+	respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, UserMetaInfoEndpoint, utils.GETRequest, headers, params, nil)
 
 	if err != nil {
 		return nil, err
 	}
 
+	dataResponse := utils.ValidateClientResponseWithoutContext(respBytes, statusCode, err)
+
 	// Parse response
-	var userInfoResponse UsersInfo
-	if err := json.Unmarshal(respBytes, &userInfoResponse); err != nil {
-		return nil, err
-	}
+	if dataResponse != nil {
+		user_data, ok := dataResponse["users"]
 
-	if only_user_unique_ids {
-
-		for _, v := range userInfoResponse.Users {
-			response = append(response, v.UserUniqueID)
+		if !ok {
+			return nil, errors.New("No users found!")
 		}
 
-		return response, nil
+		if only_user_unique_ids {
+			var user_unique_ids []interface{}
+
+			for _, v := range user_data.([]interface{}) {
+				user_unique_id, ok := v.(map[string]interface{})["user_unique_id"]
+
+				if ok {
+					user_unique_ids = append(user_unique_ids, user_unique_id.(string))
+				}
+			}
+
+			return user_unique_ids, nil
+		} else {
+			return user_data, nil
+		}
 	}
 
-	return userInfoResponse.Users, nil
+	return dataResponse, nil
 
 }
