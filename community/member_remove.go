@@ -42,7 +42,7 @@ func RemoveMember(c *gin.Context) {
 	var user_unique_ids []interface{}
 
 	if removeMemberRequest.MemberIds != nil {
-		user_unique_ids_info, err := utility.GetUsersInfo(c, removeMemberRequest.MemberIds.([]interface{}), true)
+		user_unique_ids_info, err := utility.GetUsersInfo(utils.CreateHeaders(c, userId), removeMemberRequest.MemberIds.([]interface{}), true)
 
 		if err != nil {
 			return
