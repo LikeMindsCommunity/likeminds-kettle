@@ -7,10 +7,10 @@ import (
 )
 
 type InitiateDMRequest struct {
-	ChatroomID       int    `json:"chatroom_id"`
-	ChatRequestState int    `json:"chat_request_state"`
-	Text             string `json:"text"`
-	MemberID         int    `json:"member_id"`
+	ChatroomID       interface{} `json:"chatroom_id"`
+	ChatRequestState int         `json:"chat_request_state"`
+	Text             string      `json:"text"`
+	MemberID         interface{} `json:"member_id"`
 }
 
 func parseInitiateDMRequest(c *gin.Context) (*InitiateDMRequest, error) {
@@ -18,6 +18,14 @@ func parseInitiateDMRequest(c *gin.Context) (*InitiateDMRequest, error) {
 	var idmr InitiateDMRequest
 	if err := c.ShouldBindJSON(&idmr); err != nil {
 		return nil, err
+	}
+
+	if idmr.ChatroomID != nil {
+		idmr.ChatroomID = utils.ParseInterfaceToString(idmr.ChatroomID)
+	}
+
+	if idmr.MemberID != nil {
+		idmr.MemberID = utils.ParseInterfaceToString(idmr.MemberID)
 	}
 
 	return &idmr, nil

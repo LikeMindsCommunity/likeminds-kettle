@@ -8,9 +8,9 @@ import (
 
 // AutoFollowMembersRequest
 type AutoFollowMembersRequest struct {
-	ChatroomId          int64 `json:"chatroom_id" binding:"required"`
-	AutoFollowDone      *bool `json:"auto_follow_done" binding:"required"`
-	IncludeMembersLater *bool `json:"include_members_later" binding:"required"`
+	ChatroomId          interface{} `json:"chatroom_id" binding:"required"`
+	AutoFollowDone      *bool       `json:"auto_follow_done" binding:"required"`
+	IncludeMembersLater *bool       `json:"include_members_later" binding:"required"`
 }
 
 // AutoFollowMembers is used to enable auto follow members for a chatroom
@@ -45,6 +45,10 @@ func parseAutoFollowMembersRequst(c *gin.Context) (*AutoFollowMembersRequest, er
 
 	if err := c.ShouldBindJSON(&afmr); err != nil {
 		return nil, err
+	}
+
+	if afmr.ChatroomId != nil {
+		afmr.ChatroomId = utils.ParseInterfaceToString(afmr.ChatroomId)
 	}
 
 	return &afmr, nil

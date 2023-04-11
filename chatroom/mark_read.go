@@ -8,7 +8,7 @@ import (
 )
 
 type ChatroomMarkReadRequest struct {
-	ChatroomID string `json:"chatroom_id" binding:"required"`
+	ChatroomID interface{} `json:"chatroom_id" binding:"required"`
 }
 
 func ChatroomMarkRead(c *gin.Context) {
@@ -38,6 +38,10 @@ func parseChatroomMarkReadRequest(c *gin.Context) (*ChatroomMarkReadRequest, err
 
 	if err := c.ShouldBindBodyWith(&cmr, binding.JSON); err != nil {
 		return nil, err
+	}
+
+	if cmr.ChatroomID != nil {
+		cmr.ChatroomID = utils.ParseInterfaceToString(cmr.ChatroomID)
 	}
 
 	return &cmr, nil

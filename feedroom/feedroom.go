@@ -24,10 +24,10 @@ type CreateFeedroomRequest struct {
 }
 
 type EditFeedroomRequest struct {
-	FeedroomID       int64  `json:"feedroom_id"`
-	Title            string `json:"title"`
-	Header           string `json:"header"`
-	FeedroomImageUrl string `json:"feedroom_image_url"`
+	FeedroomID       interface{} `json:"feedroom_id"`
+	Title            string      `json:"title"`
+	Header           string      `json:"header"`
+	FeedroomImageUrl string      `json:"feedroom_image_url"`
 }
 
 type DeleteFeedroomRequest struct {
@@ -105,6 +105,10 @@ func parseEditFeedroomRequest(c *gin.Context) (*EditFeedroomRequest, error) {
 
 	if err := c.ShouldBindJSON(&ecr); err != nil {
 		return nil, err
+	}
+
+	if ecr.FeedroomID != nil {
+		ecr.FeedroomID = utils.ParseInterfaceToString(ecr.FeedroomID)
 	}
 
 	return &ecr, nil

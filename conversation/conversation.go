@@ -22,7 +22,7 @@ type ConversationPreview struct {
 }
 
 type CreateConversationRequest struct {
-	ChatroomID            int64               `json:"chatroom_id"`
+	ChatroomID            interface{}         `json:"chatroom_id"`
 	Text                  string              `json:"text"`
 	PollType              int32               `json:"poll_type"`
 	AllowAddOption        bool                `json:"allow_add_option"`
@@ -104,6 +104,10 @@ func parseCreateConversationRequest(c *gin.Context) (*CreateConversationRequest,
 
 	if err := c.ShouldBindJSON(&ccr); err != nil {
 		return nil, err
+	}
+
+	if ccr.ChatroomID != nil {
+		ccr.ChatroomID = utils.ParseInterfaceToString(ccr.ChatroomID)
 	}
 
 	return &ccr, nil

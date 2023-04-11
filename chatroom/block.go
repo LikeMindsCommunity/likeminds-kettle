@@ -7,8 +7,8 @@ import (
 )
 
 type ChatroomBlockRequest struct {
-	ChatroomID int `json:"chatroom_id" binding:"required"`
-	Status     int `json:"status"`
+	ChatroomID interface{} `json:"chatroom_id" binding:"required"`
+	Status     int         `json:"status"`
 }
 
 func parseChatroomBlockRequest(c *gin.Context) (*ChatroomBlockRequest, error) {
@@ -16,6 +16,10 @@ func parseChatroomBlockRequest(c *gin.Context) (*ChatroomBlockRequest, error) {
 	var cbr ChatroomBlockRequest
 	if err := c.ShouldBindJSON(&cbr); err != nil {
 		return nil, err
+	}
+
+	if cbr.ChatroomID != nil {
+		cbr.ChatroomID = utils.ParseInterfaceToString(cbr.ChatroomID)
 	}
 
 	return &cbr, nil

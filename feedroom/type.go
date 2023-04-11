@@ -8,8 +8,8 @@ import (
 )
 
 type FeedroomTypeRequest struct {
-	FeedroomID int64 `json:"feedroom_id" binding:"required"`
-	IsSecret   *bool `json:"is_secret" binding:"required"`
+	FeedroomID interface{} `json:"feedroom_id" binding:"required"`
+	IsSecret   *bool       `json:"is_secret" binding:"required"`
 }
 
 // ChangeFeedroomType is used to change feedroom type
@@ -80,6 +80,10 @@ func parseFeedroomTypeRequest(c *gin.Context) (*FeedroomTypeRequest, error) {
 
 	if err := c.ShouldBindJSON(&ctr); err != nil {
 		return nil, err
+	}
+
+	if ctr.FeedroomID != nil {
+		ctr.FeedroomID = utils.ParseInterfaceToString(ctr.FeedroomID)
 	}
 
 	return &ctr, nil

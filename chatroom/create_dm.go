@@ -7,7 +7,7 @@ import (
 )
 
 type CreateDMRequest struct {
-	MemberID int `json:"member_id"`
+	MemberID interface{} `json:"member_id"`
 }
 
 func parseCreateDMRequest(c *gin.Context) (*CreateDMRequest, error) {
@@ -15,6 +15,10 @@ func parseCreateDMRequest(c *gin.Context) (*CreateDMRequest, error) {
 	var cdmr CreateDMRequest
 	if err := c.ShouldBindJSON(&cdmr); err != nil {
 		return nil, err
+	}
+
+	if cdmr.MemberID != nil {
+		cdmr.MemberID = utils.ParseInterfaceToString(cdmr.MemberID)
 	}
 
 	return &cdmr, nil

@@ -7,8 +7,8 @@ import (
 )
 
 type ChatroomTypeRequest struct {
-	ChatroomID int64 `json:"chatroom_id" binding:"required"`
-	IsSecret   *bool `json:"is_secret" binding:"required"`
+	ChatroomID interface{} `json:"chatroom_id" binding:"required"`
+	IsSecret   *bool       `json:"is_secret" binding:"required"`
 }
 
 // ChangeChatroomType is used to change chatroom type
@@ -76,6 +76,8 @@ func parseChatroomTypeRequest(c *gin.Context) (*ChatroomTypeRequest, error) {
 	if err := c.ShouldBindJSON(&ctr); err != nil {
 		return nil, err
 	}
+
+	ctr.ChatroomID = utils.ParseInterfaceToString(ctr.ChatroomID)
 
 	return &ctr, nil
 }
