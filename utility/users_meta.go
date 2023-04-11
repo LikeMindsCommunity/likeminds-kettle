@@ -29,7 +29,7 @@ func GetUsersInfo(headers map[string]interface{}, member_ids []interface{}, only
 		ParamMemberIDs: utils.ParseArrayToString(member_ids),
 	}
 
-	// Internally call api/community_member/can_dm
+	// Internally call /api/community/users
 	respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.CoreService, UserMetaInfoEndpoint, utils.GETRequest, headers, params, nil)
 
 	if err != nil {
