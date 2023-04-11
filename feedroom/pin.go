@@ -8,8 +8,8 @@ import (
 )
 
 type PinFeedroomRequest struct {
-	FeedroomID int64 `json:"feedroom_id" binding:"required"`
-	Value      *bool `json:"value" binding:"required"`
+	FeedroomID interface{} `json:"feedroom_id" binding:"required"`
+	Value      *bool       `json:"value" binding:"required"`
 }
 
 // PinFeedroom is used to create a pin a feedroom
@@ -49,6 +49,10 @@ func parsePinFeedroomRequest(c *gin.Context) (*PinFeedroomRequest, error) {
 
 	if err := c.ShouldBindJSON(&pcr); err != nil {
 		return nil, err
+	}
+
+	if pcr.FeedroomID != nil {
+		pcr.FeedroomID = utils.ParseInterfaceToString(pcr.FeedroomID)
 	}
 
 	return &pcr, nil

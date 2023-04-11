@@ -47,10 +47,10 @@ type CreateChatroomRequest struct {
 }
 
 type EditChatroomRequest struct {
-	ChatroomID       int64  `json:"chatroom_id"`
-	Title            string `json:"title"`
-	Header           string `json:"header"`
-	ChatroomImageUrl string `json:"chatroom_image_url"`
+	ChatroomID       interface{} `json:"chatroom_id"`
+	Title            string      `json:"title"`
+	Header           string      `json:"header"`
+	ChatroomImageUrl string      `json:"chatroom_image_url"`
 }
 
 type DeleteChatroomRequest struct {
@@ -130,6 +130,10 @@ func parseEditChatroomRequest(c *gin.Context) (*EditChatroomRequest, error) {
 
 	if err := c.ShouldBindJSON(&ecr); err != nil {
 		return nil, err
+	}
+
+	if ecr.ChatroomID != nil {
+		ecr.ChatroomID = utils.ParseInterfaceToString(ecr.ChatroomID)
 	}
 
 	return &ecr, nil

@@ -15,11 +15,11 @@ type Attachment struct {
 }
 
 type UpdateFilesRequest struct {
-	ChatroomID  int64        `json:"chatroom_id"`
+	ChatroomID  interface{}  `json:"chatroom_id"`
 	Attachments []Attachment `json:"attachments"`
 }
 
-//UpdateFiles is used to update files in chatroom
+// UpdateFiles is used to update files in chatroom
 func UpdateFiles(c *gin.Context) {
 
 	//Authorize User
@@ -46,6 +46,10 @@ func parseUpdateChatroomFilesRequest(c *gin.Context) (*UpdateFilesRequest, error
 
 	if err := c.ShouldBindJSON(&ufr); err != nil {
 		return nil, err
+	}
+
+	if ufr.ChatroomID != nil {
+		ufr.ChatroomID = utils.ParseInterfaceToString(ufr.ChatroomID)
 	}
 
 	return &ufr, nil

@@ -9,8 +9,8 @@ import (
 
 // EnableMemberPostRequest | member message setting schema
 type EnableMemberPostRequest struct {
-	FeedroomId int64 `json:"feedroom_id" binding:"required"`
-	Value      *bool `json:"value" binding:"required"`
+	FeedroomId interface{} `json:"feedroom_id" binding:"required"`
+	Value      *bool       `json:"value" binding:"required"`
 }
 
 // EnableMemberPost is used to enable member post settings in feedroom
@@ -50,6 +50,10 @@ func parseEnableMemberPostRequest(c *gin.Context) (*EnableMemberPostRequest, err
 
 	if err := c.ShouldBindJSON(&emmr); err != nil {
 		return nil, err
+	}
+
+	if emmr.FeedroomId != nil {
+		emmr.FeedroomId = utils.ParseInterfaceToString(emmr.FeedroomId)
 	}
 
 	return &emmr, nil
