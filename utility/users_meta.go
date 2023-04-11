@@ -1,19 +1,27 @@
 package utility
 
 import (
-	"errors"
+	"encoding/json"
 
-	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-func GetUsersInfo(c *gin.Context, member_ids []interface{}, only_user_unique_ids bool) (interface{}, error) {
+type UserInfo struct {
+	UserID             int64  `json:"user_id"`
+	UserUniqueID       string `json:"user_unique_id"`
+	ClientUserUniqueID string `json:"clients_user_unique_id"`
+}
 
-	// Authorize User
-	userId := user.GetRequestingUserId(c)
-	if userId == "" {
-		return "", errors.New("Some in getting bot ID!")
+type UsersInfo struct {
+	Users []UserInfo `json:"users"`
+}
+
+func GetUsersInfo(headers map[string]interface{}, member_ids []interface{}, only_user_unique_ids bool) (interface{}, error) {
+
+	var response []interface{}
+
+	if len(member_ids) == 0 {
+		return response, nil
 	}
 
 	// Create request param to member_profile
@@ -22,38 +30,27 @@ func GetUsersInfo(c *gin.Context, member_ids []interface{}, only_user_unique_ids
 	}
 
 	// Internally call api/community_member/can_dm
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, UserMetaInfoEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
-	if respBytes == nil {
-		return "", errors.New("Some error occured!")
+	respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.CoreService, UserMetaInfoEndpoint, utils.GETRequest, headers, params, nil)
+
+	if err != nil {
+		return nil, err
 	}
 
-	//Validate response
-	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
-	if apiCR == nil {
-		return "", errors.New("Some error occured!")
+	// Parse response
+	var userInfoResponse UsersInfo
+	if err := json.Unmarshal(respBytes, &userInfoResponse); err != nil {
+		return nil, err
 	}
 
-	if apiCR.Success {
-		dataResponse := apiCR.Response
+	if only_user_unique_ids {
 
-		user_data, ok := dataResponse["users"]
-
-		if ok && only_user_unique_ids {
-			var user_unique_ids []interface{}
-
-			for _, v := range user_data.([]interface{}) {
-				user_unique_id, ok := v.(map[string]interface{})["user_unique_id"]
-
-				if ok {
-					user_unique_ids = append(user_unique_ids, user_unique_id.(string))
-				}
-			}
-
-			return user_unique_ids, nil
-
+		for _, v := range userInfoResponse.Users {
+			response = append(response, v.UserUniqueID)
 		}
+
+		return response, nil
 	}
 
-	return &apiCR, nil
+	return userInfoResponse.Users, nil
 
 }
