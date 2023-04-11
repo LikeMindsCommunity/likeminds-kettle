@@ -1,8 +1,6 @@
 package utility
 
 import (
-	"errors"
-
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -43,26 +41,24 @@ func GetUsersInfo(headers map[string]interface{}, member_ids []interface{}, only
 		user_data, ok := dataResponse["users"]
 
 		if !ok {
-			return nil, errors.New("No users found!")
+			return response, nil
 		}
 
 		if only_user_unique_ids {
-			var user_unique_ids []interface{}
 
 			for _, v := range user_data.([]interface{}) {
 				user_unique_id, ok := v.(map[string]interface{})["user_unique_id"]
 
 				if ok {
-					user_unique_ids = append(user_unique_ids, user_unique_id.(string))
+					response = append(response, user_unique_id.(string))
 				}
 			}
 
-			return user_unique_ids, nil
 		} else {
-			return user_data, nil
+			response = user_data.([]interface{})
 		}
 	}
 
-	return dataResponse, nil
+	return response, nil
 
 }
