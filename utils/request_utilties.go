@@ -10,6 +10,9 @@ func ParseArrayToString(array []interface{}) string {
 	/*
 		This function is used to parse array to string using json marshal
 	*/
+	if len(array) == 0 {
+		return "[]"
+	}
 
 	temp_params, err := json.Marshal(array)
 	if err != nil {
