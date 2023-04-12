@@ -7,12 +7,12 @@ import (
 )
 
 type PinChatroomRequest struct {
-	ChatroomID int64 `json:"chatroom_id" binding:"required"`
-	Value      *bool `json:"value" binding:"required"`
-	Notify     bool  `json:"notify"`
+	ChatroomID interface{} `json:"chatroom_id" binding:"required"`
+	Value      *bool       `json:"value" binding:"required"`
+	Notify     bool        `json:"notify"`
 }
 
-//PinChatroom is used to create a pin a chatroom
+// PinChatroom is used to create a pin a chatroom
 func PinChatroom(c *gin.Context) {
 
 	//Authorize User
@@ -45,6 +45,8 @@ func parsePinChatroomRequest(c *gin.Context) (*PinChatroomRequest, error) {
 	if err := c.ShouldBindJSON(&pcr); err != nil {
 		return nil, err
 	}
+
+	pcr.ChatroomID = utils.ParseInterfaceToString(pcr.ChatroomID)
 
 	return &pcr, nil
 }

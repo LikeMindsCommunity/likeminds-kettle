@@ -7,12 +7,12 @@ import (
 )
 
 type RenameChatroomRequest struct {
-	ChatroomID      int64  `json:"chatroom_id" binding:"required"`
-	Header          string `json:"header"`
-	FirstTimeRename bool   `json:"first_time_rename"`
+	ChatroomID      interface{} `json:"chatroom_id" binding:"required"`
+	Header          string      `json:"header"`
+	FirstTimeRename bool        `json:"first_time_rename"`
 }
 
-//RenameChatroom is used to rename an existing chatroom
+// RenameChatroom is used to rename an existing chatroom
 func RenameChatroom(c *gin.Context) {
 
 	//Authorize User
@@ -39,6 +39,10 @@ func parseRenameChatroomRequest(c *gin.Context) (*RenameChatroomRequest, error) 
 
 	if err := c.ShouldBindJSON(&rcr); err != nil {
 		return nil, err
+	}
+
+	if rcr.ChatroomID != nil {
+		rcr.ChatroomID = utils.ParseInterfaceToString(rcr.ChatroomID)
 	}
 
 	return &rcr, nil

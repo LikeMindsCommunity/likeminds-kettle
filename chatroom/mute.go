@@ -7,8 +7,8 @@ import (
 )
 
 type MuteChatroomRequest struct {
-	ChatroomID int64 `json:"chatroom_id" binding:"required"`
-	Value      *bool `json:"value" binding:"required"`
+	ChatroomID interface{} `json:"chatroom_id" binding:"required"`
+	Value      *bool       `json:"value" binding:"required"`
 }
 
 // MuteChatroom is used to mute a specifid chatroom
@@ -38,6 +38,10 @@ func parseMuteChatroomRequest(c *gin.Context) (*MuteChatroomRequest, error) {
 
 	if err := c.ShouldBindJSON(&mcr); err != nil {
 		return nil, err
+	}
+
+	if mcr.ChatroomID != nil {
+		mcr.ChatroomID = utils.ParseInterfaceToString(mcr.ChatroomID)
 	}
 
 	return &mcr, nil

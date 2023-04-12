@@ -7,11 +7,11 @@ import (
 )
 
 type AddPollRequest struct {
-	Poll           PollObject `json:"poll"`
-	ConversationID int64      `json:"conversation_id"`
+	Poll           PollObject  `json:"poll"`
+	ConversationID interface{} `json:"conversation_id"`
 }
 
-//AddPoll is used add answer to a poll
+// AddPoll is used add answer to a poll
 func AddPoll(c *gin.Context) {
 
 	//Authorize User
@@ -38,6 +38,10 @@ func parseAddPollRequest(c *gin.Context) (*AddPollRequest, error) {
 
 	if err := c.ShouldBindJSON(&apr); err != nil {
 		return nil, err
+	}
+
+	if apr.ConversationID == nil {
+		apr.ConversationID = utils.ParseInterfaceToString(apr.ConversationID)
 	}
 
 	return &apr, nil

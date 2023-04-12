@@ -7,6 +7,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/feed"
 	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/utility"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -38,12 +39,28 @@ func RemoveMember(c *gin.Context) {
 		return
 	}
 
-	// If response is successfull
-	user_ids := removeMemberRequest.MemberIds.([]interface{})
+	var user_unique_ids []interface{}
 
-	removeMemberRequest.MemberIds = utils.ParseArrayToString(removeMemberRequest.MemberIds.([]interface{}))
+	if removeMemberRequest.MemberIds != nil {
+		user_unique_ids_info, err := utility.GetUsersInfoInternally(utils.CreateHeaders(c, userId), removeMemberRequest.MemberIds.([]interface{}), true)
 
-	//Send Request to Main service to remove member
+		if err != nil {
+			return
+		}
+
+		if user_unique_ids_info != nil {
+			user_unique_ids = user_unique_ids_info.([]interface{})
+		}
+
+	}
+
+	request_member_ids := utils.ParseArrayToString(user_unique_ids)
+
+	if request_member_ids != "null" {
+		removeMemberRequest.MemberIds = utils.ParseArrayToString(user_unique_ids)
+	}
+
+	// Send Request to Main service to remove member
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, RemoveMemberEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeMemberRequest)
 
 	// Validate response and if false then return
@@ -52,9 +69,14 @@ func RemoveMember(c *gin.Context) {
 		return
 	}
 
+	// If response is successfull
+	var user_ids []interface{}
+
 	// If request is for self removal, then add user id to the list
-	if len(user_ids) == 0 {
-		user_ids = append(user_ids, userId)
+	if len(user_unique_ids) == 0 {
+		user_ids = append(user_unique_ids, userId)
+	} else {
+		user_ids = user_unique_ids
 	}
 
 	// create body for user data
