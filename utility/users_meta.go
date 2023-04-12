@@ -14,7 +14,7 @@ type UsersInfo struct {
 	Users []UserInfo `json:"users"`
 }
 
-func GetUsersInfo(headers map[string]interface{}, member_ids []interface{}, only_user_unique_ids bool) (interface{}, error) {
+func GetUsersInfoInternally(headers map[string]interface{}, member_ids []interface{}, only_user_unique_ids bool) (interface{}, error) {
 
 	var response []interface{}
 
