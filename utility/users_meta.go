@@ -28,7 +28,7 @@ func GetUsersInfo(headers map[string]interface{}, member_ids []interface{}, only
 	}
 
 	// Internally call /api/community/users
-	respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, UserMetaInfoEndpoint, utils.GETRequest, headers, params, nil)
+	respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, UserMetaInfoInternalEndpoint, utils.GETRequest, headers, params, nil)
 
 	if err != nil {
 		return nil, err
