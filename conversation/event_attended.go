@@ -7,10 +7,10 @@ import (
 )
 
 type EventAttendedRequest struct {
-	ConversationID int64 `json:"conversation_id"`
+	ConversationID interface{} `json:"conversation_id"`
 }
 
-//EventAttended is used to send attendence of a user
+// EventAttended is used to send attendence of a user
 func EventAttended(c *gin.Context) {
 
 	//Authorize User
@@ -37,6 +37,10 @@ func parseEventAttendedRequest(c *gin.Context) (*EventAttendedRequest, error) {
 
 	if err := c.ShouldBindJSON(&ear); err != nil {
 		return nil, err
+	}
+
+	if ear.ConversationID != nil {
+		ear.ConversationID = utils.ParseInterfaceToString(ear.ConversationID)
 	}
 
 	return &ear, nil

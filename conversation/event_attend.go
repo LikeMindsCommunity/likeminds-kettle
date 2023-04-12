@@ -7,11 +7,11 @@ import (
 )
 
 type EventAttendRequest struct {
-	ConversationID  int64 `json:"conversation_id"`
-	AttendingStatus bool  `json:"attending_status"`
+	ConversationID  interface{} `json:"conversation_id"`
+	AttendingStatus bool        `json:"attending_status"`
 }
 
-//EventAttend is used mark event as attend
+// EventAttend is used mark event as attend
 func EventAttend(c *gin.Context) {
 
 	//Authorize User
@@ -38,6 +38,10 @@ func parseEventAttendRequest(c *gin.Context) (*EventAttendRequest, error) {
 
 	if err := c.ShouldBindJSON(&ear); err != nil {
 		return nil, err
+	}
+
+	if ear.ConversationID != nil {
+		ear.ConversationID = utils.ParseInterfaceToString(ear.ConversationID)
 	}
 
 	return &ear, nil

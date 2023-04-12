@@ -7,10 +7,10 @@ import (
 )
 
 type UpdateLastSeenEventRequest struct {
-	ConversationID int64 `json:"conversation_id"`
+	ConversationID interface{} `json:"conversation_id"`
 }
 
-//UpdateLastSeenEvent is used mark last seen for an event
+// UpdateLastSeenEvent is used mark last seen for an event
 func UpdateLastSeenEvent(c *gin.Context) {
 
 	//Authorize User
@@ -37,6 +37,10 @@ func parseUpdateLastSeenEventRequest(c *gin.Context) (*UpdateLastSeenEventReques
 
 	if err := c.ShouldBindJSON(&ulser); err != nil {
 		return nil, err
+	}
+
+	if ulser.ConversationID != nil {
+		ulser.ConversationID = utils.ParseInterfaceToString(ulser.ConversationID)
 	}
 
 	return &ulser, nil
