@@ -7,11 +7,11 @@ import (
 )
 
 type SetTopicRequest struct {
-	ChatroomID     int64 `json:"chatroom_id"`
-	ConversationID int64 `json:"conversation_id"`
+	ChatroomID     interface{} `json:"chatroom_id"`
+	ConversationID interface{} `json:"conversation_id"`
 }
 
-//SetTopic is used to set topic for conversation
+// SetTopic is used to set topic for conversation
 func SetTopic(c *gin.Context) {
 
 	//Authorize User
@@ -38,6 +38,14 @@ func parseSetTopicRequest(c *gin.Context) (*SetTopicRequest, error) {
 
 	if err := c.ShouldBindJSON(&str); err != nil {
 		return nil, err
+	}
+
+	if str.ChatroomID == nil {
+		str.ChatroomID = utils.ParseInterfaceToString(str.ChatroomID)
+	}
+
+	if str.ConversationID == nil {
+		str.ConversationID = utils.ParseInterfaceToString(str.ConversationID)
 	}
 
 	return &str, nil

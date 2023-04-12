@@ -12,10 +12,10 @@ type PollIDObject struct {
 
 type SubmitPollRequest struct {
 	Polls          []PollIDObject `json:"polls"`
-	ConversationID int64          `json:"conversation_id"`
+	ConversationID interface{}    `json:"conversation_id"`
 }
 
-//SubmitPoll is used add answer to a poll
+// SubmitPoll is used add answer to a poll
 func SubmitPoll(c *gin.Context) {
 
 	//Authorize User
@@ -42,6 +42,10 @@ func parseSubmitPollRequest(c *gin.Context) (*SubmitPollRequest, error) {
 
 	if err := c.ShouldBindJSON(&spr); err != nil {
 		return nil, err
+	}
+
+	if spr.ConversationID == nil {
+		spr.ConversationID = utils.ParseInterfaceToString(spr.ConversationID)
 	}
 
 	return &spr, nil
