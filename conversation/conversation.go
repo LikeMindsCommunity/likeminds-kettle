@@ -22,7 +22,7 @@ type ConversationPreview struct {
 }
 
 type CreateConversationRequest struct {
-	ChatroomID            int64               `json:"chatroom_id"`
+	ChatroomID            interface{}         `json:"chatroom_id"`
 	Text                  string              `json:"text"`
 	PollType              int32               `json:"poll_type"`
 	AllowAddOption        bool                `json:"allow_add_option"`
@@ -38,15 +38,15 @@ type CreateConversationRequest struct {
 }
 
 type EditConversationRequest struct {
-	ConversationID int64  `json:"conversation_id" binding:"required"`
-	Text           string `json:"text" binding:"required"`
-	ShareLink      string `json:"share_link,omitempty"`
+	ConversationID interface{} `json:"conversation_id" binding:"required"`
+	Text           string      `json:"text" binding:"required"`
+	ShareLink      string      `json:"share_link,omitempty"`
 }
 
 type DeleteConversationRequest struct {
-	ConversationIDs []int64 `json:"conversation_ids" binding:"required"`
-	TagID           int64   `json:"tag_id"`
-	Reason          string  `json:"reason" binding:"required"`
+	ConversationIDs []interface{} `json:"conversation_ids" binding:"required"`
+	TagID           int64         `json:"tag_id"`
+	Reason          string        `json:"reason" binding:"required"`
 }
 
 // CreateConversation is used to create a new conversation in chatroom
@@ -106,6 +106,10 @@ func parseCreateConversationRequest(c *gin.Context) (*CreateConversationRequest,
 		return nil, err
 	}
 
+	if ccr.ChatroomID != nil {
+		ccr.ChatroomID = utils.ParseInterfaceToString(ccr.ChatroomID)
+	}
+
 	return &ccr, nil
 }
 
@@ -117,6 +121,8 @@ func parseEditConversationRequest(c *gin.Context) (*EditConversationRequest, err
 		return nil, err
 	}
 
+	ecr.ConversationID = utils.ParseInterfaceToString(ecr.ConversationID)
+
 	return &ecr, nil
 }
 
@@ -126,6 +132,11 @@ func parseDeleteConversationRequest(c *gin.Context) (*DeleteConversationRequest,
 
 	if err := c.ShouldBindJSON(&dcr); err != nil {
 		return nil, err
+	}
+
+	// parse conversation ids to string
+	for i := 0; i < len(dcr.ConversationIDs); i++ {
+		dcr.ConversationIDs[i] = utils.ParseInterfaceToString(dcr.ConversationIDs[i])
 	}
 
 	return &dcr, nil

@@ -7,13 +7,13 @@ import (
 )
 
 type AddCohortChatroom struct {
-	ChatroomID int   `json:"chatroom_id" binding:"required"`
-	CohortIDs  []int `json:"cohort_ids"`
+	ChatroomID interface{} `json:"chatroom_id" binding:"required"`
+	CohortIDs  []int       `json:"cohort_ids"`
 }
 
 type RemoveCohortChatroom struct {
-	ChatroomID int `json:"chatroom_id" binding:"required"`
-	CohortID   int `json:"cohort_id"`
+	ChatroomID interface{} `json:"chatroom_id" binding:"required"`
+	CohortID   int         `json:"cohort_id"`
 }
 
 // Add cohort to chatroom
@@ -78,6 +78,10 @@ func parseAddCohortRequest(c *gin.Context) (*AddCohortChatroom, error) {
 		return nil, err
 	}
 
+	if acc.ChatroomID != nil {
+		acc.ChatroomID = utils.ParseInterfaceToString(acc.ChatroomID)
+	}
+
 	return &acc, nil
 }
 
@@ -87,6 +91,10 @@ func parseRemoveCohortRequest(c *gin.Context) (*RemoveCohortChatroom, error) {
 
 	if err := c.ShouldBindJSON(&rcc); err != nil {
 		return nil, err
+	}
+
+	if rcc.ChatroomID != nil {
+		rcc.ChatroomID = utils.ParseInterfaceToString(rcc.ChatroomID)
 	}
 
 	return &rcc, nil

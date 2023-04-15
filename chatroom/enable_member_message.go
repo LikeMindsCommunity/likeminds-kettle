@@ -8,8 +8,8 @@ import (
 
 // EnableMemberMessageRequest | member message setting schema
 type EnableMemberMessageRequest struct {
-	ChatroomId int64 `json:"chatroom_id" binding:"required"`
-	Value      *bool `json:"value" binding:"required"`
+	ChatroomId interface{} `json:"chatroom_id" binding:"required"`
+	Value      *bool       `json:"value" binding:"required"`
 }
 
 // EnableMemberMessage is used to enable member message settings in chatroom
@@ -44,6 +44,10 @@ func parseEnableMemberMessageRequest(c *gin.Context) (*EnableMemberMessageReques
 
 	if err := c.ShouldBindJSON(&emmr); err != nil {
 		return nil, err
+	}
+
+	if emmr.ChatroomId != nil {
+		emmr.ChatroomId = utils.ParseInterfaceToString(emmr.ChatroomId)
 	}
 
 	return &emmr, nil

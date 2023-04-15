@@ -7,10 +7,10 @@ import (
 )
 
 type ScheduleFollowRequest struct {
-	ChatroomID int32 `json:"chatroom_id"`
+	ChatroomID interface{} `json:"chatroom_id"`
 }
 
-//ScheduleFollow is used to schedule follow request for particular user
+// ScheduleFollow is used to schedule follow request for particular user
 func ScheduleFollow(c *gin.Context) {
 
 	//Authorize User
@@ -36,6 +36,10 @@ func parseScheduleFollowRequest(c *gin.Context) (*ScheduleFollowRequest, error) 
 	var sfr ScheduleFollowRequest
 	if err := c.ShouldBindJSON(&sfr); err != nil {
 		return nil, err
+	}
+
+	if sfr.ChatroomID != nil {
+		sfr.ChatroomID = utils.ParseInterfaceToString(sfr.ChatroomID)
 	}
 
 	return &sfr, nil

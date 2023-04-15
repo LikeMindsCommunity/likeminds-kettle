@@ -7,9 +7,9 @@ import (
 )
 
 type EditCohortAccessRequest struct {
-	ChatroomID   int `json:"chatroom_id" binding:"required"`
-	CohortID     int `json:"cohort_id"`
-	CohortAccess int `json:"cohort_access"`
+	ChatroomID   interface{} `json:"chatroom_id" binding:"required"`
+	CohortID     int         `json:"cohort_id"`
+	CohortAccess int         `json:"cohort_access"`
 }
 
 // Get cohort access in chatroom
@@ -69,6 +69,10 @@ func parseEditCohortAccessRequest(c *gin.Context) (*EditCohortAccessRequest, err
 
 	if err := c.ShouldBindJSON(&ecar); err != nil {
 		return nil, err
+	}
+
+	if ecar.ChatroomID != nil {
+		ecar.ChatroomID = utils.ParseInterfaceToString(ecar.ChatroomID)
 	}
 
 	return &ecar, nil

@@ -9,9 +9,9 @@ import (
 
 // AutoJoinMembersRequest
 type AutoJoinMembersRequest struct {
-	FeedroomId          int64 `json:"feedroom_id" binding:"required"`
-	AutoFollowDone      *bool `json:"auto_follow_done" binding:"required"`
-	IncludeMembersLater *bool `json:"include_members_later" binding:"required"`
+	FeedroomId          interface{} `json:"feedroom_id" binding:"required"`
+	AutoFollowDone      *bool       `json:"auto_follow_done" binding:"required"`
+	IncludeMembersLater *bool       `json:"include_members_later" binding:"required"`
 }
 
 // AutoJoinMembers is used to enable auto join members for a feedroom
@@ -52,6 +52,10 @@ func parseAutoJoinMembersRequst(c *gin.Context) (*AutoJoinMembersRequest, error)
 
 	if err := c.ShouldBindJSON(&afmr); err != nil {
 		return nil, err
+	}
+
+	if afmr.FeedroomId != nil {
+		afmr.FeedroomId = utils.ParseInterfaceToString(afmr.FeedroomId)
 	}
 
 	return &afmr, nil

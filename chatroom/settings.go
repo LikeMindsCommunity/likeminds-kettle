@@ -14,7 +14,7 @@ type ChatroomSettingsRequest struct {
 }
 
 type EditChatroomSettingsRequest struct {
-	ChatroomID       string                    `json:"chatroom_id"`
+	ChatroomID       interface{}               `json:"chatroom_id"`
 	ChatroomSettings []ChatroomSettingsRequest `json:"chatroom_settings"`
 }
 
@@ -81,6 +81,10 @@ func parseEditChatroomSettingsRequest(c *gin.Context) (*EditChatroomSettingsRequ
 
 	if err := c.ShouldBindBodyWith(&ecsr, binding.JSON); err != nil {
 		return nil, err
+	}
+
+	if ecsr.ChatroomID != nil {
+		ecsr.ChatroomID = utils.ParseInterfaceToString(ecsr.ChatroomID)
 	}
 
 	return &ecsr, nil

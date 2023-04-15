@@ -7,9 +7,9 @@ import (
 )
 
 type ActionPendingChatroomRequest struct {
-	ChatroomID int64 `json:"chatroom_id" binding:"required"`
-	Value      *bool `json:"value" binding:"required"`
-	PreApprove bool  `json:"pre_approve"`
+	ChatroomID interface{} `json:"chatroom_id" binding:"required"`
+	Value      *bool       `json:"value" binding:"required"`
+	PreApprove bool        `json:"pre_approve"`
 }
 
 // ActionPendingChatroom is used to change the state of pending chatroom
@@ -39,6 +39,10 @@ func parseActionPendingChatroomRequest(c *gin.Context) (*ActionPendingChatroomRe
 
 	if err := c.ShouldBindJSON(&apcr); err != nil {
 		return nil, err
+	}
+
+	if apcr.ChatroomID != nil {
+		apcr.ChatroomID = utils.ParseInterfaceToString(apcr.ChatroomID)
 	}
 
 	return &apcr, nil
