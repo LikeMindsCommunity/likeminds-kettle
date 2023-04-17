@@ -9,6 +9,7 @@ const WASubscriptionEndPoint = "/api/user/subscription/whatsapp"
 const FetchUserAccessEndPoint = "/api/community_member/fetch_access"
 const FetchMembersMetaEndPoint = "/api/community/fetch_members_meta"
 const PushUserTokenEndPoint = "/api/push"
+const FetchUserMetaEndPoint = "/api/fetch_user_meta"
 
 const ParamIngestCommunities = "ingest_your_communities"
 const ParamAccessType = "access_type"
