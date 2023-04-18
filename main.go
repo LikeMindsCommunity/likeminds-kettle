@@ -151,8 +151,8 @@ func main() {
 	router.GET("/community/settings/notification/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetFeedNotificationSettings)
 	router.PUT("/community/settings/notification/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditFeedNotificationSettings)
 	router.GET("/community/tag", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetTaggingList)
-	router.GET("/community/content_download_settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetContentDownloadSettings)
-	router.PUT("/community/content_download_settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditContentDownloadSettings)
+	router.GET("/community/settings/content_download", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetContentDownloadSettings)
+	router.PUT("/community/settings/content_download", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditContentDownloadSettings)
 
 	//Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
