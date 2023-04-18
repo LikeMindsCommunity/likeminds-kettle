@@ -36,7 +36,13 @@ const ConversationNotificationSettingsEndPoint = "/api/community/notification_se
 const FeedNotificationSettingEndPoint = "/api/community/feed_notification_setting"
 const CommunityExcludedChatroomsEndPoint = "/api/community_member/excluded_chatrooms"
 const GetMemberChatroomsEndPoint = "/api/community_member/chatroom/status"
+const FetchContentDownloadSettingsEndPoint = "/api/community/fetch_content_download_settings"
+const EditContentDownloadSettingsEndPoint = "/api/community/update_content_download_settings"
+const GetCommunityEndPoint = "/api/community/%s"
+const GetCommunityBrandingEndPoint = "/api/community/%s/branding"
+const GetCommunityV2Endpoint = "/api/community/fetch"
 
+const ParamCommunityID = "community_id"
 const ParamPage = "page"
 const ParamPageSize = "page_size"
 const ParamMemberId = "member_id"
