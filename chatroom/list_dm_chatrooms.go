@@ -17,6 +17,7 @@ func ListDMChatrooms(c *gin.Context) {
 	// Params to be sent in the api/community_member/fetch_dm_chatrooms request
 	requestParams := map[string]string{
 		ParamPage: c.Query(ParamPage),
+		ParamTag:  c.Query(ParamTag),
 	}
 
 	// Send Request

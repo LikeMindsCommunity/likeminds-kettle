@@ -44,6 +44,7 @@ type CreateChatroomRequest struct {
 	EndTime                    int64         `json:"end_time"`
 	EndTimeAfter               int64         `json:"end_time_after"`
 	ChatroomImageUrl           string        `json:"chatroom_image_url"`
+	Tag                        string        `json:"tag"`
 }
 
 type EditChatroomRequest struct {
@@ -51,6 +52,7 @@ type EditChatroomRequest struct {
 	Title            string      `json:"title"`
 	Header           string      `json:"header"`
 	ChatroomImageUrl string      `json:"chatroom_image_url"`
+	Tag              string      `json:"tag"`
 }
 
 type DeleteChatroomRequest struct {
