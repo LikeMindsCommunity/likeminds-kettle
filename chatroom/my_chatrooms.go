@@ -18,6 +18,7 @@ func MyChatrooms(c *gin.Context) {
 	//Params to be sent in the my chatroom api internally
 	params := map[string]string{
 		ParamPage: c.Query(ParamPage),
+		ParamTag:  c.Query(ParamTag),
 	}
 
 	//Send Request
