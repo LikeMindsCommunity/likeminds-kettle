@@ -47,6 +47,8 @@ func GetMemberChannels(c *gin.Context) {
 	requestParams := map[string]string{
 		ParamUserId:                 c.Query(ParamUserId),
 		chatroom.ParamChatroomTypes: temp_chatroom_types,
+		ParamPage:                   c.Query(ParamPage),
+		ParamPageSize:               c.Query(ParamPageSize),
 	}
 
 	//Send Request
