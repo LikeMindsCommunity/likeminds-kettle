@@ -8,6 +8,7 @@ import (
 
 type CreateDMRequest struct {
 	MemberID interface{} `json:"member_id"`
+	Tag      string      `json:"tag"`
 }
 
 func parseCreateDMRequest(c *gin.Context) (*CreateDMRequest, error) {
