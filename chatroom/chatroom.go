@@ -172,9 +172,10 @@ func getChatroomInternal(c *gin.Context, userId string) {
 		//else, call api/chatroom/fetch api internally
 
 		version := c.GetHeader(utils.HeadersVersionCode)
+		acceptVersion := c.GetHeader((utils.HeadersAcceptVersion))
 
-		if version == "v2" {
-			//Params to be sent in the /api/v2/fetch_chatroom request
+		if version == "v2" || acceptVersion == "v2" {
+			// Params to be sent in the /api/v2/fetch_chatroom request
 			params := map[string]string{
 				ParamChatroomId: chatroom_id,
 				ParamAJ:         c.Query(ParamAJ),
@@ -182,10 +183,10 @@ func getChatroomInternal(c *gin.Context, userId string) {
 				ParamApiType:    strconv.Itoa(SdkApiType),
 			}
 
-			//Send Request
+			// Send Request
 			utils.SendRequest(c, utils.CoreService, FetchChatroomV2EndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 		} else {
-			//Params to be sent in the api/chatroom/fetch request
+			// Params to be sent in the api/chatroom/fetch request
 			params := map[string]string{
 				ParamChatroomId: c.Query(ParamChatroomId),
 			}

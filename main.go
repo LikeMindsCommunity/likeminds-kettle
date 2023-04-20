@@ -33,7 +33,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "1.20.0"
+	var AppVersion string = "1.21.1"
 
 	initGin()
 	client = cache.InitRedis()
@@ -54,6 +54,7 @@ func main() {
 	router.GET("/user/bot", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.GetBot)
 	router.POST("/user/device/push", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.PushUserToken)
 	router.POST("/user/subscription/whatsapp", user.WASubscription)
+	router.GET("/user/meta", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.UserMeta)
 
 	//Home Apis
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client, true), home.FetchCommunities)
@@ -111,6 +112,8 @@ func main() {
 	router.POST("/chatroom/mark_read", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ChatroomMarkRead)
 
 	//Community Apis
+	router.GET("/community", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.Community)
+	router.GET("/community/branding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.Branding)
 	router.POST("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditQuestions)
 	router.GET("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetQuestions)
 	router.GET("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetMember)
@@ -148,6 +151,8 @@ func main() {
 	router.GET("/community/settings/notification/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetFeedNotificationSettings)
 	router.PUT("/community/settings/notification/feed", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditFeedNotificationSettings)
 	router.GET("/community/tag", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetTaggingList)
+	router.GET("/community/settings/content_download", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetContentDownloadSettings)
+	router.PUT("/community/settings/content_download", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditContentDownloadSettings)
 
 	//Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
