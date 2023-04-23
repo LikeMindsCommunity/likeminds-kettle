@@ -56,6 +56,7 @@ const RequestFromParam = "req_from"
 const SearchParam = "search"
 const SearchTypeParam = "search_type"
 const SearchName = "search_name"
+
 const ParamState = "state"
 const ParamType = "type"
 const ParamCohortID = "cohort_id"
