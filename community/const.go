@@ -65,6 +65,7 @@ const ParamPinned = "pinned"
 const ParamOrderType = "order_type"
 const ParamIsClosed = "is_closed"
 const ParamFilterType = "filter_type"
+const ParamMemberState = "member_state"
 
 const UserChannelReqFrom = "user_channel"
 const MemberProfileReqFrom = "member_profile"
