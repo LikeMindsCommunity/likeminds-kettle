@@ -35,6 +35,7 @@ type CreateConversationRequest struct {
 	IsAnonymous           bool                `json:"is_anonymous"`
 	State                 int32               `json:"state"`
 	HasFiles              bool                `json:"has_files"`
+	TemporaryID           string              `json:"temporary_id,omitempty"`
 }
 
 type EditConversationRequest struct {
