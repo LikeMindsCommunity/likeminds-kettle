@@ -41,6 +41,7 @@ const EditContentDownloadSettingsEndPoint = "/api/community/update_content_downl
 const GetCommunityEndPoint = "/api/community/%s"
 const GetCommunityBrandingEndPoint = "/api/community/%s/branding"
 const GetCommunityV2Endpoint = "/api/community/fetch"
+const UserHomeMetaEndpoint = "/api/community_member/home_meta"
 
 const ParamCommunityID = "community_id"
 const ParamPage = "page"
