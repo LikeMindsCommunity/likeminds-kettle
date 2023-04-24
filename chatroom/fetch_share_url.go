@@ -1,12 +1,14 @@
 package chatroom
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//FetchShareUrl is used to fetch share url for a specific chatroom
+// FetchShareUrl is used to fetch share url for a specific chatroom
 func FetchShareUrl(c *gin.Context) {
 
 	//Authorize User
@@ -18,6 +20,13 @@ func FetchShareUrl(c *gin.Context) {
 	//Params to be sent in the fetch share url api internally
 	params := map[string]string{
 		ParamChatroomId: c.Query(ParamChatroomId),
+		ParamApiType:    strconv.Itoa(SdkApiType),
+	}
+
+	// if domain url is present in the request, add it to the params
+	domainUrl := c.Query(ParamDomain)
+	if domainUrl != "" {
+		params[ParamDomain] = domainUrl
 	}
 
 	//Send Request

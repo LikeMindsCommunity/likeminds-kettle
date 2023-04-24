@@ -81,6 +81,7 @@ const ParamMaxTimeStamp = "max_timestamp"
 const ParamMinTimeStamp = "min_timestamp"
 const ParamChatroomTypes = "chatroom_types"
 const ParamTag = "tag"
+const ParamDomain = "domain"
 
 const (
 	SdkApiType = 1
