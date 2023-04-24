@@ -54,7 +54,7 @@ func TokenAuthError(c *gin.Context, errorMessage string) {
 }
 
 func MemberAccessFailError(c *gin.Context) {
-	c.JSON(http.StatusUnauthorized, Response{
+	c.JSON(http.StatusForbidden, Response{
 		Success:      false,
 		ErrorMessage: ErrorMemeberAccessFail,
 	})
