@@ -36,6 +36,7 @@ type CreateConversationRequest struct {
 	State                 int32               `json:"state"`
 	HasFiles              bool                `json:"has_files"`
 	TemporaryID           string              `json:"temporary_id,omitempty"`
+	OGTags                interface{}         `json:"og_tags,omitempty"`
 }
 
 type EditConversationRequest struct {
@@ -47,7 +48,7 @@ type EditConversationRequest struct {
 type DeleteConversationRequest struct {
 	ConversationIDs []interface{} `json:"conversation_ids" binding:"required"`
 	TagID           int64         `json:"tag_id"`
-	Reason          string        `json:"reason" binding:"required"`
+	Reason          string        `json:"reason"`
 }
 
 // CreateConversation is used to create a new conversation in chatroom
