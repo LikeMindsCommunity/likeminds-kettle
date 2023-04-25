@@ -35,8 +35,8 @@ func ChatroomFollow(c *gin.Context) {
 		return
 	}
 
-	// If body params are present, then pass them in params
-	if chatroomFollowRequest != nil {
+	// If collabcard_id is present in query params, then use it and skip body params
+	if params[ParamCollabcardId] == "" && chatroomFollowRequest != nil {
 		params[ParamCollabcardId] = utils.ParseInterfaceToString(chatroomFollowRequest.CollabcardId)
 		params[ParamMemberId] = utils.ParseInterfaceToString(chatroomFollowRequest.MemberId)
 		params[ParamValue] = utils.ParseInterfaceToString(chatroomFollowRequest.Value)
