@@ -18,22 +18,22 @@ type EditMemberRequest struct {
 	ImageUrl     string `json:"image_url"`
 }
 
-//GetMember is used to get community members
+// GetMember is used to get community members
 func GetMember(c *gin.Context) {
 	Member(c, utils.GETMethod)
 }
 
-//AddMember is used to add a member in community
+// AddMember is used to add a member in community
 func AddMember(c *gin.Context) {
 	Member(c, utils.POSTMethod)
 }
 
-//EditMember is used to edit member in community
+// EditMember is used to edit member in community
 func EditMember(c *gin.Context) {
 	Member(c, utils.PUTMethod)
 }
 
-//Member method handles members for a commuinty
+// Member method handles members for a commuinty
 func Member(c *gin.Context, method int) {
 
 	//Authorize User
@@ -100,7 +100,8 @@ func getMemberInternal(c *gin.Context, userId string) {
 
 		//Params to be sent in the fetch all members api internally
 		params := map[string]string{
-			ParamPage: page,
+			ParamPage:        page,
+			ParamMemberState: c.Query(ParamMemberState),
 		}
 
 		//Send Request
