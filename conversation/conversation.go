@@ -28,13 +28,19 @@ type CreateConversationRequest struct {
 	AllowAddOption        bool                `json:"allow_add_option"`
 	ExpiryTime            int64               `json:"expiry_time"`
 	Polls                 []PollObject        `json:"polls"`
+	MultilpleSelectState  int64               `json:"multiple_select_state"`
+	MultilpleSelectNo     int64               `json:"multiple_select_no"`
 	AttachmentCount       int64               `json:"attachment_count"`
-	RepliedConversationId int64               `json:"replied_conversation_id,omitempty"`
+	RepliedConversationId interface{}         `json:"replied_conversation_id,omitempty"`
+	RepliedChatroomID     string              `json:"replied_chatroom_id,omitempty"`
 	InternalLink          string              `json:"internal_link"`
 	Preview               ConversationPreview `json:"preview"`
 	IsAnonymous           bool                `json:"is_anonymous"`
 	State                 int32               `json:"state"`
 	HasFiles              bool                `json:"has_files"`
+	TemporaryID           string              `json:"temporary_id,omitempty"`
+	OGTags                interface{}         `json:"og_tags,omitempty"`
+	ShareLink             string              `json:"share_link,omitempty"`
 }
 
 type EditConversationRequest struct {
@@ -46,7 +52,7 @@ type EditConversationRequest struct {
 type DeleteConversationRequest struct {
 	ConversationIDs []interface{} `json:"conversation_ids" binding:"required"`
 	TagID           int64         `json:"tag_id"`
-	Reason          string        `json:"reason" binding:"required"`
+	Reason          string        `json:"reason"`
 }
 
 // CreateConversation is used to create a new conversation in chatroom
@@ -108,6 +114,10 @@ func parseCreateConversationRequest(c *gin.Context) (*CreateConversationRequest,
 
 	if ccr.ChatroomID != nil {
 		ccr.ChatroomID = utils.ParseInterfaceToString(ccr.ChatroomID)
+	}
+
+	if ccr.RepliedConversationId != nil {
+		ccr.RepliedConversationId = utils.ParseInterfaceToString(ccr.RepliedConversationId)
 	}
 
 	return &ccr, nil

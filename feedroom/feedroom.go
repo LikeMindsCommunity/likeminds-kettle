@@ -21,6 +21,7 @@ type CreateFeedroomRequest struct {
 	IncludeMembersLater        bool          `json:"include_members_later"`
 	SecretFeedroomParticipants []interface{} `json:"secret_feedroom_participants"`
 	FeedroomImageUrl           string        `json:"feedroom_image_url"`
+	Tag                        string        `json:"tag"`
 }
 
 type EditFeedroomRequest struct {
@@ -28,6 +29,7 @@ type EditFeedroomRequest struct {
 	Title            string      `json:"title"`
 	Header           string      `json:"header"`
 	FeedroomImageUrl string      `json:"feedroom_image_url"`
+	Tag              string      `json:"tag"`
 }
 
 type DeleteFeedroomRequest struct {
@@ -174,6 +176,7 @@ func createFeedroomInternal(c *gin.Context, userId string) {
 		IncludeMembersLater:        createFeedroomRequest.IncludeMembersLater,
 		SecretChatroomParticipants: createFeedroomRequest.SecretFeedroomParticipants,
 		ChatroomImageUrl:           createFeedroomRequest.FeedroomImageUrl,
+		Tag:                        createFeedroomRequest.Tag,
 	}
 
 	//Send Request
@@ -195,6 +198,7 @@ func editFeedroomInternal(c *gin.Context, userId string) {
 		Title:            editFeedroomRequest.Title,
 		Header:           editFeedroomRequest.Header,
 		ChatroomImageUrl: editFeedroomRequest.FeedroomImageUrl,
+		Tag:              editFeedroomRequest.Tag,
 	}
 
 	//Send Request

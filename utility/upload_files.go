@@ -8,9 +8,9 @@ import (
 )
 
 type UploadFilesRequest struct {
-	ChatroomID     string      `json:"chatroom_id"`
-	ConversationID string      `json:"conversation_id"`
-	PollID         string      `json:"poll_id,omitempty"`
+	ChatroomID     interface{} `json:"chatroom_id"`
+	ConversationID interface{} `json:"conversation_id"`
+	PollID         interface{} `json:"poll_id,omitempty"`
 	Name           string      `json:"name,omitempty"`
 	Url            string      `json:"url,omitempty"`
 	Type           string      `json:"type,omitempty"`
@@ -48,6 +48,18 @@ func parseUploadFilesRequest(c *gin.Context) (*UploadFilesRequest, error) {
 
 	if err := c.ShouldBindBodyWith(&ufr, binding.JSON); err != nil {
 		return nil, err
+	}
+
+	if ufr.ChatroomID != nil {
+		ufr.ChatroomID = utils.ParseInterfaceToString(ufr.ChatroomID)
+	}
+
+	if ufr.ConversationID != nil {
+		ufr.ConversationID = utils.ParseInterfaceToString(ufr.ConversationID)
+	}
+
+	if ufr.PollID != nil {
+		ufr.PollID = utils.ParseInterfaceToString(ufr.PollID)
 	}
 
 	return &ufr, nil

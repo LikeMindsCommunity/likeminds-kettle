@@ -22,6 +22,7 @@ func MyFeedrooms(c *gin.Context) {
 	params := map[string]string{
 		chatroom.ParamPage: c.Query(chatroom.ParamPage),
 		chatroom.ParamType: strconv.Itoa(FeedChatroomType),
+		chatroom.ParamTag:  c.Query(chatroom.ParamTag),
 	}
 
 	//Send Request

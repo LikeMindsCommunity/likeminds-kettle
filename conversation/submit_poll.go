@@ -7,7 +7,7 @@ import (
 )
 
 type PollIDObject struct {
-	ID int64 `json:"id"`
+	ID interface{} `json:"id"`
 }
 
 type SubmitPollRequest struct {

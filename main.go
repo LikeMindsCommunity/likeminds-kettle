@@ -33,7 +33,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "1.21.1"
+	var AppVersion string = "1.22.0"
 
 	initGin()
 	client = cache.InitRedis()
@@ -153,6 +153,7 @@ func main() {
 	router.GET("/community/tag", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetTaggingList)
 	router.GET("/community/settings/content_download", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetContentDownloadSettings)
 	router.PUT("/community/settings/content_download", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditContentDownloadSettings)
+	router.GET("/community/member/home/meta", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.MemberHomeMeta)
 
 	//Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)

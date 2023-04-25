@@ -48,7 +48,7 @@ func GetCoreServiceBaseUrl() string {
 	CoreServiceBaseURL := environment.GoDotEnvVariable("CORE_BASE_URL")
 
 	if len(CoreServiceBaseURL) == 0 {
-		CoreServiceBaseURL = "https://beta.likeminds.community"
+		CoreServiceBaseURL = "https://betacaravan.likeminds.community"
 	}
 
 	return CoreServiceBaseURL
