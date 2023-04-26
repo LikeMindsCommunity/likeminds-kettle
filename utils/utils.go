@@ -27,6 +27,7 @@ func CreateHeaders(c *gin.Context, userUniqueID string) map[string]interface{} {
 	}
 	headers[HeadersPlatformCode] = c.GetHeader(HeadersPlatformCode)
 	headers[HeadersVersionCode] = c.GetHeader(HeadersVersionCode)
+	headers[HeadersSdkSource] = c.GetHeader(HeadersSdkSource)
 	headers[HeadersDeviceId] = c.GetHeader(HeadersDeviceId)
 	headers[HeadersApiKey] = c.GetHeader(HeadersApiKey)
 	headers[HeadersAcceptVersion] = c.GetHeader(HeadersAcceptVersion)
