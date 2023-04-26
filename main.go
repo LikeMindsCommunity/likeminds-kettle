@@ -33,7 +33,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "1.22.0"
+	var AppVersion string = "1.22.1"
 
 	initGin()
 	client = cache.InitRedis()
@@ -504,6 +504,7 @@ func enableCors() cors.Config {
 		"x-platform-code",
 		"x-platform-type",
 		"x-version-code",
+		"x-sdk-source",
 		"x-accept-version",
 		"x-username",
 		"x-password",

@@ -24,20 +24,20 @@ type ConversationPreview struct {
 type CreateConversationRequest struct {
 	ChatroomID            interface{}         `json:"chatroom_id"`
 	Text                  string              `json:"text"`
-	PollType              int32               `json:"poll_type"`
-	AllowAddOption        bool                `json:"allow_add_option"`
-	ExpiryTime            int64               `json:"expiry_time"`
-	Polls                 []PollObject        `json:"polls"`
-	MultilpleSelectState  int64               `json:"multiple_select_state"`
-	MultilpleSelectNo     int64               `json:"multiple_select_no"`
-	AttachmentCount       int64               `json:"attachment_count"`
+	PollType              *int32              `json:"poll_type,omitempty"`
+	AllowAddOption        bool                `json:"allow_add_option,omitempty"`
+	ExpiryTime            int64               `json:"expiry_time,omitempty"`
+	Polls                 []PollObject        `json:"polls,omitempty"`
+	MultilpleSelectState  *int64              `json:"multiple_select_state,omitempty"`
+	MultilpleSelectNo     int64               `json:"multiple_select_no,omitempty"`
+	AttachmentCount       int64               `json:"attachment_count,omitempty"`
 	RepliedConversationId interface{}         `json:"replied_conversation_id,omitempty"`
 	RepliedChatroomID     string              `json:"replied_chatroom_id,omitempty"`
-	InternalLink          string              `json:"internal_link"`
-	Preview               ConversationPreview `json:"preview"`
-	IsAnonymous           bool                `json:"is_anonymous"`
+	InternalLink          string              `json:"internal_link,omitempty"`
+	Preview               ConversationPreview `json:"preview,omitempty"`
+	IsAnonymous           bool                `json:"is_anonymous,omitempty"`
 	State                 int32               `json:"state"`
-	HasFiles              bool                `json:"has_files"`
+	HasFiles              bool                `json:"has_files,omitempty"`
 	TemporaryID           string              `json:"temporary_id,omitempty"`
 	OGTags                interface{}         `json:"og_tags,omitempty"`
 	ShareLink             string              `json:"share_link,omitempty"`
