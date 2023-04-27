@@ -97,31 +97,10 @@ func EditCommentPost(c *gin.Context) {
 	post_id := c.Param("post_id")
 	comment_id := c.Param("comment_id")
 	editPostCommentEndPoint := fmt.Sprintf(SingleCommentEndPoint, post_id, comment_id)
-
-	//Body to be sent in the /post/<post_id>/comment/<comment_id> PUT request
-	editCommentRequest, err := parseEditCommentRequest(c)
-	if err != nil {
-		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
-	}
-
-	//Fetch member access to view post
-	success, response := user.FetchMemberAccess(c, EDIT_COMMENT_ACTION, userId)
-	if !success {
-		return
-	}
-
-	//If not access
-	if !response.Access {
-		utils.MemberAccessFailError(c)
-		return
-	}
-
-	// If user is CM, set user_is_cm to true
-	editCommentRequest.UserIsCm = response.IsCm
+	GetCommentEndPoint := fmt.Sprintf(SingleCommentEndPoint, post_id, comment_id)
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, editPostCommentEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, editCommentRequest)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, GetCommentEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
@@ -131,6 +110,51 @@ func EditCommentPost(c *gin.Context) {
 
 	//If flow succeeds
 	dataResponse := apiCR.Response
+	if _, ok := dataResponse["comment"]; !ok {
+		utils.GeneralBadRequestError(c, "Invalid comment_id sent!")
+		return
+	}
+
+	//Fetch comment user id
+	comment_data := dataResponse["comment"].(map[string]interface{})
+	comment_user_unique_id := comment_data["user_id"]
+
+	//Body to be sent in the /post/<post_id>/comment/<comment_id> PUT request
+	editCommentRequest, err := parseEditCommentRequest(c)
+	if err != nil {
+		//If POST body params are missing
+		utils.GeneralAPIError(c, err.Error())
+	}
+
+	//If the user is not the comment creator
+	if comment_user_unique_id != userId {
+		//Fetch member access to view post
+		success, response := user.FetchMemberAccess(c, EDIT_COMMENT_ACTION, userId)
+		if !success {
+			return
+		}
+
+		//If not access
+		if !response.Access {
+			utils.MemberAccessFailError(c)
+			return
+		}
+
+		// If user is CM, set user_is_cm to true
+		editCommentRequest.UserIsCm = response.IsCm
+	}
+
+	//Send Request
+	respBytes, statusCode = utils.GetRequestResponse(c, utils.SwarmService, editPostCommentEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, editCommentRequest)
+
+	//Validate response
+	apiCR = utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	//If flow succeeds
+	dataResponse = apiCR.Response
 	dataResponse = populateCommentDataResponse(c, dataResponse)
 
 	//Generate Response
