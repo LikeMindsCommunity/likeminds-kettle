@@ -10,15 +10,16 @@ import (
 )
 
 type PushReportRequest struct {
-	ReportedMemberID int    `json:"reported_member_id"`
-	ConversationID   int    `json:"conversation_id"`
-	ChatroomID       int    `json:"collabcard_id"`
-	EntityId         string `json:"entity_id"`
-	EntityCreatorId  string `json:"entity_creator_id"`
-	EntityType       int    `json:"entity_type"`
-	Link             string `json:"link"`
-	TagId            int    `json:"tag_id"`
-	Reason           string `json:"reason"`
+	ReportedMemberID int         `json:"reported_member_id"`
+	ConversationID   interface{} `json:"conversation_id"`
+	CollabcardId     interface{} `json:"collabcard_id"`
+	EntityId         string      `json:"entity_id"`
+	EntityCreatorId  string      `json:"entity_creator_id"`
+	EntityType       int         `json:"entity_type"`
+	Link             string      `json:"link"`
+	TagId            int         `json:"tag_id"`
+	Reason           string      `json:"reason"`
+	ChatroomId       interface{} `json:"chatroom_id"`
 }
 
 type CloseReportRequest struct {
@@ -147,6 +148,19 @@ func parsePushReportRequest(c *gin.Context) (*PushReportRequest, error) {
 
 	if err := c.ShouldBindJSON(&prr); err != nil {
 		return nil, err
+	}
+
+	if prr.CollabcardId != nil {
+		prr.CollabcardId = utils.ParseInterfaceToString(prr.CollabcardId)
+	}
+
+	if prr.ConversationID != nil {
+		prr.ConversationID = utils.ParseInterfaceToString(prr.ConversationID)
+	}
+
+	// If chatroom_id is present, parse it & set it to collabcard_id
+	if prr.ChatroomId != nil {
+		prr.CollabcardId = utils.ParseInterfaceToString(prr.ChatroomId)
 	}
 
 	return &prr, nil

@@ -281,6 +281,27 @@ func editPostInternal(c *gin.Context, userId string) {
 
 	post_id := c.Param("post_id")
 	EditPostEndPoint := fmt.Sprintf(SinglePostEndPoint, post_id)
+	GetPostEndPoint := fmt.Sprintf(SinglePostEndPoint, post_id)
+
+	//Send Request
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, GetPostEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	//If flow succeeds
+	dataResponse := apiCR.Response
+	if _, ok := dataResponse["post"]; !ok {
+		utils.GeneralBadRequestError(c, "Invalid post_id sent!")
+		return
+	}
+
+	//Fetch post user id
+	post_data := dataResponse["post"].(map[string]interface{})
+	post_user_unique_id := post_data["user_id"]
 
 	//Body to be sent in the /post/<post_id> PUT request
 	editPostRequest, err := parseEditPostRequest(c)
@@ -290,32 +311,35 @@ func editPostInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	// Fetch member access to edit post
-	success, response := user.FetchMemberAccess(c, EDIT_POST_ACTION, userId)
-	if !success {
-		return
-	}
+	if post_user_unique_id != userId {
 
-	// If not access
-	if !response.Access {
-		utils.MemberAccessFailError(c)
-		return
-	}
+		// Fetch member access to edit post
+		success, response := user.FetchMemberAccess(c, EDIT_POST_ACTION, userId)
+		if !success {
+			return
+		}
 
-	// Update user_is_cm in request
-	editPostRequest.UserIsCm = response.IsCm
+		// If not access
+		if !response.Access {
+			utils.MemberAccessFailError(c)
+			return
+		}
+
+		// Update user_is_cm in request
+		editPostRequest.UserIsCm = response.IsCm
+	}
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, EditPostEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, editPostRequest)
+	respBytes, statusCode = utils.GetRequestResponse(c, utils.SwarmService, EditPostEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, editPostRequest)
 
 	//Validate response
-	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	apiCR = utils.ValidateClientResponse(c, respBytes, statusCode)
 	if apiCR == nil {
 		return
 	}
 
 	//If flow succeeds populate post data
-	dataResponse := apiCR.Response
+	dataResponse = apiCR.Response
 	dataResponse = populatePostDataResponse(c, dataResponse)
 
 	//Generate Response
