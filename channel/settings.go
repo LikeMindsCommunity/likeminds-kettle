@@ -35,30 +35,24 @@ func ChannelUserSettings(c *gin.Context, method int) {
 		return
 	}
 
+	// GET URL params
+	channel_id := c.Param(ParamChannelId)
+	member_uuid := c.Param(ParamMemberUUID)
+
+	UserChannelEndpoint := fmt.Sprintf(UserChannelSettingsEndpoint, channel_id, member_uuid)
+
 	// Send request
 	switch method {
 	case utils.GETMethod:
-
-		// GET URL params
-		channel_id := c.Param(ParamChannelId)
-		member_uuid := c.Param(ParamMemberUUID)
-
-		GetUserChannelEndpoint := fmt.Sprintf(UserChannelSettingsEndpoint, channel_id, member_uuid)
 
 		params := map[string]string{
 			"setting_types": c.Query("setting_types"),
 		}
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, GetUserChannelEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		utils.SendRequest(c, utils.CoreService, UserChannelEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 
 	case utils.PUTMethod:
-
-		// GET URL params
-		channel_id := c.Param(ParamChannelId)
-		member_uuid := c.Param(ParamMemberUUID)
-
-		UpdateUserChannelEndpoint := fmt.Sprintf(UserChannelSettingsEndpoint, channel_id, member_uuid)
 
 		updateUserChannelSettingsRequest, err := parseUpdateUserChannelSettingsReqest(c)
 
@@ -69,7 +63,7 @@ func ChannelUserSettings(c *gin.Context, method int) {
 		}
 
 		// Send Request
-		utils.SendRequest(c, utils.CoreService, UpdateUserChannelEndpoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, updateUserChannelSettingsRequest)
+		utils.SendRequest(c, utils.CoreService, UserChannelEndpoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, updateUserChannelSettingsRequest)
 
 	}
 }
