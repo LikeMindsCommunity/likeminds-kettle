@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/utility"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -24,7 +25,6 @@ func FetchUserCreatedPosts(c *gin.Context) {
 
 	//Access query params and url generation
 	user_id := c.Param("user_id")
-	UserCreatedPostsEndPoint := fmt.Sprintf(FetchUserCreatedPostsEndPoint, user_id)
 
 	//Fetch member access to view post
 	success, response := user.FetchMemberAccess(c, VIEW_POST_ACTION, userId)
@@ -40,6 +40,16 @@ func FetchUserCreatedPosts(c *gin.Context) {
 
 	//Param updatiion
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
+
+	//Get user_unique_id from user_id internally
+	user_id, err := utility.GetUuidInternally(utils.CreateHeaders(c, userId), user_id)
+	if err != nil {
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	//Url generation
+	UserCreatedPostsEndPoint := fmt.Sprintf(FetchUserCreatedPostsEndPoint, user_id)
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, UserCreatedPostsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)

@@ -1,6 +1,8 @@
 package utility
 
 import (
+	"errors"
+
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -61,4 +63,27 @@ func GetUsersInfoInternally(headers map[string]interface{}, member_ids []interfa
 
 	return response, nil
 
+}
+
+func GetUuidInternally(headers map[string]interface{}, user_id string) (string, error) {
+
+	member_ids := []interface{}{user_id}
+	user_unique_id := ""
+
+	//Get user_unique_id by calling internal core service
+	user_unique_ids_info, err := GetUsersInfoInternally(headers, member_ids, true)
+	if err != nil {
+		return "", err
+	}
+
+	uuids := user_unique_ids_info.([]interface{})
+
+	//If user_unique_id not found return error
+	if len(uuids) > 0 {
+		user_unique_id = uuids[0].(string)
+	} else {
+		return "", errors.New(utils.ErrorInvalidUserId)
+	}
+
+	return user_unique_id, nil
 }
