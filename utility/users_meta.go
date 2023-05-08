@@ -1,7 +1,7 @@
 package utility
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -82,7 +82,7 @@ func GetUuidInternally(headers map[string]interface{}, user_id string) (string, 
 	if len(uuids) > 0 {
 		user_unique_id = uuids[0].(string)
 	} else {
-		return "", errors.New(utils.ErrorInvalidUserId)
+		return "", fmt.Errorf(utils.ErrorInvalidUserId)
 	}
 
 	return user_unique_id, nil
