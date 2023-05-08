@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/utility"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -38,6 +39,15 @@ func UserActivity(c *gin.Context, method int) {
 
 	//Access query params and url generation
 	user_id := c.Param("user_id")
+
+	//Get user_unique_id from user_id internally
+	user_id, err := utility.GetUuidInternally(utils.CreateHeaders(c, userId), user_id)
+	if err != nil {
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	//Url generation
 	UserActivityEndPoint := fmt.Sprintf(SingleUserActivityEndPoint, user_id)
 
 	//Send request
