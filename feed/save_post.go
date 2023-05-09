@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/utility"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -40,7 +41,6 @@ func SavePost(c *gin.Context, method int) {
 func getSavePostsInternal(c *gin.Context, userId string) {
 	//Access query params and url generation
 	user_id := c.Param("user_id")
-	FetchSavePostEndPoint := fmt.Sprintf(FetchUserSavedPostsEndPoint, user_id)
 
 	//Params to be sent in the /user/<user_id>/save request
 	params := map[string]string{
@@ -62,6 +62,16 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 
 	//Param updatiion
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
+
+	//Get user_unique_id from user_id internally
+	user_id, err := utility.GetUuidInternally(utils.CreateHeaders(c, userId), user_id)
+	if err != nil {
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	//Url generation
+	FetchSavePostEndPoint := fmt.Sprintf(FetchUserSavedPostsEndPoint, user_id)
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchSavePostEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)

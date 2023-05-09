@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/feed"
 	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/utility"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -29,6 +30,13 @@ func UserCreatedPostSearch(c *gin.Context) {
 	//If not access
 	if !response.Access {
 		utils.MemberAccessFailError(c)
+		return
+	}
+
+	//Get user_unique_id from user_id internally
+	user_id, err := utility.GetUuidInternally(utils.CreateHeaders(c, userId), user_id)
+	if err != nil {
+		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 
