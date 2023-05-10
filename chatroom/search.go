@@ -15,6 +15,11 @@ func ChatroomSearch(c *gin.Context) {
 		return
 	}
 
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
+	}
+
 	//Params to be sent in the chatroom search api internally
 	params := map[string]string{
 		ParamSearch:       c.Query(ParamSearch),
