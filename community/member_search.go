@@ -14,6 +14,11 @@ func MemberSearch(c *gin.Context) {
 		return
 	}
 
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
+	}
+
 	// Params to be sent in the api/search/member_directory request
 	requestParams := map[string]string{
 		SearchParam:       c.Query(SearchParam),
