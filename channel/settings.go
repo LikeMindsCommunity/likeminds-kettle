@@ -35,11 +35,11 @@ func ChannelUserSettings(c *gin.Context, method int) {
 		return
 	}
 
-	// GET URL params
+	// Get URL params
 	channel_id := c.Param(ParamChannelId)
-	member_uuid := c.Param(ParamMemberUUID)
+	participant_uuid := c.Param(ParamParticipantUUID)
 
-	UserChannelEndpoint := fmt.Sprintf(UserChannelSettingsEndpoint, channel_id, member_uuid)
+	UserChannelEndpoint := fmt.Sprintf(UserChannelSettingsEndpoint, channel_id, participant_uuid)
 
 	// Send request
 	switch method {
