@@ -22,7 +22,7 @@ type InternalParticipantRequest struct {
 
 type RemoveParticipantRequest struct {
 	ChatroomID     interface{}   `json:"chatroom_id"`
-	MemberID       interface{}   `json:"member_id"`
+	MemberID       interface{}   `json:"member_id,omitempty"`
 	RemovedMembers []interface{} `json:"removed_members"`
 	IsSecret       bool          `json:"is_secret"`
 }
