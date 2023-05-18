@@ -7,8 +7,9 @@ import (
 )
 
 type AddCohortChatroom struct {
-	ChatroomID interface{} `json:"chatroom_id" binding:"required"`
-	CohortIDs  []int       `json:"cohort_ids"`
+	ChatroomID         interface{} `json:"chatroom_id" binding:"required"`
+	CohortIDs          []int       `json:"cohort_ids"`
+	AddExistingMembers bool        `json:"add_existing_members"`
 }
 
 type RemoveCohortChatroom struct {
