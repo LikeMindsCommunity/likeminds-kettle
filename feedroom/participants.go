@@ -10,7 +10,7 @@ import (
 
 type AddParticipantRequest struct {
 	FeedroomID      interface{}   `json:"feedroom_id" binding:"required"`
-	Participants    []interface{} `json:"participants" binding:"required"`
+	Participants    []interface{} `json:"participants"`
 	UUIDS           []string      `json:"uuids"`
 	IsSecret        bool          `json:"is_secret"`
 	IsChannelInvite bool          `json:"is_channel_invite"`
