@@ -7,8 +7,9 @@ import (
 )
 
 type RemoveCohortMemberRequest struct {
-	CohortID int `json:"cohort_id" binding:"required"`
-	MemberID int `json:"user_id"`
+	CohortID int    `json:"cohort_id" binding:"required"`
+	MemberID int    `json:"user_id"`
+	UUID     string `json:"uuid"`
 }
 
 func RemoveCohortMember(c *gin.Context) {
