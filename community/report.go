@@ -20,6 +20,7 @@ type PushReportRequest struct {
 	TagId            int         `json:"tag_id"`
 	Reason           string      `json:"reason"`
 	ChatroomId       interface{} `json:"chatroom_id"`
+	UUID             string      `json:"uuid"`
 }
 
 type CloseReportRequest struct {

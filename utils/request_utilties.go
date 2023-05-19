@@ -27,7 +27,11 @@ func ParseInterfaceToString(data interface{}) string {
 		This function is used to parse interface to string using json marshal
 	*/
 
-	// If inter is string type, then return it
+	if data == nil {
+		return ""
+	}
+
+	// If data is string type, then return it
 	if _, ok := data.(string); ok {
 		return data.(string)
 	}
