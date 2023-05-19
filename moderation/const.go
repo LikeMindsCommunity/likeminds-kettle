@@ -8,6 +8,7 @@ const CreateFeedActivityEndpoint = "/user/%s/activity"
 
 const ParamIsCm = "is_cm"
 const ParamUserId = "user_id"
+const ParamUUID = "uuid"
 
 const (
 	CREATE_POST_RIGHT_ID       = 10
