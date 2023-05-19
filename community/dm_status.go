@@ -19,6 +19,7 @@ func DMStatus(c *gin.Context) {
 	requestParams := map[string]string{
 		RequestFromParam: c.Query(RequestFromParam),
 		ParamMemberId:    c.Query(ParamMemberId),
+		ParamUUID:        c.Query(ParamUUID),
 		ChatroomIDParam:  c.Query(ChatroomIDParam),
 	}
 
@@ -47,6 +48,7 @@ func DMStatus(c *gin.Context) {
 			//Body to be sent in the /chatroom/create_dm POST request
 			createDMbody := map[string]string{
 				"member_id": c.Query(ParamMemberId),
+				"uuid":      c.Query(ParamUUID),
 			}
 
 			// Send request to api/chatroom/create_dm with body

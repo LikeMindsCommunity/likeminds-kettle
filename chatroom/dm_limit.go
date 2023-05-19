@@ -17,6 +17,7 @@ func DMLimit(c *gin.Context) {
 	// Params to be sent in the api/community_member/request_dm_limit request
 	requestParams := map[string]string{
 		ParamMemberId: c.Query(ParamMemberId),
+		ParamUUID:     c.Query(ParamUUID),
 	}
 
 	// Send Request
