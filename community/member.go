@@ -9,12 +9,14 @@ import (
 type AddMemberRequest struct {
 	UserName     string `json:"user_name" binding:"required"`
 	UserUniqueId string `json:"user_unique_id"`
+	UUID         string `json:"uuid"`
 	ImageUrl     string `json:"image_url"`
 }
 
 type EditMemberRequest struct {
 	UserName     string `json:"user_name"`
-	UserUniqueId string `json:"user_unique_id" binding:"required"`
+	UserUniqueId string `json:"user_unique_id"`
+	UUID         string `json:"uuid"`
 	ImageUrl     string `json:"image_url"`
 }
 

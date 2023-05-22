@@ -10,6 +10,7 @@ type ChatroomFollowRequest struct {
 	CollabcardId interface{} `json:"collabcard_id"`
 	ChatroomId   interface{} `json:"chatroom_id"`
 	MemberId     interface{} `json:"member_id"`
+	UUID         string      `json:"uuid"`
 	Value        *bool       `json:"value"`
 }
 
@@ -26,6 +27,7 @@ func ChatroomFollow(c *gin.Context) {
 	params := map[string]string{
 		ParamCollabcardId: c.Query(ParamCollabcardId),
 		ParamMemberId:     c.Query(ParamMemberId),
+		ParamUUID:         c.Query(ParamUUID),
 		ParamValue:        c.Query(ParamValue),
 	}
 
@@ -39,6 +41,7 @@ func ChatroomFollow(c *gin.Context) {
 	if params[ParamCollabcardId] == "" && chatroomFollowRequest != nil {
 		params[ParamCollabcardId] = utils.ParseInterfaceToString(chatroomFollowRequest.CollabcardId)
 		params[ParamMemberId] = utils.ParseInterfaceToString(chatroomFollowRequest.MemberId)
+		params[ParamUUID] = chatroomFollowRequest.UUID
 		params[ParamValue] = utils.ParseInterfaceToString(chatroomFollowRequest.Value)
 	}
 

@@ -10,10 +10,11 @@ import (
 )
 
 type RemoveCommunityManagerRequest struct {
-	UserId interface{} `json:"user_id" binding:"required"`
+	UserId interface{} `json:"user_id"`
+	UUID   string      `json:"uuid"`
 }
 
-//RemoveCommunityManager is used to remove a CM from community
+// RemoveCommunityManager is used to remove a CM from community
 func RemoveCommunityManager(c *gin.Context) {
 
 	//Authorize User
@@ -35,7 +36,7 @@ func RemoveCommunityManager(c *gin.Context) {
 		return
 	}
 
-	if reflect.TypeOf(removeCMRequest.UserId).String() == "float64" {
+	if removeCMRequest.UserId != nil && reflect.TypeOf(removeCMRequest.UserId).String() == "float64" {
 		removeCMRequest.UserId = strconv.Itoa(int(removeCMRequest.UserId.(float64)))
 	}
 

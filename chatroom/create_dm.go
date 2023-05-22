@@ -8,6 +8,7 @@ import (
 
 type CreateDMRequest struct {
 	MemberID interface{} `json:"member_id"`
+	UUID     string      `json:"uuid"`
 	Tag      string      `json:"tag"`
 }
 

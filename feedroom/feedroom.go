@@ -17,6 +17,7 @@ type CreateFeedroomRequest struct {
 	CohortIDs                  []int64       `json:"cohort_ids"`
 	IsSecret                   bool          `json:"is_secret"`
 	FeedroomParticipants       []interface{} `json:"feedroom_participants"`
+	UUIDs                      []string      `json:"uuids"`
 	AutoFollowDone             bool          `json:"auto_follow_done"`
 	IncludeMembersLater        bool          `json:"include_members_later"`
 	SecretFeedroomParticipants []interface{} `json:"secret_feedroom_participants"`
@@ -175,6 +176,7 @@ func createFeedroomInternal(c *gin.Context, userId string) {
 		AutoFollowDone:             createFeedroomRequest.AutoFollowDone,
 		IncludeMembersLater:        createFeedroomRequest.IncludeMembersLater,
 		SecretChatroomParticipants: createFeedroomRequest.SecretFeedroomParticipants,
+		UUIDs:                      createFeedroomRequest.UUIDs,
 		ChatroomImageUrl:           createFeedroomRequest.FeedroomImageUrl,
 		Tag:                        createFeedroomRequest.Tag,
 	}

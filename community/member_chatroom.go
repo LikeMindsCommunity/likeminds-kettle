@@ -17,6 +17,7 @@ func MemberChatroom(c *gin.Context) {
 	// Params to be sent in the api/fetch_user_chatrooms request
 	requestParams := map[string]string{
 		ParamUserId: c.Query(ParamUserId),
+		ParamUUID:   c.Query(ParamUUID),
 		ParamState:  c.Query(ParamState),
 		ParamPage:   c.Query(ParamPage),
 	}

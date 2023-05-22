@@ -6,7 +6,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//CollabcardSeen is used to mark a chatroom as seen
+// CollabcardSeen is used to mark a chatroom as seen
 func CollabcardSeen(c *gin.Context) {
 
 	//Authorize User
@@ -19,6 +19,7 @@ func CollabcardSeen(c *gin.Context) {
 	params := map[string]string{
 		ParamCollabcardId:   c.Query(ParamCollabcardId),
 		ParamMemberId:       c.Query(ParamMemberId),
+		ParamUUID:           c.Query(ParamUUID),
 		ParamCollabcardType: c.Query(ParamCollabcardType),
 	}
 

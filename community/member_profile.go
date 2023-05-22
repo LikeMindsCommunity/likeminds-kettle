@@ -54,6 +54,7 @@ func Profile(c *gin.Context, method int) {
 		// Params to be sent in the api/community_member/fetch_profile request
 		requestParams := map[string]string{
 			ParamUserId: c.Query(ParamUserId),
+			ParamUUID:   c.Query(ParamUUID),
 		}
 
 		//Send Request
