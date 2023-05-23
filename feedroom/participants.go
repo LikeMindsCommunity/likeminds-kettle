@@ -10,14 +10,16 @@ import (
 
 type AddParticipantRequest struct {
 	FeedroomID      interface{}   `json:"feedroom_id" binding:"required"`
-	Participants    []interface{} `json:"participants" binding:"required"`
+	Participants    []interface{} `json:"participants"`
+	UUIDS           []string      `json:"uuids"`
 	IsSecret        bool          `json:"is_secret"`
 	IsChannelInvite bool          `json:"is_channel_invite"`
 }
 
 type RemoveParticipantRequest struct {
 	FeedroomID    interface{} `json:"feedroom_id" binding:"required"`
-	ParticipantID interface{} `json:"participant_id" binding:"required"`
+	ParticipantID interface{} `json:"participant_id"`
+	UUID          string      `json:"uuid"`
 	IsSecret      bool        `json:"is_secret"`
 }
 
@@ -110,6 +112,7 @@ func addParticipantsInternal(c *gin.Context, userId string) {
 		participantRequest := chatroom.ParticipantRequest{
 			ChatroomID:           addParticipantRequest.FeedroomID,
 			ChatroomParticipants: addParticipantRequest.Participants,
+			UUIDs:                addParticipantRequest.UUIDS,
 			IsSecret:             addParticipantRequest.IsSecret,
 		}
 
@@ -121,6 +124,7 @@ func addParticipantsInternal(c *gin.Context, userId string) {
 		addSecretParticipantRequest := chatroom.InternalParticipantRequest{
 			ChatroomID:                 addParticipantRequest.FeedroomID,
 			SecretChatroomParticipants: addParticipantRequest.Participants,
+			UUIDs:                      addParticipantRequest.UUIDS,
 			IsChannelInvite:            true,
 		}
 
@@ -147,6 +151,7 @@ func removeParticipantsInternal(c *gin.Context, userId string) {
 		removeParticipantRequest := chatroom.RemoveParticipantRequest{
 			ChatroomID: removeParticipantsRequest.FeedroomID,
 			MemberID:   removeParticipantsRequest.ParticipantID,
+			UUID:       removeParticipantsRequest.UUID,
 		}
 
 		//Send Request
@@ -155,8 +160,15 @@ func removeParticipantsInternal(c *gin.Context, userId string) {
 	} else {
 		// else call secret participant remove api internally
 		removeParticipantRequest := chatroom.RemoveParticipantRequest{
-			ChatroomID:     removeParticipantsRequest.FeedroomID,
-			RemovedMembers: []interface{}{removeParticipantsRequest.ParticipantID},
+			ChatroomID: removeParticipantsRequest.FeedroomID,
+		}
+
+		if removeParticipantsRequest.ParticipantID != nil {
+			removeParticipantRequest.RemovedMembers = []interface{}{removeParticipantsRequest.ParticipantID}
+		}
+
+		if removeParticipantsRequest.UUID != "" {
+			removeParticipantRequest.UUIDs = []interface{}{removeParticipantsRequest.UUID}
 		}
 
 		//Send Request

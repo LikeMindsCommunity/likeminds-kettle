@@ -13,6 +13,7 @@ import (
 
 type RemoveMemberRequest struct {
 	MemberIds interface{} `json:"member_ids,omitempty"`
+	UUIDs     interface{} `json:"uuids,omitempty"`
 	TagID     int32       `json:"tag_id"`
 	Reason    string      `json:"reason"`
 }
@@ -101,6 +102,10 @@ func parseRemoveMemberRequest(c *gin.Context) (*RemoveMemberRequest, error) {
 
 	if err := c.ShouldBindJSON(&rmr); err != nil {
 		return nil, err
+	}
+
+	if rmr.UUIDs != nil {
+		rmr.MemberIds = rmr.UUIDs
 	}
 
 	return &rmr, nil

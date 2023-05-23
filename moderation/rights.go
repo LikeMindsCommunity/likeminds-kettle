@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/utility"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -19,7 +20,8 @@ type Right struct {
 }
 
 type RightsRequest struct {
-	UserId      interface{} `json:"user_id" binding:"required"`
+	UserId      interface{} `json:"user_id"`
+	UUID        string      `json:"uuid"`
 	CustomTitle string      `json:"custom_title"`
 	Rights      []Right     `json:"rights"`
 	IsCM        bool        `json:"is_cm"`
@@ -60,6 +62,7 @@ func Rights(c *gin.Context, method int) {
 		//Params to be sent in the fetch rights request
 		params := map[string]string{
 			ParamUserId: c.Query(ParamUserId),
+			ParamUUID:   c.Query(ParamUUID),
 		}
 
 		//GET Request params
@@ -104,34 +107,41 @@ func Rights(c *gin.Context, method int) {
 				return
 			}
 
+			// Get user_unique_id from user_id internally and update user_id
+			if rightsRequest.UUID != "" {
+				uuid, _ := utility.GetUuidInternally(utils.CreateHeaders(c, userId), rightsRequest.UUID)
+				rightsRequest.UserId = uuid
+			}
+
 			//If flow succeeds
 			if reflect.TypeOf(rightsRequest.UserId).Kind() == reflect.String {
 				post_action := ""
 				comment_action := ""
+
 				for _, right := range rightsRequest.Rights {
-					if right.Id == CREATE_POST_RIGHT_ID && right.IsSelected {
-						post_action = CREATE_POST_PERMISSION_ADDED_ACTION
+					if right.Id == CREATE_POST_RIGHT_ID {
+
+						if right.IsSelected {
+							post_action = CREATE_POST_PERMISSION_ADDED_ACTION
+						} else {
+							post_action = CREATE_POST_PERMISSION_REMOVED_ACTION
+						}
 					}
 
-					if right.Id == COMMENT_AND_REPLY_RIGHT_ID && right.IsSelected {
-						comment_action = CREATE_COMMENT_PERMISSION_ADDED_ACTION
+					if right.Id == COMMENT_AND_REPLY_RIGHT_ID {
+
+						if right.IsSelected {
+							comment_action = CREATE_COMMENT_PERMISSION_ADDED_ACTION
+						} else {
+							comment_action = CREATE_COMMENT_PERMISSION_REMOVED_ACTION
+						}
 					}
-				}
-
-				if post_action == "" {
-					post_action = CREATE_POST_PERMISSION_REMOVED_ACTION
-				}
-
-				if comment_action == "" {
-					comment_action = CREATE_COMMENT_PERMISSION_REMOVED_ACTION
 				}
 
 				if post_action != "" {
 					createActivityRequest := CreateActivityRequest{
 						Action: post_action,
 					}
-
-					fmt.Println(fmt.Sprintf(CreateFeedActivityEndpoint, rightsRequest.UserId.(string)), utils.SwarmService, createActivityRequest)
 
 					//Send Request
 					respBytes, _ := utils.GetRequestResponse(c, utils.SwarmService, fmt.Sprintf(CreateFeedActivityEndpoint, rightsRequest.UserId.(string)), utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createActivityRequest)

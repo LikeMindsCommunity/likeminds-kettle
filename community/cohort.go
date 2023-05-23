@@ -14,7 +14,8 @@ type CohortFilter struct {
 
 type CreateCohortRequest struct {
 	Name      string         `json:"name" binding:"required"`
-	MemberIDs []int          `json:"member_ids"  binding:"required"`
+	MemberIDs []int          `json:"member_ids"`
+	UUIDs     []string       `json:"uuids"`
 	Filter    []CohortFilter `json:"filter"`
 }
 
@@ -30,6 +31,7 @@ type EditCohortRequest struct {
 	CohortID   int            `json:"cohort_id" binding:"required"`
 	Name       string         `json:"name"`
 	MemberIDs  []int          `json:"member_ids"`
+	UUIDs      []string       `json:"uuids"`
 	Rights     []CohortRights `json:"rights"`
 	CohortType int            `json:"type"`
 	TypeID     string         `json:"type_id"`

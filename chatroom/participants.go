@@ -10,6 +10,7 @@ import (
 type ParticipantRequest struct {
 	ChatroomID           interface{}   `json:"chatroom_id"`
 	ChatroomParticipants []interface{} `json:"chatroom_participants"`
+	UUIDs                []string      `json:"uuids"`
 	IsSecret             bool          `json:"is_secret"`
 	IsChannelInvite      bool          `json:"is_channel_invite"`
 }
@@ -17,13 +18,16 @@ type ParticipantRequest struct {
 type InternalParticipantRequest struct {
 	ChatroomID                 interface{}   `json:"chatroom_id"`
 	SecretChatroomParticipants []interface{} `json:"secret_chatroom_participants"`
+	UUIDs                      []string      `json:"uuids"`
 	IsChannelInvite            bool          `json:"is_channel_invite"`
 }
 
 type RemoveParticipantRequest struct {
 	ChatroomID     interface{}   `json:"chatroom_id"`
 	MemberID       interface{}   `json:"member_id,omitempty"`
+	UUID           string        `json:"uuid,omitempty"`
 	RemovedMembers []interface{} `json:"removed_members"`
+	UUIDs          []interface{} `json:"uuids"`
 	IsSecret       bool          `json:"is_secret"`
 }
 
@@ -78,6 +82,7 @@ func updateParticipantsRequest(pr *ParticipantRequest) *InternalParticipantReque
 
 	ipr.ChatroomID = pr.ChatroomID
 	ipr.SecretChatroomParticipants = pr.ChatroomParticipants
+	ipr.UUIDs = pr.UUIDs
 	ipr.IsChannelInvite = true
 
 	return &ipr
@@ -177,12 +182,19 @@ func removeParticipantsInternal(c *gin.Context, userId string) {
 	is_secret := removeParticipantRequest.IsSecret
 
 	if is_secret {
-		// If is_secret is true, call remove participant from open chatroom api internally
+		// If is_secret is true, call remove participant from secret chatroom api internally
 		utils.SendRequest(c, utils.CoreService, RemoveSecretParticipantsEndpoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeParticipantRequest)
 
 	} else {
-		// Updated body according to secret participant remove request
-		removeParticipantRequest.RemovedMembers = []interface{}{removeParticipantRequest.MemberID}
+
+		// Updated body according to open participant remove request
+		if removeParticipantRequest.MemberID != nil {
+			removeParticipantRequest.RemovedMembers = []interface{}{removeParticipantRequest.MemberID}
+		}
+
+		if removeParticipantRequest.UUID != "" {
+			removeParticipantRequest.UUIDs = []interface{}{removeParticipantRequest.UUID}
+		}
 
 		//Send Request
 		utils.SendRequest(c, utils.CoreService, RemoveOpenParticipantsEndpoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, removeParticipantRequest)

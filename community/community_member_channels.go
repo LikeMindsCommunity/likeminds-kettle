@@ -37,10 +37,17 @@ func CommunityMemberChannels(c *gin.Context) {
 
 	// Params to be sent in the api/fetch_user_chatrooms request
 	requestParams := map[string]string{
-		ParamUserId:     user_id,
 		ParamState:      c.Query(ParamState),
 		ParamPage:       c.Query(ParamPage),
 		ParamFilterType: utils.ParseArrayToString(filterType),
+	}
+
+	// If user_id is digit then send it as user_id else send it as uuid
+	if _, err := strconv.Atoi(user_id); err == nil {
+		// If user_id is username then fetch user_id from username
+		requestParams[ParamUserId] = user_id
+	} else {
+		requestParams[ParamUUID] = user_id
 	}
 
 	// Send Request
