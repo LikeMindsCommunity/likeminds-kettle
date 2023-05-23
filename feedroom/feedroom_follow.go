@@ -20,6 +20,7 @@ func FeedroomFollow(c *gin.Context) {
 	params := map[string]string{
 		chatroom.ParamCollabcardId: c.Query(ParamFeedroomId),
 		chatroom.ParamMemberId:     userId,
+		chatroom.ParamUUID:         c.Query(chatroom.ParamUUID),
 		chatroom.ParamValue:        c.Query(chatroom.ParamValue),
 	}
 
