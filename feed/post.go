@@ -2,11 +2,13 @@ package feed
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/chatroom"
 	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/utility"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -38,6 +40,7 @@ type CreatePostRequest struct {
 	Heading     string              `json:"heading"`
 	Attachments []AttachmentRequest `json:"attachments"`
 	FeedroomID  int                 `json:"feedroom_id"`
+	TaggedUsers []string            `json:"tagged_users"`
 }
 
 type EditPostRequest struct {
@@ -248,6 +251,10 @@ func createPostInternal(c *gin.Context, userId string) {
 		return
 	}
 
+	//Get tagged users from text
+	taggedUsers := getTaggedUsersFromText(utils.CreateHeaders(c, userId), createPostRequest.Text)
+	createPostRequest.TaggedUsers = taggedUsers
+
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, CreatePostEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createPostRequest)
 
@@ -405,4 +412,43 @@ func deletePostInternal(c *gin.Context, userId string) {
 
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, DeletePostEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, deletePostRequest)
+}
+
+func getTaggedUsersFromText(headers map[string]interface{}, text string) []string {
+	var taggedUsers []interface{}
+
+	// Get user unique id from member route using regex
+	pattern, _ := regexp.Compile("route://[member member_profile]+/([a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12})")
+	allSubstringMatches := pattern.FindAllStringSubmatch(text, -1)
+
+	for _, occurance := range allSubstringMatches {
+		taggedUsers = append(taggedUsers, occurance[1])
+	}
+
+	// Get client user unique id from user_profile route using regex
+	pattern, _ = regexp.Compile(`route:\/\/user_profile\/([\s\S]*?)>>`)
+	allSubstringMatches = pattern.FindAllStringSubmatch(text, -1)
+
+	for _, occurance := range allSubstringMatches {
+		taggedUsers = append(taggedUsers, occurance[1])
+	}
+
+	var user_unique_ids []string
+
+	// Get valid user unique ids by calling internal users meta api
+	if len(taggedUsers) > 0 {
+
+		user_unique_ids_info, err := utility.GetUsersInfoInternally(headers, taggedUsers, true)
+
+		if err != nil {
+			return user_unique_ids
+		}
+
+		// Type cast inteface{} to string array
+		for _, uuid := range user_unique_ids_info.([]interface{}) {
+			user_unique_ids = append(user_unique_ids, uuid.(string))
+		}
+	}
+
+	return user_unique_ids
 }
