@@ -40,7 +40,7 @@ type CreatePostRequest struct {
 	Heading     string              `json:"heading"`
 	Attachments []AttachmentRequest `json:"attachments"`
 	FeedroomID  int                 `json:"feedroom_id"`
-	TaggedUsers []string            `json:"tagged_users"`
+	UUIDs       []string            `json:"uuids"`
 }
 
 type EditPostRequest struct {
@@ -253,7 +253,7 @@ func createPostInternal(c *gin.Context, userId string) {
 
 	//Get tagged users from text
 	taggedUsers := getTaggedUsersFromText(utils.CreateHeaders(c, userId), createPostRequest.Text)
-	createPostRequest.TaggedUsers = taggedUsers
+	createPostRequest.UUIDs = taggedUsers
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, CreatePostEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createPostRequest)
