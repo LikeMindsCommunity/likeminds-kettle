@@ -81,3 +81,47 @@ func createUserActivityInternal(c *gin.Context, userId string, EndPoint string) 
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, EndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createUserActivityRequest)
 }
+
+// GetUserActivity | get user activity feed from swarm service
+func GetUserActivity(c *gin.Context) {
+	userID := user.GetRequestingUserId(c)
+	if userID == "" {
+		return
+	}
+
+	endpoint := fmt.Sprintf(GetUserActivityEndPoint, userID)
+
+	utils.SendRequest(c, utils.SwarmService, endpoint, utils.GETRequest, utils.CreateHeaders(c, userID), nil, gin.H{})
+}
+
+// GetUserActivityUnreadCount | get user activity unread count from swarm service
+func GetUserActivityUnreadCount(c *gin.Context) {
+	userID := user.GetRequestingUserId(c)
+	if userID == "" {
+		return
+	}
+
+	endpoint := fmt.Sprintf(GetUserActivityUnreadCountEndPoint, userID)
+
+	//Params to be sent in the api/chatroom/fetch_all request
+	params := map[string]string{
+		ParamPage:     c.Query(ParamPage),
+		ParamPageSize: c.Query(ParamPageSize),
+	}
+
+	utils.SendRequest(c, utils.SwarmService, endpoint, utils.GETRequest, utils.CreateHeaders(c, userID), params, gin.H{})
+}
+
+// UserActivityMarkRead | mark user activity as read to swarm service
+func UserActivityMarkRead(c *gin.Context) {
+	userID := user.GetRequestingUserId(c)
+	if userID == "" {
+		return
+	}
+
+	activityID := c.Param("activity_id")
+
+	endpoint := fmt.Sprintf(UserActivityMarkReadEndPoint, userID, activityID)
+
+	utils.SendRequest(c, utils.SwarmService, endpoint, utils.POSTMethod, utils.CreateHeaders(c, userID), nil, gin.H{})
+}
