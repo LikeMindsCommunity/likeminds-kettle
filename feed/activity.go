@@ -89,9 +89,14 @@ func GetUserActivity(c *gin.Context) {
 		return
 	}
 
+	params := map[string]string{
+		ParamPage:     c.Query(ParamPage),
+		ParamPageSize: c.Query(ParamPageSize),
+	}
+
 	endpoint := fmt.Sprintf(GetUserActivityEndPoint, userID)
 
-	utils.SendRequest(c, utils.SwarmService, endpoint, utils.GETRequest, utils.CreateHeaders(c, userID), nil, gin.H{})
+	utils.SendRequest(c, utils.SwarmService, endpoint, utils.GETRequest, utils.CreateHeaders(c, userID), params, gin.H{})
 }
 
 // GetUserActivityUnreadCount | get user activity unread count from swarm service
