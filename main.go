@@ -33,7 +33,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "1.26.0"
+	var AppVersion string = "1.27.0"
 
 	initGin()
 	client = cache.InitRedis()
@@ -200,7 +200,10 @@ func main() {
 	router.GET("/feed/post/:post_id/comment/:comment_id/like", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.GetCommentLikes)
 	router.GET("/feed/user/:user_id/save", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.GetSavedPosts)
 	router.GET("/feed/user/:user_id/post", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.FetchUserCreatedPosts)
+	router.GET("/feed/user/activity", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.GetUserActivity)
 	router.POST("/feed/user/:user_id/activity", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CreateUserActivity)
+	router.GET("/feed/user/activity/unread_count", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.GetUserActivityUnreadCount)
+	router.POST("/feed/user/activity/:activity_id/mark_read", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.UserActivityMarkRead)
 	router.GET("/feed/universal", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.FetchUniversalFeed)
 	router.GET("/feed/group", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.FetchGroupFeed)
 
