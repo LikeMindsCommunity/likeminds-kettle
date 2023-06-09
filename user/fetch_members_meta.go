@@ -76,3 +76,24 @@ func FetchMemberMeta(headers map[string]interface{}, member_ids []string) (map[s
 
 	return response, err
 }
+
+// This function is used to fetch members meta from user_ids of feed entity data
+func GetUsersMetaFromFeedData(headers map[string]interface{}, feedDataArray []interface{}) (map[string]MemberMeta, error) {
+
+	user_unique_ids := []string{}
+
+	// Fetch user ids from array
+	for _, data := range feedDataArray {
+		if user_unique_id, ok := data.(map[string]interface{})["user_id"]; ok {
+			user_unique_ids = append(user_unique_ids, user_unique_id.(string))
+		}
+	}
+
+	// Fetch user data for given user_unique_ids
+	user_data, err := FetchMemberMeta(headers, user_unique_ids)
+	if err != nil {
+		return nil, err
+	}
+
+	return user_data, nil
+}
