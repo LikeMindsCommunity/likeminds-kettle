@@ -65,9 +65,6 @@ func PostSearch(c *gin.Context) {
 	}
 
 	//Send Request
-	// utils.SendRequest(c, utils.SwarmService, PostSearchEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
-
-	//Send Request
 	respBytes, statusCode = utils.GetRequestResponse(c, utils.SwarmService, PostSearchEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 
 	//Validate response

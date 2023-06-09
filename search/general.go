@@ -86,14 +86,6 @@ func GeneralSearch(c *gin.Context) {
 		params[ParamExcludedChatroomIds] = fmt.Sprintf("%v", string(temp_params))
 		params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
-		// respBytes, _, err = utils.GetRequestResponseWithoutContext(utils.SwarmService, PostSearchEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
-
-		// var apiCR4 api_client.APIClientResponse
-		// err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR4)
-		// if err == nil {
-		// 	dataResponse["posts"] = apiCR4.Response["posts"]
-		// }
-
 		//Send Request
 		respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, PostSearchEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 
