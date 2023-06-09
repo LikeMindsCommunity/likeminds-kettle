@@ -47,16 +47,16 @@ func GeneralSearch(c *gin.Context) {
 
 	params[ParamSearchType] = "title"
 	//Send Request to fetch the chatroom search results
-	respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.CoreService, chatroom.ChatroomSearchEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, _, _ := utils.GetRequestResponseWithoutContext(utils.CoreService, chatroom.ChatroomSearchEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 
 	var apiCR1 api_client.APIClientResponse
-	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR1)
+	err := api_client.UnmarshalAPIClientResponse(respBytes, &apiCR1)
 	if err == nil {
 		dataResponse["chatrooms"] = apiCR1.Response["chatrooms"]
 	}
 
 	//Send Request to fetch the message search results
-	respBytes, _, err = utils.GetRequestResponseWithoutContext(utils.CoreService, conversation.ConversationSearchEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, _, _ = utils.GetRequestResponseWithoutContext(utils.CoreService, conversation.ConversationSearchEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 
 	var apiCR2 api_client.APIClientResponse
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR2)
@@ -67,7 +67,7 @@ func GeneralSearch(c *gin.Context) {
 	//Send Request to fetch the post search results
 
 	//Send Request to get excluded chatrooms list on Caravan Service
-	respBytes, _, err = utils.GetRequestResponseWithoutContext(utils.CoreService, community.CommunityExcludedChatroomsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+	respBytes, _, _ = utils.GetRequestResponseWithoutContext(utils.CoreService, community.CommunityExcludedChatroomsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
 
 	var apiCR3 api_client.APIClientResponse
 	excludedChatroomIds := []int{}
