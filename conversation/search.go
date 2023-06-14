@@ -6,7 +6,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//ConversationSearch is used to perform search on the conversations
+// ConversationSearch is used to perform search on the conversations
 func ConversationSearch(c *gin.Context) {
 
 	//Authorize User
@@ -21,6 +21,7 @@ func ConversationSearch(c *gin.Context) {
 		ParamFollowStatus: c.Query(ParamFollowStatus),
 		ParamPage:         c.Query(ParamPage),
 		ParamPageSize:     c.Query(ParamPageSize),
+		ParamChatroomId:   c.Query(ParamChatroomId),
 	}
 
 	//Send Request
