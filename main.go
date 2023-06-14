@@ -301,58 +301,65 @@ func (r responseBodyWriter) Write(b []byte) (int, error) {
 // LoggingMiddleware will log the request and response of API
 func LoggingMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		data := gin.H{}
+		if c.Request.RequestURI == "/" {
 
-		// Starting time
-		startTime := time.Now()
+			c.Next()
 
-		// Implementing custom response body writer in the context
-		w := &responseBodyWriter{body: &bytes.Buffer{}, ResponseWriter: c.Writer}
-		c.Writer = w
-
-		// Updating Request Data
-		data["request"] = processRequest(c)
-
-		// Processing request
-		c.Next()
-
-		// End Time
-		endTime := time.Now()
-
-		response := gin.H{}
-		statusCode := c.Writer.Status()
-
-		// Unmarshalling Request Response
-		_ = json.Unmarshal(w.body.Bytes(), &response)
-
-		// Updating Request Response
-		data["response"] = gin.H{
-			"http_response_code": statusCode,
-			"content":            response,
-		}
-
-		if statusCode < http.StatusBadRequest {
-			data["response"].(gin.H)["content"] = gin.H{}
-		}
-
-		// Updating Request Meta Data
-		data["meta"] = gin.H{
-			"latency":   endTime.Sub(startTime),
-			"client_ip": c.ClientIP(),
-		}
-
-		// Marshalling the final Data
-		marshelledData, _ := json.Marshal(data)
-
-		if statusCode >= http.StatusOK && statusCode < http.StatusBadRequest {
-			// Logging the generated request data as Info
-			log.Info(string(marshelledData))
 		} else {
-			// Logging the generated request data as Error
-			log.Error(string(marshelledData))
-		}
 
-		c.Next()
+			data := gin.H{}
+
+			// Starting time
+			startTime := time.Now()
+
+			// Implementing custom response body writer in the context
+			w := &responseBodyWriter{body: &bytes.Buffer{}, ResponseWriter: c.Writer}
+			c.Writer = w
+
+			// Updating Request Data
+			data["request"] = processRequest(c)
+
+			// Processing request
+			c.Next()
+
+			// End Time
+			endTime := time.Now()
+
+			response := gin.H{}
+			statusCode := c.Writer.Status()
+
+			// Unmarshalling Request Response
+			_ = json.Unmarshal(w.body.Bytes(), &response)
+
+			// Updating Request Response
+			data["response"] = gin.H{
+				"http_response_code": statusCode,
+				"content":            response,
+			}
+
+			if statusCode < http.StatusBadRequest {
+				data["response"].(gin.H)["content"] = gin.H{}
+			}
+
+			// Updating Request Meta Data
+			data["meta"] = gin.H{
+				"latency":   endTime.Sub(startTime),
+				"client_ip": c.ClientIP(),
+			}
+
+			// Marshalling the final Data
+			marshelledData, _ := json.Marshal(data)
+
+			if statusCode >= http.StatusOK && statusCode < http.StatusBadRequest {
+				// Logging the generated request data as Info
+				log.Info(string(marshelledData))
+			} else {
+				// Logging the generated request data as Error
+				log.Error(string(marshelledData))
+			}
+
+			c.Next()
+		}
 	}
 }
 
