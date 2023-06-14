@@ -301,7 +301,12 @@ func (r responseBodyWriter) Write(b []byte) (int, error) {
 // LoggingMiddleware will log the request and response of API
 func LoggingMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if c.Request.RequestURI != "/" {
+		if c.Request.RequestURI == "/" {
+
+			c.Next()
+
+		} else {
+
 			data := gin.H{}
 
 			// Starting time
@@ -352,9 +357,9 @@ func LoggingMiddleware() gin.HandlerFunc {
 				// Logging the generated request data as Error
 				log.Error(string(marshelledData))
 			}
-		}
 
-		c.Next()
+			c.Next()
+		}
 	}
 }
 
