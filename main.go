@@ -1,8 +1,14 @@
 package main
 
 import (
-	"log"
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
+	"time"
+
+	log "github.com/nateshr/likeminds-authentication/logging"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -39,6 +45,7 @@ func main() {
 	client = cache.InitRedis()
 	router.Use(cors.New(enableCors()))
 	router.Use(ApiMiddleware(client))
+	router.Use(LoggingMiddleware())
 	router.GET("", web.Home)
 
 	//OTP Apis
@@ -246,13 +253,107 @@ func main() {
 	router.GET("/search/post/user/:user_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.UserCreatedPostSearch)
 	router.GET("/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.GeneralSearch)
 
-	log.Printf("application version: %s", AppVersion)
+	log.Info(fmt.Sprintf("application version: %s", AppVersion))
 	log.Fatal(router.Run(":8080"))
 }
 
 func initGin() {
 	gin.SetMode(gin.ReleaseMode)
 	router = gin.Default()
+}
+
+// Method to process API request to log
+func processRequest(c *gin.Context) interface{} {
+	requestBodyData := gin.H{}
+
+	// Reading request body
+	requestBody, err := ioutil.ReadAll(c.Request.Body)
+
+	// Updating request body after read
+	c.Request.Body = ioutil.NopCloser(bytes.NewReader(requestBody))
+
+	// Unmarshalling request body
+	if err == nil {
+		_ = json.Unmarshal(requestBody, &requestBodyData)
+	}
+
+	return gin.H{
+		"host":         c.Request.Host,
+		"absolute_uri": c.Request.RequestURI,
+		"method":       c.Request.Method,
+		"headers":      c.Request.Header,
+		"body":         requestBodyData,
+	}
+}
+
+// responseBodyWriter | Custom Response Writer
+type responseBodyWriter struct {
+	gin.ResponseWriter
+	body *bytes.Buffer
+}
+
+// Write | Custom Write Method for responseBodyWriter
+func (r responseBodyWriter) Write(b []byte) (int, error) {
+	r.body.Write(b)
+	return r.ResponseWriter.Write(b)
+}
+
+// LoggingMiddleware will log the request and response of API
+func LoggingMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		data := gin.H{}
+
+		// Starting time
+		startTime := time.Now()
+
+		// Implementing custom response body writer in the context
+		w := &responseBodyWriter{body: &bytes.Buffer{}, ResponseWriter: c.Writer}
+		c.Writer = w
+
+		// Updating Request Data
+		data["request"] = processRequest(c)
+
+		// Processing request
+		c.Next()
+
+		// End Time
+		endTime := time.Now()
+
+		response := gin.H{}
+		statusCode := c.Writer.Status()
+
+		// Unmarshalling Request Response
+		_ = json.Unmarshal(w.body.Bytes(), &response)
+
+		// Updating Request Response
+		data["response"] = gin.H{
+			"http_response_code": statusCode,
+			"content":            response,
+		}
+
+		if statusCode < http.StatusBadRequest {
+			data["response"].(gin.H)["content"] = gin.H{}
+		}
+
+		// Updating Request Meta Data
+		data["meta"] = gin.H{
+			"latency":   endTime.Sub(startTime),
+			"client_ip": c.ClientIP(),
+		}
+
+		// Marshalling the final Data
+		marshelledData, _ := json.Marshal(data)
+
+		if statusCode >= http.StatusOK && statusCode < http.StatusBadRequest {
+			// Logging the generated request data as Info
+			log.Info(string(marshelledData))
+		} else {
+			// Logging the generated request data as Error
+			log.Error(string(marshelledData))
+		}
+
+		c.Next()
+	}
 }
 
 // ApiMiddleware will add the db connection to the context
@@ -268,7 +369,7 @@ func VTMValidationMiddleware() gin.HandlerFunc {
 		//Extract VTM from token, internally it checks if token is valid or not
 		vtm, err := token.ExtractVTM(c.Request.Header.Get(token.HeaderAuthorization))
 		if vtm == nil {
-			log.Print(err)
+			log.Error(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
 				ErrorMessage: token.ErrorInvalidVTM,
@@ -293,7 +394,7 @@ func LTMValidationMiddleware(client *redis.Client, emptyBearerTokenCheck bool) g
 		//Extract LTM from token, internally it checks if token is valid or not
 		ltm, err := token.ExtractLTM(bearerToken)
 		if ltm == nil {
-			log.Print(err)
+			log.Error(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
 				ErrorMessage: token.ErrorInvalidLTM,
@@ -320,7 +421,7 @@ func RTMValidationMiddleware() gin.HandlerFunc {
 		//Extract RTM from token, internally it checks if token is valid or not
 		rtm, err := token.ExtractRTM(c.Request.Header.Get(token.HeaderAuthorization))
 		if rtm == nil {
-			log.Print(err)
+			log.Error(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
 				ErrorMessage: token.ErrorInvalidRTM,
@@ -347,7 +448,7 @@ func LogoutValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 		//Extract LTM from token, internally it checks if token is valid or not
 		ltm, err := token.ExtractLTM(c.Request.Header.Get(token.HeaderAuthorization))
 		if ltm == nil {
-			log.Print(err)
+			log.Error(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
 				ErrorMessage: token.ErrorInvalidLTM,
@@ -374,7 +475,7 @@ func LogoutValidationMiddleware(client *redis.Client) gin.HandlerFunc {
 			//Extract RTM from token, internally it checks if token is valid or not
 			rtm, err := token.ExtractRTM(logoutRequest.RefreshToken)
 			if rtm == nil {
-				log.Print(err)
+				log.Error(err)
 				c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 					Success:      false,
 					ErrorMessage: token.ErrorInvalidRTM,
