@@ -83,6 +83,7 @@ const ParamMinTimeStamp = "min_timestamp"
 const ParamChatroomTypes = "chatroom_types"
 const ParamTag = "tag"
 const ParamDomain = "domain"
+const ParamExcludedConversationStates = "excluded_conversation_states"
 
 const (
 	SdkApiType = 1

@@ -53,5 +53,30 @@ func UserCreatedPostSearch(c *gin.Context) {
 	}
 
 	//Send Request
-	utils.SendRequest(c, utils.SwarmService, CreatedPostSearchEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, CreatedPostSearchEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	//If flow succeeds
+	dataResponse := apiCR.Response
+	if value, ok := dataResponse["posts"]; ok {
+		posts := value.([]interface{})
+
+		user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts)
+
+		if err != nil {
+			utils.GenerateResponse(c, nil)
+			return
+		}
+
+		//Update user data in dataResponse
+		dataResponse["users"] = user_data
+	}
+
+	//Send response
+	utils.GenerateResponse(c, dataResponse)
 }

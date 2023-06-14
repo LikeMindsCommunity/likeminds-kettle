@@ -1,7 +1,9 @@
 package community
 
 import (
-	"log"
+	"fmt"
+
+	log "github.com/nateshr/likeminds-authentication/logging"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
@@ -115,7 +117,7 @@ func validateDeleteUserDataReponse(respBytes []byte, err error) {
 
 	//If API fails or any other error
 	if err != nil {
-		log.Println("Error while deleting user data from Swarm: ", err.Error())
+		log.Error(fmt.Sprintf("Error while deleting user data from Swarm: %s", err.Error()))
 	}
 
 	//Parse response
@@ -124,12 +126,12 @@ func validateDeleteUserDataReponse(respBytes []byte, err error) {
 
 	if marshal_err != nil {
 		//Internal unmarshal error
-		log.Println("Error while Umarshalling: ", marshal_err.Error())
+		log.Error(fmt.Sprintf("Error while Umarshalling: %s", marshal_err.Error()))
 	}
 
 	if !apiCR.Success {
 		//If internal api returns success as false
-		log.Println("Error while deleting user data from Swarm: ", apiCR.ErrorMessage)
+		log.Error(fmt.Sprintf("Error while deleting user data from Swarm: %s", apiCR.ErrorMessage))
 	}
 
 }

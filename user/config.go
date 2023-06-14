@@ -19,13 +19,6 @@ func Config(c *gin.Context) {
 		ParamIngestCommunities: c.Query(ParamIngestCommunities),
 	}
 
-	//Params Validation
-	if params[ParamIngestCommunities] == "" {
-		//If GET params are missing
-		utils.GETQueryParamsMissingError(c)
-		return
-	}
-
 	//Send Request
 	utils.SendRequest(c, utils.CoreService, ConfigEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 }

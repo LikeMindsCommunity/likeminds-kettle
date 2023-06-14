@@ -85,20 +85,12 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 	//If flow succeeds
 	dataResponse := apiCR.Response
 	if value, ok := dataResponse["posts"]; ok {
+
 		posts := value.([]interface{})
-		user_ids := []string{}
 
-		//Fetch posts user id
-		for _, post_data := range posts {
-			if user_unique_id, ok := post_data.(map[string]interface{})["user_id"]; ok {
-				user_ids = append(user_ids, user_unique_id.(string))
-			}
-		}
-
-		//Fetch user data for given user_unique_ids
-		user_data, err := user.FetchMemberMeta(utils.CreateHeaders(c, userId), user_ids)
+		user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts)
 		if err != nil {
-			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
+			utils.GenerateResponse(c, nil)
 			return
 		}
 
