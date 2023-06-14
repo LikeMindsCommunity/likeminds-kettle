@@ -2,8 +2,10 @@ package utils
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 	"net/http"
+
+	log "github.com/nateshr/likeminds-authentication/logging"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
@@ -74,7 +76,7 @@ func ValidateClientResponseWithoutContext(respBytes []byte, statuscode int, err 
 
 	//If API fails or any other error
 	if err != nil {
-		log.Printf("Error Occured : %s", err.Error())
+		log.Error(fmt.Sprintf("Error Occured : %s", err.Error()))
 		return nil
 	}
 
@@ -84,13 +86,13 @@ func ValidateClientResponseWithoutContext(respBytes []byte, statuscode int, err 
 
 	if marshal_err != nil {
 		//Internal unmarshal error
-		log.Println("Error while Umarshalling: ", marshal_err.Error())
+		log.Error(fmt.Sprintf("Error while Umarshalling: %s", marshal_err.Error()))
 		return nil
 	}
 
 	if !apiCR.Success {
 		//If internal api returns success as false
-		log.Printf("Error Occured :(%d) %s", statuscode, apiCR.ErrorMessage)
+		log.Error(fmt.Sprintf("Error Occured :(%d) %s", statuscode, apiCR.ErrorMessage))
 		return nil
 	}
 

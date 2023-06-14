@@ -3,7 +3,8 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"log"
+
+	log "github.com/nateshr/likeminds-authentication/logging"
 )
 
 func ParseArrayToString(array []interface{}) string {
@@ -13,7 +14,8 @@ func ParseArrayToString(array []interface{}) string {
 
 	temp_params, err := json.Marshal(array)
 	if err != nil {
-		log.Println("Error in parsing array to string: ", err.Error())
+
+		log.Error(fmt.Sprintf("Error in parsing array to string: %s", err.Error()))
 		return ""
 	}
 
@@ -38,7 +40,7 @@ func ParseInterfaceToString(data interface{}) string {
 
 	temp_param, err := json.Marshal(data)
 	if err != nil {
-		log.Println("Error in parsing interface to string: ", err.Error())
+		log.Error(fmt.Sprintf("Error in parsing interface to string: %s", err.Error()))
 		return ""
 	}
 

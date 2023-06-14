@@ -1,7 +1,9 @@
 package community
 
 import (
-	"log"
+	"fmt"
+
+	log "github.com/nateshr/likeminds-authentication/logging"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/feed"
@@ -275,7 +277,7 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 		// Call Internal method to fetch users data
 		users, err = user.FetchMemberMeta(utils.CreateHeaders(c, userId), user_ids)
 		if err != nil {
-			log.Println("Error while fetching users data for reports:", err)
+			log.Error(fmt.Sprintf("Error while fetching users data for reports: %s", err))
 		}
 	}
 
