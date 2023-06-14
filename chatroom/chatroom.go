@@ -189,7 +189,8 @@ func getChatroomInternal(c *gin.Context, userId string) {
 		} else {
 			// Params to be sent in the api/chatroom/fetch request
 			params := map[string]string{
-				ParamChatroomId: c.Query(ParamChatroomId),
+				ParamChatroomId:                 c.Query(ParamChatroomId),
+				ParamExcludedConversationStates: c.Query(ParamExcludedConversationStates),
 			}
 
 			//Send Request
