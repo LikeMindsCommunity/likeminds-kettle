@@ -36,6 +36,7 @@ type AttachmentRequest struct {
 }
 
 type CreatePostRequest struct {
+	TempID      *string             `json:"temp_id"`
 	Text        string              `json:"text"`
 	Heading     string              `json:"heading"`
 	Attachments []AttachmentRequest `json:"attachments"`
