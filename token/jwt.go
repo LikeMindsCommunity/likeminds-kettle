@@ -25,6 +25,7 @@ type VerifyTokenMeta struct {
 	AccessUuid         string
 	AccessTokenExpires int64
 	AccessToken        string
+	ApiKey             string
 }
 
 type LoginTokenMeta struct {
@@ -43,7 +44,7 @@ type RefreshTokenMeta struct {
 	ApiKey              string
 }
 
-func CreateVTM() (*VerifyTokenMeta, error) {
+func CreateVTM(api_key string) (*VerifyTokenMeta, error) {
 	vtm := &VerifyTokenMeta{
 		AccessUuid:         uuid.NewV4().String(),
 		AccessTokenExpires: time.Now().Add(time.Minute * 15).Unix(),
@@ -55,6 +56,7 @@ func CreateVTM() (*VerifyTokenMeta, error) {
 	vtmClaims := jwt.MapClaims{}
 	vtmClaims["access_uuid"] = vtm.AccessUuid
 	vtmClaims["exp"] = vtm.AccessTokenExpires
+	vtmClaims["api_key"] = api_key
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, vtmClaims)
 	vtm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
 	if err != nil {
@@ -153,8 +155,10 @@ func ExtractVTM(bearerToken string) (*VerifyTokenMeta, error) {
 		if !ok {
 			return nil, err
 		}
+		apiKey, _ := claims["api_key"].(string)
 		return &VerifyTokenMeta{
 			AccessUuid: accessUuid,
+			ApiKey:     apiKey,
 		}, nil
 	}
 	return nil, err

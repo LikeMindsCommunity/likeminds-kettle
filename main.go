@@ -51,6 +51,7 @@ func main() {
 	//OTP Apis
 	router.GET("/otp/generate", otp.GenerateOTP)
 	router.GET("/otp/verify", otp.VerifyOTP)
+	router.GET("/user/token", user.CreateVTMToken)
 
 	//User Apis
 	router.POST("/user/login", VTMValidationMiddleware(), user.Login)
@@ -62,6 +63,8 @@ func main() {
 	router.POST("/user/device/push", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.PushUserToken)
 	router.POST("/user/subscription/whatsapp", user.WASubscription)
 	router.GET("/user/meta", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.UserMeta)
+	router.POST("/user/otp", VTMValidationMiddleware(), APIKeyValidationMiddleware(), user.GenerateUserOTP)
+	router.GET("/user/otp", VTMValidationMiddleware(), APIKeyValidationMiddleware(), user.VerifyUserOTP)
 
 	//Home Apis
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client, true), home.FetchCommunities)
@@ -73,7 +76,7 @@ func main() {
 	router.GET("/sdk/project", LTMValidationMiddleware(client, true), sdk.GetProject)
 	router.PUT("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.EditProject)
 	router.DELETE("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.DeleteProject)
-	router.GET("/sdk/onboarding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.GetScreen)
+	router.GET("/sdk/onboarding", VTMValidationMiddleware(), APIKeyValidationMiddleware(), sdk.GetScreen)
 	router.POST("/sdk/onboarding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.CreateScreen)
 	router.PUT("/sdk/onboarding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.EditScreen)
 	router.DELETE("/sdk/onboarding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.DeleteScreen)
@@ -511,10 +514,17 @@ const ResponseCommunityId = "community_id"
 
 func APIKeyValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//Check if request has LTM token or not
+		// Check if request has LTM token or not
 		ltm, ok := c.Get(token.ParamLTM)
 		if ok && ltm.(*token.LoginTokenMeta).ApiKey != "" {
 			c.Request.Header["X-Api-Key"] = []string{ltm.(*token.LoginTokenMeta).ApiKey}
+			c.Next()
+		}
+
+		// Check if request has VTM token or not
+		vtm, ok := c.Get(token.ParamVTM)
+		if ok && vtm.(*token.VerifyTokenMeta).ApiKey != "" {
+			c.Request.Header["X-Api-Key"] = []string{vtm.(*token.VerifyTokenMeta).ApiKey}
 			c.Next()
 		}
 

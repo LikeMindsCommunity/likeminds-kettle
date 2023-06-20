@@ -56,7 +56,7 @@ func VerifyOTP(c *gin.Context) {
 		utils.GenerateResponse(c, dataResponse)
 	} else {
 		//Create verify token
-		vtm, err := token.CreateVTM()
+		vtm, err := token.CreateVTM(c.GetHeader(utils.HeadersApiKey))
 		//If token creation fails
 		if err != nil {
 			utils.GeneralAPIError(c, err.Error())
