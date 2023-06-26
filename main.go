@@ -65,6 +65,7 @@ func main() {
 	router.GET("/user/meta", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.UserMeta)
 	router.POST("/user/otp", VTMValidationMiddleware(), APIKeyValidationMiddleware(), user.GenerateUserOTP)
 	router.GET("/user/otp", VTMValidationMiddleware(), APIKeyValidationMiddleware(), user.VerifyUserOTP)
+	router.GET("/user/social/login", VTMValidationMiddleware(), APIKeyValidationMiddleware(), user.UserSocialLogin)
 
 	//Home Apis
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client, true), home.FetchCommunities)
