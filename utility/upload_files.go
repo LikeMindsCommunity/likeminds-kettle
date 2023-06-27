@@ -15,7 +15,7 @@ type UploadFilesRequest struct {
 	Url            string      `json:"url,omitempty"`
 	Type           string      `json:"type,omitempty"`
 	FilesCount     int64       `json:"files_count,omitempty"`
-	ThumbnailUrl   string      `json:"thumnail_url,omitempty"`
+	ThumbnailUrl   string      `json:"thumbnail_url,omitempty"`
 	Index          int64       `json:"index,omitempty"`
 	Height         int64       `json:"height,omitempty"`
 	Width          int64       `json:"width,omitempty"`
