@@ -18,6 +18,7 @@ type InitiateSDKRequest struct {
 	ImageURL        string                            `json:"image_url"`
 	IsGuest         bool                              `json:"is_guest"`
 	QuestionAnswers []community.QuestionAnswerWithInt `json:"question_answers"`
+	User            user.User                         `json:"user,omitempty"`
 }
 
 // InitiateSDK is used to initiate sdk
