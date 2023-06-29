@@ -60,7 +60,7 @@ const UploadEventRecordingsMetaEndPoint = "/api/chatroom/event/upload_recordings
 const DeleteEventRecordingsMetaEndPoint = "/api/chatroom/event/delete_recordings_meta"
 const AddEventInstructorsEndPoint = "/api/chatroom/event/add_or_update_instructor"
 const AddEventHighlightsEndPoint = "/api/chatroom/event/add_or_update_highlights"
-const AddEventTestimonialsEndPoint = "/api/chatroom/event/add_or_update_member_testimonial"
+const AddEventTestimonialsEndPoint = "/api/chatroom/event/add_or_update_member_testimonials"
 const AddEventFAQEndPoint = "/api/chatroom/event/add_or_update_event_faq"
 
 const ParamCommunityId = "community_id"
@@ -118,8 +118,8 @@ const (
 
 // Edit Event Types
 const (
-	EditEventType     = "EDIT_EVENT"
-	EditLastSeenType  = "EDIT_LAST_SEEN"
-	EventAttendType   = "EVENT_ATTEND"
-	EventAttendedType = "EVENT_ATTENDED"
+	EditEventType      = "EDIT_EVENT"
+	UpdateLastSeenType = "UPDATE_LAST_SEEN"
+	EventAttendType    = "EVENT_ATTEND"
+	EventAttendedType  = "EVENT_ATTENDED"
 )

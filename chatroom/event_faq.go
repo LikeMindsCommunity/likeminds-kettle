@@ -13,8 +13,8 @@ type faq struct {
 
 // Request body params for adding event faq
 type AddEventFAQRequest struct {
-	ChatroomId string `json:"chatroom_id"`
-	FAQ        []faq  `json:"faq"`
+	ChatroomId string `json:"chatroom_id" binding:"required"`
+	FAQ        []faq  `json:"faq,omitempty"`
 }
 
 // function to parse POST body params for AddEventFAQRequest

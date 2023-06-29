@@ -13,8 +13,8 @@ type highlights struct {
 
 // Request body params for adding event highlights
 type AddEventHighlightsRequest struct {
-	ChatroomId string       `json:"chatroom_id"`
-	Highlights []highlights `json:"highlights"`
+	ChatroomId string       `json:"chatroom_id" binding:"required"`
+	Highlights []highlights `json:"highlights,omitempty"`
 }
 
 // Function to parse POST body params for AddEventHighlightsRequest

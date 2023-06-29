@@ -14,8 +14,8 @@ type testimonials struct {
 
 // Request body params for adding event testimonials
 type addEventTestimonialsRequest struct {
-	ChatroomId   string         `json:"chatroom_id"`
-	Testimonials []testimonials `json:"testimonials"`
+	ChatroomId   string         `json:"chatroom_id" binding:"required"`
+	Testimonials []testimonials `json:"testimonials,omitempty"`
 }
 
 // function to parse POST body params for addEventTestimonialsRequest
@@ -46,6 +46,6 @@ func AddEventTestimonials(c *gin.Context) {
 		return
 	}
 
-	// Send request to api/chatroom/event/add_or_update_member_testimonial
+	// Send request to api/chatroom/event/add_or_update_member_testimonials
 	utils.SendRequest(c, utils.CoreService, AddEventTestimonialsEndPoint, utils.POSTMethod, utils.CreateHeaders(c, userId), nil, addEventTestimonialsRequest)
 }

@@ -16,14 +16,14 @@ type CreateEventRequest struct {
 	OnlineLink             string  `json:"online_link"`
 	OnlineLinkId           string  `json:"online_link_id"`
 	OnlineLinkPassword     string  `json:"online_link_password"`
-	Location               string  `json:"location"`
-	LocationLat            float32 `json:"location_lat"`
-	LocationLong           float32 `json:"location_long"`
+	Location               string  `json:"location,omitempty"`
+	LocationLat            float32 `json:"location_lat,omitempty"`
+	LocationLong           float32 `json:"location_long,omitempty"`
 	DateTime               int64   `json:"date_time"`
-	EndDate                int64   `json:"end_date"`
+	EndDate                int64   `json:"end_date,omitempty"`
 	IsPaid                 bool    `json:"is_paid"`
 	Access                 int32   `json:"access"`
-	CoHost                 []int64 `json:"co_host"`
+	CoHost                 []int64 `json:"co_host,omitempty"`
 	AttachmentCount        int64   `json:"attachment_count"`
 	OnlineLinkEnableBefore int64   `json:"online_link_enable_before"`
 	EventPaymentLink       string  `json:"event_payment_link"`
@@ -34,9 +34,9 @@ type CreateEventRequest struct {
 // Request body params to edit an event
 type EditEventRequest struct {
 	CreateEventRequest
-	EventType  string  `json:"event_type"`
-	ChatroomId string  `json:"chatroom_id"`
-	CohortIds  []int64 `json:"cohort_ids"`
+	EventType  string  `json:"event_type" binding:"required"`
+	ChatroomId string  `json:"chatroom_id" binding:"required"`
+	CohortIds  []int64 `json:"cohort_ids,omitempty"`
 }
 
 // function to parse POST body params for CreateEventRequest
@@ -145,28 +145,28 @@ func editEventInternal(c *gin.Context, userId string) {
 	// check for event_type and send request accordingly
 	switch editEventRequest.EventType {
 
-	// If event_type == "edit_event", send request to /api/chatroom/event/update
+	// If event_type == "EDIT_EVENT"
 	case EditEventType:
 
 		// Send request to /api/chatroom/event/update
 		utils.SendRequest(c, utils.CoreService, UpdateEventEndpoint, utils.POSTMethod, utils.CreateHeaders(c, userId), nil, editEventRequest)
 		return
 
-	// If event_type == "edit_last_seen", send request to /api/chatroom/event/update_last_seen
-	case EditLastSeenType:
+	// If event_type == "UPDATE_LAST_SEEN"
+	case UpdateLastSeenType:
 
 		// Send request to /api/chatroom/event/update_last_seen
 		utils.SendRequest(c, utils.CoreService, EditLastSeenEventEndPoint, utils.POSTMethod, utils.CreateHeaders(c, userId), nil, editEventRequest)
 		return
 
-	// If event_type == "event_attend", send request to /api/chatroom/event/attend
+	// If event_type == "EVENT_ATTEND"
 	case EventAttendType:
 
 		// Send request to /api/chatroom/event/attend
 		utils.SendRequest(c, utils.CoreService, AttendEventEndPoint, utils.POSTMethod, utils.CreateHeaders(c, userId), nil, editEventRequest)
 		return
 
-	// If event_type == "event_attended", send request to /api/chatroom/event/attended
+	// If event_type == "EVENT_ATTENDED"
 	case EventAttendedType:
 
 		// Send request to /api/chatroom/event/attended

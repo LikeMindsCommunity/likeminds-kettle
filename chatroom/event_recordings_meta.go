@@ -18,7 +18,9 @@ type uploadEventRecordingsMetaRequest struct {
 
 // Request body params for Deleting Event Recordings Meta
 type deleteEventRecordingsMetaRequest struct {
-	Id string `json:"id" binding:"required"`
+	Id             string `json:"id" binding:"required"`
+	ChatroomId     string `json:"chatroom_id"`
+	ConversationId string `json:"conversation_id"`
 }
 
 // function to parse POST body params for uploadEventRecordingsMetaRequest
@@ -102,5 +104,5 @@ func deleteEventRecordingsMetaInternal(c *gin.Context, userId string) {
 	}
 
 	// Send request to /api/chatroom/event/delete_recordings_meta
-	utils.SendRequest(c, utils.CoreService, DeleteEventRecordingsMetaEndPoint, utils.DELETEMethod, utils.CreateHeaders(c, userId), nil, deleteEventRecordingsMetaRequest)
+	utils.SendRequest(c, utils.CoreService, DeleteEventRecordingsMetaEndPoint, utils.POSTMethod, utils.CreateHeaders(c, userId), nil, deleteEventRecordingsMetaRequest)
 }

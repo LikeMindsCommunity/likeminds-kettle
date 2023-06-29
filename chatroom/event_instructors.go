@@ -14,8 +14,8 @@ type Instructors struct {
 
 // Request body params for adding event instructors
 type AddEventInstructorsRequest struct {
-	ChatroomId  string        `json:"chatroom_id"`
-	Instructors []Instructors `json:"instructors"`
+	ChatroomId  string        `json:"chatroom_id" binding:"required"`
+	Instructors []Instructors `json:"instructors,omitempty"`
 }
 
 // function to parse POST body params for AddEventInstructorsRequest
