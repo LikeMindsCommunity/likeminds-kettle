@@ -33,8 +33,8 @@ func parseAddEventTestimonialsRequest(c *gin.Context) (*addEventTestimonialsRequ
 // Exposed function to add event testimonials
 func AddEventTestimonials(c *gin.Context) {
 
-	user_id := user.GetRequestingUserId(c)
-	if user_id == "" {
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
 		return
 	}
 
@@ -47,5 +47,5 @@ func AddEventTestimonials(c *gin.Context) {
 	}
 
 	// Send request to api/chatroom/event/add_or_update_member_testimonial
-	utils.SendRequest(c, utils.CoreService, AddEventTestimonialsEndPoint, utils.POSTMethod, utils.CreateHeaders(c, user_id), nil, addEventTestimonialsRequest)
+	utils.SendRequest(c, utils.CoreService, AddEventTestimonialsEndPoint, utils.POSTMethod, utils.CreateHeaders(c, userId), nil, addEventTestimonialsRequest)
 }

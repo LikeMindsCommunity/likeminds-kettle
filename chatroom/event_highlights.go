@@ -32,9 +32,9 @@ func parseAddEventHighlightsRequest(c *gin.Context) (*AddEventHighlightsRequest,
 // Exposed function to add event highlights
 func AddEventHighlights(c *gin.Context) {
 
-	user_id := user.GetRequestingUserId(c)
+	userId := user.GetRequestingUserId(c)
 
-	if user_id == "" {
+	if userId == "" {
 		return
 	}
 
@@ -47,5 +47,5 @@ func AddEventHighlights(c *gin.Context) {
 	}
 
 	// Send request to api/chatroom/event/add_or_update_highlight
-	utils.SendRequest(c, utils.CoreService, AddEventHighlightsEndPoint, utils.POSTMethod, utils.CreateHeaders(c, user_id), nil, AddEventHighlightsRequest)
+	utils.SendRequest(c, utils.CoreService, AddEventHighlightsEndPoint, utils.POSTMethod, utils.CreateHeaders(c, userId), nil, AddEventHighlightsRequest)
 }

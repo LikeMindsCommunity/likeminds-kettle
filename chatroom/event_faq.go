@@ -32,9 +32,9 @@ func parseAddEventFAQRequest(c *gin.Context) (*AddEventFAQRequest, error) {
 // Exposed function to add event faq
 func AddEventFAQ(c *gin.Context) {
 
-	user_id := user.GetRequestingUserId(c)
+	userId := user.GetRequestingUserId(c)
 
-	if user_id == "" {
+	if userId == "" {
 		return
 	}
 
@@ -47,5 +47,5 @@ func AddEventFAQ(c *gin.Context) {
 	}
 
 	// Send request to api/chatroom/event/add_or_update_event_faq
-	utils.SendRequest(c, utils.CoreService, AddEventFAQEndPoint, utils.POSTMethod, utils.CreateHeaders(c, user_id), nil, AddEventFAQRequest)
+	utils.SendRequest(c, utils.CoreService, AddEventFAQEndPoint, utils.POSTMethod, utils.CreateHeaders(c, userId), nil, AddEventFAQRequest)
 }

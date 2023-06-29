@@ -33,8 +33,8 @@ func parseAddEventInstructorsRequest(c *gin.Context) (*AddEventInstructorsReques
 // Exposed function to add event instructors
 func AddEventInstructors(c *gin.Context) {
 
-	user_id := user.GetRequestingUserId(c)
-	if user_id == "" {
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
 		return
 	}
 
@@ -47,5 +47,5 @@ func AddEventInstructors(c *gin.Context) {
 	}
 
 	// Send request to api/chatroom/event/add_or_update_instructor
-	utils.SendRequest(c, utils.CoreService, AddEventInstructorsEndPoint, utils.POSTMethod, utils.CreateHeaders(c, user_id), nil, AddEventInstructorsRequest)
+	utils.SendRequest(c, utils.CoreService, AddEventInstructorsEndPoint, utils.POSTMethod, utils.CreateHeaders(c, userId), nil, AddEventInstructorsRequest)
 }
