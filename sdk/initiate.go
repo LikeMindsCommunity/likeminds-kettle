@@ -71,5 +71,10 @@ func parseInitiateSDKRequest(c *gin.Context) (*InitiateSDKRequest, error) {
 		return nil, err
 	}
 
+	// If uuid is passed in the request, use it as user_unique_id
+	if isr.UUID != "" {
+		isr.UserUniqueID = isr.UUID
+	}
+
 	return &isr, nil
 }
