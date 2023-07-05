@@ -7,7 +7,7 @@ import (
 )
 
 type Question struct {
-	Id                  int32       `json:"id"`
+	Id                  int32       `json:"id,omitempty"`
 	QuestionTitle       string      `json:"question_title"`
 	Value               interface{} `json:"value"`
 	Optional            bool        `json:"optional"`
@@ -20,6 +20,7 @@ type Question struct {
 	CanAddOptions       bool        `json:"can_add_options"`
 	IsCompulsory        bool        `json:"is_compulsory"`
 	IsAnswerEditable    bool        `json:"is_answer_editable"`
+	Tag                 string      `json:"tag,omitempty"`
 }
 
 // EditQuestionsRequest
