@@ -14,9 +14,6 @@ func UserSocialLogin(c *gin.Context) {
 	}
 
 	// Send Request
-	// utils.SendRequest(c, utils.CoreService, UserSocialLoginEndpoint, utils.GETRequest, utils.CreateHeaders(c, ""), params, nil)
-
-	// Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, UserSocialLoginEndpoint, utils.GETRequest, utils.CreateHeaders(c, ""), params, nil)
 	if respBytes == nil {
 		return
