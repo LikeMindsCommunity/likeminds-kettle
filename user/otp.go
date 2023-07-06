@@ -54,7 +54,7 @@ func UserOTP(c *gin.Context, method int) {
 			return
 		}
 
-		//Validate response
+		// Validate response
 		apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
 		if apiCR == nil {
 			return
@@ -63,7 +63,7 @@ func UserOTP(c *gin.Context, method int) {
 		// Send response with login, refresh token and api/user/otp response
 		dataResponse := apiCR.Response
 
-		//Create verified token
+		// Create verified token
 		vtm, err := token.CreateVTM(c.GetHeader(utils.HeadersApiKey), params[ParamEmailID], params[UserMobileNo], params[UserCountryCode])
 
 		if err != nil {
@@ -74,7 +74,7 @@ func UserOTP(c *gin.Context, method int) {
 
 		dataResponse[token.ParamAccessToken] = vtm.AccessToken
 
-		//Generate response
+		// Generate response
 		utils.GenerateResponse(c, dataResponse)
 	}
 }
