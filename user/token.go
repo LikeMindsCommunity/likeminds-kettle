@@ -6,9 +6,9 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-func CreateVTMToken(c *gin.Context) {
+func CreateOTMToken(c *gin.Context) {
 	// Create verify token
-	vtm, err := token.CreateVTM(c.GetHeader(utils.HeadersApiKey))
+	otm, err := token.CreateOTM(c.GetHeader(utils.HeadersApiKey))
 
 	// If token creation fails
 	if err != nil {
@@ -18,7 +18,7 @@ func CreateVTMToken(c *gin.Context) {
 
 	// Send response with verify token
 	dataResponse := map[string]interface{}{
-		token.ParamAccessToken: vtm.AccessToken,
+		token.ParamAccessToken: otm.AccessToken,
 	}
 
 	// Generate Response

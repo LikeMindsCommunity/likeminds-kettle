@@ -12,6 +12,6 @@ func UserSocialLogin(c *gin.Context) {
 		ParamSocialLoginToken: c.Query(ParamSocialLoginToken),
 	}
 
-	//Send Request
+	// Send Request
 	utils.SendRequest(c, utils.CoreService, UserSocialLoginEndpoint, utils.GETRequest, utils.CreateHeaders(c, ""), params, nil)
 }

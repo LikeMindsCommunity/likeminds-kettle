@@ -48,13 +48,13 @@ func main() {
 	router.Use(LoggingMiddleware())
 	router.GET("", web.Home)
 
-	//OTP Apis
+	// OTP Apis
 	router.GET("/otp/generate", otp.GenerateOTP)
 	router.GET("/otp/verify", otp.VerifyOTP)
-	router.GET("/user/token", user.CreateVTMToken)
+	router.GET("/user/token", user.CreateOTMToken)
 
-	//User Apis
-	router.POST("/user/login", VTMValidationMiddleware(), user.Login)
+	// User Apis
+	router.POST("/user/login", OTMValidationMiddleware(), user.Login)
 	router.POST("/user/refresh", RTMValidationMiddleware(), user.Refresh)
 	router.POST("/user/logout", LogoutValidationMiddleware(client), user.Logout)
 	router.POST("/user/merge_account", LTMValidationMiddleware(client, true), user.MergeAccount)
@@ -63,26 +63,26 @@ func main() {
 	router.POST("/user/device/push", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.PushUserToken)
 	router.POST("/user/subscription/whatsapp", user.WASubscription)
 	router.GET("/user/meta", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.UserMeta)
-	router.POST("/user/otp", VTMValidationMiddleware(), APIKeyValidationMiddleware(), user.GenerateUserOTP)
-	router.GET("/user/otp", VTMValidationMiddleware(), APIKeyValidationMiddleware(), user.VerifyUserOTP)
-	router.GET("/user/social/login", VTMValidationMiddleware(), APIKeyValidationMiddleware(), user.UserSocialLogin)
+	router.POST("/user/otp", OTMValidationMiddleware(), APIKeyValidationMiddleware(), user.GenerateUserOTP)
+	router.GET("/user/otp", OTMValidationMiddleware(), APIKeyValidationMiddleware(), user.VerifyUserOTP)
+	router.GET("/user/social/login", OTMValidationMiddleware(), APIKeyValidationMiddleware(), user.UserSocialLogin)
 
-	//Home Apis
+	// Home Apis
 	router.POST("/home/fetch_communities", LTMValidationMiddleware(client, true), home.FetchCommunities)
 	router.GET("/home/dm/meta", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), home.DMHome)
 
-	//SDK Apis
-	router.POST("/sdk/initiate", APIKeyValidationMiddleware(), sdk.InitiateSDK)
+	// SDK Apis
+	router.POST("/sdk/initiate", VTMValidationMiddleware(false), APIKeyValidationMiddleware(), sdk.InitiateSDK)
 	router.POST("/sdk/project", LTMValidationMiddleware(client, true), sdk.CreateProject)
 	router.GET("/sdk/project", LTMValidationMiddleware(client, true), sdk.GetProject)
 	router.PUT("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.EditProject)
 	router.DELETE("/sdk/project", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.DeleteProject)
-	router.GET("/sdk/onboarding", VTMValidationMiddleware(), APIKeyValidationMiddleware(), sdk.GetScreen)
+	router.GET("/sdk/onboarding", OTMValidationMiddleware(), APIKeyValidationMiddleware(), sdk.GetScreen)
 	router.POST("/sdk/onboarding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.CreateScreen)
 	router.PUT("/sdk/onboarding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.EditScreen)
 	router.DELETE("/sdk/onboarding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), sdk.DeleteScreen)
 
-	//Chatroom Apis
+	// Chatroom Apis
 	router.GET("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetChatroom)
 	router.POST("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.CreateChatroom)
 	router.PUT("/chatroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.EditChatroom)
@@ -122,7 +122,7 @@ func main() {
 	router.GET("/chatroom/home", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.GetChatroomHome)
 	router.POST("/chatroom/mark_read", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), chatroom.ChatroomMarkRead)
 
-	//Community Apis
+	// Community Apis
 	router.GET("/community", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.Community)
 	router.GET("/community/branding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.Branding)
 	router.POST("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditQuestions)
@@ -166,11 +166,11 @@ func main() {
 	router.PUT("/community/settings/content_download", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditContentDownloadSettings)
 	router.GET("/community/member/home/meta", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.MemberHomeMeta)
 
-	//Moderation Apis
+	// Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
 	router.PUT("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.EditRights)
 
-	//Conversation Apis
+	// Conversation Apis
 	router.GET("/conversation", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.GetConversation)
 	router.POST("/conversation", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.CreateConversation)
 	router.PUT("/conversation", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.EditConversation)
@@ -193,7 +193,7 @@ func main() {
 	router.GET("/conversation/sync", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.SyncConversation)
 	router.GET("/conversation/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.ConversationSearch)
 
-	//Feed Apis
+	// Feed Apis
 	router.POST("/feed/post", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CreatePost)
 	router.GET("/feed/post/:post_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.GetPost)
 	router.PUT("/feed/post/:post_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.EditPost)
@@ -218,11 +218,11 @@ func main() {
 	router.GET("/feed/universal", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.FetchUniversalFeed)
 	router.GET("/feed/group", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.FetchGroupFeed)
 
-	//Utility Apis
+	// Utility Apis
 	router.GET("/helper/url", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), utility.DecodeUrl)
 	router.POST("/helper/media/upload", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), utility.UploadFiles)
 
-	//Feedroom Apis
+	// Feedroom Apis
 	router.POST("/feedroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.CreateFeedroom)
 	router.PUT("/feedroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.EditFeedroom)
 	router.DELETE("/feedroom", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feedroom.DeleteFeedroom)
@@ -375,19 +375,46 @@ func ApiMiddleware(client *redis.Client) gin.HandlerFunc {
 	}
 }
 
-func VTMValidationMiddleware() gin.HandlerFunc {
+func OTMValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//Extract VTM from token, internally it checks if token is valid or not
+		// Extract OTM from token, internally it checks if token is valid or not
+		otm, err := token.ExtractOTM(c.Request.Header.Get(token.HeaderAuthorization))
+
+		if otm == nil {
+			log.Error(err)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+				Success:      false,
+				ErrorMessage: token.ErrorInvalidOTM,
+			})
+			return
+
+		} else {
+			// If valid, set "otm" in context, to be used in later APIs
+			c.Set(token.ParamOTM, otm)
+		}
+		c.Next()
+	}
+}
+
+func VTMValidationMiddleware(isMandatory bool) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Extract VTM from token, internally it checks if token is valid or not
 		vtm, err := token.ExtractVTM(c.Request.Header.Get(token.HeaderAuthorization))
-		if vtm == nil {
+
+		if vtm == nil && isMandatory {
 			log.Error(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
 				ErrorMessage: token.ErrorInvalidVTM,
 			})
 			return
+
+		} else if vtm == nil {
+			log.Error(err)
+			c.Next()
+
 		} else {
-			//If valid, set "vtm" in context, to be used in later APIs
+			// If valid, set "vtm" in context, to be used in later APIs
 			c.Set(token.ParamVTM, vtm)
 		}
 		c.Next()
@@ -519,6 +546,13 @@ func APIKeyValidationMiddleware() gin.HandlerFunc {
 		ltm, ok := c.Get(token.ParamLTM)
 		if ok && ltm.(*token.LoginTokenMeta).ApiKey != "" {
 			c.Request.Header["X-Api-Key"] = []string{ltm.(*token.LoginTokenMeta).ApiKey}
+			c.Next()
+		}
+
+		// Check if request has OTM token or not
+		otm, ok := c.Get(token.ParamOTM)
+		if ok && otm.(*token.OnboardingTokenMeta).ApiKey != "" {
+			c.Request.Header["X-Api-Key"] = []string{otm.(*token.OnboardingTokenMeta).ApiKey}
 			c.Next()
 		}
 

@@ -15,13 +15,15 @@ const HeaderAuthorization = "Authorization"
 const ParamAccessToken = "access_token"
 const ParamRefreshToken = "refresh_token"
 const ParamVTM = "vtm"
+const ParamOTM = "otm"
 const ParamLTM = "ltm"
 const ParamRTM = "rtm"
 const ErrorInvalidVTM = "Invalid VTM!"
+const ErrorInvalidOTM = "Invalid OTM!"
 const ErrorInvalidLTM = "Invalid LTM!"
 const ErrorInvalidRTM = "Invalid RTM!"
 
-type VerifyTokenMeta struct {
+type OnboardingTokenMeta struct {
 	AccessUuid         string
 	AccessTokenExpires int64
 	AccessToken        string
@@ -44,19 +46,61 @@ type RefreshTokenMeta struct {
 	ApiKey              string
 }
 
-func CreateVTM(api_key string) (*VerifyTokenMeta, error) {
+type VerifyTokenMeta struct {
+	AccessUuid         string
+	AccessTokenExpires int64
+	AccessToken        string
+	ApiKey             string
+	EmailID            string
+	MobileNo           string
+	CountryCode        string
+}
+
+func CreateOTM(api_key string) (*OnboardingTokenMeta, error) {
+	otm := &OnboardingTokenMeta{
+		AccessUuid:         uuid.NewV4().String(),
+		AccessTokenExpires: time.Now().Add(time.Minute * 15).Unix(),
+	}
+
+	var err error
+	// Creating Access Token
+	// os.Setenv("ACCESS_SECRET", "JWT_SECRET") // this should be in an env file
+	otmClaims := jwt.MapClaims{}
+	otmClaims["access_uuid"] = otm.AccessUuid
+	otmClaims["exp"] = otm.AccessTokenExpires
+	otmClaims["api_key"] = api_key
+	at := jwt.NewWithClaims(jwt.SigningMethodHS256, otmClaims)
+	otm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
+	if err != nil {
+		return nil, err
+	}
+	return otm, nil
+}
+
+func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode string) (*VerifyTokenMeta, error) {
 	vtm := &VerifyTokenMeta{
 		AccessUuid:         uuid.NewV4().String(),
 		AccessTokenExpires: time.Now().Add(time.Minute * 15).Unix(),
 	}
 
 	var err error
-	//Creating Access Token
-	//os.Setenv("ACCESS_SECRET", "JWT_SECRET") //this should be in an env file
+	// Creating Access Token
+	// os.Setenv("ACCESS_SECRET", "JWT_SECRET") // this should be in an env file
 	vtmClaims := jwt.MapClaims{}
 	vtmClaims["access_uuid"] = vtm.AccessUuid
 	vtmClaims["exp"] = vtm.AccessTokenExpires
-	vtmClaims["api_key"] = api_key
+	vtmClaims["api_key"] = apiKey
+
+	if emailId != "" {
+		vtmClaims["email_id"] = emailId
+
+	} else if mobileNo != "" && countryCode != "" {
+		vtmClaims["mobile_no"] = mobileNo
+		vtmClaims["country_code"] = countryCode
+	} else {
+		return nil, errors.New("Email ID or Mobile no should be present!")
+	}
+
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, vtmClaims)
 	vtm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
 	if err != nil {
@@ -143,24 +187,67 @@ func VerifyToken(bearerToken string) (*jwt.Token, error) {
 	return token, nil
 }
 
-// ExtractVTM is used to return VTM and check if bearer token is valid or not
-func ExtractVTM(bearerToken string) (*VerifyTokenMeta, error) {
+// ExtractOTM is used to return OTM and check if bearer token is valid or not
+func ExtractOTM(bearerToken string) (*OnboardingTokenMeta, error) {
 	token, err := VerifyToken(bearerToken)
+
 	if err != nil {
 		return nil, err
 	}
+
 	claims, ok := token.Claims.(jwt.MapClaims)
+
 	if ok && token.Valid {
 		accessUuid, ok := claims["access_uuid"].(string)
+
 		if !ok {
 			return nil, err
 		}
+
 		apiKey, _ := claims["api_key"].(string)
-		return &VerifyTokenMeta{
+
+		return &OnboardingTokenMeta{
 			AccessUuid: accessUuid,
 			ApiKey:     apiKey,
 		}, nil
+
 	}
+
+	return nil, err
+}
+
+// ExtractVTM is used to return VTM and check if bearer token is valid or not
+func ExtractVTM(bearerToken string) (*VerifyTokenMeta, error) {
+	token, err := VerifyToken(bearerToken)
+
+	if err != nil {
+		return nil, err
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+
+	if ok && token.Valid {
+		accessUuid, ok := claims["access_uuid"].(string)
+
+		if !ok {
+			return nil, err
+		}
+
+		apiKey, _ := claims["api_key"].(string)
+		emailId, _ := claims["email_id"].(string)
+		mobileNo, _ := claims["mobile_no"].(string)
+		countryCode, _ := claims["country_code"].(string)
+
+		return &VerifyTokenMeta{
+			AccessUuid:  accessUuid,
+			ApiKey:      apiKey,
+			EmailID:     emailId,
+			MobileNo:    mobileNo,
+			CountryCode: countryCode,
+		}, nil
+
+	}
+
 	return nil, err
 }
 
