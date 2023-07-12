@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/prometheus/client_golang/prometheus"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -32,12 +33,17 @@ import (
 	"github.com/nateshr/likeminds-authentication/utility"
 	"github.com/nateshr/likeminds-authentication/utils"
 	"github.com/nateshr/likeminds-authentication/web"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
 	client *redis.Client
 	router *gin.Engine
 )
+
+func init() {
+	prometheus.Register(totalRequest)
+}
 
 func main() {
 	var AppVersion string = "2.2.0"
@@ -289,6 +295,7 @@ func main() {
 	router.PUT("/widget/:widget_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), widget.EditWidget)
 
 	log.Info(fmt.Sprintf("application version: %s", AppVersion))
+	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	log.Fatal(router.Run(":8080"))
 }
 
@@ -398,9 +405,18 @@ func LoggingMiddleware() gin.HandlerFunc {
 	}
 }
 
+var totalRequest = prometheus.NewCounterVec(
+	prometheus.CounterOpts{
+		Name: "http_request_total",
+		Help: "Number of get request",
+	},
+	[]string{"path"},
+)
+
 // ApiMiddleware will add the db connection to the context
 func ApiMiddleware(client *redis.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		totalRequest.WithLabelValues(c.FullPath()).Inc()
 		c.Set(cache.ParamRedisClient, client)
 		c.Next()
 	}
