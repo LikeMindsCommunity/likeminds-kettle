@@ -64,7 +64,7 @@ func main() {
 	router.POST("/user/subscription/whatsapp", user.WASubscription)
 	router.GET("/user/meta", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), user.UserMeta)
 	router.POST("/user/otp", OTMValidationMiddleware(), APIKeyValidationMiddleware(), user.GenerateUserOTP)
-	router.GET("/user/otp", OTMValidationMiddleware(), APIKeyValidationMiddleware(), user.VerifyUserOTP)
+	router.GET("/user/otp/verify", OTMValidationMiddleware(), APIKeyValidationMiddleware(), user.VerifyUserOTP)
 	router.GET("/user/social/login", OTMValidationMiddleware(), APIKeyValidationMiddleware(), user.UserSocialLogin)
 
 	// Home Apis

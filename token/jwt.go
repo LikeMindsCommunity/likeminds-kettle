@@ -63,8 +63,7 @@ func CreateOTM(api_key string) (*OnboardingTokenMeta, error) {
 	}
 
 	var err error
-	// Creating Access Token
-	// os.Setenv("ACCESS_SECRET", "JWT_SECRET") // this should be in an env file
+
 	otmClaims := jwt.MapClaims{}
 	otmClaims["access_uuid"] = otm.AccessUuid
 	otmClaims["exp"] = otm.AccessTokenExpires
@@ -84,8 +83,7 @@ func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode strin
 	}
 
 	var err error
-	// Creating Access Token
-	// os.Setenv("ACCESS_SECRET", "JWT_SECRET") // this should be in an env file
+
 	vtmClaims := jwt.MapClaims{}
 	vtmClaims["access_uuid"] = vtm.AccessUuid
 	vtmClaims["exp"] = vtm.AccessTokenExpires

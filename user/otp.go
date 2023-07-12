@@ -7,7 +7,7 @@ import (
 )
 
 type UserOTPRequest struct {
-	OTPType     string `json:"otp_type" binding:"required"`
+	OTPMode     string `json:"otp_mode" binding:"required"`
 	MobileNo    int    `json:"mobile_no"`
 	CountryCode int    `json:"country_code"`
 	EmailID     string `json:"email_id"`
@@ -41,7 +41,7 @@ func UserOTP(c *gin.Context, method int) {
 	case utils.GETMethod:
 		// Params to be sent in the api/user/otp GET request
 		params := map[string]string{
-			ParamOTPType:    c.Query(ParamOTPType),
+			ParamOTPMode:    c.Query(ParamOTPMode),
 			UserMobileNo:    c.Query(UserMobileNo),
 			UserCountryCode: c.Query(UserCountryCode),
 			ParamEmailID:    c.Query(ParamEmailID),
