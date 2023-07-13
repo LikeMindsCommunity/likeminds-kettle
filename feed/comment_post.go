@@ -9,7 +9,8 @@ import (
 )
 
 type CreatePostCommentRequest struct {
-	Text string `json:"text" binding:"required"`
+	TempID *string `json:"temp_id"`
+	Text   string  `json:"text" binding:"required"`
 }
 type EditCommentRequest struct {
 	Text     string `json:"text" binding:"required"`

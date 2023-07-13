@@ -16,21 +16,21 @@ func addCoralogixHook(log *logrus.Logger) {
 	coralogixPrivateKey := environment.GoDotEnvVariable("CORALOGIX_PRIVATE_KEY")
 
 	if len(coralogixPrivateKey) == 0 {
-		log.Fatal("Invalid Coralogix Private Key, Cannot start Coralogix Logger")
+		log.Error("Invalid Coralogix Private Key, Cannot start Coralogix Logger")
 		return
 	}
 
 	coralogixApplicationName := environment.GoDotEnvVariable("CORALOGIX_APPLICATION_NAME")
 
 	if len(coralogixApplicationName) == 0 {
-		log.Fatal("Invalid Coralogix Application Name, Cannot start Coralogix Logger")
+		log.Error("Invalid Coralogix Application Name, Cannot start Coralogix Logger")
 		return
 	}
 
 	coralogixSystemName := environment.GoDotEnvVariable("CORALOGIX_SYSTEM_NAME")
 
 	if len(coralogixSystemName) == 0 {
-		log.Fatal("Invalid Coralogix System Name, Cannot start Coralogix Logger")
+		log.Error("Invalid Coralogix System Name, Cannot start Coralogix Logger")
 		return
 	}
 

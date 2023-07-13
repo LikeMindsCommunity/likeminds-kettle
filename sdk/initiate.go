@@ -15,6 +15,7 @@ const InitiateSDKEndPoint = "/api/sdk/initiate"
 type InitiateSDKRequest struct {
 	UserName        string                            `json:"user_name"`
 	UserUniqueID    string                            `json:"user_unique_id"`
+	UUID            string                            `json:"uuid,omitempty"`
 	ImageURL        string                            `json:"image_url"`
 	IsGuest         bool                              `json:"is_guest"`
 	QuestionAnswers []community.QuestionAnswerWithInt `json:"question_answers"`
@@ -95,6 +96,11 @@ func parseInitiateSDKRequest(c *gin.Context) (*InitiateSDKRequest, error) {
 
 	if err := c.ShouldBindJSON(&isr); err != nil {
 		return nil, err
+	}
+
+	// If uuid is passed in the request, use it as user_unique_id
+	if isr.UUID != "" {
+		isr.UserUniqueID = isr.UUID
 	}
 
 	return &isr, nil

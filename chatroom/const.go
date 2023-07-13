@@ -45,6 +45,23 @@ const EditCohortAccessEndPoint = "/api/cohort/update_cohort_access"
 const FetchChatroomHomeEndPoint = "/api/community_member/fetch_chatroom_home"
 const ChatroomMarkReadEndPoint = "/api/mark_read"
 const EditChatroomSettingsEndPoint = "/api/chatroom/settings"
+const CreateEventEndPoint = "/api/chatroom/event/create"
+const UpdateEventEndpoint = "/api/chatroom/event/update"
+const EditLastSeenEventEndPoint = "/api/chatroom/event/update_last_seen"
+const AttendEventEndPoint = "/api/chatroom/event/attend"
+const AttendedEventEndPoint = "/api/chatroom/event/attended"
+const FetchEventsEndPoint = "/api/chatroom/event/fetch_all"
+const FetchEventMetaEndPoint = "/api/chatroom/event/fetch_all_meta"
+const FetchEventLinksEndPoint = "/api/chatroom/event/fetch_link"
+const FetchEventUnseenCountEndPoint = "/api/chatroom/event/fetch_unseen_count"
+const UploadEventRecordingsEndPoint = "/api/chatroom/event/upload_recordings"
+const DeleteEventRecordingsEndPoint = "/api/chatroom/event/delete_recordings"
+const UploadEventRecordingsMetaEndPoint = "/api/chatroom/event/upload_recordings_meta"
+const DeleteEventRecordingsMetaEndPoint = "/api/chatroom/event/delete_recordings_meta"
+const AddEventInstructorsEndPoint = "/api/chatroom/event/add_or_update_instructor"
+const AddEventHighlightsEndPoint = "/api/chatroom/event/add_or_update_highlights"
+const AddEventTestimonialsEndPoint = "/api/chatroom/event/add_or_update_member_testimonials"
+const AddEventFAQEndPoint = "/api/chatroom/event/add_or_update_event_faq"
 
 const ParamCommunityId = "community_id"
 const ParamChatroomId = "chatroom_id"
@@ -84,6 +101,10 @@ const ParamChatroomTypes = "chatroom_types"
 const ParamTag = "tag"
 const ParamDomain = "domain"
 const ParamExcludedConversationStates = "excluded_conversation_states"
+const ParamPastEvents = "past_events"
+const ParamAttendingStatus = "attending_status"
+const ParamHasContent = "has_content"
+const ParamIsEditMode = "is_edit_mode"
 
 const (
 	SdkApiType = 1
@@ -93,4 +114,12 @@ const (
 	NormalChatroomType       = 0
 	AnnouncementChatroomType = 7
 	FeedChatroomType         = 11
+)
+
+// Edit Event Types
+const (
+	EditEventType      = "EDIT_EVENT"
+	UpdateLastSeenType = "UPDATE_LAST_SEEN"
+	EventAttendType    = "EVENT_ATTEND"
+	EventAttendedType  = "EVENT_ATTENDED"
 )
