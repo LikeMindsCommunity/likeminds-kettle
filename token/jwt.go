@@ -117,7 +117,7 @@ func CreateLTMAndRTM(userUniqueID string, api_key string) (*LoginTokenMeta, *Ref
 
 	if isBeta == "true" {
 		// Setting LTM token expiry to 60 minutes for Beta
-		LTMTokenExpiryTime = time.Duration(60)
+		LTMTokenExpiryTime = time.Duration(1)
 	}
 
 	ltm := &LoginTokenMeta{
