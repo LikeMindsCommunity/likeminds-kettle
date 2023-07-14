@@ -55,18 +55,20 @@ func VerifyOTP(c *gin.Context) {
 		//Generate Response
 		utils.GenerateResponse(c, dataResponse)
 	} else {
-		//Create verify token
-		vtm, err := token.CreateVTM()
-		//If token creation fails
+		// Create onboarding token
+		otm, err := token.CreateOTM(c.GetHeader(utils.HeadersApiKey))
+
+		// If token creation fails
 		if err != nil {
 			utils.GeneralAPIError(c, err.Error())
 			return
 		}
-		//Send response with verify token
-		dataResponse := apiCR.Response
-		dataResponse[token.ParamAccessToken] = vtm.AccessToken
 
-		//Generate Response
+		// Send response with verify token
+		dataResponse := apiCR.Response
+		dataResponse[token.ParamAccessToken] = otm.AccessToken
+
+		// Generate Response
 		utils.GenerateResponse(c, dataResponse)
 	}
 }

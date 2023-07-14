@@ -7,13 +7,13 @@ import (
 )
 
 type User struct {
-	MobileNo         string `json:"mobile_no"`
-	CountryCode      string `json:"country_code"`
-	Name             string `json:"name" binding:"required"`
-	Email            string `json:"email"`
-	ImageUrl         string `json:"image_url"`
-	OrganisationName string `json:"organisation_name"`
-	UserUniqueId     string `json:"user_unique_id"`
+	MobileNo         string `json:"mobile_no,omitempty"`
+	CountryCode      string `json:"country_code,omitempty"`
+	Name             string `json:"name,omitempty"`
+	Email            string `json:"email,omitempty"`
+	ImageUrl         string `json:"image_url,omitempty"`
+	OrganisationName string `json:"organisation_name,omitempty"`
+	UserUniqueId     string `json:"user_unique_id,omitempty"`
 }
 
 type LoginRequest struct {

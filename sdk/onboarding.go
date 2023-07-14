@@ -53,15 +53,20 @@ func DeleteScreen(c *gin.Context) {
 //OnboardingScreen method handles onboarding screens for each client project
 func OnboardingScreen(c *gin.Context, method int) {
 
-	//Authorizing User
-	userId := user.GetRequestingUserId(c)
-	if userId == "" {
-		return
-	}
+	userId := ""
 
-	botId := user.GetBotId(c)
-	if botId != "" {
-		userId = botId
+	if method != utils.GETMethod {
+		// Authorizing User
+		userId = user.GetRequestingUserId(c)
+		if userId == "" {
+			return
+		}
+
+		botId := user.GetBotId(c)
+		if botId != "" {
+			userId = botId
+		}
+
 	}
 
 	switch method {

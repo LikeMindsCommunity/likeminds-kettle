@@ -19,47 +19,74 @@ type InitiateSDKRequest struct {
 	ImageURL        string                            `json:"image_url"`
 	IsGuest         bool                              `json:"is_guest"`
 	QuestionAnswers []community.QuestionAnswerWithInt `json:"question_answers"`
+	User            user.User                         `json:"user,omitempty"`
 }
 
 // InitiateSDK is used to initiate sdk
 func InitiateSDK(c *gin.Context) {
 
-	//Body to be sent in the initiate SDK api internally
+	// Body to be sent in the initiate SDK api internally
 	initiateSDKRequest, err := parseInitiateSDKRequest(c)
+
 	if err != nil {
-		//If POST body params are missing
+		// If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 
-	//Send Request
+	verifyTokenMeta, ok := c.Get(token.ParamVTM)
+
+	if ok {
+		vtm := verifyTokenMeta.(*token.VerifyTokenMeta)
+
+		if initiateSDKRequest.User.Name == "" && initiateSDKRequest.UserName != "" {
+			initiateSDKRequest.User.Name = initiateSDKRequest.UserName
+		}
+
+		if initiateSDKRequest.User.Email == "" && vtm.EmailID != "" {
+			initiateSDKRequest.User.Email = vtm.EmailID
+		}
+
+		if initiateSDKRequest.User.MobileNo == "" && vtm.MobileNo != "" {
+			initiateSDKRequest.User.MobileNo = vtm.MobileNo
+		}
+
+		if initiateSDKRequest.User.CountryCode == "" && vtm.CountryCode != "" {
+			initiateSDKRequest.User.CountryCode = vtm.CountryCode
+		}
+	}
+
+	// Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, InitiateSDKEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, ""), nil, initiateSDKRequest)
 	if respBytes == nil {
 		return
 	}
 
-	//Validate response
+	// Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
 	if apiCR == nil {
 		return
 	}
 
-	//Send response with login, refresh token and api/sdk/initiate response
+	// Send response with login, refresh token and api/sdk/initiate response
 	dataResponse := apiCR.Response
 
-	//If flow succeeds
+	// If flow succeeds
 	userUniqueID := apiCR.Response[user.ResponseUser].(map[string]interface{})[user.ResponseUserUniqueId].(string)
-	//Create login and refresh token
+
+	// Create login and refresh token
 	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, c.GetHeader(utils.HeadersApiKey))
+
 	if err != nil {
-		//If token creation fails
+		// If token creation fails
 		utils.GeneralAPIError(c, err.Error())
 		return
 	}
+
 	dataResponse[token.ParamAccessToken] = ltm.AccessToken
 	dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
 
-	//Generate response
+	// Generate response
 	utils.GenerateResponse(c, dataResponse)
 }
 
