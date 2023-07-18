@@ -49,7 +49,7 @@ func main() {
 	var AppVersion string = "2.2.0"
 
 	initGin()
-	client = cache.InitRedis()
+	//client = cache.InitRedis()
 	router.Use(cors.New(enableCors()))
 	router.Use(ApiMiddleware(client))
 	router.Use(LoggingMiddleware())
