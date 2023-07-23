@@ -20,6 +20,7 @@ type InitiateSDKRequest struct {
 	IsGuest         bool                              `json:"is_guest"`
 	QuestionAnswers []community.QuestionAnswerWithInt `json:"question_answers"`
 	User            user.User                         `json:"user,omitempty"`
+	TokenExpiryBeta int64                             `json:"token_expiry_beta,omitempty"`
 }
 
 // InitiateSDK is used to initiate sdk
@@ -75,7 +76,7 @@ func InitiateSDK(c *gin.Context) {
 	userUniqueID := apiCR.Response[user.ResponseUser].(map[string]interface{})[user.ResponseUserUniqueId].(string)
 
 	// Create login and refresh token
-	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, c.GetHeader(utils.HeadersApiKey))
+	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, c.GetHeader(utils.HeadersApiKey), initiateSDKRequest.TokenExpiryBeta)
 
 	if err != nil {
 		// If token creation fails

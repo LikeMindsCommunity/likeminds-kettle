@@ -108,7 +108,7 @@ func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode strin
 }
 
 // CreateLTMAndRTM is used to create login and refresh token meta
-func CreateLTMAndRTM(userUniqueID string, api_key string) (*LoginTokenMeta, *RefreshTokenMeta, error) {
+func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int64) (*LoginTokenMeta, *RefreshTokenMeta, error) {
 
 	isBeta := environment.GoDotEnvVariable("BETA_ENVIRONMENT")
 
@@ -116,8 +116,13 @@ func CreateLTMAndRTM(userUniqueID string, api_key string) (*LoginTokenMeta, *Ref
 	LTMTokenExpiryTime := time.Duration(15)
 
 	if isBeta == "true" {
-		// Setting LTM token expiry to 60 minutes for Beta
-		LTMTokenExpiryTime = time.Duration(60)
+
+		// Setting default LTM token expiry to 60 minutes for Beta
+		if token_expiry_beta <= 0 {
+			token_expiry_beta = 60
+		}
+
+		LTMTokenExpiryTime = time.Duration(token_expiry_beta)
 	}
 
 	ltm := &LoginTokenMeta{
