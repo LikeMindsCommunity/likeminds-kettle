@@ -82,7 +82,7 @@ func GetBotResponse(c *gin.Context, method int) *utils.Response {
 	if createToken {
 		userID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
 		//Create login and refresh token
-		ltm, rtm, err := token.CreateLTMAndRTM(userID, "")
+		ltm, rtm, err := token.CreateLTMAndRTM(userID, "", token.BETA_AUTH_TOKEN_EXPIRY)
 		if err != nil {
 			//If token creation fails
 			utils.GeneralAPIError(c, err.Error())
