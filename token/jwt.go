@@ -113,13 +113,13 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 	isBeta := environment.GoDotEnvVariable("BETA_ENVIRONMENT")
 
 	// Setting LTM token expiry to 15 minutes for Prod
-	LTMTokenExpiryTime := time.Duration(15)
+	LTMTokenExpiryTime := time.Duration(PROD_AUTH_TOKEN_EXPIRY)
 
 	if isBeta == "true" {
 
 		// Setting default LTM token expiry to 60 minutes for Beta
 		if token_expiry_beta <= 0 {
-			token_expiry_beta = 60
+			token_expiry_beta = BETA_AUTH_TOKEN_EXPIRY
 		}
 
 		LTMTokenExpiryTime = time.Duration(token_expiry_beta)

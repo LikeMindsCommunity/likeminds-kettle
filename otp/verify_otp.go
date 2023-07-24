@@ -41,7 +41,7 @@ func VerifyOTP(c *gin.Context) {
 	if profileExists {
 		//Create login and refresh token
 		userUniqueID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
-		ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, "", 0)
+		ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, "", token.BETA_AUTH_TOKEN_EXPIRY)
 		if err != nil {
 			//If token creation fails
 			utils.GeneralAPIError(c, err.Error())

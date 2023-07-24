@@ -48,7 +48,7 @@ func Login(c *gin.Context) {
 	userUniqueID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
 	//Create login and refresh token
 
-	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, "", 0)
+	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, "", token.BETA_AUTH_TOKEN_EXPIRY)
 	if err != nil {
 		//If token creation fails
 		utils.GeneralAPIError(c, err.Error())
