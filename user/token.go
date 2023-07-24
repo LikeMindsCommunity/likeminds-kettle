@@ -29,7 +29,7 @@ func CreateToken(c *gin.Context) {
 
 		// If token extraction fails
 		if err != nil {
-			utils.GeneralAPIError(c, err.Error())
+			utils.TokenAuthError(c, err.Error())
 			return
 		}
 
