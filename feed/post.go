@@ -31,8 +31,10 @@ type AttachmentMeta struct {
 }
 
 type AttachmentRequest struct {
-	AttachmentType int            `json:"attachment_type" binding:"required"`
+	AttachmentType int            `json:"attachment_type"`
 	AttachmentMeta AttachmentMeta `json:"attachment_meta"`
+	Type           string         `json:"type"`
+	MetaData       AttachmentMeta `json:"meta_data"`
 }
 
 type CreatePostRequest struct {
