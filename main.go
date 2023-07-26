@@ -141,6 +141,7 @@ func main() {
 	router.GET("/community/branding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.Branding)
 	router.POST("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditQuestions)
 	router.GET("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetQuestions)
+	router.GET("/community/question/filters", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityQuestionFilters)
 	router.GET("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetMember)
 	router.POST("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.AddMember)
 	router.PUT("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditMember)
