@@ -37,6 +37,7 @@ type AttachmentRequest struct {
 
 type CreatePostRequest struct {
 	TempID      *string             `json:"temp_id"`
+	TopicIDs    []string            `json:"topic_ids"`
 	Text        string              `json:"text"`
 	Heading     string              `json:"heading"`
 	Attachments []AttachmentRequest `json:"attachments"`
@@ -46,6 +47,7 @@ type CreatePostRequest struct {
 
 type EditPostRequest struct {
 	Text        string              `json:"text"`
+	TopicIDs    []string            `json:"topic_ids"`
 	Heading     string              `json:"heading,omitempty"`
 	Attachments []AttachmentRequest `json:"attachments"`
 	UserIsCm    bool                `json:"user_is_cm"`
