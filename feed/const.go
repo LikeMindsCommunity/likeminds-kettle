@@ -39,6 +39,7 @@ const ParamFeedroomId = "feedroom_id"
 const ParamPostIds = "post_ids"
 const ParamCommentIds = "comment_ids"
 const ParamTopicIds = "topic_ids"
+const ParamIsEnabled = "is_enabled"
 
 const (
 	CREATE_POST_ACTION     = "create_post"
