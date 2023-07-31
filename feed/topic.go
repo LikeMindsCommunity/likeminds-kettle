@@ -88,6 +88,18 @@ func GetTopicInternal(c *gin.Context, userId string) {
 		ParamIsEnabled: c.Query(ParamIsEnabled),
 	}
 
+	//Fetch member access to view topics
+	success, response := user.FetchMemberAccess(c, IS_MEMBER, userId)
+	if !success {
+		return
+	}
+
+	//If not access
+	if !response.Access {
+		utils.MemberAccessFailError(c)
+		return
+	}
+
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, TopicEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 }

@@ -59,6 +59,7 @@ const (
 	VIEW_REPORT_ENTITY     = "view_report_entity"
 	CREATE_TOPIC_ACTION    = "create_topic"
 	EDIT_TOPIC_ACTION      = "edit_topic"
+	IS_MEMBER              = "is_member"
 )
 
 const (
