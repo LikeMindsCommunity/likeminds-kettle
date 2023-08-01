@@ -79,7 +79,7 @@ func getCommentLikesInternal(c *gin.Context, userId string, endPoint string) {
 
 		//Fetch user ids
 		for _, like_data := range likes_data {
-			if user_unique_id, ok := like_data.(map[string]interface{})["user_id"]; ok {
+			if user_unique_id, ok := like_data.(map[string]interface{})["uuid"]; ok {
 				user_ids = append(user_ids, user_unique_id.(string))
 			}
 		}
