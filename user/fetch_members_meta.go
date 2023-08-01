@@ -84,7 +84,7 @@ func GetUsersMetaFromFeedData(headers map[string]interface{}, feedDataArray []in
 
 	// Fetch user ids from array
 	for _, data := range feedDataArray {
-		if user_unique_id, ok := data.(map[string]interface{})["user_id"]; ok {
+		if user_unique_id, ok := data.(map[string]interface{})["uuid"]; ok {
 			user_unique_ids = append(user_unique_ids, user_unique_id.(string))
 		}
 	}
