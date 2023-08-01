@@ -6,21 +6,73 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-func CreateOTMToken(c *gin.Context) {
-	// Create verify token
-	otm, err := token.CreateOTM(c.GetHeader(utils.HeadersApiKey))
+type CreateTokenRequest struct {
+	TokenType string `json:"token_type"`
+}
 
-	// If token creation fails
-	if err != nil {
-		utils.GeneralAPIError(c, err.Error())
-		return
+func CreateToken(c *gin.Context) {
+
+	var accessToken string
+
+	// Parsing create token request
+	createTokenRequest, _ := parseCreateTokenRequest(c)
+
+	if createTokenRequest != nil && createTokenRequest.TokenType == VTM {
+		vtmToken := c.Request.Header.Get(token.HeaderAuthorization)
+
+		if vtmToken == "" {
+			utils.TokenAuthError(c, token.ErrorInvalidVTM)
+			return
+		}
+
+		vtmData, err := token.ExtractVTM(c.Request.Header.Get(token.HeaderAuthorization))
+
+		// If token extraction fails
+		if err != nil {
+			utils.TokenAuthError(c, err.Error())
+			return
+		}
+
+		// Create VTM token
+		vtm, tokenErr := token.CreateVTM(vtmData.ApiKey, vtmData.EmailID, vtmData.MobileNo, vtmData.CountryCode)
+
+		// If token creation fails
+		if tokenErr != nil {
+			utils.GeneralAPIError(c, tokenErr.Error())
+			return
+		}
+
+		accessToken = vtm.AccessToken
+
+	} else {
+		// Create OTM token
+		otm, tokenErr := token.CreateOTM(c.GetHeader(utils.HeadersApiKey))
+
+		// If token creation fails
+		if tokenErr != nil {
+			utils.GeneralAPIError(c, tokenErr.Error())
+			return
+		}
+
+		accessToken = otm.AccessToken
 	}
 
 	// Send response with verify token
 	dataResponse := map[string]interface{}{
-		token.ParamAccessToken: otm.AccessToken,
+		token.ParamAccessToken: accessToken,
 	}
 
 	// Generate Response
 	utils.GenerateResponse(c, dataResponse)
+}
+
+func parseCreateTokenRequest(c *gin.Context) (*CreateTokenRequest, error) {
+	//POST body params
+	var ctr CreateTokenRequest
+
+	if err := c.ShouldBindJSON(&ctr); err != nil {
+		return nil, err
+	}
+
+	return &ctr, nil
 }

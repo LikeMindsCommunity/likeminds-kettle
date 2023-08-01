@@ -51,7 +51,7 @@ func main() {
 	// OTP Apis
 	router.GET("/otp/generate", otp.GenerateOTP)
 	router.GET("/otp/verify", otp.VerifyOTP)
-	router.GET("/user/token", user.CreateOTMToken)
+	router.GET("/user/token", user.CreateToken)
 
 	// User Apis
 	router.POST("/user/login", OTMValidationMiddleware(), user.Login)
