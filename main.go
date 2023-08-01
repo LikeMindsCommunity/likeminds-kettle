@@ -51,7 +51,7 @@ func main() {
 	// OTP Apis
 	router.GET("/otp/generate", otp.GenerateOTP)
 	router.GET("/otp/verify", otp.VerifyOTP)
-	router.GET("/user/token", user.CreateOTMToken)
+	router.GET("/user/token", user.CreateToken)
 
 	// User Apis
 	router.POST("/user/login", OTMValidationMiddleware(), user.Login)
@@ -141,6 +141,7 @@ func main() {
 	router.GET("/community/branding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.Branding)
 	router.POST("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditQuestions)
 	router.GET("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetQuestions)
+	router.GET("/community/question/filters", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityQuestionFilters)
 	router.GET("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetMember)
 	router.POST("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.AddMember)
 	router.PUT("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditMember)
@@ -232,6 +233,9 @@ func main() {
 	router.POST("/feed/user/activity/:activity_id/mark_read", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.UserActivityMarkRead)
 	router.GET("/feed/universal", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.FetchUniversalFeed)
 	router.GET("/feed/group", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.FetchGroupFeed)
+	router.POST("/feed/topic", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CreateTopic)
+	router.GET("/feed/topic", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.GetTopic)
+	router.PUT("/feed/topic/:topic_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.EditTopic)
 
 	// Utility Apis
 	router.GET("/helper/url", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), utility.DecodeUrl)
