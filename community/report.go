@@ -228,12 +228,12 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 
 				// Get user_ids and post_ids from comments
 				for _, comment := range comments {
-					user_ids = append(user_ids, comment.(map[string]interface{})["user_id"].(string))
+					user_ids = append(user_ids, comment.(map[string]interface{})["uuid"].(string))
 
 					// If comment is reply then get parent comment's user id
 					if parentComment, ok := comment.(map[string]interface{})["parent_comment"]; ok {
 						if parentComment != nil {
-							user_ids = append(user_ids, parentComment.(map[string]interface{})["user_id"].(string))
+							user_ids = append(user_ids, parentComment.(map[string]interface{})["uuid"].(string))
 						}
 					}
 
@@ -264,7 +264,7 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 
 			// Iterate over posts and get user ids
 			for _, post := range posts {
-				user_ids = append(user_ids, post.(map[string]interface{})["user_id"].(string))
+				user_ids = append(user_ids, post.(map[string]interface{})["uuid"].(string))
 			}
 		}
 
