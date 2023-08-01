@@ -43,6 +43,7 @@ const GetCommunityBrandingEndPoint = "/api/community/%s/branding"
 const GetCommunityV2Endpoint = "/api/community/fetch"
 const UserHomeMetaEndpoint = "/api/community_member/home_meta"
 const AcceptRejectCommunityJoinEndpoint = "/api/community_member/join"
+const FetchCommunityQuestionFiltersEndpoint = "/api/fetch_filters"
 
 const ParamCommunityID = "community_id"
 const ParamPage = "page"
