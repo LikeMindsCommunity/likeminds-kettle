@@ -29,6 +29,8 @@ const FetchGroupFeedEndPoint = "/feed/group"
 const DeleteUserDataEndPoint = "/user"
 const FetchPostsEndpoint = "/post"
 const FetchCommentsEndpoint = "/comment"
+const TopicEndPoint = "/topic"
+const SingleTopicEndPoint = "/topic/%s"
 
 const ParamPage = "page"
 const ParamPageSize = "page_size"
@@ -36,6 +38,8 @@ const ParamUserIsCm = "user_is_cm"
 const ParamFeedroomId = "feedroom_id"
 const ParamPostIds = "post_ids"
 const ParamCommentIds = "comment_ids"
+const ParamTopicIds = "topic_ids"
+const ParamIsEnabled = "is_enabled"
 
 const (
 	CREATE_POST_ACTION     = "create_post"
@@ -53,6 +57,9 @@ const (
 	CREATE_ACTIVITY_ACTION = "create_activity"
 	VIEW_ACTIVITY_ACTION   = "view_activity"
 	VIEW_REPORT_ENTITY     = "view_report_entity"
+	CREATE_TOPIC_ACTION    = "create_topic"
+	EDIT_TOPIC_ACTION      = "edit_topic"
+	IS_MEMBER              = "is_member"
 )
 
 const (
