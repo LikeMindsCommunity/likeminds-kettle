@@ -233,6 +233,9 @@ func main() {
 	router.POST("/feed/user/activity/:activity_id/mark_read", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.UserActivityMarkRead)
 	router.GET("/feed/universal", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.FetchUniversalFeed)
 	router.GET("/feed/group", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.FetchGroupFeed)
+	router.POST("/feed/topic", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.CreateTopic)
+	router.GET("/feed/topic", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.GetTopic)
+	router.PUT("/feed/topic/:topic_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), feed.EditTopic)
 
 	// Utility Apis
 	router.GET("/helper/url", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), utility.DecodeUrl)
