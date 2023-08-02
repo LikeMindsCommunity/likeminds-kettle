@@ -2,6 +2,7 @@ package community
 
 import (
 	"fmt"
+	"reflect"
 
 	log "github.com/nateshr/likeminds-authentication/logging"
 
@@ -292,6 +293,11 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 	for _, report := range reports {
 
 		typeValue, ok := report.(map[string]interface{})["type"]
+
+		// If type is string, convert it to report type int
+		if reflect.TypeOf(typeValue).Kind() == reflect.String {
+			typeValue = float64(ReportTypeStrintToInt(typeValue.(string)))
+		}
 
 		if ok {
 			if int(typeValue.(float64)) == feed.POST_REPORT_TYPE {
