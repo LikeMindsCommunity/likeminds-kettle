@@ -36,3 +36,16 @@ func CheckVersion(c *gin.Context, featureVersionCode map[string]int) bool {
 	return isVersionCheck
 
 }
+
+func ApiRevampV1Check(c *gin.Context) bool {
+	/*
+		Api Revamp V1 Check
+
+		returns True if, x-accept-version == v1
+	*/
+
+	acceptVersion := c.GetHeader(HeadersAcceptVersion)
+
+	return acceptVersion == "v1"
+
+}
