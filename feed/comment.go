@@ -30,14 +30,14 @@ func populateCommentDataResponse(c *gin.Context, dataResponse map[string]interfa
 		user_ids := []string{}
 
 		//Fetch comment user id
-		if comment_user_unique_id, ok := comment_data["user_id"]; ok {
+		if comment_user_unique_id, ok := comment_data["uuid"]; ok {
 			user_ids = append(user_ids, comment_user_unique_id.(string))
 		}
 
 		//Fetch replies user id
 		if replies, ok := comment_data["replies"]; ok {
 			for _, reply_data := range replies.([]interface{}) {
-				if user_unique_id, ok := reply_data.(map[string]interface{})["user_id"]; ok {
+				if user_unique_id, ok := reply_data.(map[string]interface{})["uuid"]; ok {
 					user_ids = append(user_ids, user_unique_id.(string))
 				}
 			}
@@ -56,7 +56,7 @@ func populateCommentDataResponse(c *gin.Context, dataResponse map[string]interfa
 		var comment_user user.MemberMeta
 
 		//Validation of comment based on community member
-		comment_user_unique_id, ok := comment_data["user_id"]
+		comment_user_unique_id, ok := comment_data["uuid"]
 		if ok {
 			comment_user, ok = user_data[comment_user_unique_id.(string)]
 		}
@@ -268,7 +268,7 @@ func deleteCommentInternal(c *gin.Context, userId string) {
 
 	//Fetch comment user id
 	comment_data := dataResponse["comment"].(map[string]interface{})
-	comment_user_unique_id := comment_data["user_id"]
+	comment_user_unique_id := comment_data["uuid"]
 
 	//Body to be sent in the /post/<post_id>/comment/<comment_id> DELETE request
 	deleteCommentRequest, err := parseDeleteCommentRequest(c)

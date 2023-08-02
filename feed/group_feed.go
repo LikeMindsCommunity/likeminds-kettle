@@ -21,6 +21,7 @@ func FetchGroupFeed(c *gin.Context) {
 		ParamPage:       c.Query(ParamPage),
 		ParamPageSize:   c.Query(ParamPageSize),
 		ParamFeedroomId: c.Query(ParamFeedroomId),
+		ParamTopicIds:   c.Query(ParamTopicIds),
 	}
 
 	//Fetch member access to view post

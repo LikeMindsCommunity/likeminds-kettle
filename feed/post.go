@@ -39,6 +39,7 @@ type AttachmentRequest struct {
 
 type CreatePostRequest struct {
 	TempID      *string             `json:"temp_id"`
+	TopicIDs    []string            `json:"topic_ids"`
 	Text        string              `json:"text"`
 	Heading     string              `json:"heading"`
 	Attachments []AttachmentRequest `json:"attachments"`
@@ -48,6 +49,7 @@ type CreatePostRequest struct {
 
 type EditPostRequest struct {
 	Text        string              `json:"text"`
+	TopicIDs    []string            `json:"topic_ids"`
 	Heading     string              `json:"heading,omitempty"`
 	Attachments []AttachmentRequest `json:"attachments"`
 	UserIsCm    bool                `json:"user_is_cm"`
@@ -96,14 +98,14 @@ func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{
 		user_ids := []string{}
 
 		//Fetch post user id
-		if post_user_unique_id, ok := post_data["user_id"]; ok {
+		if post_user_unique_id, ok := post_data["uuid"]; ok {
 			user_ids = append(user_ids, post_user_unique_id.(string))
 		}
 
 		//Fetch replies user id
 		if replies, ok := post_data["replies"]; ok {
 			for _, reply_data := range replies.([]interface{}) {
-				if user_unique_id, ok := reply_data.(map[string]interface{})["user_id"]; ok {
+				if user_unique_id, ok := reply_data.(map[string]interface{})["uuid"]; ok {
 					user_ids = append(user_ids, user_unique_id.(string))
 				}
 			}
@@ -120,7 +122,7 @@ func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{
 		}
 
 		//Validation of post based on community member
-		if post_user_unique_id, ok := post_data["user_id"]; ok {
+		if post_user_unique_id, ok := post_data["uuid"]; ok {
 			if post_user, ok := user_data[post_user_unique_id.(string)]; ok {
 				if post_user.IsDeleted {
 					utils.GeneralBadRequestError(c, "Invalid post_id sent!")
@@ -312,7 +314,7 @@ func editPostInternal(c *gin.Context, userId string) {
 
 	//Fetch post user id
 	post_data := dataResponse["post"].(map[string]interface{})
-	post_user_unique_id := post_data["user_id"]
+	post_user_unique_id := post_data["uuid"]
 
 	//Body to be sent in the /post/<post_id> PUT request
 	editPostRequest, err := parseEditPostRequest(c)
@@ -380,7 +382,7 @@ func deletePostInternal(c *gin.Context, userId string) {
 
 	//Fetch post user id
 	post_data := dataResponse["post"].(map[string]interface{})
-	post_user_unique_id := post_data["user_id"]
+	post_user_unique_id := post_data["uuid"]
 
 	//Body to be sent in the /post/<post_id> DELETE request
 	deletePostRequest, err := parseDeletePostRequest(c)

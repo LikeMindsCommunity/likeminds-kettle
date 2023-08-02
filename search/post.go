@@ -81,7 +81,7 @@ func PostSearch(c *gin.Context) {
 
 		//Fetch posts user id
 		for _, post_data := range posts {
-			if user_unique_id, ok := post_data.(map[string]interface{})["user_id"]; ok {
+			if user_unique_id, ok := post_data.(map[string]interface{})["uuid"]; ok {
 				user_ids = append(user_ids, user_unique_id.(string))
 			}
 		}
