@@ -40,6 +40,8 @@ const ParamPostIds = "post_ids"
 const ParamCommentIds = "comment_ids"
 const ParamTopicIds = "topic_ids"
 const ParamIsEnabled = "is_enabled"
+const ParamSearchType = "search_type"
+const ParamSearch = "search"
 
 const (
 	CREATE_POST_ACTION     = "create_post"
