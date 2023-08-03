@@ -83,9 +83,11 @@ func Topic(c *gin.Context, method int) {
 func GetTopicInternal(c *gin.Context, userId string) {
 	//Params to be sent in the /topic GET request
 	params := map[string]string{
-		ParamPage:      c.Query(ParamPage),
-		ParamPageSize:  c.Query(ParamPageSize),
-		ParamIsEnabled: c.Query(ParamIsEnabled),
+		ParamPage:       c.Query(ParamPage),
+		ParamPageSize:   c.Query(ParamPageSize),
+		ParamIsEnabled:  c.Query(ParamIsEnabled),
+		ParamSearchType: c.Query(ParamSearchType),
+		ParamSearch:     c.Query(ParamSearch),
 	}
 
 	//Fetch member access to view topics
