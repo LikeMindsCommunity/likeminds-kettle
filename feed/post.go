@@ -38,14 +38,13 @@ type AttachmentRequest struct {
 }
 
 type CreatePostRequest struct {
-	TempID         *string             `json:"temp_id"`
-	TopicIDs       []string            `json:"topic_ids"`
-	Text           string              `json:"text"`
-	Heading        string              `json:"heading"`
-	Attachments    []AttachmentRequest `json:"attachments"`
-	FeedroomID     int                 `json:"feedroom_id"`
-	UUIDs          []string            `json:"uuids"`
-	OnBehalfOfUUID string              `json:"on_behalf_of_uuid"`
+	TempID      *string             `json:"temp_id"`
+	TopicIDs    []string            `json:"topic_ids"`
+	Text        string              `json:"text"`
+	Heading     string              `json:"heading"`
+	Attachments []AttachmentRequest `json:"attachments"`
+	FeedroomID  int                 `json:"feedroom_id"`
+	UUIDs       []string            `json:"uuids"`
 }
 
 type EditPostRequest struct {
@@ -251,23 +250,6 @@ func createPostInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	if createPostRequest.OnBehalfOfUUID != "" {
-		// Check if user is a admin or not
-		if !response.IsCm {
-			utils.MemberAccessFailError(c)
-			return
-		}
-
-		// Get valid user unique ids by calling internal users meta api
-		OnBehalfOfUUID, err := utility.GetUuidInternally(utils.CreateHeaders(c, userId), createPostRequest.OnBehalfOfUUID)
-		if err != nil {
-			utils.GeneralBadRequestError(c, "Invalid UUUD for on_behalf_of_uuid")
-			return
-		}
-
-		createPostRequest.OnBehalfOfUUID = OnBehalfOfUUID
-	}
-
 	//If not access
 	if !response.Access {
 		utils.MemberAccessFailError(c)
@@ -305,7 +287,7 @@ func createPostInternal(c *gin.Context, userId string) {
 	}
 
 	//Generate Response
-	utils.GenerateResponse(c)
+	utils.GenerateResponse(c, dataResponse)
 }
 
 func editPostInternal(c *gin.Context, userId string) {
