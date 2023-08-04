@@ -13,9 +13,8 @@ func InitRedis() *redis.Client {
 	//Initializing Redis
 	dsn := environment.GoDotEnvVariable("REDIS_DSN")
 	if len(dsn) == 0 {
-		dsn = "localhost:6379"
+		dsn = "redis:6379"
 	}
-
 	client := redis.NewClient(&redis.Options{
 		Addr: dsn,
 	})
@@ -26,7 +25,7 @@ func InitRedis() *redis.Client {
 	return client
 }
 
-//IsLTMBlacklisted checks if token is blacklisted or not => user is logged out or not
+// IsLTMBlacklisted checks if token is blacklisted or not => user is logged out or not
 func IsLTMBlacklisted(client *redis.Client, ltm *token.LoginTokenMeta) bool {
 	userUniqueID, _ := client.Get(ltm.AccessUuid).Result()
 	if userUniqueID != "" {
@@ -35,7 +34,7 @@ func IsLTMBlacklisted(client *redis.Client, ltm *token.LoginTokenMeta) bool {
 	return false
 }
 
-//IsRTMBlacklisted checks if token is blacklisted or not => user is logged out or not
+// IsRTMBlacklisted checks if token is blacklisted or not => user is logged out or not
 func IsRTMBlacklisted(client *redis.Client, rtm *token.RefreshTokenMeta) bool {
 	userUniqueID, _ := client.Get(rtm.RefreshUuid).Result()
 	if userUniqueID != "" {
@@ -44,7 +43,7 @@ func IsRTMBlacklisted(client *redis.Client, rtm *token.RefreshTokenMeta) bool {
 	return false
 }
 
-//BlacklistToken Updates user id against uuid in cache when user logs out
+// BlacklistToken Updates user id against uuid in cache when user logs out
 func BlacklistToken(client *redis.Client, ltm *token.LoginTokenMeta, rtm *token.RefreshTokenMeta) error {
 	atExpires := time.Unix(ltm.AccessTokenExpires, 0)
 	rtExpires := time.Unix(rtm.RefreshTokenExpires, 0)
