@@ -39,8 +39,6 @@ func CheckVersion(c *gin.Context, featureVersionCode map[string]int) bool {
 
 func ApiRevampV1Check(c *gin.Context) bool {
 	/*
-		Api Revamp V1 Check
-
 		returns True if, x-accept-version == v1
 	*/
 
