@@ -109,7 +109,7 @@ func Rights(c *gin.Context, method int) {
 
 			// Get user_unique_id from user_id internally and update user_id
 			if rightsRequest.UUID != "" {
-				uuid, _ := utility.GetUuidInternally(utils.CreateHeaders(c, userId), rightsRequest.UUID)
+				uuid, _ := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), rightsRequest.UUID)
 				rightsRequest.UserId = uuid
 			}
 
