@@ -251,7 +251,6 @@ func closeReportsInternalOld(c *gin.Context, userId string) {
 
 	//Body to be sent in the close report api internally
 	closeReportRequest, err := parseCloseReportRequest(c)
-
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
@@ -267,7 +266,6 @@ func closeReportsInternalV1(c *gin.Context, userId string) {
 
 	//Body to be sent in the close report api internally
 	closeReportV1Request, err := parseCloseReportV1Request(c)
-
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
