@@ -767,8 +767,5 @@ func enableCors() cors.Config {
 // getPrometheusMetricService returns prometheus metrics service
 func getPrometheusMetricService() (*monitoring.PrometheusService, error) {
 	prometheusService, err := monitoring.NewPrometheusService()
-	if err != nil {
-		log.Fatal(err.Error())
-	}
 	return prometheusService, err
 }
