@@ -2,6 +2,7 @@ package community
 
 import (
 	"fmt"
+	"reflect"
 
 	log "github.com/nateshr/likeminds-authentication/logging"
 
@@ -25,8 +26,78 @@ type PushReportRequest struct {
 	UUID             string      `json:"uuid"`
 }
 
+type PushReportV1Request struct {
+	EntityId    string `json:"entity_id" binding:"required"`
+	EntityType  string `json:"entity_type" binding:"required"`
+	AccusedUUID string `json:"accused_uuid"`
+	TagId       int    `json:"tag_id,omitempty"`
+	Reason      string `json:"reason"`
+	Link        string `json:"link"`
+}
+
 type CloseReportRequest struct {
 	ReportID int `json:"report_id" binding:"required"`
+}
+
+type CloseReportV1Request struct {
+	ReportIds []int `json:"report_ids" binding:"required"`
+}
+
+func parsePushReportRequest(c *gin.Context) (*PushReportRequest, error) {
+	//POST body params
+	var prr PushReportRequest
+
+	if err := c.ShouldBindJSON(&prr); err != nil {
+		return nil, err
+	}
+
+	if prr.CollabcardId != nil {
+		prr.CollabcardId = utils.ParseInterfaceToString(prr.CollabcardId)
+	}
+
+	if prr.ConversationID != nil {
+		prr.ConversationID = utils.ParseInterfaceToString(prr.ConversationID)
+	}
+
+	// If chatroom_id is present, parse it & set it to collabcard_id
+	if prr.ChatroomId != nil {
+		prr.CollabcardId = utils.ParseInterfaceToString(prr.ChatroomId)
+	}
+
+	return &prr, nil
+}
+
+func parseCloseReportRequest(c *gin.Context) (*CloseReportRequest, error) {
+	//POST body params
+	var crr CloseReportRequest
+
+	if err := c.ShouldBindJSON(&crr); err != nil {
+		return nil, err
+	}
+
+	return &crr, nil
+}
+
+func parseCloseReportV1Request(c *gin.Context) (*CloseReportV1Request, error) {
+	//POST body params
+	var crr CloseReportV1Request
+
+	if err := c.ShouldBindJSON(&crr); err != nil {
+		return nil, err
+	}
+
+	return &crr, nil
+}
+
+func parsePushReportV1Request(c *gin.Context) (*PushReportV1Request, error) {
+	//POST body params
+	var prr PushReportV1Request
+
+	if err := c.ShouldBindJSON(&prr); err != nil {
+		return nil, err
+	}
+
+	return &prr, nil
 }
 
 // GetReport is used to get community reports
@@ -61,15 +132,15 @@ func Report(c *gin.Context, method int) {
 
 	case utils.POSTMethod:
 
-		pushReportRequest, err := parsePushReportRequest(c)
-		if err != nil {
-			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
-			return
-		}
+		apiRevampCheckV1 := utils.ApiRevampV1Check(c)
 
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, PushReportEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, pushReportRequest)
+		if apiRevampCheckV1 {
+			// If ApiRevampV1Check is true, call api/community/report with POST method
+			pushReportsInternalV1(c, userId)
+		} else {
+			// Else call api/push_report with POST method
+			pushReportsInternalOld(c, userId)
+		}
 
 	case utils.DELETEMethod:
 
@@ -78,16 +149,15 @@ func Report(c *gin.Context, method int) {
 			userId = botId
 		}
 
-		//Body to be sent in the close report api internally
-		closeReportRequest, err := parseCloseReportRequest(c)
-		if err != nil {
-			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
-			return
-		}
+		apiRevampCheckV1 := utils.ApiRevampV1Check(c)
 
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, CloseReportsEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, closeReportRequest)
+		if apiRevampCheckV1 {
+			// If ApiRevampV1Check is true, call api/community/report with DELETE method
+			closeReportsInternalV1(c, userId)
+		} else {
+			// Else call api/close_report with POST method
+			closeReportsInternalOld(c, userId)
+		}
 
 	}
 }
@@ -148,39 +218,62 @@ func getReportsInternal(c *gin.Context, userId string) {
 	utils.GenerateResponse(c, dataResponse)
 }
 
-func parsePushReportRequest(c *gin.Context) (*PushReportRequest, error) {
-	//POST body params
-	var prr PushReportRequest
+// Internal method to push reports Old
+func pushReportsInternalOld(c *gin.Context, userId string) {
 
-	if err := c.ShouldBindJSON(&prr); err != nil {
-		return nil, err
+	pushReportRequest, err := parsePushReportRequest(c)
+	if err != nil {
+		//If POST body params are missing
+		utils.GeneralAPIError(c, err.Error())
+		return
 	}
 
-	if prr.CollabcardId != nil {
-		prr.CollabcardId = utils.ParseInterfaceToString(prr.CollabcardId)
-	}
-
-	if prr.ConversationID != nil {
-		prr.ConversationID = utils.ParseInterfaceToString(prr.ConversationID)
-	}
-
-	// If chatroom_id is present, parse it & set it to collabcard_id
-	if prr.ChatroomId != nil {
-		prr.CollabcardId = utils.ParseInterfaceToString(prr.ChatroomId)
-	}
-
-	return &prr, nil
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, PushReportEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, pushReportRequest)
 }
 
-func parseCloseReportRequest(c *gin.Context) (*CloseReportRequest, error) {
-	//POST body params
-	var crr CloseReportRequest
+// Internal method to push reports ApiRevamp v1
+func pushReportsInternalV1(c *gin.Context, userId string) {
 
-	if err := c.ShouldBindJSON(&crr); err != nil {
-		return nil, err
+	pushReportV1Request, err := parsePushReportV1Request(c)
+	if err != nil {
+		// Throw error if parsing fails
+		utils.GeneralAPIError(c, err.Error())
+		return
 	}
 
-	return &crr, nil
+	// Send Request
+	utils.SendRequest(c, utils.CoreService, CommunityReportV1EndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, pushReportV1Request)
+}
+
+// Internal method to close reports Old
+func closeReportsInternalOld(c *gin.Context, userId string) {
+
+	//Body to be sent in the close report api internally
+	closeReportRequest, err := parseCloseReportRequest(c)
+	if err != nil {
+		//If POST body params are missing
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	//Send Request to api/close_report
+	utils.SendRequest(c, utils.CoreService, CloseReportsEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, closeReportRequest)
+}
+
+// Internal method to close reports ApiRevamp v1
+func closeReportsInternalV1(c *gin.Context, userId string) {
+
+	//Body to be sent in the close report api internally
+	closeReportV1Request, err := parseCloseReportV1Request(c)
+	if err != nil {
+		//If POST body params are missing
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	//Send Request to api/community/report/close
+	utils.SendRequest(c, utils.CoreService, CommunityReportV1EndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, closeReportV1Request)
 }
 
 // Internal method to fetch posts and comments data for the reports
@@ -200,6 +293,11 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 	for _, report := range reports {
 
 		typeValue, ok := report.(map[string]interface{})["type"]
+
+		// If type is string, convert it to report type int
+		if reflect.TypeOf(typeValue).Kind() == reflect.String {
+			typeValue = float64(ReportTypeStrintToInt(typeValue.(string)))
+		}
 
 		if ok {
 			if int(typeValue.(float64)) == feed.POST_REPORT_TYPE {

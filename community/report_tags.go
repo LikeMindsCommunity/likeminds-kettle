@@ -15,18 +15,36 @@ func GetReportTags(c *gin.Context) {
 		return
 	}
 
-	//Params to be sent in the member state api internally
-	params := map[string]string{
-		ParamType: c.Query(ParamType),
-	}
+	apiRevampCheckv1 := utils.ApiRevampV1Check(c)
 
-	//Params Validation
-	if params[ParamType] == "" {
-		//If GET params are missing
-		utils.GETQueryParamsMissingError(c)
-		return
-	}
+	// Query Params
+	params := map[string]string{}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, FetchReportTagsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	if apiRevampCheckv1 {
+
+		params[ParamEntityType] = c.Query(ParamEntityType)
+
+		// Validation for entity_type
+		if params[ParamEntityType] == "" {
+			utils.GeneralBadRequestError(c, "Please provide entity_type in query params")
+			return
+		}
+
+		//Send Request to api/community/report/tag with GET method
+		utils.SendRequest(c, utils.CoreService, FetchCommunityReportTagsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
+	} else {
+
+		params[ParamType] = c.Query(ParamType)
+
+		// Validation for type
+		if params[ParamType] == "" {
+			utils.GeneralBadRequestError(c, "Please provide type in query params")
+			return
+		}
+
+		//Send Request to api/fetch_report_tags with GET method
+		utils.SendRequest(c, utils.CoreService, FetchReportTagsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
+	}
 }
