@@ -33,7 +33,7 @@ func CreateToken(c *gin.Context) {
 
 		// If token creation fails
 		if tokenErr != nil {
-			utils.GeneralAPIError(c, tokenErr.Error())
+			utils.GeneralBadRequestError(c, tokenErr.Error())
 			return
 		}
 
