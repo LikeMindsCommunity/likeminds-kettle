@@ -34,7 +34,7 @@ func UserCreatedPostSearch(c *gin.Context) {
 	}
 
 	//Get user_unique_id from user_id internally
-	user_id, err := utility.GetUuidInternally(utils.CreateHeaders(c, userId), user_id)
+	user_id, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), user_id)
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
 		return

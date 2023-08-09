@@ -62,6 +62,7 @@ const (
 	CREATE_TOPIC_ACTION    = "create_topic"
 	EDIT_TOPIC_ACTION      = "edit_topic"
 	IS_MEMBER              = "is_member"
+	CHANGE_AUTHOR_ACTION   = "change_author"
 )
 
 const (

@@ -65,7 +65,7 @@ func GetUsersInfoInternally(headers map[string]interface{}, member_ids []interfa
 
 }
 
-func GetUuidInternally(headers map[string]interface{}, user_id string) (string, error) {
+func GetUUIDInternally(headers map[string]interface{}, user_id string) (string, error) {
 
 	member_ids := []interface{}{user_id}
 	user_unique_id := ""
