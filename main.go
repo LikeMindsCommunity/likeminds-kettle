@@ -509,7 +509,7 @@ func LTMorVTMValidationMiddleware() gin.HandlerFunc {
 		if bearerToken == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
-				ErrorMessage: token.ErrorInvalidLTMorRTM,
+				ErrorMessage: token.ErrorInvalidLTMorVTM,
 			})
 			return
 		}
@@ -534,7 +534,7 @@ func LTMorVTMValidationMiddleware() gin.HandlerFunc {
 			log.Error(vtmErr)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
-				ErrorMessage: token.ErrorInvalidLTMorRTM,
+				ErrorMessage: token.ErrorInvalidLTMorVTM,
 			})
 			return
 		}
