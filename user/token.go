@@ -6,18 +6,13 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-type CreateTokenRequest struct {
-	TokenType string `json:"token_type"`
-}
-
 func CreateToken(c *gin.Context) {
 
 	var accessToken string
 
-	// Parsing create token request
-	createTokenRequest, _ := parseCreateTokenRequest(c)
+	tokenType := c.Query(ParamTokenType)
 
-	if createTokenRequest != nil && createTokenRequest.TokenType == VTM {
+	if tokenType != "" && tokenType == VTM {
 		vtmToken := c.Request.Header.Get(token.HeaderAuthorization)
 
 		if vtmToken == "" {
@@ -64,15 +59,4 @@ func CreateToken(c *gin.Context) {
 
 	// Generate Response
 	utils.GenerateResponse(c, dataResponse)
-}
-
-func parseCreateTokenRequest(c *gin.Context) (*CreateTokenRequest, error) {
-	//POST body params
-	var ctr CreateTokenRequest
-
-	if err := c.ShouldBindJSON(&ctr); err != nil {
-		return nil, err
-	}
-
-	return &ctr, nil
 }
