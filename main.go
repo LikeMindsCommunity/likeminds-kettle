@@ -186,6 +186,7 @@ func main() {
 	// Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
 	router.PUT("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.EditRights)
+	router.PATCH("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.UpdateRights)
 
 	// Conversation Apis
 	router.GET("/conversation", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.GetConversation)
