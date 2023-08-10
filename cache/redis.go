@@ -13,7 +13,7 @@ func InitRedis() *redis.Client {
 	//Initializing Redis
 	dsn := environment.GoDotEnvVariable("REDIS_DSN")
 	if len(dsn) == 0 {
-		dsn = "redis:6379"
+		dsn = "localhost:6379"
 	}
 	client := redis.NewClient(&redis.Options{
 		Addr: dsn,

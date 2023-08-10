@@ -1,13 +1,33 @@
-version: "1.0"
 services:
-  kettle:
-    build: "."
-    expose:
-      - "8080"
-
-  nginx:
-    build: "./scripts/nginx"
+  redis:
+    image: redis
+    container_name: redis
+    hostname: redis
     ports:
-      - "80:80"
-    depends_on:
-      - "kettle"
+      - 6379:6379
+    restart: always
+  auth:
+    container_name: auth
+    hostname: auth
+    build:
+      dockerfile: ./Dockerfile.kettle-local
+    ports:
+      - 8080:8080
+    restart: always
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - 9090:9090
+    restart: always
+
+volumes:
+  prometheus_data:
