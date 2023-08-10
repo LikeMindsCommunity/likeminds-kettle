@@ -2,8 +2,8 @@ package monitoring
 
 import "time"
 
-// HTTP application
-type HTTP struct {
+// ResponseTimeMetric to record response time metric
+type ResponseTimeMetric struct {
 	Handler    string
 	Method     string
 	StatusCode string
@@ -12,25 +12,37 @@ type HTTP struct {
 	Duration   float64
 }
 
-// newHTTP create a new HTTP app
-func newHTTP(handler string, method string) *HTTP {
-	return &HTTP{
+// newResponseTimeMetric create a new ResponseTimeMetric
+func newResponseTimeMetric(handler string, method string) *ResponseTimeMetric {
+	return &ResponseTimeMetric{
 		Handler: handler,
 		Method:  method,
 	}
 }
 
-// Started start monitoring the app
-func (http *HTTP) Started() {
+// Started start recording response time
+func (http *ResponseTimeMetric) Started() {
 	http.StartedAt = time.Now()
 }
 
-// Finished app finished
-func (http *HTTP) Finished() {
+// Finished response time recorded
+func (http *ResponseTimeMetric) Finished() {
 	http.FinishedAt = time.Now()
 	http.Duration = time.Since(http.StartedAt).Seconds()
 }
 
-type MetricService interface {
-	SaveHTTP(h *HTTP)
+// TotalRequestMetric to record total no. of requests
+type TotalRequestMetric struct {
+	Handler    string
+	Method     string
+	StatusCode string
+}
+
+// newResponseTimeMetric create a new TotalRequestMetric
+func newTotalRequestMetric(handler string, method string, statusCode string) *TotalRequestMetric {
+	return &TotalRequestMetric{
+		Handler:    handler,
+		Method:     method,
+		StatusCode: statusCode,
+	}
 }

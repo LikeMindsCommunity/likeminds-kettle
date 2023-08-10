@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/nateshr/likeminds-authentication/utility/monitoring"
-	"github.com/prometheus/client_golang/prometheus"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -409,18 +408,9 @@ func LoggingMiddleware() gin.HandlerFunc {
 	}
 }
 
-var totalRequest = prometheus.NewCounterVec(
-	prometheus.CounterOpts{
-		Name: "http_request_total",
-		Help: "Number of get request",
-	},
-	[]string{"path"},
-)
-
 // ApiMiddleware will add the db connection to the context
 func ApiMiddleware(client *redis.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		totalRequest.WithLabelValues(c.FullPath()).Inc()
 		c.Set(cache.ParamRedisClient, client)
 		c.Next()
 	}
