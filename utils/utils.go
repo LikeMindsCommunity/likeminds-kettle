@@ -183,6 +183,17 @@ func GetRequestResponseWithoutContext(serviceType ServiceType, url string, reque
 		}
 
 		respBytes, statusCode, err = client.DeleteRequest(&options)
+
+	case PATCHRequest:
+
+		options := api_client.PostRequestOptions{
+			Url:           baseUrl + url,
+			CustomHeaders: headers,
+			Params:        params,
+			Body:          body,
+		}
+
+		respBytes, statusCode, err = client.PatchRequest(&options)
 	}
 
 	return respBytes, statusCode, err
