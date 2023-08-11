@@ -38,13 +38,15 @@ type AttachmentRequest struct {
 }
 
 type CreatePostRequest struct {
-	TempID      *string             `json:"temp_id"`
-	TopicIDs    []string            `json:"topic_ids"`
-	Text        string              `json:"text"`
-	Heading     string              `json:"heading"`
-	Attachments []AttachmentRequest `json:"attachments"`
-	FeedroomID  int                 `json:"feedroom_id"`
-	UUIDs       []string            `json:"uuids"`
+	TempID         *string             `json:"temp_id"`
+	TopicIDs       []string            `json:"topic_ids"`
+	Text           string              `json:"text"`
+	Heading        string              `json:"heading"`
+	Attachments    []AttachmentRequest `json:"attachments"`
+	FeedroomID     int                 `json:"feedroom_id"`
+	UUIDs          []string            `json:"uuids"`
+	OnBehalfOfUUID string              `json:"on_behalf_of_uuid,omitempty"`
+	UserIsCm       bool                `json:"user_is_cm,omitempty"`
 }
 
 type EditPostRequest struct {
@@ -254,6 +256,38 @@ func createPostInternal(c *gin.Context, userId string) {
 	if !response.Access {
 		utils.MemberAccessFailError(c)
 		return
+	}
+
+	//Update user_is_cm in request
+	createPostRequest.UserIsCm = response.IsCm
+
+	if createPostRequest.OnBehalfOfUUID != "" {
+		//Fetch member access to change author
+		success, response := user.FetchMemberAccess(c, CHANGE_AUTHOR_ACTION, userId)
+		if !success {
+			return
+		}
+
+		//If not access
+		if !response.Access {
+			utils.MemberAccessFailError(c)
+			return
+		}
+
+		//Update user_is_cm in request
+		createPostRequest.UserIsCm = response.IsCm
+
+		//Get parsed UUID from core service
+		parsedUUID, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), createPostRequest.OnBehalfOfUUID)
+
+		//If error in fetching UUID
+		if err != nil || parsedUUID == "" {
+			utils.GeneralBadRequestError(c, "Invalid on_behalf_of_uuid sent!")
+			return
+		}
+
+		//Update UUID in request
+		createPostRequest.OnBehalfOfUUID = parsedUUID
 	}
 
 	//Get tagged users from text

@@ -22,6 +22,7 @@ const ErrorInvalidVTM = "Invalid VTM!"
 const ErrorInvalidOTM = "Invalid OTM!"
 const ErrorInvalidLTM = "Invalid LTM!"
 const ErrorInvalidRTM = "Invalid RTM!"
+const ErrorInvalidLTMorVTM = "Invalid LTM or VTM!"
 
 type OnboardingTokenMeta struct {
 	AccessUuid         string
