@@ -22,7 +22,7 @@ type Right struct {
 type RightsRequest struct {
 	UserId      interface{} `json:"user_id"`
 	UUID        string      `json:"uuid"`
-	CustomTitle string      `json:"custom_title"`
+	CustomTitle *string     `json:"custom_title,omitempty"`
 	Rights      []Right     `json:"rights"`
 	IsCM        bool        `json:"is_cm"`
 }
