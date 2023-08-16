@@ -22,13 +22,24 @@ type Right struct {
 type RightsRequest struct {
 	UserId      interface{} `json:"user_id"`
 	UUID        string      `json:"uuid"`
-	CustomTitle string      `json:"custom_title"`
-	Rights      []Right     `json:"rights"`
+	CustomTitle *string     `json:"custom_title,omitempty"`
+	Rights      []Right     `json:"rights,omitempty"`
 	IsCM        bool        `json:"is_cm"`
 }
 
 type CreateActivityRequest struct {
 	Action string `json:"action"`
+}
+
+func parseRightsRequest(c *gin.Context) (*RightsRequest, error) {
+	//POST body params
+	var rr RightsRequest
+
+	if err := c.ShouldBindJSON(&rr); err != nil {
+		return nil, err
+	}
+
+	return &rr, nil
 }
 
 // EditRights is used to edit community rights for members
@@ -39,6 +50,11 @@ func EditRights(c *gin.Context) {
 // GetRights is used to get community rights for members
 func GetRights(c *gin.Context) {
 	Rights(c, utils.GETMethod)
+}
+
+// UpdateRights is used to update only rights sent in the request
+func UpdateRights(c *gin.Context) {
+	Rights(c, utils.PatchMethod)
 }
 
 // Rigths method handles community rights for members
@@ -59,135 +75,202 @@ func Rights(c *gin.Context, method int) {
 	switch method {
 	case utils.GETMethod:
 
-		//Params to be sent in the fetch rights request
-		params := map[string]string{
-			ParamUserId: c.Query(ParamUserId),
-			ParamUUID:   c.Query(ParamUUID),
-		}
-
-		//GET Request params
-		is_cm := c.Query(ParamIsCm)
-
-		if is_cm == "" || is_cm == "false" {
-			//If is_cm is missing or false, call fetch member rights api internally
-
-			//Send Request
-			utils.SendRequest(c, utils.CoreService, FetchMemberRights, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
-		} else {
-			//else, call fetch cm rights api internally
-
-			//Send Request
-			utils.SendRequest(c, utils.CoreService, FetchCMRights, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
-		}
+		getRightsInternal(c, userId)
 
 	case utils.PUTMethod:
 
-		//Body to be sent in the update rights POST request
-		rightsRequest, err := parseRightsRequest(c)
-		if err != nil {
-			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
-			return
-		}
+		editRightsInternal(c, userId)
 
-		is_cm := rightsRequest.IsCM
+	case utils.PatchMethod:
 
-		if !is_cm {
-			//If is_cm is missing or false, call update member rights api internally
+		updateRightsInternal(c, userId)
 
-			//Send Request
-			respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, UpdateMemberRights, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, rightsRequest)
-			if respBytes == nil {
-				return
-			}
-
-			//Validate response
-			apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
-			if apiCR == nil {
-				return
-			}
-
-			// Get user_unique_id from user_id internally and update user_id
-			if rightsRequest.UUID != "" {
-				uuid, _ := utility.GetUuidInternally(utils.CreateHeaders(c, userId), rightsRequest.UUID)
-				rightsRequest.UserId = uuid
-			}
-
-			//If flow succeeds
-			if reflect.TypeOf(rightsRequest.UserId).Kind() == reflect.String {
-				post_action := ""
-				comment_action := ""
-
-				for _, right := range rightsRequest.Rights {
-					if right.Id == CREATE_POST_RIGHT_ID {
-
-						if right.IsSelected {
-							post_action = CREATE_POST_PERMISSION_ADDED_ACTION
-						} else {
-							post_action = CREATE_POST_PERMISSION_REMOVED_ACTION
-						}
-					}
-
-					if right.Id == COMMENT_AND_REPLY_RIGHT_ID {
-
-						if right.IsSelected {
-							comment_action = CREATE_COMMENT_PERMISSION_ADDED_ACTION
-						} else {
-							comment_action = CREATE_COMMENT_PERMISSION_REMOVED_ACTION
-						}
-					}
-				}
-
-				if post_action != "" {
-					createActivityRequest := CreateActivityRequest{
-						Action: post_action,
-					}
-
-					//Send Request
-					respBytes, _ := utils.GetRequestResponse(c, utils.SwarmService, fmt.Sprintf(CreateFeedActivityEndpoint, rightsRequest.UserId.(string)), utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createActivityRequest)
-					if respBytes == nil {
-						return
-					}
-
-					//Validate response
-					apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
-					if apiCR == nil {
-						return
-					}
-				}
-
-				if comment_action != "" {
-					createActivityRequest := CreateActivityRequest{
-						Action: comment_action,
-					}
-
-					//Send Request
-					respBytes, _ := utils.GetRequestResponse(c, utils.SwarmService, fmt.Sprintf(CreateFeedActivityEndpoint, rightsRequest.UserId.(string)), utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createActivityRequest)
-					if respBytes == nil {
-						return
-					}
-				}
-			}
-
-			//Generate response
-			utils.GenerateResponse(c, apiCR.Response)
-
-		} else {
-			//else, call update cm rights api internally
-
-			//Send Request
-			utils.SendRequest(c, utils.CoreService, UpdateCMRights, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, rightsRequest)
-		}
 	}
 }
 
-func parseRightsRequest(c *gin.Context) (*RightsRequest, error) {
-	//POST body params
-	var rr RightsRequest
+func getRightsInternal(c *gin.Context, userId string) {
 
-	if err := c.ShouldBindJSON(&rr); err != nil {
-		return nil, err
+	//Params to be sent in the fetch rights request
+	params := map[string]string{
+		ParamUserId: c.Query(ParamUserId),
+		ParamUUID:   c.Query(ParamUUID),
 	}
 
-	return &rr, nil
+	//GET Request params
+	is_cm := c.Query(ParamIsCm)
+
+	if is_cm == "" || is_cm == "false" {
+		//If is_cm is missing or false, call fetch member rights api internally
+
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, FetchMemberRights, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	} else {
+		//else, call fetch cm rights api internally
+
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, FetchCMRights, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	}
+}
+
+func editRightsInternal(c *gin.Context, userId string) {
+
+	//Body to be sent in the update rights POST request
+	rightsRequest, err := parseRightsRequest(c)
+	if err != nil {
+		//If POST body params are missing
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	is_cm := rightsRequest.IsCM
+
+	if !is_cm {
+		//If is_cm is missing or false, call update member rights api internally
+
+		//Send Request
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, UpdateMemberRights, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, rightsRequest)
+		if respBytes == nil {
+			return
+		}
+
+		//Validate response
+		apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+		if apiCR == nil {
+			return
+		}
+
+		// Get user_unique_id from user_id internally and update user_id
+		if rightsRequest.UUID != "" {
+			uuid, _ := utility.GetUuidInternally(utils.CreateHeaders(c, userId), rightsRequest.UUID)
+			rightsRequest.UserId = uuid
+		}
+		// Get user_unique_id from user_id internally and update user_id
+		if rightsRequest.UUID != "" {
+			uuid, _ := utility.GetUuidInternally(utils.CreateHeaders(c, userId), rightsRequest.UUID)
+			rightsRequest.UserId = uuid
+		}
+
+		//If rights change for FEED, create feed rights activity
+		if reflect.TypeOf(rightsRequest.UserId).Kind() == reflect.String {
+			err := createFeedRightsAcitivity(c, userId, rightsRequest.Rights, rightsRequest.UserId.(string))
+			if err {
+				return
+			}
+		}
+
+		//Generate response
+		utils.GenerateResponse(c, apiCR.Response)
+
+	} else {
+		//else, call update cm rights api internally
+
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, UpdateCMRights, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, rightsRequest)
+	}
+}
+
+func updateRightsInternal(c *gin.Context, userId string) {
+
+	//Body to be sent in the update rights PATCH request
+	rightsRequest, err := parseRightsRequest(c)
+	if err != nil {
+		//If body params are missing
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	is_cm := rightsRequest.IsCM
+
+	if !is_cm {
+		//If is_cm is missing or false, call update member rights api internally
+
+		//Send Request
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, UpdateMemberRights, utils.PATCHRequest, utils.CreateHeaders(c, userId), nil, rightsRequest)
+		if respBytes == nil {
+			return
+		}
+
+		//Validate response
+		apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+		if apiCR == nil {
+			return
+		}
+
+		// Get UUID from internal core service and update UUID
+		if rightsRequest.UUID != "" {
+			rightsRequest.UUID, _ = utility.GetUuidInternally(utils.CreateHeaders(c, userId), rightsRequest.UUID)
+		}
+
+		err := createFeedRightsAcitivity(c, userId, rightsRequest.Rights, rightsRequest.UUID)
+		if err {
+			return
+		}
+
+		//Generate response
+		utils.GenerateResponse(c, apiCR.Response)
+
+	} else {
+
+		//Send Request to api/update_community_manager_rights
+		utils.SendRequest(c, utils.CoreService, UpdateCMRights, utils.PATCHRequest, utils.CreateHeaders(c, userId), nil, rightsRequest)
+	}
+}
+
+// createFeedRightsAcitivity is used to create feed rights activity for members
+func createFeedRightsAcitivity(c *gin.Context, userId string, rights []Right, uuid string) bool {
+
+	post_action := ""
+	comment_action := ""
+
+	for _, right := range rights {
+		if right.Id == CREATE_POST_RIGHT_ID {
+
+			if right.IsSelected {
+				post_action = CREATE_POST_PERMISSION_ADDED_ACTION
+			} else {
+				post_action = CREATE_POST_PERMISSION_REMOVED_ACTION
+			}
+		}
+
+		if right.Id == COMMENT_AND_REPLY_RIGHT_ID {
+
+			if right.IsSelected {
+				comment_action = CREATE_COMMENT_PERMISSION_ADDED_ACTION
+			} else {
+				comment_action = CREATE_COMMENT_PERMISSION_REMOVED_ACTION
+			}
+		}
+	}
+
+	if post_action != "" {
+		createActivityRequest := CreateActivityRequest{
+			Action: post_action,
+		}
+
+		//Send Request
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, fmt.Sprintf(CreateFeedActivityEndpoint, uuid), utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createActivityRequest)
+		if respBytes == nil {
+			return true
+		}
+
+		//Validate response
+		apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+		if apiCR == nil {
+			return true
+		}
+	}
+
+	if comment_action != "" {
+		createActivityRequest := CreateActivityRequest{
+			Action: comment_action,
+		}
+
+		//Send Request
+		respBytes, _ := utils.GetRequestResponse(c, utils.SwarmService, fmt.Sprintf(CreateFeedActivityEndpoint, uuid), utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createActivityRequest)
+		if respBytes == nil {
+			return true
+		}
+	}
+
+	return false
 }

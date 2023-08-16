@@ -13,6 +13,7 @@ const GETMethod = 0
 const POSTMethod = 1
 const PUTMethod = 2
 const DELETEMethod = 3
+const PatchMethod = 4
 
 type ServiceType int
 
@@ -30,6 +31,7 @@ const (
 	POSTRequestFormUrlEncodedBody
 	PUTRequest
 	DELETERequest
+	PATCHRequest
 )
 
 type PlatformType string
