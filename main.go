@@ -39,7 +39,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "1.33.1"
+	var AppVersion string = "1.35.0"
 
 	initGin()
 	client = cache.InitRedis()
@@ -181,11 +181,14 @@ func main() {
 	router.PUT("/community/settings/content_download", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditContentDownloadSettings)
 	router.GET("/community/member/home/meta", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.MemberHomeMeta)
 	router.PUT("/community/member/join", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.AcceptRejectJoinCommunity)
-	router.GET("/community/intro_examples", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetIntroExamples)
+	router.GET("/community/intro_examples", LTMorVTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetIntroExamples)
+	router.POST("/community/invite", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.SendCommunityInvite)
+	router.GET("/community/configurations", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityConfigurations)
 
 	// Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
 	router.PUT("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.EditRights)
+	router.PATCH("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.UpdateRights)
 
 	// Conversation Apis
 	router.GET("/conversation", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), conversation.GetConversation)

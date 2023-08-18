@@ -2,15 +2,22 @@ package community
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
 func GetIntroExamples(c *gin.Context) {
-	// Authorize User
-	userId := user.GetRequestingUserId(c)
-	if userId == "" {
-		return
+	var userId string
+
+	ltm, _ := c.Get(token.ParamLTM)
+
+	if ltm != nil {
+		// Authorize User
+		userId := user.GetRequestingUserId(c)
+		if userId == "" {
+			return
+		}
 	}
 
 	// Send Request

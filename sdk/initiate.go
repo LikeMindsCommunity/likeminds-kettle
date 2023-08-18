@@ -21,6 +21,7 @@ type InitiateSDKRequest struct {
 	QuestionAnswers []community.QuestionAnswerWithInt `json:"question_answers"`
 	User            user.User                         `json:"user,omitempty"`
 	TokenExpiryBeta int64                             `json:"token_expiry_beta,omitempty"`
+	SharedBy        string                            `json:"shared_by,omitempty"`
 }
 
 // InitiateSDK is used to initiate sdk
