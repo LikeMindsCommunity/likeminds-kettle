@@ -17,6 +17,7 @@ type Question struct {
 	IsHidden            bool        `json:"is_hidden"`
 	Field               bool        `json:"field"`
 	Rank                int32       `json:"rank"`
+	ImageUrl            string      `json:"image_url"`
 	QuestionChangeState int32       `json:"question_change_state"`
 	CanAddOptions       bool        `json:"can_add_options"`
 	IsCompulsory        bool        `json:"is_compulsory"`
