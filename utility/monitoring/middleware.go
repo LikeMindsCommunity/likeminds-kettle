@@ -11,8 +11,6 @@ func PrometheusMiddleware(metricService MetricService) gin.HandlerFunc {
 		responseTimeMetric := newResponseTimeMetric(c.FullPath(), c.Request.Method)
 		//Start recording response time
 		responseTimeMetric.Started()
-		//Increase concurrency
-		metricService.IncreaseConcurrentRequest()
 		//Serve request
 		c.Next()
 		statusCode := strconv.Itoa(c.Writer.Status())
@@ -23,7 +21,5 @@ func PrometheusMiddleware(metricService MetricService) gin.HandlerFunc {
 		metricService.SaveResponseTime(responseTimeMetric)
 		//Save total no. of request
 		metricService.SaveTotalRequest(newTotalRequestMetric(c.FullPath(), c.Request.Method, statusCode))
-		//Decrease concurrency
-		metricService.DecreaseConcurrentRequest()
 	}
 }
