@@ -9,6 +9,7 @@ import (
 	"time"
 
 	log "github.com/nateshr/likeminds-authentication/logging"
+	"github.com/nateshr/likeminds-authentication/widget"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -279,6 +280,11 @@ func main() {
 	router.GET("/search/post", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.PostSearch)
 	router.GET("/search/post/user/:user_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.UserCreatedPostSearch)
 	router.GET("/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.GeneralSearch)
+
+	// Widget Apis
+	router.POST("/widget", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), widget.CreateWidget)
+	router.GET("/widget", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), widget.GetWidget)
+	router.PUT("/widget/:widget_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), widget.EditWidget)
 
 	log.Info(fmt.Sprintf("application version: %s", AppVersion))
 	log.Fatal(router.Run(":8080"))
