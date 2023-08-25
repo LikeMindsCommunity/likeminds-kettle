@@ -8,7 +8,7 @@ import (
 
 type UserOTPRequest struct {
 	OTPMode     string `json:"otp_mode" binding:"required"`
-	MobileNo    int    `json:"mobile_no"`
+	MobileNo    string `json:"mobile_no"`
 	CountryCode int    `json:"country_code"`
 	EmailID     string `json:"email_id"`
 	IsRetry     bool   `json:"is_retry"`

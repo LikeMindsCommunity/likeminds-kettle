@@ -141,12 +141,7 @@ func editRightsInternal(c *gin.Context, userId string) {
 
 		// Get user_unique_id from user_id internally and update user_id
 		if rightsRequest.UUID != "" {
-			uuid, _ := utility.GetUuidInternally(utils.CreateHeaders(c, userId), rightsRequest.UUID)
-			rightsRequest.UserId = uuid
-		}
-		// Get user_unique_id from user_id internally and update user_id
-		if rightsRequest.UUID != "" {
-			uuid, _ := utility.GetUuidInternally(utils.CreateHeaders(c, userId), rightsRequest.UUID)
+			uuid, _ := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), rightsRequest.UUID)
 			rightsRequest.UserId = uuid
 		}
 
@@ -198,7 +193,7 @@ func updateRightsInternal(c *gin.Context, userId string) {
 
 		// Get UUID from internal core service and update UUID
 		if rightsRequest.UUID != "" {
-			rightsRequest.UUID, _ = utility.GetUuidInternally(utils.CreateHeaders(c, userId), rightsRequest.UUID)
+			rightsRequest.UUID, _ = utility.GetUUIDInternally(utils.CreateHeaders(c, userId), rightsRequest.UUID)
 		}
 
 		err := createFeedRightsAcitivity(c, userId, rightsRequest.Rights, rightsRequest.UUID)

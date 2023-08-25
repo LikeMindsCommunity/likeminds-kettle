@@ -39,7 +39,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "1.35.0"
+	var AppVersion string = "2.0.0"
 
 	initGin()
 	client = cache.InitRedis()
@@ -51,7 +51,7 @@ func main() {
 	// OTP Apis
 	router.GET("/otp/generate", otp.GenerateOTP)
 	router.GET("/otp/verify", otp.VerifyOTP)
-	router.GET("/user/token", user.CreateOTMToken)
+	router.GET("/user/token", user.CreateToken)
 
 	// User Apis
 	router.POST("/user/login", OTMValidationMiddleware(), user.Login)
@@ -140,7 +140,8 @@ func main() {
 	router.GET("/community", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.Community)
 	router.GET("/community/branding", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.Branding)
 	router.POST("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditQuestions)
-	router.GET("/community/questions", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetQuestions)
+	router.GET("/community/questions", LTMorVTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetQuestions)
+	router.GET("/community/question/filters", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityQuestionFilters)
 	router.GET("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetMember)
 	router.POST("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.AddMember)
 	router.PUT("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditMember)
@@ -180,6 +181,8 @@ func main() {
 	router.PUT("/community/settings/content_download", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditContentDownloadSettings)
 	router.GET("/community/member/home/meta", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.MemberHomeMeta)
 	router.PUT("/community/member/join", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.AcceptRejectJoinCommunity)
+	router.GET("/community/intro_examples", LTMorVTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetIntroExamples)
+	router.POST("/community/invite", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.SendCommunityInvite)
 	router.GET("/community/configurations", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityConfigurations)
 
 	// Moderation Apis
@@ -498,6 +501,46 @@ func RTMValidationMiddleware() gin.HandlerFunc {
 			c.Set(token.ParamRTM, rtm)
 		}
 		c.Next()
+	}
+}
+
+func LTMorVTMValidationMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Extract token from headers
+		bearerToken := c.Request.Header.Get(token.HeaderAuthorization)
+
+		if bearerToken == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+				Success:      false,
+				ErrorMessage: token.ErrorInvalidLTMorVTM,
+			})
+			return
+		}
+
+		// Extract LTM info from token, internally it checks if token is valid or not
+		ltm, ltmErr := token.ExtractLTM(bearerToken)
+
+		if ltmErr == nil {
+			c.Set(token.ParamLTM, ltm)
+			c.Next()
+		}
+
+		// Extract VTM info from token, internally it checks if token is valid or not
+		vtm, vtmErr := token.ExtractVTM(bearerToken)
+
+		if vtmErr == nil {
+			c.Set(token.ParamVTM, vtm)
+			c.Next()
+
+		} else {
+			log.Error(ltmErr)
+			log.Error(vtmErr)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+				Success:      false,
+				ErrorMessage: token.ErrorInvalidLTMorVTM,
+			})
+			return
+		}
 	}
 }
 

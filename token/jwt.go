@@ -22,6 +22,7 @@ const ErrorInvalidVTM = "Invalid VTM!"
 const ErrorInvalidOTM = "Invalid OTM!"
 const ErrorInvalidLTM = "Invalid LTM!"
 const ErrorInvalidRTM = "Invalid RTM!"
+const ErrorInvalidLTMorVTM = "Invalid LTM or VTM!"
 
 type OnboardingTokenMeta struct {
 	AccessUuid         string
@@ -79,7 +80,7 @@ func CreateOTM(api_key string) (*OnboardingTokenMeta, error) {
 func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode string) (*VerifyTokenMeta, error) {
 	vtm := &VerifyTokenMeta{
 		AccessUuid:         uuid.NewV4().String(),
-		AccessTokenExpires: time.Now().Add(time.Minute * 15).Unix(),
+		AccessTokenExpires: time.Now().Add(time.Hour * 24 * 30).Unix(),
 	}
 
 	var err error

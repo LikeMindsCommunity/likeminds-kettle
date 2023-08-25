@@ -2,6 +2,7 @@ package community
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -16,6 +17,7 @@ type Question struct {
 	IsHidden            bool        `json:"is_hidden"`
 	Field               bool        `json:"field"`
 	Rank                int32       `json:"rank"`
+	ImageUrl            string      `json:"image_url,omitempty"`
 	QuestionChangeState int32       `json:"question_change_state"`
 	CanAddOptions       bool        `json:"can_add_options"`
 	IsCompulsory        bool        `json:"is_compulsory"`
@@ -40,39 +42,46 @@ func GetQuestions(c *gin.Context) {
 
 // Questions is used to for Community Questions
 func Questions(c *gin.Context, method int) {
+	var userId string
 
-	//Authorize User
-	userId := user.GetRequestingUserId(c)
-	if userId == "" {
-		return
-	}
+	ltm, _ := c.Get(token.ParamLTM)
 
-	botId := user.GetBotId(c)
-	if botId != "" {
-		userId = botId
+	if ltm != nil {
+		// Authorize User
+		userId = user.GetRequestingUserId(c)
+		if userId == "" {
+			return
+		}
+
+		botId := user.GetBotId(c)
+		if botId != "" {
+			userId = botId
+		}
+
 	}
 
 	switch method {
 	case utils.PUTMethod:
-		//Body to be sent in the api/community/edit_questions POST request
+		// Body to be sent in the api/community/edit_questions POST request
 		editQuestionsRequest, err := parseEditQuestionRequest(c)
+
 		if err != nil {
-			//If POST body params are missing
+			// If POST body params are missing
 			utils.GeneralAPIError(c, err.Error())
 			return
 		}
 
-		//Send Request
+		// Send Request
 		utils.SendRequest(c, utils.CoreService, EditQuestionsEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, editQuestionsRequest)
 
 	case utils.GETMethod:
-		//Send Request
+		// Send Request
 		utils.SendRequest(c, utils.CoreService, FetchQuestionsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
 	}
 }
 
 func parseEditQuestionRequest(c *gin.Context) (*EditQuestionsRequest, error) {
-	//POST body params
+	// POST body params
 	var eqr EditQuestionsRequest
 
 	if err := c.ShouldBindJSON(&eqr); err != nil {
