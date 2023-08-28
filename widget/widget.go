@@ -138,7 +138,7 @@ func editWidgetInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	//Fetch member access to create topic
+	//Fetch member access to edit widget
 	success, response := user.FetchMemberAccess(c, feed.IS_MEMBER, userId)
 	if !success {
 		return
