@@ -20,6 +20,6 @@ func GetCommunityConfigurations(c *gin.Context) {
 	}
 
 	//Send Request to api/community/configurations
-	utils.SendRequest(c, utils.CoreService, FetchCommunityConfigurations, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	utils.SendRequest(c, utils.CoreService, FetchCommunityConfigurationsEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 
 }
