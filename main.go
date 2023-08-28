@@ -50,11 +50,10 @@ func main() {
 	router.Use(ApiMiddleware(client))
 	router.Use(LoggingMiddleware())
 	//Attach prometheus service as middleware
-	prometheusService, err := getPrometheusMetricService()
-	if err != nil {
-		log.Fatal(err.Error())
+	prometheusService := getPrometheusMetricService()
+	if prometheusService != nil {
+		router.Use(monitoring.PrometheusMiddleware(prometheusService))
 	}
-	router.Use(monitoring.PrometheusMiddleware(prometheusService))
 
 	router.GET("", web.Home)
 
@@ -755,7 +754,11 @@ func enableCors() cors.Config {
 }
 
 // getPrometheusMetricService returns prometheus metrics service
-func getPrometheusMetricService() (*monitoring.PrometheusService, error) {
+func getPrometheusMetricService() *monitoring.PrometheusService {
 	prometheusService, err := monitoring.NewPrometheusService()
-	return prometheusService, err
+	if err != nil {
+		log.Fatal(err.Error())
+		return nil
+	}
+	return prometheusService
 }
