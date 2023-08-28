@@ -50,7 +50,7 @@ const FetchCommunityQuestionFiltersEndpoint = "/api/fetch_filters"
 const FetchIntroExamplesEndpoint = "/api/fetch_intro_examples"
 const SendCommunityInviteEndpoint = "/api/community/invite"
 const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
-const FetchPendingMembersEndpoint = "/api/pending_members"
+const FetchPendingMembersEndpoint = "/api/community_member/pending_members"
 
 const ParamCommunityID = "community_id"
 const ParamPage = "page"
