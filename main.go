@@ -9,6 +9,7 @@ import (
 	"time"
 
 	log "github.com/nateshr/likeminds-authentication/logging"
+	"github.com/nateshr/likeminds-authentication/widget"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -39,7 +40,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.0.0"
+	var AppVersion string = "2.1.0"
 
 	initGin()
 	client = cache.InitRedis()
@@ -155,6 +156,7 @@ func main() {
 	router.GET("/community/report/tag", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetReportTags)
 	router.GET("/community/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunitySettings)
 	router.PUT("/community/settings", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.UpdateCommunitySettings)
+	router.GET("/community/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityRights)
 	router.PUT("/community/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditCommunityRights)
 	router.GET("/community/settings/dm", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityDMSettings)
 	router.PUT("/community/settings/dm", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditCommunityDMSettings)
@@ -184,6 +186,7 @@ func main() {
 	router.GET("/community/intro_examples", LTMorVTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetIntroExamples)
 	router.POST("/community/invite", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.SendCommunityInvite)
 	router.GET("/community/configurations", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityConfigurations)
+	router.GET("/community/member/pending", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetPendingCommunityMembers)
 
 	// Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
@@ -279,6 +282,11 @@ func main() {
 	router.GET("/search/post", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.PostSearch)
 	router.GET("/search/post/user/:user_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.UserCreatedPostSearch)
 	router.GET("/search", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), search.GeneralSearch)
+
+	// Widget Apis
+	router.POST("/widget", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), widget.CreateWidget)
+	router.GET("/widget", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), widget.GetWidget)
+	router.PUT("/widget/:widget_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), widget.EditWidget)
 
 	log.Info(fmt.Sprintf("application version: %s", AppVersion))
 	log.Fatal(router.Run(":8080"))

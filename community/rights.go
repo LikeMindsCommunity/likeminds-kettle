@@ -18,11 +18,6 @@ type EditCommunityRightsRequest struct {
 	Rights []CommunityRight `json:"rights" binding:"required"`
 }
 
-// EditCommunityRights is used to update community rights
-func EditCommunityRights(c *gin.Context) {
-	CommunityRights(c, utils.PUTMethod)
-}
-
 func parseEditCommunityRightsRequest(c *gin.Context) (*EditCommunityRightsRequest, error) {
 	//POST body params
 	var ecrr EditCommunityRightsRequest
@@ -32,6 +27,16 @@ func parseEditCommunityRightsRequest(c *gin.Context) (*EditCommunityRightsReques
 	}
 
 	return &ecrr, nil
+}
+
+// GetCommunityRights is used to get community rights
+func GetCommunityRights(c *gin.Context) {
+	CommunityRights(c, utils.GETMethod)
+}
+
+// EditCommunityRights is used to update community rights
+func EditCommunityRights(c *gin.Context) {
+	CommunityRights(c, utils.PUTMethod)
 }
 
 func CommunityRights(c *gin.Context, method int) {
@@ -48,6 +53,11 @@ func CommunityRights(c *gin.Context, method int) {
 	}
 
 	switch method {
+	case utils.GETMethod:
+
+		//Send Request
+		utils.SendRequest(c, utils.CoreService, FetchCommunityRightsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+
 	case utils.PUTMethod:
 
 		// Body to be sent in the edit rights api internally
