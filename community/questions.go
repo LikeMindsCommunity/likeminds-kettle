@@ -22,7 +22,7 @@ type Question struct {
 	CanAddOptions       bool        `json:"can_add_options"`
 	IsCompulsory        bool        `json:"is_compulsory"`
 	IsAnswerEditable    bool        `json:"is_answer_editable"`
-	OptionOnlyForSelf   bool        `json:"option_only_for_self"`
+	OptionsOnlyForSelf  *bool       `json:"options_only_for_self,omitempty"`
 	Tag                 string      `json:"tag,omitempty"`
 }
 
