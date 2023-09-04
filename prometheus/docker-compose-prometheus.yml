@@ -1,19 +1,4 @@
 services:
-  redis:
-    image: redis
-    container_name: redis
-    hostname: redis
-    ports:
-      - 6379:6379
-    restart: always
-  auth:
-    container_name: auth
-    hostname: auth
-    build:
-      dockerfile: ./Dockerfile.kettle-local
-    ports:
-      - 8080:8080
-    restart: always
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
