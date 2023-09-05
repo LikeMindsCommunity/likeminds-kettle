@@ -1,6 +1,4 @@
 #!/bin/bash
-source /home/ubuntu/.profile
-cd /home/ubuntu/LikeMinds-Authentication/
 branch_name="$(git rev-parse --abbrev-ref HEAD)"
 if [ "$branch_name" = "master" ]
 then
