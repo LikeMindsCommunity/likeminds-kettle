@@ -12,8 +12,8 @@ type ResponseTimeMetric struct {
 	Duration   float64
 }
 
-// newResponseTimeMetric create a new ResponseTimeMetric
-func newResponseTimeMetric(handler string, method string) *ResponseTimeMetric {
+// NewResponseTimeMetric create a new ResponseTimeMetric
+func NewResponseTimeMetric(handler string, method string) *ResponseTimeMetric {
 	return &ResponseTimeMetric{
 		Handler: handler,
 		Method:  method,
@@ -38,8 +38,8 @@ type TotalRequestMetric struct {
 	StatusCode string
 }
 
-// newResponseTimeMetric create a new TotalRequestMetric
-func newTotalRequestMetric(handler string, method string, statusCode string) *TotalRequestMetric {
+// NewTotalRequestMetric create a new TotalRequestMetric
+func NewTotalRequestMetric(handler string, method string, statusCode string) *TotalRequestMetric {
 	return &TotalRequestMetric{
 		Handler:    handler,
 		Method:     method,

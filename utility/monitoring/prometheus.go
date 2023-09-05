@@ -34,12 +34,11 @@ func NewPrometheusService() (*PrometheusService, error) {
 		Buckets:   prometheus.DefBuckets,
 	}, []string{"handler", "method", "code"})
 
-	totalRequestCounter := prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Namespace: "kettle",
-			Name:      "request",
-			Help:      "Total no. of requests",
-		},
+	totalRequestCounter := prometheus.NewCounterVec(prometheus.CounterOpts{
+		Namespace: "kettle",
+		Name:      "request",
+		Help:      "Total no. of requests",
+	},
 		[]string{"handler", "method", "code"},
 	)
 
@@ -47,10 +46,12 @@ func NewPrometheusService() (*PrometheusService, error) {
 		responseTimeHistogram: responseTimeHistogram,
 		totalRequestCounter:   totalRequestCounter,
 	}
+
 	err := prometheus.Register(s.responseTimeHistogram)
 	if err != nil && err.Error() != "duplicate metrics collector registration attempted" {
 		return nil, err
 	}
+
 	err = prometheus.Register(s.totalRequestCounter)
 	if err != nil && err.Error() != "duplicate metrics collector registration attempted" {
 		return nil, err
