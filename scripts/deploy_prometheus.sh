@@ -10,4 +10,6 @@ else
   curl -o ./.env https://beta-likeminds-media.s3.ap-south-1.amazonaws.com/environment/Kettle-Beta-Dot-Env/.env
   git pull origin "$branch_name"
 fi
+set -a
+source ./.env
 docker compose -f ./prometheus/docker-compose-prometheus.yml up -d --build
