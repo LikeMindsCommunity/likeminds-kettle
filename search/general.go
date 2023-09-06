@@ -95,6 +95,7 @@ func GeneralSearch(c *gin.Context) {
 		if err == nil {
 			dataResponse["posts"] = apiCR["posts"]
 			dataResponse["topics"] = apiCR["topics"]
+			dataResponse["widgets"] = apiCR["widgets"]
 
 			// Fetch users meta for the posts
 			if value, ok := dataResponse["posts"]; ok {
