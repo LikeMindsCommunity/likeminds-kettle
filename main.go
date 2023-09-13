@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/nateshr/likeminds-authentication/utility/monitoring"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/nateshr/likeminds-authentication/utility/monitoring"
 
 	log "github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/widget"
@@ -42,7 +43,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.2.0"
+	var AppVersion string = "2.3.0"
 
 	initGin()
 	client = cache.InitRedis()
