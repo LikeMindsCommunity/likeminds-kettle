@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/nateshr/likeminds-authentication/utility/monitoring"
+
 	log "github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/widget"
 
@@ -32,6 +34,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/utility"
 	"github.com/nateshr/likeminds-authentication/utils"
 	"github.com/nateshr/likeminds-authentication/web"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
@@ -40,13 +43,19 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.2.0"
+	var AppVersion string = "2.3.0"
 
 	initGin()
 	client = cache.InitRedis()
 	router.Use(cors.New(enableCors()))
 	router.Use(ApiMiddleware(client))
 	router.Use(LoggingMiddleware())
+	//Attach prometheus service as middleware
+	prometheusService := getPrometheusMetricService()
+	if prometheusService != nil {
+		router.Use(monitoring.PrometheusMiddleware(prometheusService))
+	}
+
 	router.GET("", web.Home)
 
 	// OTP Apis
@@ -289,6 +298,7 @@ func main() {
 	router.PUT("/widget/:widget_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), widget.EditWidget)
 
 	log.Info(fmt.Sprintf("application version: %s", AppVersion))
+	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	log.Fatal(router.Run(":8080"))
 }
 
@@ -742,4 +752,14 @@ func enableCors() cors.Config {
 		"Authorization",
 	)
 	return config
+}
+
+// getPrometheusMetricService returns prometheus metrics service
+func getPrometheusMetricService() *monitoring.PrometheusService {
+	prometheusService, err := monitoring.NewPrometheusService()
+	if err != nil {
+		log.Fatal(err.Error())
+		return nil
+	}
+	return prometheusService
 }
