@@ -11,7 +11,7 @@ import (
 type CreateWebhookRequest struct {
 	WebhookType string `json:"webhook_type" binding:"required"`
 	URL         string `json:"url" binding:"required"`
-	IsActive    bool   `json:"is_active" binding:"required"`
+	IsActive    *bool  `json:"is_active" binding:"required"`
 }
 
 func parseCreateWebhookRequest(c *gin.Context) (*CreateWebhookRequest, error) {
@@ -26,8 +26,8 @@ func parseCreateWebhookRequest(c *gin.Context) (*CreateWebhookRequest, error) {
 }
 
 type EditWebhookRequest struct {
-	URL      string `json:"url"`
-	IsActive bool   `json:"is_active"`
+	URL      string `json:"url,omitempty"`
+	IsActive *bool  `json:"is_active,omitempty"`
 }
 
 func parseEditWebhookRequest(c *gin.Context) (*EditWebhookRequest, error) {
