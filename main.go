@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/nateshr/likeminds-authentication/utility/monitoring"
+	"github.com/nateshr/likeminds-authentication/webhook"
 
 	log "github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/widget"
@@ -43,7 +44,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.3.0"
+	var AppVersion string = "2.4.0"
 
 	initGin()
 	client = cache.InitRedis()
@@ -296,6 +297,13 @@ func main() {
 	router.POST("/widget", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), widget.CreateWidget)
 	router.GET("/widget", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), widget.GetWidget)
 	router.PUT("/widget/:widget_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), widget.EditWidget)
+
+	// Webhook Apis
+	router.POST("/webhook", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), webhook.CreateWebhook)
+	router.GET("/webhook", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), webhook.GetWebhooks)
+	router.GET("/webhook/:webhook_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), webhook.GetWebhook)
+	router.PATCH("/webhook/:webhook_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), webhook.EditWebhook)
+	router.DELETE("/webhook/:webhook_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), webhook.DeleteWebhook)
 
 	log.Info(fmt.Sprintf("application version: %s", AppVersion))
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
