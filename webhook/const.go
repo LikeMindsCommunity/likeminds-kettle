@@ -1,4 +1,4 @@
 package webhook
 
-const WebhooksEndpoint = "/api/webhooks"
-const WebhookEndpoint = "/api/webhooks/%s"
+const WebhooksEndpoint = "/api/webhook"
+const WebhookEndpoint = "/api/webhook/%s"
