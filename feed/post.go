@@ -20,18 +20,24 @@ type OGTags struct {
 }
 
 type AttachmentMeta struct {
-	Name          string `json:"name"`
-	Url           string `json:"url"`
-	Format        string `json:"format"`
-	Size          int    `json:"size"`
-	Duration      int    `json:"duration"`
-	PageCount     int    `json:"page_count"`
-	ThumbnailUrl  string `json:"thumbnail_url"`
-	OgTags        OGTags `json:"og_tags"`
-	EntityID      string `json:"entity_id"`
-	CoverImageUrl string `json:"cover_image_url"`
-	Title         string `json:"title"`
-	Body          string `json:"body"`
+	Name                 string `json:"name"`
+	Url                  string `json:"url"`
+	Format               string `json:"format"`
+	Size                 int    `json:"size"`
+	Duration             int    `json:"duration"`
+	PageCount            int    `json:"page_count"`
+	ThumbnailUrl         string `json:"thumbnail_url"`
+	OgTags               OGTags `json:"og_tags"`
+	EntityID             string `json:"entity_id"`
+	CoverImageUrl        string `json:"cover_image_url"`
+	Title                string `json:"title"`
+	Body                 string `json:"body"`
+	ExpiryTime           int64  `json:"expiry_time"`
+	PollType             string `json:"poll_type"`
+	MultipleSelectState  string `json:"multiple_select_state"`
+	MultipleSelectNumber int    `json:"multiple_select_number"`
+	IsAnonymous          bool   `json:"is_anonymous"`
+	AllowAddOption       bool   `json:"allow_add_option"`
 }
 
 type AttachmentRequest struct {
@@ -76,6 +82,7 @@ func parseCreatePostRequest(c *gin.Context) (*CreatePostRequest, error) {
 
 	return &cpr, nil
 }
+
 func parseEditPostRequest(c *gin.Context) (*EditPostRequest, error) {
 	//POST body params
 	var cpr EditPostRequest

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/nateshr/likeminds-authentication/poll"
 	"github.com/nateshr/likeminds-authentication/utility/monitoring"
 	"github.com/nateshr/likeminds-authentication/webhook"
 
@@ -297,6 +298,11 @@ func main() {
 	router.POST("/widget", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), widget.CreateWidget)
 	router.GET("/widget", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), widget.GetWidget)
 	router.PUT("/widget/:widget_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), widget.EditWidget)
+
+	// Poll Apis
+	router.PUT("/poll/:poll_id", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), poll.AddPollOption)
+	router.PUT("/poll/:poll_id/vote", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), poll.CreatePollVote)
+	router.GET("/poll/:poll_id/vote", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), poll.GetPollVotes)
 
 	// Webhook Apis
 	router.POST("/webhook", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), webhook.CreateWebhook)
