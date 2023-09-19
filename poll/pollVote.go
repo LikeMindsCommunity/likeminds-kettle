@@ -59,12 +59,12 @@ func PollVote(c *gin.Context, method int) {
 }
 
 func getPollVotesInternal(c *gin.Context, userId string, endPoint string) {
-	//Params to be sent in the /post/<post_id>/like request
+	//Params to be sent in the /poll/<poll_id>/vote request
 	params := map[string]string{
 		ParamVotes: c.Query(ParamVotes),
 	}
 
-	//Fetch member access to view post likes
+	//Fetch member access to view poll votes
 	success, response := user.FetchMemberAccess(c, feed.IS_MEMBER, userId)
 	if !success {
 		return
@@ -88,13 +88,13 @@ func getPollVotesInternal(c *gin.Context, userId string, endPoint string) {
 	//If flow succeeds
 	dataResponse := apiCR.Response
 	if value, ok := dataResponse["votes"]; ok {
-		votesData := value.([]interface{})
+		votesData := value.([]map[string]interface{})
 		userIds := []string{}
 
 		//Fetch user ids
 		for _, voteData := range votesData {
-			if userUniqueId, ok := voteData.(map[string]interface{})["uuid"]; ok {
-				userIds = append(userIds, userUniqueId.(string))
+			if userUniqueIds, ok := voteData["users"]; ok {
+				userIds = append(userIds, userUniqueIds.([]string)...)
 			}
 		}
 
@@ -118,7 +118,7 @@ func createPollVotesInternal(c *gin.Context, userId string, endPoint string) {
 	createPollVoteRequest, err := parseCreatePollVoteRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

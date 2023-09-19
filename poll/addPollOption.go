@@ -36,7 +36,7 @@ func AddPollOption(c *gin.Context) {
 	addPollOptionRequest, err := parseAddPollOptionRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
