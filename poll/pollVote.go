@@ -98,7 +98,12 @@ func getPollVotesInternal(c *gin.Context, userId string, endPoint string) {
 		//Fetch user ids
 		for _, voteData := range votesData {
 			if userUniqueIds, ok := voteData["users"]; ok {
-				userIds = append(userIds, userUniqueIds.([]string)...)
+				uniqueIds := []string{}
+
+				convertedUserUniqueIds, _ := json.Marshal(userUniqueIds)
+				_ = json.Unmarshal(convertedUserUniqueIds, &uniqueIds)
+
+				userIds = append(userIds, uniqueIds...)
 			}
 		}
 
