@@ -1,6 +1,7 @@
 package poll
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -88,8 +89,11 @@ func getPollVotesInternal(c *gin.Context, userId string, endPoint string) {
 	//If flow succeeds
 	dataResponse := apiCR.Response
 	if value, ok := dataResponse["votes"]; ok {
-		votesData := value.([]map[string]interface{})
+		votesData := []map[string]interface{}{}
 		userIds := []string{}
+
+		convertedVotesData, _ := json.Marshal(value)
+		_ = json.Unmarshal(convertedVotesData, &votesData)
 
 		//Fetch user ids
 		for _, voteData := range votesData {
