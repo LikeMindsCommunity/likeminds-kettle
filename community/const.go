@@ -79,6 +79,7 @@ const ParamFilterType = "filter_type"
 const ParamMemberState = "member_state"
 const ParamMemberStates = "member_states"
 const ParamConfigurationTypes = "configuration_types"
+const ParamSendQuestionAnswers = "send_question_answers"
 
 const UserChannelReqFrom = "user_channel"
 const MemberProfileReqFrom = "member_profile"
