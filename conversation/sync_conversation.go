@@ -17,13 +17,14 @@ func SyncConversation(c *gin.Context) {
 
 	//Params to be sent in the sync conversation api internally
 	params := map[string]string{
-		ParamPage:           c.Query(ParamPage),
-		ParamPageSize:       c.Query(ParamPageSize),
-		ParamMaxTimeStamp:   c.Query(ParamMaxTimeStamp),
-		ParamMinTimeStamp:   c.Query(ParamMinTimeStamp),
-		ParamChatroomId:     c.Query(ParamChatroomId),
-		ParamIsLocalDb:      c.Query(ParamIsLocalDb),
-		ParamConversationId: c.Query(ParamConversationId),
+		ParamPage:                       c.Query(ParamPage),
+		ParamPageSize:                   c.Query(ParamPageSize),
+		ParamMaxTimeStamp:               c.Query(ParamMaxTimeStamp),
+		ParamMinTimeStamp:               c.Query(ParamMinTimeStamp),
+		ParamChatroomId:                 c.Query(ParamChatroomId),
+		ParamIsLocalDb:                  c.Query(ParamIsLocalDb),
+		ParamConversationId:             c.Query(ParamConversationId),
+		ParamExcludedConversationStates: c.Query(ParamExcludedConversationStates),
 	}
 
 	//Send Request
