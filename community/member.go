@@ -102,8 +102,9 @@ func getMemberInternal(c *gin.Context, userId string) {
 
 		//Params to be sent in the fetch all members api internally
 		params := map[string]string{
-			ParamPage:        page,
-			ParamMemberState: c.Query(ParamMemberState),
+			ParamPage:                   page,
+			ParamMemberState:            c.Query(ParamMemberState),
+			ParamQuestionAnswersVersion: c.Query(ParamQuestionAnswersVersion),
 		}
 
 		//Send Request
