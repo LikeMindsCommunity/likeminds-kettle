@@ -21,12 +21,13 @@ func MemberSearch(c *gin.Context) {
 
 	// Params to be sent in the api/search/member_directory request
 	requestParams := map[string]string{
-		SearchParam:       c.Query(SearchParam),
-		SearchTypeParam:   c.Query(SearchTypeParam),
-		ParamPage:         c.Query(ParamPage),
-		ParamPageSize:     c.Query(ParamPageSize),
-		ParamOrderType:    c.Query(ParamOrderType),
-		ParamMemberStates: c.Query(ParamMemberStates),
+		SearchParam:                 c.Query(SearchParam),
+		SearchTypeParam:             c.Query(SearchTypeParam),
+		ParamPage:                   c.Query(ParamPage),
+		ParamPageSize:               c.Query(ParamPageSize),
+		ParamOrderType:              c.Query(ParamOrderType),
+		ParamMemberStates:           c.Query(ParamMemberStates),
+		ParamQuestionAnswersVersion: c.Query(ParamQuestionAnswersVersion),
 	}
 
 	// Send Request

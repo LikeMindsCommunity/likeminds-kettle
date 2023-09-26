@@ -9,8 +9,9 @@ import (
 )
 
 type CreatePostCommentRequest struct {
-	TempID *string `json:"temp_id"`
-	Text   string  `json:"text" binding:"required"`
+	TempID *string  `json:"temp_id"`
+	Text   string   `json:"text" binding:"required"`
+	UUIDs  []string `json:"uuids"`
 }
 type EditCommentRequest struct {
 	Text     string `json:"text" binding:"required"`
@@ -68,6 +69,10 @@ func CommentPost(c *gin.Context) {
 		utils.MemberAccessFailError(c)
 		return
 	}
+
+	//Get tagged users from text
+	taggedUsers := getTaggedUsersFromText(utils.CreateHeaders(c, userId), createPostCommentRequest.Text)
+	createPostCommentRequest.UUIDs = taggedUsers
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, CommentPostEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createPostCommentRequest)
