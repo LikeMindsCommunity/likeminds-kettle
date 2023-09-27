@@ -59,3 +59,7 @@ var QuestionIdVersions = map[string]int{
 	PlatformReact:       MaxVersion,
 	PlatformReactNative: MaxVersion,
 }
+
+const (
+	ApiRevampV1 string = "v1"
+)

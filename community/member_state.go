@@ -6,7 +6,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//FetchMemberState is used to fetch member state in a community
+// FetchMemberState is used to fetch member state in a community
 func FetchMemberState(c *gin.Context) {
 
 	//Authorize User
@@ -22,4 +22,16 @@ func FetchMemberState(c *gin.Context) {
 
 	//Send Request
 	utils.SendRequest(c, utils.CoreService, MemberStateEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+}
+
+// Exposed method to fetch member role
+func FetchMemberRole(c *gin.Context) {
+
+	// If x-accept-version header is not present, then add v1 as default
+	if c.GetHeader(utils.HeadersAcceptVersion) == "" {
+		c.Request.Header.Add(utils.HeadersAcceptVersion, utils.ApiRevampV1)
+	}
+
+	// Send request to api/members_state
+	FetchMemberState(c)
 }

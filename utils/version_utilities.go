@@ -44,6 +44,6 @@ func ApiRevampV1Check(c *gin.Context) bool {
 
 	acceptVersion := c.GetHeader(HeadersAcceptVersion)
 
-	return acceptVersion == "v1"
+	return acceptVersion == ApiRevampV1
 
 }
