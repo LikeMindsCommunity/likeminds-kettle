@@ -36,22 +36,21 @@ func main() {
 		return
 	}
 
-	fmt.Println("The File is opened successfully...")
-
 	defer fileContent.Close()
 
 	byteResult, _ := ioutil.ReadAll(fileContent)
 
 	var logs []Log
-
 	json.Unmarshal(byteResult, &logs)
 
-	hashmap := make(map[string]int)
+	AuthorizationMap := make(map[string]int)
+
 	for i := 0; i < len(logs); i++ {
 		var msg Msg
 		json.Unmarshal([]byte(logs[i].JsonPayload.Msg), &msg)
 		AuthorizationValue := fmt.Sprint(msg.Request.Headers.Authorization)
-		hashmap[AuthorizationValue] = hashmap[AuthorizationValue] + 1
+		AuthorizationMap[AuthorizationValue] = AuthorizationMap[AuthorizationValue] + 1
 	}
-	fmt.Print("Msg: ", len(hashmap))
+
+	fmt.Print("Msg: ", len(AuthorizationMap))
 }
