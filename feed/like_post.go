@@ -8,6 +8,21 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
+type CreateLikeRequest struct {
+	CreatedAt int `json:"created_at"`
+}
+
+func parseCreateLikeRequest(c *gin.Context) (*CreateLikeRequest, error) {
+	//POST body params
+	var clr CreateLikeRequest
+
+	if err := c.ShouldBindJSON(&clr); err != nil {
+		return nil, err
+	}
+
+	return &clr, nil
+}
+
 // CreatePostLike is used to like on a post
 func CreatePostLike(c *gin.Context) {
 	PostLike(c, utils.PUTMethod)
@@ -99,6 +114,13 @@ func getPostLikesInternal(c *gin.Context, userId string, endPoint string) {
 }
 
 func createPostLikeInternal(c *gin.Context, userId string, endPoint string) {
+	//Body to be sent in the /post/<post_id>/like PUT request
+	createPostLikeRequest, err := parseCreateLikeRequest(c)
+	if err != nil {
+		//If POST body params are missing
+		utils.GeneralAPIError(c, err.Error())
+	}
+
 	//Fetch member access to create post
 	success, response := user.FetchMemberAccess(c, LIKE_POST_ACTION, userId)
 	if !success {
@@ -112,5 +134,5 @@ func createPostLikeInternal(c *gin.Context, userId string, endPoint string) {
 	}
 
 	//Send Request
-	utils.SendRequest(c, utils.SwarmService, endPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, nil)
+	utils.SendRequest(c, utils.SwarmService, endPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, createPostLikeRequest)
 }
