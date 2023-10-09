@@ -115,11 +115,7 @@ func getPostLikesInternal(c *gin.Context, userId string, endPoint string) {
 
 func createPostLikeInternal(c *gin.Context, userId string, endPoint string) {
 	//Body to be sent in the /post/<post_id>/like PUT request
-	createPostLikeRequest, err := parseCreateLikeRequest(c)
-	if err != nil {
-		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
-	}
+	createPostLikeRequest, _ := parseCreateLikeRequest(c)
 
 	//Fetch member access to create post
 	success, response := user.FetchMemberAccess(c, LIKE_POST_ACTION, userId)
