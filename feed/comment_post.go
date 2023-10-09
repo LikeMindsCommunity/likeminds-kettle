@@ -9,9 +9,10 @@ import (
 )
 
 type CreatePostCommentRequest struct {
-	TempID *string  `json:"temp_id"`
-	Text   string   `json:"text" binding:"required"`
-	UUIDs  []string `json:"uuids"`
+	TempID    *string  `json:"temp_id"`
+	Text      string   `json:"text" binding:"required"`
+	UUIDs     []string `json:"uuids"`
+	CreatedAt int      `json:"created_at"`
 }
 type EditCommentRequest struct {
 	Text     string `json:"text" binding:"required"`

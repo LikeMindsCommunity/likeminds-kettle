@@ -100,6 +100,9 @@ func getCommentLikesInternal(c *gin.Context, userId string, endPoint string) {
 }
 
 func createCommentLikeInternal(c *gin.Context, userId string, endPoint string) {
+	//Body to be sent in the /post/<post_id>/comment/<comment_id>/like PUT request
+	createCommentLikeRequest, _ := parseCreateLikeRequest(c)
+
 	//Fetch member access to create post
 	success, response := user.FetchMemberAccess(c, LIKE_COMMENT_ACTION, userId)
 	if !success {
@@ -113,5 +116,5 @@ func createCommentLikeInternal(c *gin.Context, userId string, endPoint string) {
 	}
 
 	//Send Request
-	utils.SendRequest(c, utils.SwarmService, endPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, nil)
+	utils.SendRequest(c, utils.SwarmService, endPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, createCommentLikeRequest)
 }
