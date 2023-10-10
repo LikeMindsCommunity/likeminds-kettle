@@ -16,6 +16,8 @@
 
 #Go build binary
 likeminds-authentication
+log-reader-timeout
+log-reader-500
 
 #Environment file
 .env

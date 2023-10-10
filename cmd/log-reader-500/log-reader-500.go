@@ -27,12 +27,19 @@ func main() {
 	var logs []LogError
 	json.Unmarshal(byteResult, &logs)
 
-	IPMap := make(map[string]int)
+	Distinct500Map := make(map[string]int)
 
 	for i := 0; i < len(logs); i++ {
-		IPMapValue := strings.Split(logs[i].TextPayload, "|")[3]
-		IPMap[IPMapValue] = IPMap[IPMapValue] + 1
+		TextPayload := logs[i].TextPayload
+
+		DateTime := strings.Split(TextPayload, "|")[0]
+		Date := strings.Split(DateTime, "-")[0]
+		IP := strings.Split(logs[i].TextPayload, "|")[3]
+		API := strings.Split(logs[i].TextPayload, "|")[4]
+
+		Distinct500MapKey := Date + IP + API
+		Distinct500Map[Distinct500MapKey] = Distinct500Map[Distinct500MapKey] + 1
 	}
 
-	fmt.Print("Msg: ", len(IPMap))
+	fmt.Print("Msg: ", len(Distinct500Map))
 }
