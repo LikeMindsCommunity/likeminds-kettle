@@ -51,6 +51,7 @@ const FetchIntroExamplesEndpoint = "/api/fetch_intro_examples"
 const SendCommunityInviteEndpoint = "/api/community/invite"
 const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
 const FetchPendingMembersEndpoint = "/api/community_member/pending_members"
+const LeaveCommunityEndPoint = "/api/community_member/leave"
 
 const ParamCommunityID = "community_id"
 const ParamPage = "page"

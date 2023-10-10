@@ -156,6 +156,8 @@ func main() {
 	router.GET("/community/question/filters", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityQuestionFilters)
 	router.GET("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetMember)
 	router.POST("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.AddMember)
+	router.DELETE("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.RemoveMembers)
+	router.DELETE("/community/member/leave", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.LeaveCommunity)
 	router.PUT("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditMember)
 	router.GET("/community/member/state", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.FetchMemberState)
 	router.GET("/community/member/role", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.FetchMemberRole)
