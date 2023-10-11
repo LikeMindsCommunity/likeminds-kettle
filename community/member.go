@@ -20,6 +20,45 @@ type EditMemberRequest struct {
 	ImageUrl     string `json:"image_url"`
 }
 
+type DeleteMembersRequest struct {
+	UUIDs  []string `json:"uuids" binding:"required"`
+	Reason string   `json:"reason,omitempty"`
+	TagId  int      `json:"tag_id,omitempty"`
+}
+
+func parseAddMemberRequest(c *gin.Context) (*AddMemberRequest, error) {
+	//POST body params
+	var amr AddMemberRequest
+
+	if err := c.ShouldBindJSON(&amr); err != nil {
+		return nil, err
+	}
+
+	return &amr, nil
+}
+
+func parseEditMemberRequest(c *gin.Context) (*EditMemberRequest, error) {
+	//POST body params
+	var emr EditMemberRequest
+
+	if err := c.ShouldBindJSON(&emr); err != nil {
+		return nil, err
+	}
+
+	return &emr, nil
+}
+
+func parseDeleteMembersRequest(c *gin.Context) (*DeleteMembersRequest, error) {
+	//POST body params
+	var dmr DeleteMembersRequest
+
+	if err := c.ShouldBindJSON(&dmr); err != nil {
+		return nil, err
+	}
+
+	return &dmr, nil
+}
+
 // GetMember is used to get community members
 func GetMember(c *gin.Context) {
 	Member(c, utils.GETMethod)
@@ -33,6 +72,11 @@ func AddMember(c *gin.Context) {
 // EditMember is used to edit member in community
 func EditMember(c *gin.Context) {
 	Member(c, utils.PUTMethod)
+}
+
+// RemoveMembers is used to remove members from community
+func RemoveMembers(c *gin.Context) {
+	Member(c, utils.DELETEMethod)
 }
 
 // Member method handles members for a commuinty
@@ -63,29 +107,12 @@ func Member(c *gin.Context, method int) {
 
 		editMemberInternal(c, userId)
 
-	}
-}
+	case utils.DELETEMethod:
 
-func parseAddMemberRequest(c *gin.Context) (*AddMemberRequest, error) {
-	//POST body params
-	var amr AddMemberRequest
+		removeMembersInternal(c, userId)
 
-	if err := c.ShouldBindJSON(&amr); err != nil {
-		return nil, err
 	}
 
-	return &amr, nil
-}
-
-func parseEditMemberRequest(c *gin.Context) (*EditMemberRequest, error) {
-	//POST body params
-	var emr EditMemberRequest
-
-	if err := c.ShouldBindJSON(&emr); err != nil {
-		return nil, err
-	}
-
-	return &emr, nil
 }
 
 func getMemberInternal(c *gin.Context, userId string) {
@@ -138,4 +165,31 @@ func editMemberInternal(c *gin.Context, userId string) {
 
 	//Send Request
 	utils.SendRequest(c, utils.CoreService, CommunityMemberEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, memberRequest)
+}
+
+func removeMembersInternal(c *gin.Context, userId string) {
+
+	//Body to be sent in the remove member api internally
+	memberRequest, err := parseDeleteMembersRequest(c)
+	if err != nil {
+		//If POST body params are missing
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	//Send Request to internal core service
+	utils.SendRequest(c, utils.CoreService, CommunityMemberEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, memberRequest)
+}
+
+// Exposed method to leave community
+func LeaveCommunity(c *gin.Context) {
+
+	//Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
+		return
+	}
+
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, LeaveCommunityEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, nil)
 }
