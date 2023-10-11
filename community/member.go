@@ -2,7 +2,6 @@ package community
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/feed"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -179,52 +178,7 @@ func removeMembersInternal(c *gin.Context, userId string) {
 	}
 
 	//Send Request to internal core service
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, CommunityMemberEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, memberRequest)
-
-	// Validate response and if false then return
-	apiCr := utils.ValidateClientResponse(c, respBytes, statusCode)
-	if apiCr == nil {
-		return
-	}
-
-	// If response is successfull, then fetch uuid and delete feed data
-	dataResponse := apiCr.Response
-
-	if users_meta, ok := dataResponse["removal_status"].([]interface{}); ok {
-		lm_uuids := []string{}
-
-		// iterate over user_meta and get lm_uuids
-		for _, v := range users_meta {
-
-			is_removed, _ := v.(map[string]interface{})["is_removed"].(bool)
-			lm_uuid, _ := v.(map[string]interface{})["lm_uuid"].(string)
-
-			// if is_removed is true, then append lm_uuid to lm_uuids
-			if is_removed && lm_uuid != "" {
-				lm_uuids = append(lm_uuids, lm_uuid)
-			}
-		}
-
-		if len(lm_uuids) > 0 {
-
-			// create body for user data
-			postBody := map[string]interface{}{
-				"user_ids":   lm_uuids,
-				"user_is_cm": true,
-			}
-			// Send request internally to delete user data
-			respBytes, _, err = utils.GetRequestResponseWithoutContext(utils.SwarmService, feed.DeleteUserDataEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, postBody)
-
-			// Validate response and log if error
-			validateDeleteUserDataReponse(respBytes, err)
-
-		}
-
-	}
-
-	//Generate response
-	utils.GenerateResponse(c, apiCr.Response)
-
+	utils.SendRequest(c, utils.CoreService, CommunityMemberEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, memberRequest)
 }
 
 // Exposed method to leave community
@@ -237,27 +191,5 @@ func LeaveCommunity(c *gin.Context) {
 	}
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, LeaveCommunityEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, nil)
-
-	// Validate response and if false then return
-	apiCr := utils.ValidateClientResponse(c, respBytes, statusCode)
-	if apiCr == nil {
-		return
-	}
-
-	// If response is successfull, then delete feed data
-	postBody := map[string]interface{}{
-		"user_ids":   []string{userId},
-		"user_is_cm": false,
-	}
-
-	// Send request internally to delete user data
-	respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, feed.DeleteUserDataEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, postBody)
-
-	// Validate response and log if error
-	validateDeleteUserDataReponse(respBytes, err)
-
-	// Generate response
-	utils.GenerateResponse(c, apiCr.Response)
-
+	utils.SendRequest(c, utils.CoreService, LeaveCommunityEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, nil)
 }
