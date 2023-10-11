@@ -202,6 +202,7 @@ func main() {
 	router.POST("/community/invite", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.SendCommunityInvite)
 	router.GET("/community/configurations", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityConfigurations)
 	router.GET("/community/member/pending", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetPendingCommunityMembers)
+	router.GET("/community/removal_reports", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetRemovalReports)
 
 	// Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
