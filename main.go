@@ -45,7 +45,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.8.0"
+	var AppVersion string = "2.9.0"
 
 	initGin()
 	client = cache.InitRedis()
@@ -156,9 +156,13 @@ func main() {
 	router.GET("/community/question/filters", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityQuestionFilters)
 	router.GET("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetMember)
 	router.POST("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.AddMember)
+	router.DELETE("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.RemoveMembers)
+	router.DELETE("/community/member/leave", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.LeaveCommunity)
 	router.PUT("/community/member", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.EditMember)
 	router.GET("/community/member/state", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.FetchMemberState)
+	router.GET("/community/member/role", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.FetchMemberRole)
 	router.DELETE("/community/manager/remove", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.RemoveCommunityManager)
+	router.DELETE("/community/admin", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.RemoveCommunityManager)
 	router.DELETE("/community/member/remove", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.RemoveMember)
 	router.GET("/community/management/tool", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetManagementTools)
 	router.GET("/community/report", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetReport)
@@ -198,6 +202,7 @@ func main() {
 	router.POST("/community/invite", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.SendCommunityInvite)
 	router.GET("/community/configurations", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetCommunityConfigurations)
 	router.GET("/community/member/pending", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetPendingCommunityMembers)
+	router.GET("/community/removal_reports", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), community.GetRemovalReports)
 
 	// Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(client, true), APIKeyValidationMiddleware(), moderation.GetRights)
