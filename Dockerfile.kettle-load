@@ -10,7 +10,7 @@ RUN go mod download
 
 COPY . ./
 
-ADD https://beta-likeminds-media.s3.ap-south-1.amazonaws.com/environment/load-testing/kettle-load-testing-dot-env ./.env
+ADD https://beta-likeminds-media.s3.ap-south-1.amazonaws.com/environment/load-test/kettle-load-test-dot-env ./.env
 
 RUN go build -o ./kettle
 
