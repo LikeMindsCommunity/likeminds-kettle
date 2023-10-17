@@ -3,6 +3,7 @@ module github.com/nateshr/likeminds-authentication
 go 1.16
 
 require (
+	cloud.google.com/go/logging v1.8.1
 	github.com/coralogix/go-coralogix-sdk v1.0.3
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.8.1
