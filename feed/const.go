@@ -70,3 +70,14 @@ const (
 	COMMENT_REPORT_TYPE = 6
 	REPLY_REPORT_TYPE   = 7
 )
+
+// constants for attachment_type
+const (
+	ImageWidget int = iota + 1
+	VideoWidget
+	DocumentWidget
+	LinkWidget
+	CustomWidget
+	PollWidget
+	ArticleWidget
+)

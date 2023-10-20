@@ -1,6 +1,7 @@
 package feed
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -29,7 +30,6 @@ type AttachmentMeta struct {
 	ThumbnailUrl         string                 `json:"thumbnail_url"`
 	OgTags               OGTags                 `json:"og_tags"`
 	EntityID             string                 `json:"entity_id"`
-	WidgetMeta           map[string]interface{} `json:"widget_meta"`
 	CoverImageUrl        string                 `json:"cover_image_url"`
 	Title                string                 `json:"title"`
 	Body                 string                 `json:"body"`
@@ -40,13 +40,14 @@ type AttachmentMeta struct {
 	MultipleSelectNumber int                    `json:"multiple_select_number"`
 	IsAnonymous          bool                   `json:"is_anonymous"`
 	AllowAddOption       bool                   `json:"allow_add_option"`
+	WidgetMeta           map[string]interface{} `json:"widget_meta"`
 }
 
 type AttachmentRequest struct {
-	AttachmentType int            `json:"attachment_type"`
-	AttachmentMeta AttachmentMeta `json:"attachment_meta"`
-	Type           string         `json:"type"`
-	MetaData       AttachmentMeta `json:"meta_data"`
+	AttachmentType int             `json:"attachment_type"`
+	AttachmentMeta *AttachmentMeta `json:"attachment_meta"`
+	Type           string          `json:"type"`
+	MetaData       *AttachmentMeta `json:"meta_data"`
 }
 
 type CreatePostRequest struct {
@@ -78,9 +79,35 @@ type DeletePostRequest struct {
 func parseCreatePostRequest(c *gin.Context) (*CreatePostRequest, error) {
 	//POST body params
 	var cpr CreatePostRequest
+	raw_data, _ := c.GetRawData()
 
-	if err := c.ShouldBindJSON(&cpr); err != nil {
+	if err := json.Unmarshal(raw_data, &cpr); err != nil {
 		return nil, err
+	}
+
+	// Unmarshal widgets data for attachment type custom wiget
+	widgets_data := make(map[string]interface{})
+	err := json.Unmarshal(raw_data, &widgets_data)
+	if err != nil {
+		return nil, err
+	}
+
+	// Iterate over attachments and add widgets_data to widget_meta
+	if cpr.Attachments != nil {
+		for i := 0; i < len(cpr.Attachments); i++ {
+			if cpr.Attachments[i].AttachmentType == CustomWidget {
+
+				if cpr.Attachments[i].AttachmentMeta != nil {
+					widget_meta := widgets_data["attachments"].([]interface{})[i].(map[string]interface{})["attachment_meta"].(map[string]interface{})
+
+					if widget_meta != nil {
+						delete(widget_meta, "entity_id")
+						cpr.Attachments[i].AttachmentMeta = &AttachmentMeta{EntityID: cpr.Attachments[i].AttachmentMeta.EntityID}
+						cpr.Attachments[i].AttachmentMeta.WidgetMeta = widget_meta
+					}
+				}
+			}
+		}
 	}
 
 	return &cpr, nil
@@ -90,8 +117,35 @@ func parseEditPostRequest(c *gin.Context) (*EditPostRequest, error) {
 	//POST body params
 	var cpr EditPostRequest
 
-	if err := c.ShouldBindJSON(&cpr); err != nil {
+	raw_data, _ := c.GetRawData()
+
+	if err := json.Unmarshal(raw_data, &cpr); err != nil {
 		return nil, err
+	}
+
+	// Unmarshal widgets data for attachment type custom wiget
+	widgets_data := make(map[string]interface{})
+	err := json.Unmarshal(raw_data, &widgets_data)
+	if err != nil {
+		return nil, err
+	}
+
+	// Iterate over attachments and add widgets_data to widget_meta
+	if cpr.Attachments != nil {
+		for i := 0; i < len(cpr.Attachments); i++ {
+			if cpr.Attachments[i].AttachmentType == CustomWidget {
+
+				if cpr.Attachments[i].AttachmentMeta != nil {
+					widget_meta := widgets_data["attachments"].([]interface{})[i].(map[string]interface{})["attachment_meta"].(map[string]interface{})
+
+					if widget_meta != nil {
+						delete(widget_meta, "entity_id")
+						cpr.Attachments[i].AttachmentMeta = &AttachmentMeta{EntityID: cpr.Attachments[i].AttachmentMeta.EntityID}
+						cpr.Attachments[i].AttachmentMeta.WidgetMeta = widget_meta
+					}
+				}
+			}
+		}
 	}
 
 	return &cpr, nil
