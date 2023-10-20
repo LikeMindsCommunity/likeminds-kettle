@@ -20,25 +20,26 @@ type OGTags struct {
 }
 
 type AttachmentMeta struct {
-	Name                 string   `json:"name"`
-	Url                  string   `json:"url"`
-	Format               string   `json:"format"`
-	Size                 int      `json:"size"`
-	Duration             int      `json:"duration"`
-	PageCount            int      `json:"page_count"`
-	ThumbnailUrl         string   `json:"thumbnail_url"`
-	OgTags               OGTags   `json:"og_tags"`
-	EntityID             string   `json:"entity_id"`
-	CoverImageUrl        string   `json:"cover_image_url"`
-	Title                string   `json:"title"`
-	Body                 string   `json:"body"`
-	Options              []string `json:"options"`
-	ExpiryTime           int64    `json:"expiry_time"`
-	PollType             string   `json:"poll_type"`
-	MultipleSelectState  string   `json:"multiple_select_state"`
-	MultipleSelectNumber int      `json:"multiple_select_number"`
-	IsAnonymous          bool     `json:"is_anonymous"`
-	AllowAddOption       bool     `json:"allow_add_option"`
+	Name                 string                 `json:"name"`
+	Url                  string                 `json:"url"`
+	Format               string                 `json:"format"`
+	Size                 int                    `json:"size"`
+	Duration             int                    `json:"duration"`
+	PageCount            int                    `json:"page_count"`
+	ThumbnailUrl         string                 `json:"thumbnail_url"`
+	OgTags               OGTags                 `json:"og_tags"`
+	EntityID             string                 `json:"entity_id"`
+	WidgetMeta           map[string]interface{} `json:"widget_meta"`
+	CoverImageUrl        string                 `json:"cover_image_url"`
+	Title                string                 `json:"title"`
+	Body                 string                 `json:"body"`
+	Options              []string               `json:"options"`
+	ExpiryTime           int64                  `json:"expiry_time"`
+	PollType             string                 `json:"poll_type"`
+	MultipleSelectState  string                 `json:"multiple_select_state"`
+	MultipleSelectNumber int                    `json:"multiple_select_number"`
+	IsAnonymous          bool                   `json:"is_anonymous"`
+	AllowAddOption       bool                   `json:"allow_add_option"`
 }
 
 type AttachmentRequest struct {
