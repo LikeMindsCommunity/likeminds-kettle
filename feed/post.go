@@ -85,7 +85,7 @@ func parseCreatePostRequest(c *gin.Context) (*CreatePostRequest, error) {
 		return nil, err
 	}
 
-	// Unmarshal widgets data for attachment type custom wiget
+	// Unmarshal widgets data for attachment type custom widget
 	widgets_data := make(map[string]interface{})
 	err := json.Unmarshal(raw_data, &widgets_data)
 	if err != nil {
