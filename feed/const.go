@@ -39,6 +39,7 @@ const ParamFeedroomId = "feedroom_id"
 const ParamPostIds = "post_ids"
 const ParamCommentIds = "comment_ids"
 const ParamTopicIds = "topic_ids"
+const ParamWidgetIds = "widget_ids"
 const ParamIsEnabled = "is_enabled"
 const ParamSearchType = "search_type"
 const ParamSearch = "search"
@@ -69,4 +70,15 @@ const (
 	POST_REPORT_TYPE    = 5
 	COMMENT_REPORT_TYPE = 6
 	REPLY_REPORT_TYPE   = 7
+)
+
+// constants for attachment_type
+const (
+	ImageWidget int = iota + 1
+	VideoWidget
+	DocumentWidget
+	LinkWidget
+	CustomWidget
+	PollWidget
+	ArticleWidget
 )
