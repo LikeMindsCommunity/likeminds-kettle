@@ -30,6 +30,7 @@ type CreateEventRequest struct {
 	EventWebPage           string  `json:"event_web_page"`
 	WebFlowItemId          string  `json:"webflow_item_id"`
 	AttendingStatus        bool    `json:"attending_status"`
+	EventKind              string  `json:"event_kind"`
 }
 
 // Request body params to edit an event
