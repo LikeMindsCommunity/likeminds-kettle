@@ -132,6 +132,7 @@ func getMemberInternal(c *gin.Context, userId string) {
 			ParamPage:                   page,
 			ParamMemberState:            c.Query(ParamMemberState),
 			ParamQuestionAnswersVersion: c.Query(ParamQuestionAnswersVersion),
+			ParamFilterMemberRoles:      c.Query(ParamFilterMemberRoles),
 		}
 
 		//Send Request
