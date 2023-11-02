@@ -79,10 +79,13 @@ func Widget(c *gin.Context, method int) {
 func GetWidgetInternal(c *gin.Context, userId string) {
 	//Params to be sent in the /widget GET request
 	params := map[string]string{
-		ParamPage:        c.Query(ParamPage),
-		ParamPageSize:    c.Query(ParamPageSize),
-		ParamSearchKey:   c.Query(ParamSearchKey),
-		ParamSearchValue: c.Query(ParamSearchValue),
+		ParamPage:             c.Query(ParamPage),
+		ParamPageSize:         c.Query(ParamPageSize),
+		ParamSearchKey:        c.Query(ParamSearchKey),
+		ParamSearchValue:      c.Query(ParamSearchValue),
+		ParamWidgetIds:        c.Query(ParamWidgetIds),
+		ParamParentEntityId:   c.Query(ParamParentEntityId),
+		ParamParentEntityType: c.Query(ParamParentEntityType),
 	}
 
 	//Fetch member access to view widgets
