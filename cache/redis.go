@@ -25,12 +25,14 @@ func InitRedis() *redis.Client {
 }
 
 // Get | get the key object value from cache storage
-func Get(client *redis.Client, key string) (string, error) {
+func Get(client *redis.Client, key string) (string, bool, error) {
 	val, err := client.Get(key).Result()
-	if err != nil {
-		return "", err
+	if err == redis.Nil {
+		return "", false, nil
+	} else if err != nil {
+		return "", false, err
 	}
-	return val, nil
+	return val, true, err
 }
 
 // Set | set the key with object value into cache storage, set expiration = 0 for no expiry

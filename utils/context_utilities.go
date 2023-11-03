@@ -21,5 +21,6 @@ func GetCommunityIdFromContext(c *gin.Context) int {
 	if !exists {
 		return 0
 	}
-	return communityId.(int)
+
+	return int(communityId.(float64))
 }
