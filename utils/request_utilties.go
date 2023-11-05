@@ -4,13 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/gin-gonic/gin"
 	log "github.com/nateshr/likeminds-authentication/logging"
 )
 
+// This function is used to parse array to string using json marshal
 func ParseArrayToString(array []interface{}) string {
-	/*
-		This function is used to parse array to string using json marshal
-	*/
 
 	temp_params, err := json.Marshal(array)
 	if err != nil {
@@ -24,10 +23,8 @@ func ParseArrayToString(array []interface{}) string {
 	return str
 }
 
+// This function is used to parse interface to string using json marshal
 func ParseInterfaceToString(data interface{}) string {
-	/*
-		This function is used to parse interface to string using json marshal
-	*/
 
 	if data == nil {
 		return ""
@@ -47,4 +44,9 @@ func ParseInterfaceToString(data interface{}) string {
 	str := fmt.Sprintf("%v", string(temp_param))
 
 	return str
+}
+
+// This function is used to fetch and return x-api-key from request
+func GetApiKeyFromRequest(c *gin.Context) string {
+	return c.GetHeader(HeadersApiKey)
 }

@@ -23,7 +23,7 @@ const ErrorInvalidChannelType = "Invalid channel type!"
 const ErrorFetchingUserData = "Error while fetching user data!"
 const ErrorInvalidUserId = "Invalid user_id!"
 const ErrorCommunityConfigurationsNotFound = "Community configurations not found!"
-const ErrorCommunityIdNotFound = "Community id not found!"
+const ErrorApiKeyNotFound = "Api key not found!"
 
 func GeneralAPIError(c *gin.Context, errorMessage string) {
 	c.JSON(http.StatusInternalServerError, Response{

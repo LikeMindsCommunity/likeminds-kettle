@@ -14,13 +14,3 @@ func GetRedisClientFromContext(c *gin.Context) *redis.Client {
 	}
 	return redisClient.(*redis.Client)
 }
-
-// Exposed utility method to get community_id from context
-func GetCommunityIdFromContext(c *gin.Context) int {
-	communityId, exists := c.Get(ParamCommunityId)
-	if !exists {
-		return 0
-	}
-
-	return int(communityId.(float64))
-}

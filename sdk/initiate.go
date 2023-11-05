@@ -6,6 +6,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
+	"github.com/nateshr/likeminds-authentication/widget"
 )
 
 // InitiateSDKEndPoint | togther service user initiate endpoint
@@ -87,6 +88,27 @@ func InitiateSDK(c *gin.Context) {
 
 	dataResponse[token.ParamAccessToken] = ltm.AccessToken
 	dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
+
+	// Fetch Profile meta configurations and check if widget are enabled
+	profileWidgetsEnabled, _ := community.ProfileWidgetsEnabled(c, userUniqueID)
+	if profileWidgetsEnabled {
+		// If profile widgets are enabled
+		widgetIds := utils.GetWidgetIdsFromDataResponse(dataResponse)
+
+		if len(widgetIds) > 0 {
+			widgets, _ := widget.GetWidgetsFromWidgetIds(utils.CreateHeaders(c, userUniqueID), widgetIds)
+
+			if dataResponse["widgets"] == nil {
+				dataResponse["widgets"] = map[string]interface{}{}
+			}
+
+			for _, value := range widgets {
+				widgetId := value.ID
+				dataResponse["widgets"].(map[string]interface{})[widgetId] = value
+			}
+		}
+
+	}
 
 	// Generate response
 	utils.GenerateResponse(c, dataResponse)

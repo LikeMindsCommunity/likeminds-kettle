@@ -7,8 +7,8 @@ const (
 
 // Cache Keys
 const (
-	CommunityConfigurationsCacheKey   = "%d_community_configurations"
-	ProfileMetaConfigurationsCacheKey = "%d_profile_meta_configurations"
+	CommunityConfigurationsCacheKey   = "%s_community_configurations"
+	ProfileMetaConfigurationsCacheKey = "%s_profile_meta_configurations"
 )
 
 // Cache TTLs
