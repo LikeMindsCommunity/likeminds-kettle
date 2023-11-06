@@ -88,6 +88,7 @@ func parseMemberProfileRequest(c *gin.Context) (*MemberProfileRequest, error) {
 }
 
 func EditMemberProfileInternal(c *gin.Context, userId string) {
+
 	//Body to be sent in the edit profile api internally
 	mpr, err := parseMemberProfileRequest(c)
 	if err != nil {
@@ -96,78 +97,15 @@ func EditMemberProfileInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	widgetId := ""
+	widgetId, created := "", false
 
 	// If metadata is present, create or edit widget
 	if mpr.Metadata != nil {
 
-		// send request and check if widget exists
-		fetchWidgetParams := map[string]string{
-			widget.ParamParentEntityId:   userId,
-			widget.ParamParentEntityType: widget.ParentEntityTypeUser,
+		widgetId, created = createOrEditWidgetForMemberProfile(c, userId, mpr.Metadata)
+		if widgetId != "" {
+			mpr.WidgetId = &widgetId
 		}
-
-		//Send Request to /widget GET
-		respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, widget.WidgetEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), fetchWidgetParams, nil)
-
-		apiCr := utils.ValidateClientResponse(c, respBytes, statusCode)
-		if apiCr == nil {
-			return
-		}
-
-		// Get widget id from response
-		dataResponse := apiCr.Response
-
-		if widgets, ok := dataResponse["widgets"].([]interface{}); ok {
-			if len(widgets) > 0 {
-				if id, ok := widgets[0].(map[string]interface{})["_id"].(string); ok {
-					widgetId = id
-				}
-			}
-		}
-
-		if widgetId != "" { // If widget exists, edit widget
-			EditWidgetEndPoint := fmt.Sprintf(widget.SingleWidgetEndPoint, widgetId)
-
-			ewr := widget.EditWidgetRequest{
-				MetaData: mpr.Metadata,
-			}
-
-			// Send request to edit widget
-			respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, EditWidgetEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, ewr)
-
-			apiCr := utils.ValidateClientResponse(c, respBytes, statusCode)
-			if apiCr == nil {
-				return
-			}
-
-		} else { // If widget does not exist, create widget
-
-			cwr := widget.CreateWidgetRequest{
-				ParentEntityID:   userId,
-				ParentEntityType: widget.ParentEntityTypeUser,
-				MetaData:         mpr.Metadata,
-			}
-
-			// Send request to create widget
-			respByte, statusCode := utils.GetRequestResponse(c, utils.SwarmService, widget.WidgetEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, cwr)
-
-			apiCr := utils.ValidateClientResponse(c, respByte, statusCode)
-			if apiCr == nil {
-				return
-			}
-
-			// Get widget id from response
-			dataResponse := apiCr.Response
-			if widget, ok := dataResponse["widget"].(map[string]interface{}); ok {
-				widgetId = widget["_id"].(string)
-			}
-		}
-	}
-
-	// update request body with widget_id
-	if widgetId != "" {
-		mpr.WidgetId = &widgetId
 	}
 
 	//Send Request to edit member profile
@@ -175,8 +113,8 @@ func EditMemberProfileInternal(c *gin.Context, userId string) {
 
 	apiCr := utils.ValidateClientResponse(c, respBytes, statusCode)
 
-	// If edit profile fails, delete widget
-	if apiCr == nil {
+	// if a widget was created and edit_member API failed, delete the widget
+	if created && apiCr == nil && widgetId != "" {
 
 		deleteWidgetEndPoint := fmt.Sprintf(widget.SingleWidgetEndPoint, widgetId)
 
@@ -193,4 +131,71 @@ func EditMemberProfileInternal(c *gin.Context, userId string) {
 
 	utils.GenerateResponse(c, apiCr.Response, false)
 
+}
+
+func createOrEditWidgetForMemberProfile(c *gin.Context, userId string, metaData map[string]interface{}) (string, bool) {
+
+	widgetId, created := "", false
+
+	// send request and check if widget exists
+	fetchWidgetParams := map[string]string{
+		widget.ParamParentEntityId:   userId,
+		widget.ParamParentEntityType: widget.ParentEntityTypeUser,
+	}
+
+	//Send Request to /widget GET
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, widget.WidgetEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), fetchWidgetParams, nil)
+	apiCr := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCr == nil {
+		return widgetId, created
+	}
+
+	// Get widget id from response
+	dataResponse := apiCr.Response
+	if widgets, ok := dataResponse["widgets"].([]interface{}); ok {
+		if len(widgets) > 0 {
+			if id, ok := widgets[0].(map[string]interface{})["_id"].(string); ok {
+				widgetId = id
+			}
+		}
+	}
+
+	if widgetId != "" { // If widget exists, edit widget
+		EditWidgetEndPoint := fmt.Sprintf(widget.SingleWidgetEndPoint, widgetId)
+
+		ewr := widget.EditWidgetRequest{
+			MetaData: metaData,
+		}
+
+		// Send request to edit widget
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, EditWidgetEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, ewr)
+		apiCr := utils.ValidateClientResponse(c, respBytes, statusCode)
+		if apiCr == nil {
+			return widgetId, created
+		}
+
+	} else { // If widget does not exist, create widget
+
+		cwr := widget.CreateWidgetRequest{
+			ParentEntityID:   userId,
+			ParentEntityType: widget.ParentEntityTypeUser,
+			MetaData:         metaData,
+		}
+
+		// Send request to create widget
+		respByte, statusCode := utils.GetRequestResponse(c, utils.SwarmService, widget.WidgetEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, cwr)
+		apiCr := utils.ValidateClientResponse(c, respByte, statusCode)
+		if apiCr == nil {
+			return widgetId, created
+		}
+
+		// Get widget id from response
+		dataResponse := apiCr.Response
+		if widget, ok := dataResponse["widget"].(map[string]interface{}); ok {
+			widgetId = widget["_id"].(string)
+			created = true
+		}
+	}
+
+	return widgetId, created
 }
