@@ -68,3 +68,23 @@ const (
 const (
 	ParamCommunityId = "community_id"
 )
+
+// Community Configurations | community configuration types
+const (
+	CommunityConfigurationMediaLimits     = "media_limits"
+	CommunityConfigurationFeedMetadata    = "feed_metadata"
+	CommunityConfigurationProfileMetadata = "profile_metadata"
+)
+
+// profile metadata configurations s| profile metadata types
+const (
+	ConfigurationsProfileMetaWidgetsEnabled = "widgets_enabled"
+)
+
+const ParamConfigurationTypes = "configuration_types"
+
+const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
+
+const ParamWidgetIds = "widget_ids"
+
+const WidgetEndPoint = "/widget"

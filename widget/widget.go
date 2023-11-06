@@ -1,9 +1,7 @@
 package widget
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/feed"
@@ -19,22 +17,6 @@ type CreateWidgetRequest struct {
 
 type EditWidgetRequest struct {
 	MetaData map[string]interface{} `json:"metadata"`
-}
-
-// Response Structure for Custom Widget
-type WidgetResponse struct {
-	ID               string                 `json:"_id"`
-	ParentEntityID   string                 `json:"parent_entity_id"`
-	ParentEntityType string                 `json:"parent_entity_type"`
-	MetaData         map[string]interface{} `json:"metadata"`
-	LMMeta           map[string]interface{} `json:"_lm_meta"`
-	CreatedAt        int                    `json:"created_at"`
-	UpdatedAt        int                    `json:"updated_at"`
-}
-
-type WidgetsResponse struct {
-	Success bool             `json:"success"`
-	Widgets []WidgetResponse `json:"widgets"`
 }
 
 func parseCreateWidgetRequest(c *gin.Context) (*CreateWidgetRequest, error) {
@@ -173,27 +155,4 @@ func editWidgetInternal(c *gin.Context, userId string) {
 
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, EditWidgetEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, editWidgetRequest)
-}
-
-// Exposed utility method to fetch widgets from widgetIds
-func GetWidgetsFromWidgetIds(headers map[string]interface{}, widgetIds []string) ([]WidgetResponse, error) {
-
-	params := map[string]string{
-		ParamWidgetIds: utils.ParseStringArrayToString(widgetIds),
-	}
-
-	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(nil, utils.SwarmService, WidgetEndPoint, utils.GETRequest, headers, params, nil)
-	if respBytes == nil && statusCode != http.StatusOK {
-		return nil, nil
-	}
-
-	//Parse response
-	var wr WidgetsResponse
-	err := json.Unmarshal(respBytes, &wr)
-	if err != nil {
-		return nil, err
-	}
-
-	return wr.Widgets, nil
 }

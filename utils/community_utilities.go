@@ -10,9 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/cache"
-	"github.com/nateshr/likeminds-authentication/community"
 	"github.com/nateshr/likeminds-authentication/logging"
-	"github.com/nateshr/likeminds-authentication/user"
 )
 
 type CommunityConfiguration struct {
@@ -29,9 +27,6 @@ type CommunityConfigurationsResponse struct {
 // Exposed utility method to check if profile widgets are enabled for a community
 func ProfileWidgetsEnabled(c *gin.Context, userId string) (bool, error) {
 
-	if userId == "" {
-		userId = user.GetRequestingUserId(c)
-	}
 	headers := CreateHeaders(c, userId)
 
 	apiKey := GetApiKeyFromRequest(c)
@@ -50,7 +45,7 @@ func ProfileWidgetsEnabled(c *gin.Context, userId string) (bool, error) {
 	}
 
 	// Check if profile widgets are enabled
-	if widgetsEnabled, ok := profileMetaConfigurations.Value[community.ConfigurationsProfileMetaWidgetsEnabled]; ok {
+	if widgetsEnabled, ok := profileMetaConfigurations.Value[ConfigurationsProfileMetaWidgetsEnabled]; ok {
 
 		return widgetsEnabled.(bool), nil
 	}
