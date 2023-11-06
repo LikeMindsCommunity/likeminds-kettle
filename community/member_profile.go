@@ -55,8 +55,14 @@ func Profile(c *gin.Context, method int) {
 			ParamUUID:   c.Query(ParamUUID),
 		}
 
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchMemberProfileEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), requestParams, nil)
+		//Get Request response
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchMemberProfileEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), requestParams, nil)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
 
 	case utils.PUTMethod:
 
@@ -70,6 +76,12 @@ func parseMemberProfileRequest(c *gin.Context) (*MemberProfileRequest, error) {
 
 	if err := c.ShouldBindJSON(&mpr); err != nil {
 		return nil, err
+	}
+
+	for i, QuestionAnswer := range mpr.QuestionAnswers {
+		if QuestionAnswer.QuestionId != nil {
+			mpr.QuestionAnswers[i].QuestionId = utils.ParseInterfaceToString(QuestionAnswer.QuestionId)
+		}
 	}
 
 	return &mpr, nil
@@ -114,7 +126,7 @@ func EditMemberProfileInternal(c *gin.Context, userId string) {
 			}
 		}
 
-		if widgetId != "" {
+		if widgetId != "" { // If widget exists, edit widget
 			EditWidgetEndPoint := fmt.Sprintf(widget.SingleWidgetEndPoint, widgetId)
 
 			ewr := widget.EditWidgetRequest{
@@ -129,7 +141,7 @@ func EditMemberProfileInternal(c *gin.Context, userId string) {
 				return
 			}
 
-		} else {
+		} else { // If widget does not exist, create widget
 
 			cwr := widget.CreateWidgetRequest{
 				ParentEntityID:   userId,
