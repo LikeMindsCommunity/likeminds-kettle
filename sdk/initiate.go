@@ -85,11 +85,15 @@ func InitiateSDK(c *gin.Context) {
 		return
 	}
 
+	// Set ltm and user_unique_id in context
+	ltm.UserUniqueID = userUniqueID
+	c.Set(token.ParamLTM, ltm)
+
 	dataResponse[token.ParamAccessToken] = ltm.AccessToken
 	dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
 
 	// Generate response
-	utils.GenerateResponse(c, dataResponse, false)
+	utils.GenerateResponse(c, dataResponse, true)
 }
 
 func parseInitiateSDKRequest(c *gin.Context) (*InitiateSDKRequest, error) {

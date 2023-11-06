@@ -33,33 +33,3 @@ func GetUserIdFromContext(c *gin.Context) string {
 
 	return userUniqueId
 }
-
-func ParseAndFetchProfileWidgets(c *gin.Context, userId string, dataResponse map[string]interface{}) map[string]interface{} {
-
-	if userId == "" {
-		return dataResponse
-	}
-
-	// Fetch Profile meta configurations and check if widget are enabled
-	profileWidgetsEnabled, _ := ProfileWidgetsEnabled(c, userId)
-	if profileWidgetsEnabled {
-		// If profile widgets are enabled
-		widgetIds := GetWidgetIdsFromDataResponse(dataResponse)
-
-		if len(widgetIds) > 0 {
-			widgets, _ := GetWidgetsFromWidgetIds(CreateHeaders(c, userId), widgetIds)
-
-			if dataResponse["widgets"] == nil {
-				dataResponse["widgets"] = map[string]interface{}{}
-			}
-
-			for _, value := range widgets {
-				widgetId := value.ID
-				dataResponse["widgets"].(map[string]interface{})[widgetId] = value
-			}
-		}
-
-	}
-
-	return dataResponse
-}
