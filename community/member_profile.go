@@ -179,6 +179,6 @@ func EditMemberProfileInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	utils.GenerateResponse(c, apiCr.Response)
+	utils.GenerateResponse(c, apiCr.Response, false)
 
 }

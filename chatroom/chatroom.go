@@ -167,7 +167,13 @@ func getChatroomInternal(c *gin.Context, userId string) {
 		}
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchAllChatroomEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchAllChatroomEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
 
 	} else {
 		//else, call api/chatroom/fetch api internally
@@ -184,8 +190,14 @@ func getChatroomInternal(c *gin.Context, userId string) {
 				ParamApiType:    strconv.Itoa(SdkApiType),
 			}
 
-			// Send Request
-			utils.SendRequest(c, utils.CoreService, FetchChatroomV2EndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+			//Get Request response
+			respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchChatroomV2EndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+			if respBytes == nil {
+				return
+			}
+
+			//Parse and generate response
+			utils.ParseResponse(c, respBytes, statusCode, true)
 		} else {
 			// Params to be sent in the api/chatroom/fetch request
 			params := map[string]string{
@@ -193,8 +205,14 @@ func getChatroomInternal(c *gin.Context, userId string) {
 				ParamExcludedConversationStates: c.Query(ParamExcludedConversationStates),
 			}
 
-			//Send Request
-			utils.SendRequest(c, utils.CoreService, FetchChatroomEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+			//Get Request response
+			respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchChatroomEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+			if respBytes == nil {
+				return
+			}
+
+			//Parse and generate response
+			utils.ParseResponse(c, respBytes, statusCode, true)
 		}
 
 	}

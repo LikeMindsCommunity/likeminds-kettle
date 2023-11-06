@@ -131,14 +131,27 @@ func getParticipantsInternal(c *gin.Context, userId string) {
 	if is_secret == "true" {
 		//If is_secret is true, call api/chatroom/secret/fetch_participants_meta api internally
 
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchSecretParticipantsMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		//Get Request response
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchSecretParticipantsMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
 
 	} else {
 		//else, call api/chatroom/fetch_participants_meta api internally
 
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchParticipantsMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		//Get Request response
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchParticipantsMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
+
 	}
 }
 
@@ -156,16 +169,28 @@ func addParticipantsInternal(c *gin.Context, userId string) {
 	if !is_secret {
 		//If is_secret is missing or false, call add chatroom participant api internally
 
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, AddParticipantsEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, participantRequest)
+		//Get Request response
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, AddParticipantsEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, participantRequest)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
 	} else {
 		//else, call add secret chatroom participant api internally
 
 		//updated body according to secret participant add request
 		addSecretParticipantRequest := updateParticipantsRequest(participantRequest)
 
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, AddSecretParticipantsEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, addSecretParticipantRequest)
+		//Get Request response
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, AddSecretParticipantsEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, addSecretParticipantRequest)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
 	}
 }
 
@@ -182,8 +207,15 @@ func removeParticipantsInternal(c *gin.Context, userId string) {
 	is_secret := removeParticipantRequest.IsSecret
 
 	if is_secret {
-		// If is_secret is true, call remove participant from secret chatroom api internally
-		utils.SendRequest(c, utils.CoreService, RemoveSecretParticipantsEndpoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeParticipantRequest)
+
+		//Get Request response
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, RemoveSecretParticipantsEndpoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeParticipantRequest)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
 
 	} else {
 
@@ -196,7 +228,13 @@ func removeParticipantsInternal(c *gin.Context, userId string) {
 			removeParticipantRequest.UUIDs = []interface{}{removeParticipantRequest.UUID}
 		}
 
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, RemoveOpenParticipantsEndpoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, removeParticipantRequest)
+		//Get Request response
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, RemoveOpenParticipantsEndpoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, removeParticipantRequest)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
 	}
 }

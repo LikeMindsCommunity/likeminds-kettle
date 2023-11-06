@@ -154,7 +154,7 @@ func editRightsInternal(c *gin.Context, userId string) {
 		}
 
 		//Generate response
-		utils.GenerateResponse(c, apiCR.Response)
+		utils.GenerateResponse(c, apiCR.Response, false)
 
 	} else {
 		//else, call update cm rights api internally
@@ -202,7 +202,7 @@ func updateRightsInternal(c *gin.Context, userId string) {
 		}
 
 		//Generate response
-		utils.GenerateResponse(c, apiCR.Response)
+		utils.GenerateResponse(c, apiCR.Response, false)
 
 	} else {
 
