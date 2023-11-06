@@ -81,10 +81,10 @@ const (
 	ConfigurationsProfileMetaWidgetsEnabled = "widgets_enabled"
 )
 
+// Params
 const ParamConfigurationTypes = "configuration_types"
-
-const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
-
 const ParamWidgetIds = "widget_ids"
 
+// Endpoints
+const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
 const WidgetEndPoint = "/widget"
