@@ -60,7 +60,7 @@ func Login(c *gin.Context) {
 	dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
 
 	//Generate response
-	utils.GenerateResponse(c, dataResponse)
+	utils.GenerateResponse(c, dataResponse, false)
 }
 
 func parseLoginRequest(c *gin.Context) (*LoginRequest, error) {

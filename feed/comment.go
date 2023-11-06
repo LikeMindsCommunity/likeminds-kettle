@@ -156,7 +156,7 @@ func getCommentInternal(c *gin.Context, userId string) {
 	dataResponse = populateCommentDataResponse(c, dataResponse)
 
 	//Send response
-	utils.GenerateResponse(c, dataResponse)
+	utils.GenerateResponse(c, dataResponse, false)
 }
 
 func FetchCommentByIdInternal(c *gin.Context, userId string, commentId string) map[string]interface{} {
@@ -240,7 +240,7 @@ func createCommentInternal(c *gin.Context, userId string) {
 	dataResponse = populateCommentDataResponse(c, dataResponse)
 
 	//Generate Response
-	utils.GenerateResponse(c, dataResponse)
+	utils.GenerateResponse(c, dataResponse, false)
 }
 
 func deleteCommentInternal(c *gin.Context, userId string) {

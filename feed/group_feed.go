@@ -56,7 +56,7 @@ func FetchGroupFeed(c *gin.Context) {
 		user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts)
 
 		if err != nil {
-			utils.GenerateResponse(c, nil)
+			utils.GenerateResponse(c, nil, false)
 			return
 		}
 
@@ -65,5 +65,5 @@ func FetchGroupFeed(c *gin.Context) {
 	}
 
 	//Send response
-	utils.GenerateResponse(c, dataResponse)
+	utils.GenerateResponse(c, dataResponse, false)
 }

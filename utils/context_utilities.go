@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/cache"
@@ -20,7 +18,7 @@ func GetRedisClientFromContext(c *gin.Context) *redis.Client {
 }
 
 // Exposed utility method to return the user_unique_id of user from LTM token
-func GetUserIdFromContext(c *gin.Context) (string, error) {
+func GetUserIdFromContext(c *gin.Context) string {
 
 	var userUniqueId string = ""
 
@@ -28,21 +26,18 @@ func GetUserIdFromContext(c *gin.Context) (string, error) {
 	ltm, ok := c.Get(token.ParamLTM)
 	if !ok {
 		//If token is not available
-		return "", fmt.Errorf(ErrorInvalidLTM)
+		return ""
 	}
 
 	userUniqueId = ltm.(*token.LoginTokenMeta).UserUniqueID
 
-	return userUniqueId, nil
+	return userUniqueId
 }
 
 func ParseAndFetchProfileWidgets(c *gin.Context, userId string, dataResponse map[string]interface{}) map[string]interface{} {
 
 	if userId == "" {
-		userId, err := GetUserIdFromContext(c)
-		if err != nil || userId == "" {
-			return dataResponse
-		}
+		return dataResponse
 	}
 
 	// Fetch Profile meta configurations and check if widget are enabled

@@ -37,10 +37,15 @@ func CreateHeaders(c *gin.Context, userUniqueID string) map[string]interface{} {
 }
 
 // Generate Response to be sent on request success
-func GenerateResponse(c *gin.Context, dataResponse map[string]interface{}) {
+func GenerateResponse(c *gin.Context, dataResponse map[string]interface{}, getProfileWidgets bool) {
 	//Generating Response Object
 	response := Response{
 		Success: true,
+	}
+
+	// Get profile widgets if required
+	if getProfileWidgets {
+		ParseAndFetchProfileWidgets(c, GetUserIdFromContext(c), dataResponse)
 	}
 
 	//Removing Blank Data Key
@@ -100,12 +105,12 @@ func ValidateClientResponseWithoutContext(respBytes []byte, statuscode int, err 
 }
 
 // ParseResponse from request sent internally
-func ParseResponse(c *gin.Context, respBytes []byte, statusCode int) {
+func ParseResponse(c *gin.Context, respBytes []byte, statusCode int, getProfileWidgets bool) {
 
 	apiCR := ValidateClientResponse(c, respBytes, statusCode)
 
 	if apiCR != nil {
-		GenerateResponse(c, apiCR.Response)
+		GenerateResponse(c, apiCR.Response, getProfileWidgets)
 	}
 }
 
@@ -218,6 +223,6 @@ func SendRequest(c *gin.Context, serviceType ServiceType, url string, requestTyp
 	}
 
 	//Parse response
-	ParseResponse(c, respBytes, statusCode)
+	ParseResponse(c, respBytes, statusCode, false)
 
 }

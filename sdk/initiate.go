@@ -88,11 +88,8 @@ func InitiateSDK(c *gin.Context) {
 	dataResponse[token.ParamAccessToken] = ltm.AccessToken
 	dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
 
-	// Parse and get widgets
-	utils.ParseAndFetchProfileWidgets(c, userUniqueID, dataResponse)
-
 	// Generate response
-	utils.GenerateResponse(c, dataResponse)
+	utils.GenerateResponse(c, dataResponse, false)
 }
 
 func parseInitiateSDKRequest(c *gin.Context) (*InitiateSDKRequest, error) {

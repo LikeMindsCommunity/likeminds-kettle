@@ -246,7 +246,7 @@ func Post(c *gin.Context, method int) {
 		}
 
 		//Send response
-		utils.GenerateResponse(c, post_data)
+		utils.GenerateResponse(c, post_data, false)
 
 	case utils.POSTMethod:
 		createPostInternal(c, userId)
@@ -389,7 +389,7 @@ func createPostInternal(c *gin.Context, userId string) {
 	}
 
 	//Generate Response
-	utils.GenerateResponse(c, dataResponse)
+	utils.GenerateResponse(c, dataResponse, false)
 }
 
 func editPostInternal(c *gin.Context, userId string) {
@@ -458,7 +458,7 @@ func editPostInternal(c *gin.Context, userId string) {
 	dataResponse = populatePostDataResponse(c, dataResponse)
 
 	//Generate Response
-	utils.GenerateResponse(c, dataResponse)
+	utils.GenerateResponse(c, dataResponse, false)
 }
 
 func deletePostInternal(c *gin.Context, userId string) {
