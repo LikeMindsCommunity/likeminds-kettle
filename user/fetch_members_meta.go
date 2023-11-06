@@ -12,6 +12,7 @@ type SdkClientInfo struct {
 	UserId       int    `json:"user"`
 	UserUniqueId string `json:"user_unique_id"`
 	UUID         string `json:"uuid"`
+	WidgetId     string `json:"widget_id"`
 }
 
 type MemberMeta struct {
