@@ -47,13 +47,18 @@ func VerifyOTP(c *gin.Context) {
 			utils.GeneralAPIError(c, err.Error())
 			return
 		}
+
+		// Set ltm and user_unique_id in context
+		ltm.UserUniqueID = userUniqueID
+		c.Set(token.ParamLTM, ltm)
+
 		//Send response with login, refresh token and verify otp api response
 		dataResponse := apiCR.Response
 		dataResponse[token.ParamAccessToken] = ltm.AccessToken
 		dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
 
 		//Generate Response
-		utils.GenerateResponse(c, dataResponse, false)
+		utils.GenerateResponse(c, dataResponse, true)
 	} else {
 		// Create onboarding token
 		otm, err := token.CreateOTM(c.GetHeader(utils.HeadersApiKey))
@@ -69,6 +74,6 @@ func VerifyOTP(c *gin.Context) {
 		dataResponse[token.ParamAccessToken] = otm.AccessToken
 
 		// Generate Response
-		utils.GenerateResponse(c, dataResponse, false)
+		utils.GenerateResponse(c, dataResponse, true)
 	}
 }

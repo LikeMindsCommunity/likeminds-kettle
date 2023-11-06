@@ -41,10 +41,12 @@ func ParseAndFetchProfileWidgets(c *gin.Context, userId string, dataResponse map
 			dataResponse["widgets"] = map[string]interface{}{}
 		}
 
-		// If profile widgets are enabled
+		// parse and fetch widget ids from data response
 		widgetIds := GetWidgetIdsFromDataResponse(dataResponse)
 
 		if len(widgetIds) > 0 {
+
+			// fetch widgets from widget ids from swarm service
 			widgets, _ := GetWidgetsFromWidgetIds(CreateHeaders(c, userId), widgetIds)
 
 			for _, value := range widgets {

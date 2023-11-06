@@ -54,13 +54,18 @@ func Login(c *gin.Context) {
 		utils.GeneralAPIError(c, err.Error())
 		return
 	}
+
+	// Set ltm and user_unique_id in context
+	ltm.UserUniqueID = userUniqueID
+	c.Set(token.ParamLTM, ltm)
+
 	//Send response with login, refresh token and api/user/login response
 	dataResponse := apiCR.Response
 	dataResponse[token.ParamAccessToken] = ltm.AccessToken
 	dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
 
 	//Generate response
-	utils.GenerateResponse(c, dataResponse, false)
+	utils.GenerateResponse(c, dataResponse, true)
 }
 
 func parseLoginRequest(c *gin.Context) (*LoginRequest, error) {

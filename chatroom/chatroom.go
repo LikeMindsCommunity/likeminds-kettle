@@ -228,8 +228,14 @@ func createChatroomInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, CreateChatroomEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createChatroomRequest)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, CreateChatroomEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createChatroomRequest)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
 
 }
 

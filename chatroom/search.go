@@ -6,7 +6,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//ChatroomSearch is used to perform search on the chatrooms
+// ChatroomSearch is used to perform search on the chatrooms
 func ChatroomSearch(c *gin.Context) {
 
 	//Authorize User
@@ -29,6 +29,12 @@ func ChatroomSearch(c *gin.Context) {
 		ParamSearchType:   c.Query(ParamSearchType),
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, ChatroomSearchEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, ChatroomSearchEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
 }

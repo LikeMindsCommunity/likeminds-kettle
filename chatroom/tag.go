@@ -6,7 +6,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//GetTaggingList is used to fetch the tag members list for a specific chatroom
+// GetTaggingList is used to fetch the tag members list for a specific chatroom
 func GetTaggingList(c *gin.Context) {
 
 	//Authorize User
@@ -30,6 +30,12 @@ func GetTaggingList(c *gin.Context) {
 		return
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, GetTaggingListEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, GetTaggingListEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
 }
