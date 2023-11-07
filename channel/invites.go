@@ -61,7 +61,7 @@ func ChannelInvites(c *gin.Context, method int) {
 			chatroom.ParamChatroomTypes: fmt.Sprintf("[%s]", channel_type),
 		}
 
-		//Send Request
+		// Send Request
 		utils.SendRequest(c, utils.CoreService, ChatroomInvitesEndppoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 
 	case utils.PUTMethod:

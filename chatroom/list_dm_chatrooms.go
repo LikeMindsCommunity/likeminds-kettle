@@ -20,6 +20,12 @@ func ListDMChatrooms(c *gin.Context) {
 		ParamTag:  c.Query(ParamTag),
 	}
 
-	// Send Request
-	utils.SendRequest(c, utils.CoreService, FetchDMChatroomsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), requestParams, nil)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchDMChatroomsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), requestParams, nil)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
 }

@@ -218,7 +218,7 @@ func getReportsInternal(c *gin.Context, userId string) {
 	}
 
 	//Generate response
-	utils.GenerateResponse(c, dataResponse)
+	utils.GenerateResponse(c, dataResponse, true)
 }
 
 // Internal method to push reports Old

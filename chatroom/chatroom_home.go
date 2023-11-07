@@ -20,7 +20,13 @@ func GetChatroomHome(c *gin.Context) {
 		ParamChatroomId: c.Query(ParamChatroomId),
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, FetchChatroomHomeEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchChatroomHomeEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
 
 }

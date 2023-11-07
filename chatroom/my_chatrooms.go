@@ -21,6 +21,12 @@ func MyChatrooms(c *gin.Context) {
 		ParamTag:  c.Query(ParamTag),
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, MyChatroomsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, MyChatroomsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
 }

@@ -1,13 +1,12 @@
 package cache
 
 import (
+	"time"
+
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/environment"
 	"github.com/nateshr/likeminds-authentication/token"
-	"time"
 )
-
-const ParamRedisClient = "redis_client"
 
 func InitRedis() *redis.Client {
 	//Initializing Redis
@@ -25,22 +24,36 @@ func InitRedis() *redis.Client {
 	return client
 }
 
+// Get | get the key object value from cache storage
+func Get(client *redis.Client, key string) (string, bool, error) {
+	val, err := client.Get(key).Result()
+	if err == redis.Nil {
+		return "", false, nil
+	} else if err != nil {
+		return "", false, err
+	}
+	return val, true, err
+}
+
+// Set | set the key with object value into cache storage, set expiration = 0 for no expiry
+func Set(client *redis.Client, key string, value interface{}, expiration time.Duration) error {
+	err := client.Set(key, value, expiration).Err()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // IsLTMBlacklisted checks if token is blacklisted or not => user is logged out or not
 func IsLTMBlacklisted(client *redis.Client, ltm *token.LoginTokenMeta) bool {
 	userUniqueID, _ := client.Get(ltm.AccessUuid).Result()
-	if userUniqueID != "" {
-		return true
-	}
-	return false
+	return userUniqueID != ""
 }
 
 // IsRTMBlacklisted checks if token is blacklisted or not => user is logged out or not
 func IsRTMBlacklisted(client *redis.Client, rtm *token.RefreshTokenMeta) bool {
 	userUniqueID, _ := client.Get(rtm.RefreshUuid).Result()
-	if userUniqueID != "" {
-		return true
-	}
-	return false
+	return userUniqueID != ""
 }
 
 // BlacklistToken Updates user id against uuid in cache when user logs out

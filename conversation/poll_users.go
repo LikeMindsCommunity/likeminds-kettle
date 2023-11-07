@@ -6,7 +6,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//PollUsers is used to fetch users who voted on poll
+// PollUsers is used to fetch users who voted on poll
 func PollUsers(c *gin.Context) {
 
 	//Authorize User
@@ -28,6 +28,13 @@ func PollUsers(c *gin.Context) {
 		return
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, PollUsersEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, PollUsersEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
+
 }

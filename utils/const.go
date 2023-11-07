@@ -63,3 +63,28 @@ var QuestionIdVersions = map[string]int{
 const (
 	ApiRevampV1 string = "v1"
 )
+
+// Context Params | These are the params that are passed in the context
+const (
+	ParamCommunityId = "community_id"
+)
+
+// Community Configurations | community configuration types
+const (
+	CommunityConfigurationMediaLimits     = "media_limits"
+	CommunityConfigurationFeedMetadata    = "feed_metadata"
+	CommunityConfigurationProfileMetadata = "profile_metadata"
+)
+
+// profile metadata configurations s| profile metadata types
+const (
+	ConfigurationsProfileMetaWidgetsEnabled = "widgets_enabled"
+)
+
+// Params
+const ParamConfigurationTypes = "configuration_types"
+const ParamWidgetIds = "widget_ids"
+
+// Endpoints
+const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
+const WidgetEndPoint = "/widget"

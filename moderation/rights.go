@@ -102,13 +102,27 @@ func getRightsInternal(c *gin.Context, userId string) {
 	if is_cm == "" || is_cm == "false" {
 		//If is_cm is missing or false, call fetch member rights api internally
 
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchMemberRights, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		//Get Request response
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchMemberRights, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
+
 	} else {
 		//else, call fetch cm rights api internally
 
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchCMRights, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		//Get Request response
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchCMRights, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
+
 	}
 }
 
@@ -154,7 +168,7 @@ func editRightsInternal(c *gin.Context, userId string) {
 		}
 
 		//Generate response
-		utils.GenerateResponse(c, apiCR.Response)
+		utils.GenerateResponse(c, apiCR.Response, false)
 
 	} else {
 		//else, call update cm rights api internally
@@ -202,7 +216,7 @@ func updateRightsInternal(c *gin.Context, userId string) {
 		}
 
 		//Generate response
-		utils.GenerateResponse(c, apiCR.Response)
+		utils.GenerateResponse(c, apiCR.Response, false)
 
 	} else {
 

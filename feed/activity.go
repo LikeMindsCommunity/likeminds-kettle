@@ -96,7 +96,14 @@ func GetUserActivity(c *gin.Context) {
 
 	endpoint := fmt.Sprintf(GetUserActivityEndPoint, userID)
 
-	utils.SendRequest(c, utils.SwarmService, endpoint, utils.GETRequest, utils.CreateHeaders(c, userID), params, gin.H{})
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endpoint, utils.GETRequest, utils.CreateHeaders(c, userID), params, gin.H{})
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
 }
 
 // GetUserActivityUnreadCount | get user activity unread count from swarm service

@@ -38,8 +38,15 @@ func UploadFiles(c *gin.Context) {
 		return
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, UploadFilesEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, uploadFileRequest)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, UploadFilesEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, uploadFileRequest)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
+
 }
 
 func parseUploadFilesRequest(c *gin.Context) (*UploadFilesRequest, error) {

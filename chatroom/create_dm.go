@@ -42,6 +42,12 @@ func CreateDM(c *gin.Context) {
 		return
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, CreateDMEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createDMRequest)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, CreateDMEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createDMRequest)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
 }

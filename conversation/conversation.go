@@ -167,8 +167,16 @@ func getConversationInternal(c *gin.Context, userId string) {
 			ParamIncludeConversationId:      c.Query(ParamIncludeConversationId),
 			ParamExcludedConversationStates: c.Query(ParamExcludedConversationStates),
 		}
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchConversationEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
+		//Get Request response
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchConversationEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
+
 	} else {
 		//else, call api/conversation_meta api internally
 		params := map[string]string{
@@ -190,8 +198,14 @@ func createConversationInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, CreateConversationEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createConversationRequest)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, CreateConversationEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createConversationRequest)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
 }
 
 func editConversationInternal(c *gin.Context, userId string) {
@@ -204,8 +218,14 @@ func editConversationInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, EditConversationEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, editConversationRequest)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, EditConversationEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, editConversationRequest)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
 }
 
 func deleteConversationInternal(c *gin.Context, userId string) {
