@@ -30,7 +30,13 @@ func MemberSearch(c *gin.Context) {
 		ParamQuestionAnswersVersion: c.Query(ParamQuestionAnswersVersion),
 	}
 
-	// Send Request
-	utils.SendRequest(c, utils.CoreService, UserSearchEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), requestParams, nil)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, UserSearchEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), requestParams, nil)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
 
 }

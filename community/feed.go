@@ -49,7 +49,7 @@ func CommunityFeed(c *gin.Context, method int) {
 				}
 
 				//Send Response
-				utils.GenerateResponse(c, dataResponse, false)
+				utils.GenerateResponse(c, dataResponse, true)
 			} else if params[ParamOrderType] == strconv.Itoa(OrderTypeRecentlyActive) || params[ParamOrderType] == strconv.Itoa(OrderTypeMostMessages) {
 				//Fetch post independent data
 				dataResponse := fetchPostIndependentFeed(c, userId, params)
@@ -58,15 +58,23 @@ func CommunityFeed(c *gin.Context, method int) {
 				}
 
 				//Send Response
-				utils.GenerateResponse(c, dataResponse, false)
+				utils.GenerateResponse(c, dataResponse, true)
 			} else {
 				utils.GeneralBadRequestError(c, "invalid order_type sent")
 				return
 			}
 
 		} else {
-			//Send Request to get chat community feed
-			utils.SendRequest(c, utils.CoreService, CommunityFetchFeedEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
+			//Get Request response
+			respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, CommunityFetchFeedEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+			if respBytes == nil {
+				return
+			}
+
+			//Parse and generate response
+			utils.ParseResponse(c, respBytes, statusCode, true)
+
 		}
 	}
 }

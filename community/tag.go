@@ -31,10 +31,26 @@ func GetTaggingList(c *gin.Context) {
 
 	//Params Validation
 	if params[chatroom.ParamChatroomId] == "" {
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchMembersMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
+		//Get Request response
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchMembersMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
+
 	} else {
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, chatroom.GetTaggingListEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
+		//Get Request response
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, chatroom.GetTaggingListEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
+
 	}
 }

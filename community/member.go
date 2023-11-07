@@ -122,8 +122,15 @@ func getMemberInternal(c *gin.Context, userId string) {
 	if page == "" {
 		//If page is missing, call api/community/fetch_members_meta api internally
 
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchMembersMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+		//Get Request response
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchMembersMetaEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
+
 	} else {
 		//else, call api/v1/all_members api internally
 
@@ -134,8 +141,14 @@ func getMemberInternal(c *gin.Context, userId string) {
 			ParamQuestionAnswersVersion: c.Query(ParamQuestionAnswersVersion),
 		}
 
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, AllMembersV1EndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		//Get Request response
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, AllMembersV1EndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
 	}
 }
 
@@ -149,8 +162,15 @@ func addMemberInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, CommunityMemberEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, memberRequest)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, CommunityMemberEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, memberRequest)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
+
 }
 
 func editMemberInternal(c *gin.Context, userId string) {
