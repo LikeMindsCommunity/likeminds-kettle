@@ -40,7 +40,7 @@ func ProfileWidgetsEnabled(c *gin.Context, userId string) (bool, error) {
 	}
 
 	profileMetaConfigurations, err := getProfileMetaCommunityConfigurationsFromCache(redisClient, headers, apiKey)
-	if err != nil {
+	if err != nil || profileMetaConfigurations == nil {
 		return false, err
 	}
 
