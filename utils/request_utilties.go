@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/gin-gonic/gin"
 	log "github.com/nateshr/likeminds-authentication/logging"
 )
 
@@ -44,9 +43,4 @@ func ParseInterfaceToString(data interface{}) string {
 	str := fmt.Sprintf("%v", string(temp_param))
 
 	return str
-}
-
-// This function is used to fetch and return x-api-key from request
-func GetApiKeyFromRequest(c *gin.Context) string {
-	return c.GetHeader(HeadersApiKey)
 }

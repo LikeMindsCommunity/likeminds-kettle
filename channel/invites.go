@@ -61,14 +61,8 @@ func ChannelInvites(c *gin.Context, method int) {
 			chatroom.ParamChatroomTypes: fmt.Sprintf("[%s]", channel_type),
 		}
 
-		//Get Request response
-		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, ChatroomInvitesEndppoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
-		if respBytes == nil {
-			return
-		}
-
-		//Parse and generate response
-		utils.ParseResponse(c, respBytes, statusCode, false)
+		// Send Request
+		utils.SendRequest(c, utils.CoreService, ChatroomInvitesEndppoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 
 	case utils.PUTMethod:
 

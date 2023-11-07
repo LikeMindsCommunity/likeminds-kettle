@@ -25,11 +25,11 @@ type CommunityConfigurationsResponse struct {
 }
 
 // Exposed utility method to check if profile widgets are enabled for a community
-func ProfileWidgetsEnabled(c *gin.Context, userId string) (bool, error) {
+func IsProfileWidgetsEnabled(c *gin.Context, userId string) (bool, error) {
 
 	headers := CreateHeaders(c, userId)
 
-	apiKey := GetApiKeyFromRequest(c)
+	apiKey := headers[HeadersApiKey].(string)
 	if apiKey == "" {
 		return false, errors.New(ErrorApiKeyNotFound)
 	}
@@ -39,7 +39,7 @@ func ProfileWidgetsEnabled(c *gin.Context, userId string) (bool, error) {
 		return false, errors.New(ErrorRedisClientFailed)
 	}
 
-	profileMetaConfigurations, err := getProfileMetaCommunityConfigurationsFromCache(redisClient, headers, apiKey)
+	profileMetaConfigurations, err := getProfileMetaConfig(redisClient, headers, apiKey)
 	if err != nil || profileMetaConfigurations == nil {
 		return false, err
 	}
@@ -54,9 +54,9 @@ func ProfileWidgetsEnabled(c *gin.Context, userId string) (bool, error) {
 }
 
 // utility method to fetch community configurations from Cache and if not, fetch from Core Service and updates cache
-func getProfileMetaCommunityConfigurationsFromCache(redisClient *redis.Client, headers map[string]interface{}, apiKey string) (*CommunityConfiguration, error) {
+func getProfileMetaConfig(redisClient *redis.Client, headers map[string]interface{}, apiKey string) (*CommunityConfiguration, error) {
 
-	profileMetaConfigurations, exists, err := fetchProfileMetaConfigurationsfromCache(redisClient, apiKey)
+	profileMetaConfig, exists, err := fetchProfileMetaConfigfromCache(redisClient, apiKey)
 	if err != nil {
 		return nil, err
 	}
@@ -65,17 +65,17 @@ func getProfileMetaCommunityConfigurationsFromCache(redisClient *redis.Client, h
 	if !exists {
 
 		// Send request to internal service to fetch profile_metadata configurations
-		profileMetaConfigurations, err = getCommunityConfigurationInternal(headers, CommunityConfigurationProfileMetadata)
-		if err != nil || profileMetaConfigurations == nil {
+		profileMetaConfig, err = getCommunityConfigurationInternal(headers, CommunityConfigurationProfileMetadata)
+		if err != nil || profileMetaConfig == nil {
 			return nil, err
 		}
 
 		// Save data to cache
-		setProfileMetaConfigurationsInCache(redisClient, apiKey, profileMetaConfigurations)
+		setProfileMetaConfigInCache(redisClient, apiKey, profileMetaConfig)
 
 	}
 
-	return profileMetaConfigurations, nil
+	return profileMetaConfig, nil
 }
 
 // Internal method to fetch a community configuration without context
@@ -107,7 +107,7 @@ func getCommunityConfigurationInternal(headers map[string]interface{}, configura
 }
 
 // utility method to fetch profile_meta configurations from Cache
-func fetchProfileMetaConfigurationsfromCache(redisClient *redis.Client, apiKey string) (*CommunityConfiguration, bool, error) {
+func fetchProfileMetaConfigfromCache(redisClient *redis.Client, apiKey string) (*CommunityConfiguration, bool, error) {
 
 	cacheKey := fmt.Sprintf(cache.ProfileMetaConfigurationsCacheKey, apiKey)
 
@@ -127,17 +127,17 @@ func fetchProfileMetaConfigurationsfromCache(redisClient *redis.Client, apiKey s
 }
 
 // utility method to save profile_meta configurations in Cache
-func setProfileMetaConfigurationsInCache(redisClient *redis.Client, apiKey string, profileMetaConfigurations *CommunityConfiguration) error {
+func setProfileMetaConfigInCache(redisClient *redis.Client, apiKey string, profileMetaConfigurations *CommunityConfiguration) error {
 
 	cacheKey := fmt.Sprintf(cache.ProfileMetaConfigurationsCacheKey, apiKey)
 
-	//Save profile_meta configurations in cache
-	parsedProfileMeta, err := json.Marshal(profileMetaConfigurations)
-	if err != nil {
-		return err
-	}
+	// //Save profile_meta configurations in cache
+	// parsedProfileMeta, err := json.Marshal(profileMetaConfigurations)
+	// if err != nil {
+	// 	return err
+	// }
 
-	err = cache.Set(redisClient, cacheKey, parsedProfileMeta, cache.ProfileMetaConfigurationsCacheTTL*time.Hour)
+	err := cache.Set(redisClient, cacheKey, profileMetaConfigurations, cache.ProfileMetaConfigurationsCacheTTL*time.Hour)
 	if err != nil {
 		return err
 	}

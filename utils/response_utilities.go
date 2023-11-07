@@ -8,7 +8,7 @@ import (
 )
 
 // Exposed utility method to parse response for widget_ids using regex
-func GetWidgetIdsFromDataResponse(dataResponse map[string]interface{}) []string {
+func GetProfileWidgetIdsFromDataResponse(dataResponse map[string]interface{}) []string {
 
 	var widgetIds []string
 
@@ -34,7 +34,7 @@ func ParseAndFetchProfileWidgets(c *gin.Context, userId string, dataResponse map
 	}
 
 	// Fetch Profile meta configurations and check if widget are enabled
-	profileWidgetsEnabled, _ := ProfileWidgetsEnabled(c, userId)
+	profileWidgetsEnabled, _ := IsProfileWidgetsEnabled(c, userId)
 	if profileWidgetsEnabled {
 
 		if dataResponse["widgets"] == nil {
@@ -42,7 +42,7 @@ func ParseAndFetchProfileWidgets(c *gin.Context, userId string, dataResponse map
 		}
 
 		// parse and fetch widget ids from data response
-		widgetIds := GetWidgetIdsFromDataResponse(dataResponse)
+		widgetIds := GetProfileWidgetIdsFromDataResponse(dataResponse)
 
 		if len(widgetIds) > 0 {
 

@@ -74,6 +74,6 @@ func VerifyOTP(c *gin.Context) {
 		dataResponse[token.ParamAccessToken] = otm.AccessToken
 
 		// Generate Response
-		utils.GenerateResponse(c, dataResponse, true)
+		utils.GenerateResponse(c, dataResponse, false)
 	}
 }

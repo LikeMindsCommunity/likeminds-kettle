@@ -14,10 +14,6 @@ type QuestionAnswer struct {
 	Answer     string      `json:"answer"`
 }
 
-type QuestionAnswerWithInt struct {
-	QuestionId int    `json:"question_id"`
-	Answer     string `json:"answer"`
-}
 type MemberProfileRequest struct {
 	QuestionAnswers []QuestionAnswer       `json:"question_answers"`
 	ImageUrl        string                 `json:"image_url"`
@@ -102,7 +98,7 @@ func EditMemberProfileInternal(c *gin.Context, userId string) {
 	// If metadata is present, create or edit widget
 	if mpr.Metadata != nil {
 
-		widgetId, created = createOrEditWidgetForMemberProfile(c, userId, mpr.Metadata)
+		widgetId, created = createOrUpdateWidgetForMemberProfile(c, userId, mpr.Metadata)
 		if widgetId != "" {
 			mpr.WidgetId = &widgetId
 		}
@@ -133,7 +129,7 @@ func EditMemberProfileInternal(c *gin.Context, userId string) {
 
 }
 
-func createOrEditWidgetForMemberProfile(c *gin.Context, userId string, metaData map[string]interface{}) (string, bool) {
+func createOrUpdateWidgetForMemberProfile(c *gin.Context, userId string, metaData map[string]interface{}) (string, bool) {
 
 	widgetId, created := "", false
 
