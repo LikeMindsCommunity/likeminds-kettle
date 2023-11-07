@@ -6,7 +6,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//FetchUnreadPreviews is used to fetch all the unread previews conversation
+// FetchUnreadPreviews is used to fetch all the unread previews conversation
 func FetchUnreadPreviews(c *gin.Context) {
 
 	//Authorize User
@@ -22,6 +22,13 @@ func FetchUnreadPreviews(c *gin.Context) {
 		ParamPage:        c.Query(ParamPage),
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, FetchUnreadPreviewsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchUnreadPreviewsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
+
 }
