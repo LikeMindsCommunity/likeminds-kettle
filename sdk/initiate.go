@@ -13,15 +13,15 @@ const InitiateSDKEndPoint = "/api/sdk/initiate"
 
 // InitiateSDKRequest | user initiate request schema
 type InitiateSDKRequest struct {
-	UserName        string                            `json:"user_name"`
-	UserUniqueID    string                            `json:"user_unique_id"`
-	UUID            string                            `json:"uuid,omitempty"`
-	ImageURL        string                            `json:"image_url"`
-	IsGuest         bool                              `json:"is_guest"`
-	QuestionAnswers []community.QuestionAnswerWithInt `json:"question_answers"`
-	User            user.User                         `json:"user,omitempty"`
-	TokenExpiryBeta int64                             `json:"token_expiry_beta,omitempty"`
-	SharedBy        string                            `json:"shared_by,omitempty"`
+	UserName        string                     `json:"user_name"`
+	UserUniqueID    string                     `json:"user_unique_id"`
+	UUID            string                     `json:"uuid,omitempty"`
+	ImageURL        string                     `json:"image_url"`
+	IsGuest         bool                       `json:"is_guest"`
+	QuestionAnswers []community.QuestionAnswer `json:"question_answers"`
+	User            user.User                  `json:"user,omitempty"`
+	TokenExpiryBeta int64                      `json:"token_expiry_beta,omitempty"`
+	SharedBy        string                     `json:"shared_by,omitempty"`
 }
 
 // InitiateSDK is used to initiate sdk
@@ -107,6 +107,12 @@ func parseInitiateSDKRequest(c *gin.Context) (*InitiateSDKRequest, error) {
 	// If uuid is passed in the request, use it as user_unique_id
 	if isr.UUID != "" {
 		isr.UserUniqueID = isr.UUID
+	}
+
+	for i, QuestionAnswer := range isr.QuestionAnswers {
+		if QuestionAnswer.QuestionId != nil {
+			isr.QuestionAnswers[i].QuestionId = utils.ParseInterfaceToString(QuestionAnswer.QuestionId)
+		}
 	}
 
 	return &isr, nil
