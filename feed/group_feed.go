@@ -65,5 +65,5 @@ func FetchGroupFeed(c *gin.Context) {
 	}
 
 	//Send response
-	utils.GenerateResponse(c, dataResponse, false)
+	utils.GenerateResponse(c, dataResponse, true)
 }

@@ -99,7 +99,7 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 	}
 
 	//Send response
-	utils.GenerateResponse(c, dataResponse, false)
+	utils.GenerateResponse(c, dataResponse, true)
 }
 
 func createSavePostInternal(c *gin.Context, userId string) {
