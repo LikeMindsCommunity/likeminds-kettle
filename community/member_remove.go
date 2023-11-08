@@ -95,7 +95,7 @@ func RemoveMember(c *gin.Context) {
 	validateDeleteUserDataReponse(respBytes, err)
 
 	//Generate response
-	utils.GenerateResponse(c, apiCr.Response)
+	utils.GenerateResponse(c, apiCr.Response, false)
 }
 
 func parseRemoveMemberRequest(c *gin.Context) (*RemoveMemberRequest, error) {

@@ -12,7 +12,7 @@ type LogoutRequest struct {
 	RefreshToken string `json:"refresh_token" binding:"required"`
 }
 
-//Logout is used to blacklist login and refresh tokens and logout user
+// Logout is used to blacklist login and refresh tokens and logout user
 func Logout(c *gin.Context) {
 
 	//Check if request has LTM token or not
@@ -65,5 +65,5 @@ func Logout(c *gin.Context) {
 	}
 
 	//Generate Response
-	utils.GenerateResponse(c, nil)
+	utils.GenerateResponse(c, nil, false)
 }

@@ -47,5 +47,5 @@ func UserSocialLogin(c *gin.Context) {
 	}
 
 	// Generate response
-	utils.GenerateResponse(c, dataResponse)
+	utils.GenerateResponse(c, dataResponse, false)
 }

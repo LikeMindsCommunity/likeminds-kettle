@@ -2,7 +2,6 @@ package sdk
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/community"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -11,17 +10,22 @@ import (
 // InitiateSDKEndPoint | togther service user initiate endpoint
 const InitiateSDKEndPoint = "/api/sdk/initiate"
 
+type QuestionAnswer struct {
+	QuestionId int    `json:"question_id"`
+	Answer     string `json:"answer"`
+}
+
 // InitiateSDKRequest | user initiate request schema
 type InitiateSDKRequest struct {
-	UserName        string                            `json:"user_name"`
-	UserUniqueID    string                            `json:"user_unique_id"`
-	UUID            string                            `json:"uuid,omitempty"`
-	ImageURL        string                            `json:"image_url"`
-	IsGuest         bool                              `json:"is_guest"`
-	QuestionAnswers []community.QuestionAnswerWithInt `json:"question_answers"`
-	User            user.User                         `json:"user,omitempty"`
-	TokenExpiryBeta int64                             `json:"token_expiry_beta,omitempty"`
-	SharedBy        string                            `json:"shared_by,omitempty"`
+	UserName        string           `json:"user_name"`
+	UserUniqueID    string           `json:"user_unique_id"`
+	UUID            string           `json:"uuid,omitempty"`
+	ImageURL        string           `json:"image_url"`
+	IsGuest         bool             `json:"is_guest"`
+	QuestionAnswers []QuestionAnswer `json:"question_answers"`
+	User            user.User        `json:"user,omitempty"`
+	TokenExpiryBeta int64            `json:"token_expiry_beta,omitempty"`
+	SharedBy        string           `json:"shared_by,omitempty"`
 }
 
 // InitiateSDK is used to initiate sdk
@@ -85,11 +89,15 @@ func InitiateSDK(c *gin.Context) {
 		return
 	}
 
+	// Set ltm and user_unique_id in context
+	ltm.UserUniqueID = userUniqueID
+	c.Set(token.ParamLTM, ltm)
+
 	dataResponse[token.ParamAccessToken] = ltm.AccessToken
 	dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
 
 	// Generate response
-	utils.GenerateResponse(c, dataResponse)
+	utils.GenerateResponse(c, dataResponse, true)
 }
 
 func parseInitiateSDKRequest(c *gin.Context) (*InitiateSDKRequest, error) {

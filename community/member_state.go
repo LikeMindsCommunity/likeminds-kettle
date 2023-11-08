@@ -20,8 +20,15 @@ func FetchMemberState(c *gin.Context) {
 		ParamMemberId: userId,
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, MemberStateEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, MemberStateEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
+
 }
 
 // Exposed method to fetch member role

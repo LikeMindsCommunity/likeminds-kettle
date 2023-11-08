@@ -6,7 +6,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-// Configurations : Get the list of configurations
+// Expose method to fetch community configurations for a community
 func GetCommunityConfigurations(c *gin.Context) {
 
 	//Authorize User

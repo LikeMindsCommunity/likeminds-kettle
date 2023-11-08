@@ -28,8 +28,15 @@ func AddPoll(c *gin.Context) {
 		return
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, AddPollEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, addPollRequest)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, AddPollEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, addPollRequest)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
+
 }
 
 func parseAddPollRequest(c *gin.Context) (*AddPollRequest, error) {

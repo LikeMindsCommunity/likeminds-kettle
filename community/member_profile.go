@@ -1,31 +1,25 @@
 package community
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
+	"github.com/nateshr/likeminds-authentication/widget"
 )
 
 type QuestionAnswer struct {
-	QuestionId string `json:"question_id"`
-	Answer     string `json:"answer"`
-}
-
-type QuestionAnswerWithInt struct {
-	QuestionId int    `json:"question_id"`
-	Answer     string `json:"answer"`
+	QuestionId interface{} `json:"question_id"`
+	Answer     string      `json:"answer"`
 }
 
 type MemberProfileRequest struct {
-	QuestionAnswers []QuestionAnswer `json:"question_answers"`
-	ImageUrl        string           `json:"image_url"`
-	Name            *string          `json:"name"`
-}
-
-type MemberProfileRequestWithInt struct {
-	QuestionAnswers []QuestionAnswerWithInt `json:"question_answers"`
-	ImageUrl        string                  `json:"image_url"`
-	Name            *string                 `json:"name"`
+	QuestionAnswers []QuestionAnswer       `json:"question_answers"`
+	ImageUrl        string                 `json:"image_url"`
+	Name            *string                `json:"name"`
+	WidgetId        *string                `json:"widget_id"`
+	Metadata        map[string]interface{} `json:"metadata"`
 }
 
 // GetProfile is used to get member profile
@@ -57,33 +51,18 @@ func Profile(c *gin.Context, method int) {
 			ParamUUID:   c.Query(ParamUUID),
 		}
 
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, FetchMemberProfileEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), requestParams, nil)
-
-	case utils.PUTMethod:
-
-		var memberProfileRequest interface{}
-		var err error
-
-		//Body to be sent in the edit profile api internally
-
-		questionIdVersionCheck := utils.CheckVersion(c, utils.QuestionIdVersions)
-
-		if !questionIdVersionCheck {
-			memberProfileRequest, err = parseMemberProfileRequest(c)
-		} else {
-			memberProfileRequest, err = parseMemberProfileRequestWithInt(c)
-		}
-
-		if err != nil {
-			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+		//Get Request response
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchMemberProfileEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), requestParams, nil)
+		if respBytes == nil {
 			return
 		}
 
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, EditMemberProfileEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, memberProfileRequest)
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
 
+	case utils.PUTMethod:
+
+		EditMemberProfileInternal(c, userId)
 	}
 }
 
@@ -95,16 +74,124 @@ func parseMemberProfileRequest(c *gin.Context) (*MemberProfileRequest, error) {
 		return nil, err
 	}
 
-	return &mpr, nil
-}
-
-func parseMemberProfileRequestWithInt(c *gin.Context) (*MemberProfileRequestWithInt, error) {
-	// POST body params
-	var mpr MemberProfileRequestWithInt
-
-	if err := c.ShouldBindJSON(&mpr); err != nil {
-		return nil, err
+	for i, QuestionAnswer := range mpr.QuestionAnswers {
+		if QuestionAnswer.QuestionId != nil {
+			mpr.QuestionAnswers[i].QuestionId = utils.ParseInterfaceToString(QuestionAnswer.QuestionId)
+		}
 	}
 
 	return &mpr, nil
+}
+
+func EditMemberProfileInternal(c *gin.Context, userId string) {
+
+	//Body to be sent in the edit profile api internally
+	mpr, err := parseMemberProfileRequest(c)
+	if err != nil {
+		//If POST body params are missing
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	widgetId, created := "", false
+
+	// If metadata is present, create or edit widget
+	if mpr.Metadata != nil {
+
+		widgetId, created = createOrUpdateWidgetForMemberProfile(c, userId, mpr.Metadata)
+		if widgetId != "" {
+			mpr.WidgetId = &widgetId
+		}
+	}
+
+	//Send Request to edit member profile
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, EditMemberProfileEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, mpr)
+
+	apiCr := utils.ValidateClientResponse(c, respBytes, statusCode)
+
+	// if a widget was created and edit_member API failed, delete the widget
+	if created && apiCr == nil && widgetId != "" {
+
+		deleteWidgetEndPoint := fmt.Sprintf(widget.SingleWidgetEndPoint, widgetId)
+
+		// Send request to delete widget
+		respBytes, _ := utils.GetRequestResponse(c, utils.SwarmService, deleteWidgetEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, nil)
+
+		apiCr := utils.ValidateClientResponse(c, respBytes, statusCode)
+		if apiCr == nil {
+			return
+		}
+
+		return
+	}
+
+	utils.GenerateResponse(c, apiCr.Response, false)
+
+}
+
+func createOrUpdateWidgetForMemberProfile(c *gin.Context, userId string, metaData map[string]interface{}) (string, bool) {
+
+	widgetId, created := "", false
+
+	// send request and check if widget exists
+	fetchWidgetParams := map[string]string{
+		widget.ParamParentEntityId:   userId,
+		widget.ParamParentEntityType: widget.ParentEntityTypeUser,
+	}
+
+	//Send Request to /widget GET
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, widget.WidgetEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), fetchWidgetParams, nil)
+	apiCr := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCr == nil {
+		return widgetId, created
+	}
+
+	// Get widget id from response
+	dataResponse := apiCr.Response
+	if widgets, ok := dataResponse["widgets"].([]interface{}); ok {
+		if len(widgets) > 0 {
+			if id, ok := widgets[0].(map[string]interface{})["_id"].(string); ok {
+				widgetId = id
+			}
+		}
+	}
+
+	if widgetId != "" { // If widget exists, edit widget
+		EditWidgetEndPoint := fmt.Sprintf(widget.SingleWidgetEndPoint, widgetId)
+
+		ewr := widget.EditWidgetRequest{
+			MetaData: metaData,
+		}
+
+		// Send request to edit widget
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, EditWidgetEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, ewr)
+		apiCr := utils.ValidateClientResponse(c, respBytes, statusCode)
+		if apiCr == nil {
+			return widgetId, created
+		}
+
+	} else { // If widget does not exist, create widget
+
+		cwr := widget.CreateWidgetRequest{
+			ParentEntityID:   userId,
+			ParentEntityType: widget.ParentEntityTypeUser,
+			MetaData:         metaData,
+		}
+
+		// Send request to create widget
+		respByte, statusCode := utils.GetRequestResponse(c, utils.SwarmService, widget.WidgetEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, cwr)
+		apiCr := utils.ValidateClientResponse(c, respByte, statusCode)
+		if apiCr == nil {
+			return widgetId, created
+		}
+
+		// Get widget id from response
+		dataResponse := apiCr.Response
+		if widget, ok := dataResponse["widget"].(map[string]interface{}); ok {
+			widgetId = widget["_id"].(string)
+			created = true
+		}
+	}
+
+	return widgetId, created
 }

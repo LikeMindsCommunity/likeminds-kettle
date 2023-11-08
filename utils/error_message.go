@@ -14,6 +14,7 @@ const ErrorBodyParamsMissing = "Body params missing!"
 const ErrorInvalidLTM = "Invalid LTM!"
 const ErrorInvalidRTM = "Invalid RTM!"
 const ErrorRedisFailed = "Unable to initialize Redis!"
+const ErrorRedisClientFailed = "Unable to get Redis client!"
 const ErrorInvalidAPIKey = "Invalid API key!"
 const ErrorGuestAccessDenied = "Login required!"
 const ErrorMemeberAccessFail = "You are not authorized to perform this operation!"
@@ -21,6 +22,8 @@ const ErrorUserCannotDm = "User cannot DM"
 const ErrorInvalidChannelType = "Invalid channel type!"
 const ErrorFetchingUserData = "Error while fetching user data!"
 const ErrorInvalidUserId = "Invalid user_id!"
+const ErrorCommunityConfigurationsNotFound = "Community configurations not found!"
+const ErrorApiKeyNotFound = "Api key not found!"
 
 func GeneralAPIError(c *gin.Context, errorMessage string) {
 	c.JSON(http.StatusInternalServerError, Response{
