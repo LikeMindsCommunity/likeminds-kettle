@@ -114,7 +114,7 @@ func fetchProfileMetaConfigfromCache(redisClient *redis.Client, apiKey string) (
 	//Fetch profile_meta configurations from cache
 	profileMetaValue, exists, err := cache.Get(redisClient, cacheKey)
 	if !exists {
-		logging.Info(fmt.Sprintf("profile_meta configurations not found in cache for api-key: %s", apiKey))
+		logging.Error(fmt.Sprintf("profile_meta configurations not found in cache for api-key: %s", apiKey))
 		return nil, exists, err
 	}
 
@@ -132,7 +132,7 @@ func setProfileMetaConfigInCache(redisClient *redis.Client, apiKey string, profi
 
 	cacheKey := fmt.Sprintf(cache.ProfileMetaConfigurationsCacheKey, apiKey)
 
-	// //Save profile_meta configurations in cache
+	//Save profile_meta configurations in cache
 	parsedProfileMeta, err := json.Marshal(profileMetaConfigurations)
 	if err != nil {
 		return err
