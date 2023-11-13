@@ -161,3 +161,24 @@ func parseEditCohortRequest(c *gin.Context) (*EditCohortRequest, error) {
 
 	return &ecr, nil
 }
+
+// Exposed method to fetch a cohort using cohort id
+func FetchCohort(c *gin.Context) {
+
+	// Get cohort id from url params
+	cohortId := c.Param(ParamCohortID)
+
+	// Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
+		return
+	}
+
+	// Params to be sent in fetch cohort api internally
+	params := map[string]string{
+		ParamCohortID: cohortId,
+	}
+
+	// Send Request
+	utils.SendRequest(c, utils.CoreService, GetCohortEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+}

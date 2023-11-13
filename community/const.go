@@ -112,3 +112,9 @@ const (
 	OrderTypeMostMessages     = 2
 	OrderTypeMostParticipants = 3
 )
+
+// Notification Types
+const (
+	NotificationTypeChat = "chat"
+	NotificationTypeFeed = "feed"
+)
