@@ -10,7 +10,7 @@ import (
 
 type notificationSetting struct {
 	NotificationType  int    `json:"notification_type,omitempty"`
-	Enabled           bool   `json:"enabled,omitempty"`
+	Enabled           *bool  `json:"enabled,omitempty"`
 	NotificationState int    `json:"noti_state,omitempty"`
 	NotificationTitle string `json:"notification_title,omitempty"`
 }
@@ -116,7 +116,7 @@ func editCommunityNotificationsInternal(c *gin.Context, userId string) {
 	case NotificationTypeChat:
 
 		//Send Request to /api/community/notification_settings
-		utils.SendRequest(c, utils.CoreService, ConversationNotificationSettingsEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, ecnsr)
+		utils.SendRequest(c, utils.CoreService, ConversationNotificationSettingsEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, ecnsr.NotificationSettings[0])
 		return
 
 	case NotificationTypeFeed:
