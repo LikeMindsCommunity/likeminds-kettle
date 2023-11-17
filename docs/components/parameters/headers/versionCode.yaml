@@ -1,0 +1,7 @@
+name: x-version-code
+in: header
+description: Version Code
+schema:
+  type: integer
+  minimum: 0
+  maximum: 999
