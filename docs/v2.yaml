@@ -8,11 +8,36 @@ servers:
   - url: https://auth.likeminds.community
 tags:
   - name: Project
+    description: APIs for Creating, Updating and Fetching SDK Projects
+  - name: Bot
+    description: APIs for Fetching Bot details for a SDK Project
+  - name: Login
+    description: APIs to make User Login on SDK Dashboard, SDK Apps
+  - name: Chatroom
+    description: APIs for chatroom and related.
+  - name: Feedroom
+  - name: Community
+  - name: Moderation
+  - name: Conversation
+  - name: Onboarding Screens
+  - name: DM
+  - name: Search
+  - name: User
+  - name: Feed
+  - name: Feed - Api Revamp V1
+    description: APIs related to Feed (Api Revamp v1)
+  - name: Community feed
+  - name: Helpers
+  - name: Channel
+  - name: Widget
+  - name: Webhooks
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
 paths:
-  /sdk/initiate:
+  /sdk/project:
     $ref: "./api/sdk/project.yaml"
+  /sdk/initiate:
+    $ref: "./api/login/initiate.yaml"

@@ -1,0 +1,5 @@
+name: x-api-key
+in: header
+schema:
+  type: string
+  example: "5eb9e3c5-7d04-4c8d-a1b6-d479d05a09b9"

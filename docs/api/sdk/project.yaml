@@ -6,8 +6,7 @@ post:
   tags:
     - Project
 
-  description:
-    This API creates SDK Project for client.
+  description: This API creates SDK Project for client.
 
   security:
     - bearerAuth: []
@@ -63,7 +62,7 @@ post:
                       - CA certificate: Signing certificate for web apps for HTTPS
           required:
             - name
-  
+
   responses:
     "200":
       description: OK
@@ -71,10 +70,11 @@ post:
         application/json:
           schema:
             type: object
-            properties: 
-              success: 
+            properties:
+              success:
                 type: boolean
               data:
-                type: string
-                api_key: 
-                  type: string
+                type: object
+                properties:
+                  api_key:
+                    type: string

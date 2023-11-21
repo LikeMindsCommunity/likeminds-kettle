@@ -1,0 +1,5 @@
+name: x-sdk-source
+in: header
+schema:
+  type: string
+  example: chat
