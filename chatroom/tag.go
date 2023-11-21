@@ -23,6 +23,12 @@ func GetTaggingList(c *gin.Context) {
 		ParamSearchName: c.Query(ParamSearchName),
 	}
 
+	// Access URl param, and if exists update query params
+	chatroomId := c.Param((ParamChatroomId))
+	if chatroomId != "" {
+		params[ParamChatroomId] = chatroomId
+	}
+
 	//Params Validation
 	if params[ParamChatroomId] == "" {
 		//If GET params are missing
