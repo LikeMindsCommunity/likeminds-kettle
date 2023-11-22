@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/nateshr/likeminds-authentication/logging/logger"
 	"github.com/nateshr/likeminds-authentication/poll"
 	"github.com/nateshr/likeminds-authentication/utility/monitoring"
 	"github.com/nateshr/likeminds-authentication/webhook"
@@ -315,6 +316,9 @@ func main() {
 	router.GET("/webhook/:webhook_id", LTMValidationMiddleware(), APIKeyValidationMiddleware(), webhook.GetWebhook)
 	router.PATCH("/webhook/:webhook_id", LTMValidationMiddleware(), APIKeyValidationMiddleware(), webhook.EditWebhook)
 	router.DELETE("/webhook/:webhook_id", LTMValidationMiddleware(), APIKeyValidationMiddleware(), webhook.DeleteWebhook)
+
+	// Logging Apis
+	router.POST("/logs/frontend", LTMValidationMiddleware(), APIKeyValidationMiddleware(), logger.PushFrontendLogs)
 
 	log.Info(fmt.Sprintf("application version: %s", AppVersion))
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
