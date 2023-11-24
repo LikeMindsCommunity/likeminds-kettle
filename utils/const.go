@@ -49,6 +49,16 @@ const (
 	PlatformReactNative string = "rn"
 )
 
+// Valid Platform Codes
+var ValidFrontendPlatformCodes = []string{
+	PlatformAndroid,
+	PlatformWeb,
+	PlatformIoS,
+	PlatformFlutter,
+	PlatformReact,
+	PlatformReactNative,
+}
+
 var MaxVersion int = 9999
 
 var QuestionIdVersions = map[string]int{
