@@ -67,11 +67,9 @@ func communityNotificationSettings(c *gin.Context, method int) {
 
 	switch method {
 	case utils.GETMethod:
-
 		getCommunityNotificationsInternal(c, userId)
 
 	case utils.PUTMethod:
-
 		editCommunityNotificationsInternal(c, userId)
 
 	}

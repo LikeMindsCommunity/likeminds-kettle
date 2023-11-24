@@ -77,7 +77,6 @@ func CommunityRights(c *gin.Context, method int) {
 		utils.SendRequest(c, utils.CoreService, EditCommunityRightsEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, editCommunityRightsRequest)
 
 	case utils.PatchMethod:
-
 		UpdateCommunityRightsInternal(c, userId)
 
 	}
