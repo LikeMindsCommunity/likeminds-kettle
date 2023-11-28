@@ -20,48 +20,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            name:
-              type: string
-              description: Name of the Community
-            headline:
-              type: string
-              description: Purpose of the Community
-            branding:
-              type: object
-              description: Brand details of the Community
-            image_url:
-              type: string
-              description: Image URL
-            platform:
-              type: array
-              description: Credentials for each platform
-              items:
-                type: object
-                properties:
-                  type:
-                    type: integer
-                    enum: [0, 1, 2]
-                    description: |
-                      Platform type
-                      - 0 - Android
-                      - 1 - iOS
-                      - 2 - Web
-                  package:
-                    type: string
-                    description: |
-                      Package name in case of Android
-                      Bundle ID in case of iOS
-                  certificate:
-                    type: string
-                    description: |
-                      Signing certificate
-                      - sha: Signing certificate of Android
-                      - certificate: Signing certificate in iOS
-                      - CA certificate: Signing certificate for web apps for HTTPS
-          required:
-            - name
+          $ref: "../../components/schemas/requests/project.yaml"
 
   responses:
     "200":
@@ -95,6 +54,7 @@ get:
   parameters:
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
 
   responses:
     "200":
@@ -117,8 +77,72 @@ get:
                         api_key:
                           type: string
                         community:
-                          $ref: "../../components/schemas/communityResponse.yaml"
+                          $ref: "../../components/schemas/responses/community.yaml"
                         firebase_server_key:
                           type: string
                         is_join_form_enabled:
                           type: boolean
+
+put:
+  summary: Update SDK Project
+
+  operationId: editSdkProjects
+
+  tags:
+    - Project
+
+  description: This API updates SDK Project for client.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/project.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+
+delete:
+  summary: Deletes SDK Project
+
+  operationId: deleteSdkProjects
+
+  tags:
+    - Project
+
+  description: This API deletes SDK Project for client.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
