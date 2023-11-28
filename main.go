@@ -105,6 +105,7 @@ func main() {
 	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
 	router.PUT("/chatroom/pin", LTMValidationMiddleware(), APIKeyValidationMiddleware(), chatroom.PinChatroom)
 	router.GET("/chatroom/tag", LTMValidationMiddleware(), APIKeyValidationMiddleware(), chatroom.GetTaggingList)
+	router.GET("/chatroom/:chatroom_id/tag", LTMValidationMiddleware(), APIKeyValidationMiddleware(), chatroom.GetTaggingList)
 	router.GET("/chatroom/participants", LTMValidationMiddleware(), APIKeyValidationMiddleware(), chatroom.GetParticipants)
 	router.POST("/chatroom/participants", LTMValidationMiddleware(), APIKeyValidationMiddleware(), chatroom.AddParticipants)
 	router.DELETE("/chatroom/participants", LTMValidationMiddleware(), APIKeyValidationMiddleware(), chatroom.RemoveParticipants)
@@ -285,6 +286,7 @@ func main() {
 	router.GET("/feedroom/mine", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feedroom.MyFeedrooms)
 	router.PUT("/feedroom/follow", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feedroom.FeedroomFollow)
 	router.GET("/feedroom/tag", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feedroom.GetTaggingList)
+	router.GET("/feedroom/:feedroom_id/tag", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feedroom.GetTaggingList)
 
 	// Channel Apis
 	router.GET("/channel", LTMValidationMiddleware(), APIKeyValidationMiddleware(), channel.FetchChannel)
