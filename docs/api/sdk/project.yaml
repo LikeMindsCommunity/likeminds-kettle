@@ -78,3 +78,47 @@ post:
                 properties:
                   api_key:
                     type: string
+
+get:
+  summary: Fetch SDK Projects
+
+  operationId: getSdkProjects
+
+  tags:
+    - Project
+
+  description: This API fetches SDK Projects for client.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  projects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        api_key:
+                          type: string
+                        community:
+                          $ref: "../../components/schemas/communityResponse.yaml"
+                        firebase_server_key:
+                          type: string
+                        is_join_form_enabled:
+                          type: boolean
