@@ -40,4 +40,7 @@ paths:
   /sdk/project:
     $ref: "./api/sdk/project.yaml"
   /sdk/initiate:
-    $ref: "./api/login/initiate.yaml"
+    $ref: "./api/login/initiate.yaml" 
+  /community/member:
+    $ref: "./api/community/member.yaml"
+  
