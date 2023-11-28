@@ -21,9 +21,10 @@ type PayloadEntry struct {
 	Timestamp   time.Time              `json:"timestamp"`
 }
 
-// initalize and return logClient
-func initLogClient() (*logging.Client, error) {
+// Internal method to get logger with logger name
+func getLogger(logId string) (*logging.Logger, error) {
 
+	// Initialize logClient
 	projectId := environment.GoDotEnvVariable("GCP_LOGGING_PROJECT_ID")
 	ctx := context.Background()
 
@@ -34,18 +35,6 @@ func initLogClient() (*logging.Client, error) {
 			Error(fmt.Sprintf("Error creating new LogClient => %s", err.Error()))
 			return nil, err
 		}
-	}
-
-	return logClient, nil
-}
-
-// Internal method to get logger with logger name
-func getLogger(logId string) (*logging.Logger, error) {
-
-	// Initialize logClient
-	logClient, err := initLogClient()
-	if err != nil {
-		return nil, err
 	}
 
 	// Sets the name of the log to write to.
