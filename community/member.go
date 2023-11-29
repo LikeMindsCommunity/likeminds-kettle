@@ -140,6 +140,7 @@ func getMemberInternal(c *gin.Context, userId string) {
 			ParamMemberState:            c.Query(ParamMemberState),
 			ParamQuestionAnswersVersion: c.Query(ParamQuestionAnswersVersion),
 			ParamFilterMemberRoles:      c.Query(ParamFilterMemberRoles),
+			ParamExcludeSelfMember:      c.Query(ParamExcludeSelfMember),
 		}
 
 		//Get Request response
