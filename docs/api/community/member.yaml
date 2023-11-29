@@ -5,47 +5,6 @@ get:
       summary: Fetch Community Members
       description: |-
         This API fetches members of a community
-
-        #### Request
-
-        ##### Header
-
-        It takes the following parameters in headers:
-
-        *   `Authorization`: String | JWT token
-        *   `x-api-key`: String | API Key
-        *   `x-platform-code` : String | Platform Code | nullable
-        *   `x-version-code`: String | Version Code | nullable
-            
-
-        ##### Params
-
-        It takes following parameters in query params:
-
-        *   `page`: Int | Page number | Nullable
-            
-
-        #### Response
-
-        This API returns following keys in response body:
-
-        *   `success`: bool
-        *   `error_message` String | Nullable
-        *   `data` : JSON Object | Contains Response
-            *   `members`: JSON Array | List of members
-                *   `custom_intro_text`: String | Intro Text of Users
-                *   `custom_title`: String | Tile of User
-                *   `id`: Int | User ID
-                *   `is_guest` : bool | If user is guest user
-                *   `is_owner`: bool | If user is owner
-                *   `member_since`: String | Community Member Since
-                *   `menu`: JSON Array | Menu actions
-                    *   `route`: String | action route
-                    *   `title`: String | action title
-                *   `name`: String | User Name
-                *   `route`: String | Member profile route
-                *   `state`: Int | Member state
-                *   `updated_at`: Int | Last updated at
       parameters:
         - $ref: "../../components/parameters/headers/platformCode.yaml"
         - $ref: "../../components/parameters/headers/versionCode.yaml"
@@ -53,9 +12,27 @@ get:
         - $ref: "../../components/parameters/headers/apiKey.yaml"
         - name: page
           in: query
+          description: Page number
+          required: false
           schema:
             type: integer
-          example: 1
+        - name: member_state
+          in: query
+          description: Member state filter
+          required: false
+          schema:
+            type: integer
+        - name: question_answers_version
+          in: query
+          description: Question answers version to send in response
+          required: false
+          schema:
+            type: string
+            default: v1
+            enum:
+              - v1
+              - v2
+        
       responses:
         "200":
           description: OK
@@ -63,119 +40,188 @@ get:
             application/json:
               schema:
                 type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      community:
+                        $ref: "../../components/schemas/communityResponse.yaml"
+                      members:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            custom_intro_text:
+                              type: string
+                            custom_title:
+                              type: string
+                            id:
+                              type: integer
+                            image_url:
+                              type: string
+                            is_guest:
+                              type: boolean
+                            is_owner:
+                              type: boolean
+                            member_since:
+                              type: string
+                            member_since_epoch:
+                              type: integer
+                            menu:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  route:
+                                    type: string
+                                  title:
+                                    type: string
+                            name:
+                              type: string
+                            organisation_name:
+                              type: string
+                            question_answers:
+                              type: object
+                            route:
+                              type: string
+                            sdk_client_info:
+                              type: object
+                            state:
+                              type: integer
+                            updated_at:
+                              type: integer
+                            user_unique_id:
+                              type: string
+                            uuid:
+                              type: string
+                      total_filtered_members:
+                        type: integer
+                      total_members:
+                        type: integer
+                      total_only_members:
+                        type: integer
+                      total_pending_members:
+                        type: integer
+
+post:
+    operationId: createCommunityMember
+    tags:
+        - Community
+    summary: Fetch Community Members
+    description: |-
+      This API fetches members of a community
+    parameters:
+      - $ref: "../../components/parameters/headers/platformCode.yaml"
+      - $ref: "../../components/parameters/headers/versionCode.yaml"
+      - $ref: "../../components/parameters/headers/platformType.yaml"
+      - $ref: "../../components/parameters/headers/apiKey.yaml"
+    responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
               example:
                 success: true
                 data:
-                  community:
-                    auto_approval: true
-                    branding:
-                      advanced:
-                        buttons_icons_colour: aldnfl
-                        header_colour: a;lfn;l
-                        text_links_colour: asldfkn
-                      basic:
-                        primary_colour: ""
-                    community_setting_rights:
-                      - id: 1
-                        is_locked: false
-                        is_selected: true
-                        state: 0
-                        title: Create chat rooms
-                      - id: 2
-                        is_locked: false
-                        is_selected: true
-                        state: 1
-                        title: Create polls
-                      - id: 3
-                        is_locked: false
-                        is_selected: true
-                        state: 2
-                        title: Create events
-                      - id: 4
-                        is_locked: false
-                        is_selected: true
-                        state: 3
-                        title: Respond in chat rooms
-                      - id: 6
-                        is_locked: false
-                        is_selected: true
-                        state: 5
-                        sub_title: >-
-                          If auto-approved, member's chat rooms will be posted
-                          instantly and would not need any approval.
-                        title: Auto-approve created chat rooms
-                      - id: 7
-                        is_locked: false
-                        is_selected: true
-                        state: 6
-                        title: Create secret chat rooms
-                      - id: 8
-                        is_locked: false
-                        is_selected: false
-                        state: 7
-                        sub_title: >-
-                          Direct messaging can happen only between a community
-                          manager and a community member (not among 2 members).
-                        title: Direct messages
-                    fee_event: 5
-                    fee_membership: 5
-                    fee_payment_pages: 5
-                    grace_period: 0
-                    hide_dm_tab: false
-                    id: 50335
-                    image_url: https://www.google.com2
-                    is_discoverable: false
-                    is_freemium_community: false
-                    is_paid: false
-                    is_whitelabel: false
-                    members_count: 2
-                    name: Test Community Sign Off Testing
-                    purpose: We will send all the announcements here on this chatroom.
-                    referral_enabled: false
-                    sub_type: 1111
-                    type: 1111
-                    updated_at: 1655194168
-                    whitelabel_info: null
-                  members:
-                    - custom_intro_text: Created this community on 14 Jun 2022
-                      custom_title: Owner
-                      id: 1867
-                      is_guest: false
-                      is_owner: true
-                      member_since: Member since Jun 14 2022
-                      menu:
-                        - route: >-
-                            route://edit_custom_title?community_id=50335&member_id=1867
-                          title: Edit title
-                      name: " bot"
-                      route: >-
-                        route://member_community_profile?community_id=50335&member_id=1867
-                      state: 1
-                      updated_at: 1655193662
-                    - id: 1870
-                      image_url: https://www.google.com/mahir-gupta
-                      is_guest: false
-                      is_owner: false
-                      member_since: Member since Jun 14 2022
-                      menu:
-                        - route: >-
-                            route://edit_member_rights?community_id=50335&member_id=1870
-                          title: Edit permissions
-                        - route: >-
-                            route://give_manager_rights?community_id=50335&member_id=1870
-                          title: Give community management rights
-                        - route: >-
-                            route://remove_from_community?community_id=50335&member_id=1870
-                          title: Remove from community
-                        - route: >-
-                            route://block_member?community_id=50335&member_id=1870
-                          title: Block member
-                      name: Mahir G
-                      route: >-
-                        route://member_community_profile?community_id=50335&member_id=1870
-                      state: 4
-                      updated_at: 1655194872
-                  total_filtered_members: 2
-                  total_members: 2
-                  total_only_members: 1
-                  total_pending_members: 0
+                  type: object
+                  properties:
+                    community:
+                      type: object
+                      properties:
+                        auto_approval:
+                          type: boolean
+                        branding:
+                          type: object
+                          properties:
+                            advanced:
+                              type: object
+                              properties:
+                                buttons_icons_colour:
+                                  type: string
+                                header_colour:
+                                  type: string
+                                text_links_colour:
+                                  type: string
+                            basic:
+                              type: object
+                              properties:
+                                primary_colour:
+                                  type: string
+                        community_setting_rights:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              is_locked:
+                                type: boolean
+                              is_selected:
+                                type: boolean
+                              state:
+                                type: integer
+                              title:
+                                type: string
+                              sub_title:
+                                type: string
+                        fee_event:
+                          type: integer
+                        fee_membership:
+                          type: integer
+                        fee_payment_pages:
+                          type: integer
+                        grace_period:
+                          type: integer
+                        hide_dm_tab:
+                          type: boolean
+                        id:
+                          type: integer
+                        image_url:
+                          type: string
+                        is_discoverable:
+                          type: boolean
+                        is_freemium_community:
+                          type: boolean
+                        is_paid:
+                          type: boolean
+                        is_whitelabel:
+                          type: boolean
+                        members_count:
+                          type: integer
+                        name:
+                          type: string
+                        purpose:
+                          type: string
+                        referral_enabled:
+                          type: boolean
+                        sub_type:
+                          type: integer
+                        type:
+                          type: integer
+                        updated_at:
+                          type: integer
+                        whitelabel_info:
+                          type: object
+                    user:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        image_url:
+                          type: string
+                        is_guest:
+                          type: boolean
+                        name:
+                          type: string
+                        organisation_name:
+                          type: string
+                        sdk_client_info:
+                          type: object
+                        updated_at:
+                          type: integer
+                        user_unique_id:
+                          type: string
+                        uuid:
+                          type: string
