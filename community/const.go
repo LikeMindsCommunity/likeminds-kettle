@@ -83,6 +83,7 @@ const ParamMemberStates = "member_states"
 const ParamConfigurationTypes = "configuration_types"
 const ParamQuestionAnswersVersion = "question_answers_version"
 const ParamFilterMemberRoles = "filter_member_roles"
+const ParamExcludeSelfMember = "exclude_self_user"
 
 const UserChannelReqFrom = "user_channel"
 const MemberProfileReqFrom = "member_profile"
