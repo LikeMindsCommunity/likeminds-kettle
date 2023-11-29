@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/nateshr/likeminds-authentication/poll"
+	"github.com/nateshr/likeminds-authentication/utility/logger"
 	"github.com/nateshr/likeminds-authentication/utility/monitoring"
 	"github.com/nateshr/likeminds-authentication/webhook"
 
@@ -45,7 +46,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.12.1"
+	var AppVersion string = "2.13.0"
 
 	initGin()
 	redisClient = cache.InitRedis()
@@ -104,6 +105,7 @@ func main() {
 	router.POST("/chatroom/schedule_follow", LTMValidationMiddleware(), APIKeyValidationMiddleware(), chatroom.ScheduleFollow)
 	router.PUT("/chatroom/pin", LTMValidationMiddleware(), APIKeyValidationMiddleware(), chatroom.PinChatroom)
 	router.GET("/chatroom/tag", LTMValidationMiddleware(), APIKeyValidationMiddleware(), chatroom.GetTaggingList)
+	router.GET("/chatroom/:chatroom_id/tag", LTMValidationMiddleware(), APIKeyValidationMiddleware(), chatroom.GetTaggingList)
 	router.GET("/chatroom/participants", LTMValidationMiddleware(), APIKeyValidationMiddleware(), chatroom.GetParticipants)
 	router.POST("/chatroom/participants", LTMValidationMiddleware(), APIKeyValidationMiddleware(), chatroom.AddParticipants)
 	router.DELETE("/chatroom/participants", LTMValidationMiddleware(), APIKeyValidationMiddleware(), chatroom.RemoveParticipants)
@@ -173,6 +175,7 @@ func main() {
 	router.PUT("/community/settings", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.UpdateCommunitySettings)
 	router.GET("/community/rights", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetCommunityRights)
 	router.PUT("/community/rights", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.EditCommunityRights)
+	router.PATCH("/community/rights", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.UpdateCommunityRights)
 	router.GET("/community/settings/dm", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetCommunityDMSettings)
 	router.PUT("/community/settings/dm", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.EditCommunityDMSettings)
 	router.GET("/community/feed/dm", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.DMFeed)
@@ -185,6 +188,7 @@ func main() {
 	router.GET("/community/member/channel/status", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetMemberChannels)
 	router.POST("/community/cohort", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.CreateCohort)
 	router.GET("/community/cohort", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetCohort)
+	router.GET("/community/cohort/:cohort_id", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.FetchCohort)
 	router.DELETE("/community/cohort", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.DeleteCohort)
 	router.PUT("/community/cohort", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.EditCohort)
 	router.DELETE("/community/cohort/member", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.RemoveCohortMember)
@@ -193,6 +197,8 @@ func main() {
 	router.PUT("/community/settings/notification/conversation", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.EditConversationNotificationSettings)
 	router.GET("/community/settings/notification/feed", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetFeedNotificationSettings)
 	router.PUT("/community/settings/notification/feed", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.EditFeedNotificationSettings)
+	router.GET("/community/settings/notification", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetNotificationSettings)
+	router.PUT("/community/settings/notification", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.EditNotificationSettings)
 	router.GET("/community/tag", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetTaggingList)
 	router.GET("/community/settings/content_download", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetContentDownloadSettings)
 	router.PUT("/community/settings/content_download", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.EditContentDownloadSettings)
@@ -284,6 +290,7 @@ func main() {
 	router.GET("/feedroom/mine", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feedroom.MyFeedrooms)
 	router.PUT("/feedroom/follow", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feedroom.FeedroomFollow)
 	router.GET("/feedroom/tag", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feedroom.GetTaggingList)
+	router.GET("/feedroom/:feedroom_id/tag", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feedroom.GetTaggingList)
 
 	// Channel Apis
 	router.GET("/channel", LTMValidationMiddleware(), APIKeyValidationMiddleware(), channel.FetchChannel)
@@ -315,6 +322,9 @@ func main() {
 	router.GET("/webhook/:webhook_id", LTMValidationMiddleware(), APIKeyValidationMiddleware(), webhook.GetWebhook)
 	router.PATCH("/webhook/:webhook_id", LTMValidationMiddleware(), APIKeyValidationMiddleware(), webhook.EditWebhook)
 	router.DELETE("/webhook/:webhook_id", LTMValidationMiddleware(), APIKeyValidationMiddleware(), webhook.DeleteWebhook)
+
+	// Logging Apis
+	router.POST("/logs", LTMValidationMiddleware(), APIKeyValidationMiddleware(), logger.PushLogs)
 
 	log.Info(fmt.Sprintf("application version: %s", AppVersion))
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))

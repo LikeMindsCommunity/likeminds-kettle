@@ -7,9 +7,9 @@ import (
 )
 
 type EditCommunityDMSettingsRequest struct {
-	State            int    `json:"state"`
-	Duration         string `json:"duration"`
-	NumberInDuration int    `json:"number_in_duration"`
+	State            interface{} `json:"state"`
+	Duration         string      `json:"duration"`
+	NumberInDuration int         `json:"number_in_duration"`
 }
 
 func GetCommunityDMSettings(c *gin.Context) {
