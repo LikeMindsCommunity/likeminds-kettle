@@ -1,0 +1,13 @@
+type: object
+properties:
+  user_name:
+    type: string
+    description: The user's name
+  user_unique_id:
+    type: string
+    format: uuid
+    description: The unique ID assigned to the user
+  image_url:
+    type: string
+    format: uri
+    description: The URL of the user's image

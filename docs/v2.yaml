@@ -43,4 +43,17 @@ paths:
     $ref: "./api/login/initiate.yaml" 
   /community/member:
     $ref: "./api/community/member.yaml"
-  
+  /community/report:
+     $ref: "./api/community/report.yaml"
+  /community/questions:
+    $ref: "./api/community/questions.yaml"
+  /moderation/rights:
+    $ref: "./api/moderation/rights.yaml"
+  /helper/url:
+    $ref: "./api/helper/url.yaml"
+  /helper/media/upload:
+    $ref: "./api/helper/media_upload.yaml"
+  /widget:
+    $ref: "./api/widget.yaml"
+  /webhooks:
+    $ref: "./api/webhooks.yaml"

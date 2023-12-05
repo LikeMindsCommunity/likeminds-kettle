@@ -1,0 +1,44 @@
+get:
+  summary: Fetch OG tags
+
+  operationId: getOgTags
+
+  tags:
+    - Helpers
+
+  description: This API fetches OG tags for a URL
+
+  security:
+    - bearerAuth: []
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          example:
+            success: true
+            data:
+              type: object
+              properties:
+                og_tags:
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                    image:
+                      type: string
+                      format: uri
+                    title:
+                      type: string
+                    url:
+                      type: string
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                $ref: "../../components/schemas/responses/og_tags.yaml"
+    '400':
+      description: Bad Request
+

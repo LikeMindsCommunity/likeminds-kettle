@@ -1,0 +1,10 @@
+type: object
+properties:
+  id:
+    type: integer
+  is_selected:
+    type: boolean
+  state:
+    type: integer
+  title:
+    type: string

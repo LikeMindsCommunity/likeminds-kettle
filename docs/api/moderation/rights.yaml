@@ -1,0 +1,164 @@
+get:
+  summary: Fetch Moderation Rights
+
+  operationId: getModetationRights
+
+  tags:
+    - Moderation
+
+  description: This API fetches Moderation rights for a user
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/is_cm.yaml"
+    - $ref: "../../components/parameters/query/user_id.yaml"
+    - $ref: "../../components/parameters/query/uuid.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  admin_mobiles:
+                    type: array
+                    items: {}
+                  member:
+                    type: object
+                    properties:
+                      community_id:
+                        type: integer
+                      id:
+                        type: integer
+                      image_url:
+                        type: string
+                      is_guest:
+                        type: boolean
+                      name:
+                        type: string
+                      organisation_name:
+                        type: string
+                      state:
+                        type: integer
+                      updated_at:
+                        type: integer
+                      user_unique_id:
+                        type: string
+                      uuid:
+                        type: string
+                  rights:
+                    type: array
+                    items:
+                      $ref: "../../components/schemas/responses/right.yaml"
+
+put: 
+  summary: Update Moderation Rights
+
+  operationId: updateModetationRights
+
+  tags:
+    - Moderation
+
+  description: This API updates Moderation rights for a user
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/is_cm.yaml"
+    - $ref: "../../components/parameters/query/user_id.yaml"
+    - $ref: "../../components/parameters/query/uuid.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            user_id:
+              type: integer
+            rights:
+              type: array
+              items:
+                $ref: "../../components/schemas/responses/right.yaml"
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+
+
+
+patch: 
+  summary: Modify Moderation Rights
+
+  operationId: modifyModetationRights
+
+  tags:
+    - Moderation
+
+  description: This API modifies Moderation rights for a user
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/is_cm.yaml"
+    - $ref: "../../components/parameters/query/user_id.yaml"
+    - $ref: "../../components/parameters/query/uuid.yaml"
+  
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            user_id:
+              type: integer
+            is_cm: 
+              type: boolean
+            uuid: 
+              type: string
+            custom_title:
+              type: string
+            rights:
+              type: array
+              items:
+                $ref: "../../components/schemas/responses/right.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
