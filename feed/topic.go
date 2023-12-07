@@ -158,3 +158,49 @@ func editTopicInternal(c *gin.Context, userId string) {
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, EditTopicEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, editTopicRequest)
 }
+
+func GetFollowingFeed(c *gin.Context) {
+	// Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
+		return
+	}
+
+	// user id received in path params
+	paramUserId := c.Param(ParamUserId)
+	getFollowingFeedEndPoint := fmt.Sprintf(FollowingFeedEndPoint, paramUserId)
+
+	// Params to be sent in the api/chatroom/fetch_all request
+	params := map[string]string{
+		ParamPage:     c.Query(ParamPage),
+		ParamPageSize: c.Query(ParamPageSize),
+	}
+
+	//Fetch member access to view post
+	success, response := user.FetchMemberAccess(c, VIEW_POST_ACTION, userId)
+	if !success {
+		return
+	}
+
+	//If not access
+	if !response.Access {
+		utils.MemberAccessFailError(c)
+		return
+	}
+
+	//Send Request
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, getFollowingFeedEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	//If flow succeeds
+	dataResponse := apiCR.Response
+	dataResponse = populatePostDataResponse(c, dataResponse)
+
+	//Send response
+	utils.GenerateResponse(c, dataResponse, true)
+}

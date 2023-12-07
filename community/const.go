@@ -53,6 +53,7 @@ const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
 const FetchPendingMembersEndpoint = "/api/community_member/pending_members"
 const LeaveCommunityEndPoint = "/api/community_member/leave"
 const FetchCommunityRemovalReports = "/api/community/removal_reports"
+const MemberConnectionEndPoint = "/api/community_member/%s/connection"
 
 const ParamCommunityID = "community_id"
 const ParamPage = "page"
