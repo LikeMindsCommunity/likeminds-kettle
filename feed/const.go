@@ -31,7 +31,7 @@ const FetchPostsEndpoint = "/post"
 const FetchCommentsEndpoint = "/comment"
 const TopicEndPoint = "/topic"
 const SingleTopicEndPoint = "/topic/%s"
-const ConnectionFeedEndPoint = "/feed/%s/connection"
+const ConnectionFeedEndPoint = "/feed/connection"
 
 const ParamPage = "page"
 const ParamPageSize = "page_size"

@@ -1,8 +1,6 @@
 package feed
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -14,10 +12,6 @@ func GetConnectionFeed(c *gin.Context) {
 	if userId == "" {
 		return
 	}
-
-	// user id received in path params
-	paramUserId := c.Param(ParamUserId)
-	getConnectionFeedEndPoint := fmt.Sprintf(ConnectionFeedEndPoint, paramUserId)
 
 	// Params to be sent in the /feed/<user_id>/follow request
 	params := map[string]string{
@@ -38,7 +32,7 @@ func GetConnectionFeed(c *gin.Context) {
 	}
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, getConnectionFeedEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, ConnectionFeedEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
