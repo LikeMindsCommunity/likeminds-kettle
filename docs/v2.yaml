@@ -8,7 +8,7 @@ servers:
   - url: https://auth.likeminds.community
 tags:
   - name: Project
-    description: APIs for Creating, Updating and Fetching SDK Projects
+    description: APIs for Creating, Updating, Fetching and Deleting SDK Projects
   - name: Bot
     description: APIs for Fetching Bot details for a SDK Project
   - name: Login
