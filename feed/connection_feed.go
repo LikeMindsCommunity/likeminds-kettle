@@ -8,7 +8,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-func GetFollowingFeed(c *gin.Context) {
+func GetConnectionFeed(c *gin.Context) {
 	// Authorize User
 	userId := user.GetRequestingUserId(c)
 	if userId == "" {
@@ -17,7 +17,7 @@ func GetFollowingFeed(c *gin.Context) {
 
 	// user id received in path params
 	paramUserId := c.Param(ParamUserId)
-	getFollowingFeedEndPoint := fmt.Sprintf(FollowingFeedEndPoint, paramUserId)
+	getConnectionFeedEndPoint := fmt.Sprintf(ConnectionFeedEndPoint, paramUserId)
 
 	// Params to be sent in the /feed/<user_id>/follow request
 	params := map[string]string{
@@ -38,7 +38,7 @@ func GetFollowingFeed(c *gin.Context) {
 	}
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, getFollowingFeedEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, getConnectionFeedEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)

@@ -45,51 +45,24 @@ func MemberConnection(c *gin.Context, method int) {
 	if userId == "" {
 		return
 	}
+	// user id received in path params
+	paramUserId := c.Param(ParamUserId)
+	memberConnectionEndPoint := fmt.Sprintf(MemberConnectionEndPoint, paramUserId)
 
 	// Send request
 	switch method {
 	case utils.GETMethod:
-		getMemberConnectionInternal(c, userId)
+		getMemberConnectionInternal(c, userId, memberConnectionEndPoint)
 
 	case utils.POSTMethod:
-		createMemberConnectionInternal(c, userId)
+		createMemberConnectionInternal(c, userId, memberConnectionEndPoint)
 
 	case utils.PatchMethod:
-		acceptRejectMemberConnectionInternal(c, userId)
+		acceptRejectMemberConnectionInternal(c, userId, memberConnectionEndPoint)
 	}
 }
 
-func createMemberConnectionInternal(c *gin.Context, userId string) {
-	// user id received in path params
-	paramUserId := c.Param(ParamUserId)
-	createMemberConnectionEndPoint := fmt.Sprintf(MemberConnectionEndPoint, paramUserId)
-
-	// Send Request
-	utils.SendRequest(c, utils.CoreService, createMemberConnectionEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, nil)
-}
-
-func acceptRejectMemberConnectionInternal(c *gin.Context, userId string) {
-	// user id received in path params
-	paramUserId := c.Param(ParamUserId)
-	acceptRejectMemberConnectionEndPoint := fmt.Sprintf(MemberConnectionEndPoint, paramUserId)
-
-	// Body to be sent in the accept reject member conneciton api internally
-	acceptRejectMemberConnectionRequest, err := parseAcceptRejectMemberConnectionRequest(c)
-	if err != nil {
-		// If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
-		return
-	}
-
-	// Send Request
-	utils.SendRequest(c, utils.CoreService, acceptRejectMemberConnectionEndPoint, utils.PATCHRequest, utils.CreateHeaders(c, userId), nil, acceptRejectMemberConnectionRequest)
-}
-
-func getMemberConnectionInternal(c *gin.Context, userId string) {
-	// user id received in path params
-	paramUserId := c.Param(ParamUserId)
-	getMemberConnectionEndPoint := fmt.Sprintf(MemberConnectionEndPoint, paramUserId)
-
+func getMemberConnectionInternal(c *gin.Context, userId string, getMemberConnectionEndPoint string) {
 	// Params to be sent in the api/chatroom/fetch_all request
 	params := map[string]string{
 		ParamPage:     c.Query(ParamPage),
@@ -99,4 +72,23 @@ func getMemberConnectionInternal(c *gin.Context, userId string) {
 
 	// Send Request
 	utils.SendRequest(c, utils.CoreService, getMemberConnectionEndPoint, utils.PATCHRequest, utils.CreateHeaders(c, userId), params, nil)
+}
+
+func createMemberConnectionInternal(c *gin.Context, userId string, createMemberConnectionEndPoint string) {
+	// Send Request
+	utils.SendRequest(c, utils.CoreService, createMemberConnectionEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, nil)
+}
+
+func acceptRejectMemberConnectionInternal(c *gin.Context, userId string, acceptRejectMemberConnectionEndPoint string) {
+	// Body to be sent in the accept reject member conneciton api internally
+	acceptRejectMemberConnectionRequest, err := parseAcceptRejectMemberConnectionRequest(c)
+
+	if err != nil {
+		// If POST body params are missing
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	// Send Request
+	utils.SendRequest(c, utils.CoreService, acceptRejectMemberConnectionEndPoint, utils.PATCHRequest, utils.CreateHeaders(c, userId), nil, acceptRejectMemberConnectionRequest)
 }
