@@ -17,11 +17,13 @@ func SyncChatrooms(c *gin.Context) {
 
 	//Params to be sent in the sync chatroom api internally
 	params := map[string]string{
-		ParamPage:          c.Query(ParamPage),
-		ParamPageSize:      c.Query(ParamPageSize),
-		ParamMaxTimeStamp:  c.Query(ParamMaxTimeStamp),
-		ParamMinTimeStamp:  c.Query(ParamMinTimeStamp),
-		ParamChatroomTypes: c.Query(ParamChatroomTypes),
+		ParamPage:                       c.Query(ParamPage),
+		ParamPageSize:                   c.Query(ParamPageSize),
+		ParamMaxTimeStamp:               c.Query(ParamMaxTimeStamp),
+		ParamMinTimeStamp:               c.Query(ParamMinTimeStamp),
+		ParamChatroomTypes:              c.Query(ParamChatroomTypes),
+		ParamIsLocalDb:                  c.Query(ParamIsLocalDb),
+		ParamIncludedConversationStates: c.Query(ParamIncludedConversationStates),
 	}
 
 	//Get Request response
