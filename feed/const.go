@@ -15,7 +15,7 @@ const FetchUserCreatedPostsEndPoint = "/user/%s/post"
 const SingleUserActivityEndPoint = "/user/%s/activity"
 
 // GetUserActivityEndPoint | swarm API endpoint for user activity list
-const GetUserActivityEndPoint = "/user/%s/activity"
+const GetUserActivityEndPoint = "/user/activity"
 
 // GetUserActivityUnreadCountEndPoint | swarm API endpoint for user activity unread count
 const GetUserActivityUnreadCountEndPoint = "/user/%s/activity/unread_count"

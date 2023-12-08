@@ -94,10 +94,8 @@ func GetUserActivity(c *gin.Context) {
 		ParamPageSize: c.Query(ParamPageSize),
 	}
 
-	endpoint := fmt.Sprintf(GetUserActivityEndPoint, userID)
-
 	//Get Request response
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endpoint, utils.GETRequest, utils.CreateHeaders(c, userID), params, gin.H{})
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, GetUserActivityEndPoint, utils.GETRequest, utils.CreateHeaders(c, userID), params, gin.H{})
 	if respBytes == nil {
 		return
 	}
