@@ -58,6 +58,7 @@ const (
 	DELETE_COMMENT_ACTION  = "delete_comment"
 	LIKE_COMMENT_ACTION    = "like_comment"
 	CREATE_ACTIVITY_ACTION = "create_activity"
+	VIEW_USER_ACTIVITY     = "view_user_activity"
 	VIEW_ACTIVITY_ACTION   = "view_activity"
 	VIEW_REPORT_ENTITY     = "view_report_entity"
 	CREATE_TOPIC_ACTION    = "create_topic"
