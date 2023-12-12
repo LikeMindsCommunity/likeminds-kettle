@@ -105,6 +105,8 @@ const ParamPastEvents = "past_events"
 const ParamAttendingStatus = "attending_status"
 const ParamHasContent = "has_content"
 const ParamIsEditMode = "is_edit_mode"
+const ParamIncludedConversationStates = "included_conversation_states"
+const ParamIsLocalDb = "is_local_db"
 
 const (
 	SdkApiType = 1
