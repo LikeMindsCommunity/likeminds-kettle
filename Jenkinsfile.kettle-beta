@@ -39,6 +39,15 @@ pipeline {
                 '''
             }
         }
+        
+        stage("Build and Push OpenAPI Spec file to S3") {
+            steps{
+                sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
+                withAWS(region:"${region}", credentials:"${aws_credential}"){
+                     s3Upload(file:"${TAG_NAME}", bucket:"${bucket}", path:"${TAG_NAME}/")
+                }
+            }
+        } 
     }  
         post { 
         always { 

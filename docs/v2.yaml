@@ -57,3 +57,6 @@ paths:
     $ref: "./api/widget.yaml"
   /webhooks:
     $ref: "./api/webhooks.yaml"
+  /search:
+    $ref: "./api/search/index.yaml"
+    

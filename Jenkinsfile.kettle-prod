@@ -21,7 +21,8 @@ pipeline {
                     }
                 }
             }
-         stage("Pushing Application Docker Image to Google Artifact Registry"){
+
+        stage("Pushing Application Docker Image to Google Artifact Registry"){
             steps{
                 script{
                     sh 'gcloud auth configure-docker asia.gcr.io'
@@ -39,7 +40,13 @@ pipeline {
                 '''
             }
         }
-    }  
+        stage("Push OpenAPI Spec file to S3") {
+            steps{
+                withAWS(region:"${region}", credentials:"${aws_credential}"){
+                     s3Upload(file:"${TAG_NAME}", bucket:"${bucket}", path:"${TAG_NAME}/")
+                }
+            }
+        }  
         post { 
         always { 
             cleanWs()
