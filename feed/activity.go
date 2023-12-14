@@ -29,6 +29,10 @@ func CreateUserActivity(c *gin.Context) {
 	UserActivity(c, utils.PUTMethod)
 }
 
+func FetchUserProfileActivity(c *gin.Context) {
+	UserActivity(c, utils.GETMethod)
+}
+
 // UserActivity method handles post like objects
 func UserActivity(c *gin.Context, method int) {
 	//Authorize User
@@ -52,6 +56,9 @@ func UserActivity(c *gin.Context, method int) {
 
 	//Send request
 	switch method {
+	case utils.GETMethod:
+		fetchUserProfileActivityInternal(c, userId, UserActivityEndPoint)
+
 	case utils.PUTMethod:
 		createUserActivityInternal(c, userId, UserActivityEndPoint)
 
@@ -82,6 +89,30 @@ func createUserActivityInternal(c *gin.Context, userId string, EndPoint string) 
 	utils.SendRequest(c, utils.SwarmService, EndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createUserActivityRequest)
 }
 
+// FetchUserProfileActivity | fetch user profile activity from swarm service
+func fetchUserProfileActivityInternal(c *gin.Context, userId string, EndPoint string) {
+
+	//Fetch member access to create post
+	success, response := user.FetchMemberAccess(c, VIEW_USER_ACTIVITY, userId)
+	if !success {
+		return
+	}
+
+	//If not access
+	if !response.Access {
+		utils.MemberAccessFailError(c)
+		return
+	}
+
+	params := map[string]string{
+		ParamPage:     c.Query(ParamPage),
+		ParamPageSize: c.Query(ParamPageSize),
+	}
+
+	//Send Request
+	utils.SendRequest(c, utils.SwarmService, EndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+}
+
 // GetUserActivity | get user activity feed from swarm service
 func GetUserActivity(c *gin.Context) {
 	userID := user.GetRequestingUserId(c)
@@ -94,10 +125,8 @@ func GetUserActivity(c *gin.Context) {
 		ParamPageSize: c.Query(ParamPageSize),
 	}
 
-	endpoint := fmt.Sprintf(GetUserActivityEndPoint, userID)
-
 	//Get Request response
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endpoint, utils.GETRequest, utils.CreateHeaders(c, userID), params, gin.H{})
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, GetUserActivityEndPoint, utils.GETRequest, utils.CreateHeaders(c, userID), params, gin.H{})
 	if respBytes == nil {
 		return
 	}
