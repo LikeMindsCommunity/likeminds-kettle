@@ -16,3 +16,17 @@ func ParseStringArrayToString(array []string) string {
 
 	return str
 }
+
+func CheckIfStringExistsInArray(array []string, str string) bool {
+	/*
+		This function is used to check if string exists in array
+	*/
+
+	for _, a := range array {
+		if a == str {
+			return true
+		}
+	}
+
+	return false
+}

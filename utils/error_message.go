@@ -24,6 +24,8 @@ const ErrorFetchingUserData = "Error while fetching user data!"
 const ErrorInvalidUserId = "Invalid user_id!"
 const ErrorCommunityConfigurationsNotFound = "Community configurations not found!"
 const ErrorApiKeyNotFound = "Api key not found!"
+const ErrorInvalidNotificationType = "Invalid notification type sent"
+const ErrorInvalidNotificationSettings = "Invalid notification settings sent"
 
 func GeneralAPIError(c *gin.Context, errorMessage string) {
 	c.JSON(http.StatusInternalServerError, Response{
