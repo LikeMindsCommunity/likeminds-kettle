@@ -43,6 +43,7 @@ const ParamWidgetIds = "widget_ids"
 const ParamIsEnabled = "is_enabled"
 const ParamSearchType = "search_type"
 const ParamSearch = "search"
+const ParamMinPosts = "min_posts"
 
 const (
 	CREATE_POST_ACTION     = "create_post"
