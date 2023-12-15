@@ -9,7 +9,8 @@ import (
 )
 
 type CreateTopicRequest struct {
-	Name string `json:"name"`
+	Name  string   `json:"name,omitempty"`
+	Names []string `json:"names,omitempty"`
 }
 
 type EditTopicRequest struct {
