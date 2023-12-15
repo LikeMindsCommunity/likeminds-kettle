@@ -8,9 +8,13 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-type CreateTopicRequest struct {
+type CreateTopicsRequest struct {
 	Name  string   `json:"name,omitempty"`
 	Names []string `json:"names,omitempty"`
+}
+
+type DeleteTopicsRequest struct {
+	TopicIds []string `json:"topic_ids"`
 }
 
 type EditTopicRequest struct {
@@ -19,9 +23,9 @@ type EditTopicRequest struct {
 	UserIsCm  bool   `json:"user_is_cm"`
 }
 
-func parseCreateTopicRequest(c *gin.Context) (*CreateTopicRequest, error) {
+func parseCreateTopicsRequest(c *gin.Context) (*CreateTopicsRequest, error) {
 	//POST body params
-	var ctr CreateTopicRequest
+	var ctr CreateTopicsRequest
 
 	if err := c.ShouldBindJSON(&ctr); err != nil {
 		return nil, err
@@ -29,8 +33,20 @@ func parseCreateTopicRequest(c *gin.Context) (*CreateTopicRequest, error) {
 
 	return &ctr, nil
 }
+
+func parseDeleteTopicsRequest(c *gin.Context) (*DeleteTopicsRequest, error) {
+	//DELETE body params
+	var dtr DeleteTopicsRequest
+
+	if err := c.ShouldBindJSON(&dtr); err != nil {
+		return nil, err
+	}
+
+	return &dtr, nil
+}
+
 func parseEditTopicRequest(c *gin.Context) (*EditTopicRequest, error) {
-	//POST body params
+	//PUT body params
 	var etr EditTopicRequest
 
 	if err := c.ShouldBindJSON(&etr); err != nil {
@@ -40,14 +56,19 @@ func parseEditTopicRequest(c *gin.Context) (*EditTopicRequest, error) {
 	return &etr, nil
 }
 
-// CreateTopic is used to create a new topic
-func CreateTopic(c *gin.Context) {
+// CreateTopics is used to create a new topic
+func CreateTopics(c *gin.Context) {
 	Topic(c, utils.POSTMethod)
 }
 
 // GetTopic is used to get topics of a specific community
 func GetTopic(c *gin.Context) {
 	Topic(c, utils.GETMethod)
+}
+
+// DeleteTopics is used to delete topics of a specific community
+func DeleteTopics(c *gin.Context) {
+	Topic(c, utils.DELETEMethod)
 }
 
 // EditTopic is used to edit an existing topic
@@ -74,7 +95,10 @@ func Topic(c *gin.Context, method int) {
 		GetTopicInternal(c, userId)
 
 	case utils.POSTMethod:
-		createTopicInternal(c, userId)
+		createTopicsInternal(c, userId)
+
+	case utils.DELETEMethod:
+		deleteTopicsInternal(c, userId)
 
 	case utils.PUTMethod:
 		editTopicInternal(c, userId)
@@ -108,16 +132,16 @@ func GetTopicInternal(c *gin.Context, userId string) {
 	utils.SendRequest(c, utils.SwarmService, TopicEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 }
 
-func createTopicInternal(c *gin.Context, userId string) {
+func createTopicsInternal(c *gin.Context, userId string) {
 	//Body to be sent in the /topic POST request
-	createTopicRequest, err := parseCreateTopicRequest(c)
+	createTopicsRequest, err := parseCreateTopicsRequest(c)
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 
-	//Fetch member access to create topic
+	//Fetch member access to create topics
 	success, response := user.FetchMemberAccess(c, CREATE_TOPIC_ACTION, userId)
 	if !success {
 		return
@@ -130,7 +154,32 @@ func createTopicInternal(c *gin.Context, userId string) {
 	}
 
 	//Send Request
-	utils.SendRequest(c, utils.SwarmService, TopicEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createTopicRequest)
+	utils.SendRequest(c, utils.SwarmService, TopicEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createTopicsRequest)
+}
+
+func deleteTopicsInternal(c *gin.Context, userId string) {
+	//Body to be sent in the /topic DELETE request
+	deleteTopicsRequest, err := parseDeleteTopicsRequest(c)
+	if err != nil {
+		//If DELETE body params are missing
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	//Fetch member access to delete topics
+	success, response := user.FetchMemberAccess(c, DELETE_TOPIC_ACTION, userId)
+	if !success {
+		return
+	}
+
+	//If not access
+	if !response.Access {
+		utils.MemberAccessFailError(c)
+		return
+	}
+
+	//Send Request
+	utils.SendRequest(c, utils.SwarmService, TopicEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, deleteTopicsRequest)
 }
 
 func editTopicInternal(c *gin.Context, userId string) {
