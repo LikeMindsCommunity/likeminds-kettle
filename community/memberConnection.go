@@ -46,8 +46,8 @@ func MemberConnection(c *gin.Context, method int) {
 		return
 	}
 	// user id received in path params
-	paramUserId := c.Param(ParamUserId)
-	memberConnectionEndPoint := fmt.Sprintf(MemberConnectionEndPoint, paramUserId)
+	paramUUID := c.Param(ParamUUID)
+	memberConnectionEndPoint := fmt.Sprintf(MemberConnectionEndPoint, paramUUID)
 
 	// Send request
 	switch method {
