@@ -71,7 +71,7 @@ func getMemberConnectionInternal(c *gin.Context, userId string, getMemberConnect
 	}
 
 	// Send Request
-	utils.SendRequest(c, utils.CoreService, getMemberConnectionEndPoint, utils.PATCHRequest, utils.CreateHeaders(c, userId), params, nil)
+	utils.SendRequest(c, utils.CoreService, getMemberConnectionEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 }
 
 func createMemberConnectionInternal(c *gin.Context, userId string, createMemberConnectionEndPoint string) {
