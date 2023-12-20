@@ -209,9 +209,9 @@ func main() {
 	router.GET("/community/configurations", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetCommunityConfigurations)
 	router.GET("/community/member/pending", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetPendingCommunityMembers)
 	router.GET("/community/removal_reports", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetRemovalReports)
-	router.POST("/community/member/:uuid/connection", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.CreateMemberConnection)
-	router.PATCH("/community/member/:uuid/connection", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.AcceptRejectMemberConnection)
-	router.GET("/community/member/:uuid/connection", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetMemberConnection)
+	router.POST("/community/member/:user_id/connection", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.CreateMemberConnection)
+	router.PATCH("/community/member/:user_id/connection", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.AcceptRejectMemberConnection)
+	router.GET("/community/member/:user_id/connection", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetMemberConnection)
 
 	// Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(), APIKeyValidationMiddleware(), moderation.GetRights)

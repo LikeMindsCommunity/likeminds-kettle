@@ -46,7 +46,7 @@ func MemberConnection(c *gin.Context, method int) {
 		return
 	}
 	// user id received in path params
-	paramUUID := c.Param(ParamUUID)
+	paramUUID := c.Param(ParamUserId)
 	memberConnectionEndPoint := fmt.Sprintf(MemberConnectionEndPoint, paramUUID)
 
 	// Send request
