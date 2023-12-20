@@ -15,7 +15,7 @@ const FetchUserCreatedPostsEndPoint = "/user/%s/post"
 const SingleUserActivityEndPoint = "/user/%s/activity"
 
 // GetUserActivityEndPoint | swarm API endpoint for user activity list
-const GetUserActivityEndPoint = "/user/%s/activity"
+const GetUserActivityEndPoint = "/user/activity"
 
 // GetUserActivityUnreadCountEndPoint | swarm API endpoint for user activity unread count
 const GetUserActivityUnreadCountEndPoint = "/user/%s/activity/unread_count"
@@ -60,6 +60,7 @@ const (
 	DELETE_COMMENT_ACTION  = "delete_comment"
 	LIKE_COMMENT_ACTION    = "like_comment"
 	CREATE_ACTIVITY_ACTION = "create_activity"
+	VIEW_USER_ACTIVITY     = "view_user_activity"
 	VIEW_ACTIVITY_ACTION   = "view_activity"
 	VIEW_REPORT_ENTITY     = "view_report_entity"
 	CREATE_TOPIC_ACTION    = "create_topic"
