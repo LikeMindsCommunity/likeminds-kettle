@@ -31,6 +31,7 @@ const FetchPostsEndpoint = "/post"
 const FetchCommentsEndpoint = "/comment"
 const TopicEndPoint = "/topic"
 const SingleTopicEndPoint = "/topic/%s"
+const ConnectionFeedEndPoint = "/feed/connection"
 
 const ParamPage = "page"
 const ParamPageSize = "page_size"
@@ -43,6 +44,7 @@ const ParamWidgetIds = "widget_ids"
 const ParamIsEnabled = "is_enabled"
 const ParamSearchType = "search_type"
 const ParamSearch = "search"
+const ParamUserId = "user_id"
 
 const (
 	CREATE_POST_ACTION     = "create_post"
