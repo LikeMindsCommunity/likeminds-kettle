@@ -269,7 +269,7 @@ func main() {
 	router.POST("/feed/topic", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.CreateTopic)
 	router.GET("/feed/topic", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.GetTopic)
 	router.PUT("/feed/topic/:topic_id", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.EditTopic)
-	router.GET("feed/connection", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.GetConnectionFeed)
+	router.GET("/feed/connection", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.GetConnectionFeed)
 
 	// Utility Apis
 	router.GET("/helper/url", LTMValidationMiddleware(), APIKeyValidationMiddleware(), utility.DecodeUrl)

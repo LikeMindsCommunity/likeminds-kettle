@@ -1,6 +1,8 @@
 package feed
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -30,6 +32,9 @@ func GetConnectionFeed(c *gin.Context) {
 		utils.MemberAccessFailError(c)
 		return
 	}
+
+	//Param updation
+	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, ConnectionFeedEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
