@@ -46,7 +46,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.15.0"
+	var AppVersion string = "2.16.0"
 
 	initGin()
 	redisClient = cache.InitRedis()
