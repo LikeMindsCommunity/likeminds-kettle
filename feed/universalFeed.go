@@ -36,7 +36,7 @@ func FetchUniversalFeed(c *gin.Context) {
 		return
 	}
 
-	//Param updatiion
+	//Param updation
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
 	//Send Request
