@@ -8,6 +8,7 @@ const HeadersSdkSource = "x-sdk-source"
 const HeadersDeviceId = "x-device-id"
 const HeadersApiKey = "x-api-key"
 const HeadersAcceptVersion = "x-accept-version"
+const HeadersApiVersion = "x-api-version"
 
 const GETMethod = 0
 const POSTMethod = 1
