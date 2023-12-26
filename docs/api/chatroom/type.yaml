@@ -1,0 +1,43 @@
+put:
+  summary: Update Chatroom Type
+
+  operationId: updateChatroomType
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - name: chatroom_id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: ID of the chatroom to be updated
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            is_secret:
+              type: boolean
+          required:
+            - is_secret
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string

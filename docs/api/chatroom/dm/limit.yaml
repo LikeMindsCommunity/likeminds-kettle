@@ -1,0 +1,41 @@
+get:
+  summary: Get DM Limit of a User
+  operationId: getDMLimit
+  tags:
+    - Chatroom
+    - Direct Message
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+    - name: uuid
+      in: query
+      description: User unique ID
+      schema:
+        type: string
+    - name: member_id
+      in: query
+      description: Member ID
+      schema:
+        type: integer
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  chatroom_id:
+                    type: integer
+                  is_request_dm_limit_exceeded:
+                    type: boolean
+                  new_request_dm_timestamp:
+                    type: string

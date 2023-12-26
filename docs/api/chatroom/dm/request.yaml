@@ -1,0 +1,74 @@
+post:
+  summary: Send DM Request
+  operationId: sendDMRequest
+  tags:
+    - Chatroom
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            chatroom_id:
+              type: integer
+            chat_request_state:
+              type: integer
+            text:
+              type: string
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  conversation:
+                    type: object
+                    properties:
+                      allow_add_option:
+                        type: boolean
+                      answer:
+                        type: string
+                      attachment_count:
+                        type: integer
+                      attachments_uploaded:
+                        type: boolean
+                      chatroom_id:
+                        type: integer
+                      community_id:
+                        type: integer
+                      created_at:
+                        type: string
+                      created_epoch:
+                        type: integer
+                      date:
+                        type: string
+                      end_time:
+                        type: integer
+                      has_event_recording:
+                        type: boolean
+                      has_files:
+                        type: boolean
+                      id:
+                        type: integer
+                      is_anonymous:
+                        type: boolean
+                      is_edited:
+                        type: boolean
+                      member_id:
+                        type: integer
+                      poll_answer_text:
+                        type: string
+                      reactions:
+                        type: array
+                        items: {}
+                      start_time:
+                        type: integer
+                      state:
+                        type: integer

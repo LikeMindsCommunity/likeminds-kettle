@@ -1,0 +1,58 @@
+post:
+  summary: Add Cohorts to Chatroom
+  operationId: addCohortsToChatroom
+  tags:
+    - Chatroom
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            chatroom_id:
+              type: integer
+            cohort_ids:
+              type: array
+              items:
+                type: integer
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+
+delete:
+  summary: Remove Cohort from Chatroom
+  operationId: removeCohortFromChatroom
+  tags:
+    - Chatroom
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            chatroom_id:
+              type: integer
+            cohort_id:
+              type: integer
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  removed_participant_count:
+                    type: integer

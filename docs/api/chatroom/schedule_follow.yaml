@@ -1,0 +1,102 @@
+post:
+  summary: Schedule Follow for Chatroom
+
+  operationId: scheduleFollowForChatroom
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            chatroom_id:
+              type: string
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              chatroom:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  community_id:
+                    type: integer
+                  share_link:
+                    type: string
+                  image_count:
+                    type: integer
+                  pdf_count:
+                    type: integer
+                  video_count:
+                    type: integer
+                  audio_count:
+                    type: integer
+                  attachment_count:
+                    type: integer
+                  attachments_uploaded:
+                    type: boolean
+                  type:
+                    type: integer
+                  date_time:
+                    type: integer
+                  duration:
+                    type: integer
+                  is_pending:
+                    type: boolean
+                  attending_count:
+                    type: integer
+                  polls_count:
+                    type: integer
+                  card_creation_time:
+                    type: string
+                  community_name:
+                    type: string
+                  date:
+                    type: string
+                  created_at:
+                    type: string
+                  date_epoch:
+                    type: integer
+                  is_secret:
+                    type: boolean
+                  auto_follow_done:
+                    type: boolean
+                  is_paid:
+                    type: boolean
+                  secret_chatroom_participants:
+                    type: array
+                    items:
+                      type: integer
+                  has_been_named:
+                    type: boolean
+                  location:
+                    type: string
+                  location_lat:
+                    type: number
+                  location_long:
+                    type: number
+                  about:
+                    type: string
+                  co_hosts:
+                    type: array
+                    items:
+                      type: integer
+                  header:
+                    type: string

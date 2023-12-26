@@ -1,0 +1,95 @@
+get:
+    operationId: verifyOTP
+    description: This API verifies generated OTP
+    tags:
+      - Login
+    security:
+      - bearer_token: []
+    parameters:
+      - name: country_code
+        in: query
+        description: User Country Code
+        required: true
+        schema:
+          type: string
+      - name: mobile_no
+        in: query
+        description: User Mobile Number
+        required: true
+        schema:
+          type: string
+      - name: otp
+        in: query
+        description: OTP sent via SMS
+        required: true
+        schema:
+          type: string
+
+    responses:
+      '200':
+        description: OTP verified successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                error_message:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    access:
+                      type: boolean
+                    access_token:
+                      type: string
+                    profile_exists:
+                      type: boolean
+                    refresh_token:
+                      type: string
+                    user:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        image_url:
+                          type: string
+                        name:
+                          type: string
+                        is_guest:
+                          type: boolean
+                        user_unique_id:
+                          type: string
+                        emails:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              email:
+                                type: string
+                              id:
+                                type: integer
+                              state:
+                                type: integer
+                              user_id:
+                                type: integer
+                              verified:
+                                type: boolean
+                        mobiles:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              mobile_no:
+                                type: integer
+                              country_code:
+                                type: integer
+                              state:
+                                type: integer
+                              user_id:
+                                type: integer
+                        updated_at:
+                          type: integer

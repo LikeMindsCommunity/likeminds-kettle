@@ -1,0 +1,30 @@
+post:
+    operationId: logoutUser
+    description: This API logs out the user and expires the authorization and refresh tokens
+    tags:
+      - Login
+    security:
+      - bearer_token: []
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              refresh_token:
+                type: string
+            required:
+              - refresh_token
+
+    responses:
+      '200':
+        description: User logged out successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                error_message:
+                  type: string

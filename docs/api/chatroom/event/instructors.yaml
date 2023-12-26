@@ -1,0 +1,54 @@
+post:
+  summary: Add Instructors to Chatroom Event
+
+  operationId: addChatroomEventInstructors
+
+  tags:
+    - Chatroom
+
+  description: |
+    This API adds instructors to a chatroom event.
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            chatroom_id:
+              type: string
+            instructors:
+              type: array
+              items:
+                type: object
+                properties:
+                  chatroom_id:
+                    type: string
+                  about:
+                    type: string
+                  url:
+                    type: string
+                  name:
+                    type: string
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+              data:
+                type: object
+                properties:
+                  chatroom:
+                    type: object
+                  chatrooms:
+                    type: array
+                    items:
+                      type: object

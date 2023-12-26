@@ -1,0 +1,110 @@
+post:
+  operationId: loginUser
+  tags: 
+    - Login
+  security:
+    - api_key: []
+    - bearer_token: []
+  parameters:
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/device.yaml"
+    - $ref: "../../components/parameters/headers/contentType.yaml"
+    - $ref: "../../components/parameters/headers/cookie.yaml"
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            type:
+              type: string
+            user:
+              type: object
+              properties:
+                mobile_no:
+                  type: string
+                country_code:
+                  type: string
+                name:
+                  type: string
+                email:
+                  type: string
+                organisation_name:
+                  type: string
+                image_url:
+                  type: string
+                user_unique_id:
+                  type: string
+          
+  summary: Login user
+  responses:
+    '200':
+      description: User logged in successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  access:
+                    type: boolean
+                  access_token:
+                    type: string
+                  email_exists:
+                    type: boolean
+                  refresh_token:
+                    type: string
+                  existing_user:
+                    type: boolean
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      image_url:
+                        type: string
+                      name:
+                        type: string
+                      is_guest:
+                        type: boolean
+                      organisation_name:
+                        type: string
+                      user_unique_id:
+                        type: string
+                      emails:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            email:
+                              type: string
+                            id:
+                              type: integer
+                            state:
+                              type: integer
+                            user_id:
+                              type: integer
+                            verified:
+                              type: boolean
+                      mobiles:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            mobile_no:
+                              type: integer
+                            country_code:
+                              type: integer
+                            state:
+                              type: integer
+                            user_id:
+                              type: integer

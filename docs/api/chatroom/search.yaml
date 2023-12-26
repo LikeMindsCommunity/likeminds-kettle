@@ -1,0 +1,162 @@
+get:
+  summary: Search Chatrooms
+  operationId: searchChatrooms
+  tags:
+    - Chatroom
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      required: true
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      description: API key
+      required: true
+      schema:
+        type: string
+    - name: search
+      in: query
+      description: Keyword to search
+      required: true
+      schema:
+        type: string
+    - name: search_type
+      in: query
+      description: Search type
+      required: true
+      schema:
+        type: string
+        enum: ['title', 'header', 'chatroom_id']
+    - name: follow_status
+      in: query
+      description: To only search followed or un-followed chatrooms
+      required: false
+      schema:
+        type: boolean
+    - name: page
+      in: query
+      description: Page number
+      required: false
+      schema:
+        type: integer
+    - name: page_size
+      in: query
+      description: Page size
+      required: false
+      schema:
+        type: integer
+  description: 
+    This API searches chatrooms in a community based on search term.
+
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+                nullable: true
+              data:
+                type: object
+                properties:
+                  chatrooms:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        attachments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              index:
+                                type: integer
+                              type:
+                                type: string
+                              url:
+                                type: string
+                        attending_status:
+                          type: boolean
+                        chatroom:
+                          type: object
+                          properties:
+                            attachment_count:
+                              type: integer
+                            attachments_uploaded:
+                              type: boolean
+                            audio_count:
+                              type: integer
+                            chatroom_with_user:
+                              type: object
+                            created_at:
+                              type: integer
+                            device_id:
+                              type: null
+                            header:
+                              type: string
+                            id:
+                              type: integer
+                            image_count:
+                              type: integer
+                            is_deleted:
+                              type: boolean
+                            is_pending:
+                              type: boolean
+                            is_pinned:
+                              type: boolean
+                            is_private:
+                              type: boolean
+                            is_secret:
+                              type: boolean
+                            pdf_count:
+                              type: integer
+                            platform:
+                              type: null
+                            title:
+                              type: string
+                            type:
+                              type: integer
+                            video_count:
+                              type: integer
+                        community:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                        follow_status:
+                          type: boolean
+                        id:
+                          type: integer
+                        is_guest:
+                          type: boolean
+                        is_tagged:
+                          type: boolean
+                        member:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            profile:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                        mute_status:
+                          type: boolean
+                        secret_chatroom_left:
+                          type: boolean
+                        state:
+                          type: integer
+                        updated_at:
+                          type: integer

@@ -1,0 +1,5 @@
+name: Authorization
+in: header
+schema:
+  type: string
+  example: ""

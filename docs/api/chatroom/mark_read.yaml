@@ -1,0 +1,36 @@
+post:
+  summary: Mark Chatroom as Read
+
+  operationId: markChatroomAsRead
+
+  tags:
+    - Chatroom
+
+  description: Marks the specified chatroom as read.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            chatroom_id:
+              type: string
+              description: ID of the chatroom to mark as read
+          required:
+            - chatroom_id
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json: {}
+

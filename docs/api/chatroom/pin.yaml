@@ -1,0 +1,53 @@
+put:
+  summary: Pin Chatroom in a Community
+
+  operationId: pinChatroom
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - name: chatroom_id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: ID of the chatroom to be pinned
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            value:
+              type: boolean
+            notify:
+              type: boolean
+          required:
+            - value
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+    "404":
+      description: Not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string

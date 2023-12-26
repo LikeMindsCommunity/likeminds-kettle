@@ -1,0 +1,5 @@
+name: Content-Type
+in: header
+description: Content Type
+schema:
+  type: string

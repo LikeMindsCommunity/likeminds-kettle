@@ -1,0 +1,96 @@
+post:
+  summary: Add Participants to Chatroom
+
+  operationId: addParticipantsToChatroom
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            is_secret:
+              type: boolean
+            chatroom_id:
+              type: integer
+            chatroom_participants:
+              type: array
+              items:
+                type: integer
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+
+
+get:
+  summary: Get Chatroom Participants
+
+  operationId: getChatroomParticipants
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - name: chatroom_id
+      in: query
+      required: true
+      schema:
+        type: integer
+      description: ID of the chatroom
+
+    - name: is_secret
+      in: query
+      required: true
+      schema:
+        type: boolean
+      description: Whether the chatroom is secret or not
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+              data:
+                type: object
+                properties:
+                  can_edit_participant:
+                    type: boolean
+                  participants:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        image_url:
+                          type: string
+                        name:
+                          type: string

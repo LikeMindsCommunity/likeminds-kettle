@@ -1,0 +1,50 @@
+put:
+      summary: Rename Chatroom
+      operationId: renameChatroom
+      tags:
+        - Chatroom
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                chatroom_id:
+                  type: integer
+                header:
+                  type: string
+                first_time_rename:
+                  type: boolean
+              required:
+                - chatroom_id
+                - header
+                - first_time_rename
+              example:
+                chatroom_id: 26957
+                header: "New chatroom Name"
+                first_time_rename: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+              example:
+                success: true
+              description: Indicates whether the operation was successful.
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: "Chatroom not found"
+              description: Indicates that the specified chatroom was not found.

@@ -1,0 +1,50 @@
+put:
+  summary: Mark Chatroom as Seen
+  operationId: markChatroomSeen
+  tags:
+    - Chatroom
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            collabcard_id:
+              type: integer
+            member_id:
+              type: integer
+            collabcard_type:
+              type: integer
+          required:
+            - collabcard_id
+            - member_id
+            - collabcard_type
+          example:
+            collabcard_id: 26959
+            member_id: 792
+            collabcard_type: 0
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+          example:
+            success: true
+          description: Indicates whether the operation was successful.
+    '404':
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+          example:
+            error: "Chatroom not found"
+          description: Indicates that the specified chatroom was not found.

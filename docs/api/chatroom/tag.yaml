@@ -1,0 +1,154 @@
+get:
+  summary: Get Chatroom Tags
+
+  operationId: getChatroomTags
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - name: chatroom_id
+      in: query
+      required: true
+      schema:
+        type: integer
+      description: ID of the chatroom to get tags
+
+    - name: search_name
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Search term for tags
+
+    - name: is_secret
+      in: query
+      required: false
+      schema:
+        type: boolean
+      description: Filter by secret status
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  members:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        image_url:
+                          type: string
+                        is_guest:
+                          type: boolean
+                        name:
+                          type: string
+                        user_unique_id:
+                          type: string
+                  participants:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        image_url:
+                          type: string
+                        is_guest:
+                          type: boolean
+                        name:
+                          type: string
+                        user_unique_id:
+                          type: string
+
+
+get_chatroom_tags_by_id:
+  summary: Get Chatroom Tags by ID
+
+  operationId: getChatroomTagsById
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - name: chatroom_id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: ID of the chatroom to get tags
+
+    - name: search_name
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Search term for tags
+
+    - name: is_secret
+      in: query
+      required: false
+      schema:
+        type: boolean
+      description: Filter by secret status
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  members:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        image_url:
+                          type: string
+                        is_guest:
+                          type: boolean
+                        name:
+                          type: string
+                        user_unique_id:
+                          type: string
+                  participants:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        image_url:
+                          type: string
+                        is_guest:
+                          type: boolean
+                        name:
+                          type: string
+                        user_unique_id:
+                          type: string

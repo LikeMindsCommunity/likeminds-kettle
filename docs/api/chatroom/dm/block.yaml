@@ -1,0 +1,68 @@
+post:
+  summary: Block Direct Message Chatroom
+  operationId: blockDirectMessageChatroom
+  tags:
+    - Chatroom
+    - Direct Message
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      description: API Key
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            chatroom_id:
+              type: integer
+            status:
+              type: integer
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  conversation:
+                    type: object
+                    properties:
+                      allow_add_option: boolean
+                      answer: string
+                      attachment_count: integer
+                      attachments_uploaded: boolean
+                      chatroom_id: integer
+                      community_id: integer
+                      created_at: string
+                      created_epoch: integer
+                      date: string
+                      end_time: integer
+                      has_event_recording: boolean
+                      has_files: boolean
+                      id: integer
+                      is_anonymous: boolean
+                      is_edited: boolean
+                      member_id: integer
+                      poll_answer_text: string
+                      reactions:
+                        type: array
+                        items:
+                          type: string
+                      start_time: integer
+                      state: integer

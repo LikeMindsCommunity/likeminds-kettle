@@ -1,0 +1,360 @@
+get:
+  summary: Get Chatroom Home
+  operationId: getChatroomHome
+  tags:
+    - Chatroom
+    - Home
+  parameters:
+    - name: chatroom_id
+      in: query
+      required: true
+      schema:
+        type: integer
+  responses: 
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                description: Indicates whether the request was successful.
+              data:
+                type: object
+                properties:
+                  chatroom:
+                    type: object
+                    properties:
+                      access:
+                        type: null
+                      answer_text:
+                        type: string
+                      answers_count:
+                        type: integer
+                      attachment_count:
+                        type: integer
+                      attachments:
+                        type: array
+                        items: {}
+                      attachments_uploaded:
+                        type: boolean
+                      attending_count:
+                        type: integer
+                      attending_status:
+                        type: boolean
+                      audio_count:
+                        type: integer
+                      audios:
+                        type: array
+                        items: {}
+                      auto_follow_done:
+                        type: boolean
+                      card_creation_time:
+                        type: string
+                      chatroom_image_url:
+                        type: string
+                        format: uri
+                      community_id:
+                        type: integer
+                      community_name:
+                        type: string
+                      created_at:
+                        type: string
+                      custom_tag:
+                        type: string
+                      date:
+                        type: string
+                      date_epoch:
+                        type: integer
+                      date_time:
+                        type: integer
+                      duration:
+                        type: integer
+                      follow_status:
+                        type: boolean
+                      has_event_recording:
+                        type: boolean
+                      header:
+                        type: string
+                      id:
+                        type: integer
+                      image_count:
+                        type: integer
+                      images:
+                        type: array
+                        items: {}
+                      include_members_later:
+                        type: boolean
+                      is_edited:
+                        type: boolean
+                      is_guest:
+                        type: boolean
+                      is_paid:
+                        type: boolean
+                      is_pending:
+                        type: boolean
+                      is_private:
+                        type: boolean
+                      is_private_member:
+                        type: boolean
+                      is_secret:
+                        type: boolean
+                      is_tagged:
+                        type: boolean
+                      member:
+                        type: object
+                        properties:
+                          custom_intro_text:
+                            type: string
+                          custom_title:
+                            type: string
+                          id:
+                            type: integer
+                          image_url:
+                            type: string
+                            format: uri
+                          is_guest:
+                            type: boolean
+                          is_owner:
+                            type: boolean
+                          member_since:
+                            type: string
+                          member_since_epoch:
+                            type: integer
+                          name:
+                            type: string
+                          organisation_name:
+                            type: null
+                          route:
+                            type: string
+                          sdk_client_info:
+                            type: object
+                            properties:
+                              community:
+                                type: integer
+                              user:
+                                type: integer
+                              user_unique_id:
+                                type: string
+                              uuid:
+                                type: string
+                              widget_id:
+                                type: string
+                          state:
+                            type: integer
+                          updated_at:
+                            type: integer
+                          user_unique_id:
+                            type: string
+                          uuid:
+                            type: string
+                      mute_status:
+                        type: boolean
+                      online_link_enable_before:
+                        type: integer
+                      online_link_type:
+                        type: null
+                      pdf:
+                        type: array
+                        items: {}
+                      pdf_count:
+                        type: integer
+                      polls_count:
+                        type: integer
+                      reactions:
+                        type: array
+                        items: {}
+                      secret_chatroom_left:
+                        type: boolean
+                      share_link:
+                        type: string
+                      state:
+                        type: integer
+                      title:
+                        type: string
+                      type:
+                        type: integer
+                      video_count:
+                        type: integer
+                      videos:
+                        type: array
+                        items: {}
+                  community:
+                    type: object
+                    properties:
+                      auto_approval:
+                        type: boolean
+                      branding:
+                        type: object
+                        properties:
+                          advanced:
+                            type: object
+                            properties:
+                              buttons_icons_colour:
+                                type: string
+                              header_colour:
+                                type: string
+                              text_links_colour:
+                                type: string
+                          basic:
+                            type: object
+                            properties:
+                              primary_colour:
+                                type: string
+                      community_setting_rights:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            is_locked:
+                              type: boolean
+                            is_selected:
+                              type: boolean
+                            state:
+                              type: integer
+                            title:
+                              type: string
+                            sub_title:
+                              type: string
+                      fee_event:
+                        type: integer
+                      fee_membership:
+                        type: integer
+                      fee_payment_pages:
+                        type: integer
+                      grace_period:
+                        type: integer
+                      hide_dm_tab:
+                        type: boolean
+                      id:
+                        type: integer
+                      image_url:
+                        type: string
+                        format: uri
+                      is_discoverable:
+                        type: boolean
+                      is_freemium_community:
+                        type: boolean
+                      is_paid:
+                        type: boolean
+                      is_whitelabel:
+                        type: boolean
+                      members_count:
+                        type: integer
+                      name:
+                        type: string
+                      purpose:
+                        type: string
+                      referral_enabled:
+                        type: boolean
+                      sub_type:
+                        type: integer
+                      type:
+                        type: integer
+                      updated_at:
+                        type: integer
+                      whitelabel_info:
+                        type: null
+                  conversation_users:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        image_url:
+                          type: string
+                          format: uri
+                        name:
+                          type: string
+                  is_draft:
+                    type: boolean
+                  last_conversation:
+                    type: object
+                    properties:
+                      answer:
+                        type: string
+                      attachment_count:
+                        type: integer
+                      attachments_uploaded:
+                        type: boolean
+                      chatroom_id:
+                        type: integer
+                      community_id:
+                        type: integer
+                      created_at:
+                        type: integer
+                      created_epoch:
+                        type: integer
+                      date:
+                        type: string
+                      has_files:
+                        type: boolean
+                      id:
+                        type: integer
+                      is_edited:
+                        type: boolean
+                      member:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          image_url:
+                            type: string
+                            format: uri
+                          is_guest:
+                            type: boolean
+                          is_owner:
+                            type: boolean
+                          member_since:
+                            type: string
+                          member_since_epoch:
+                            type: integer
+                          name:
+                            type: string
+                          organisation_name:
+                            type: null
+                          route:
+                            type: string
+                          sdk_client_info:
+                            type: object
+                            properties:
+                              community:
+                                type: integer
+                              user:
+                                type: integer
+                              user_unique_id:
+                                type: string
+                              uuid:
+                                type: string
+                              widget_id:
+                                type: string
+                          state:
+                            type: integer
+                          updated_at:
+                            type: integer
+                          user_unique_id:
+                            type: string
+                          uuid:
+                            type: string
+                      reactions:
+                        type: array
+                        items: {}
+                      state:
+                        type: integer
+                      temporary_id:
+                        type: string
+                  last_conversation_time:
+                    type: string
+                  member_right_states:
+                    type: array
+                    items:
+                      type: integer
+                  member_state:
+                    type: integer
+                  unseen_conversation_count:
+                    type: integer

@@ -1,0 +1,33 @@
+get:
+    operationId: generateOTP
+    description: This API generates OTP
+    tags:
+      - Login
+    security:
+      - bearer_token: []
+    parameters:
+      - name: country_code
+        in: query
+        description: User Country Code
+        required: true
+        schema:
+          type: string
+      - name: mobile_no
+        in: query
+        description: User Mobile Number
+        required: true
+        schema:
+          type: string
+
+    responses:
+      '200':
+        description: OTP generated successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                error_message:
+                  type: string

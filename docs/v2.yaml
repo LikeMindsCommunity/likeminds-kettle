@@ -39,8 +39,104 @@ components:
 paths:
   /sdk/project:
     $ref: "./api/sdk/project.yaml"
+  /user/bot:
+    $ref: "./api/user/bot.yaml"
+  /user/login:
+    $ref: "./api/user/login.yaml"
   /sdk/initiate:
     $ref: "./api/login/initiate.yaml" 
+  /otp/generate:
+    $ref: "./api/otp/generate.yaml"
+  /otp/verify:
+    $ref: "./api/otp/verify.yaml"
+  /user/refresh:
+    $ref: "./api/user/refresh.yaml"
+  /user/logout:
+    $ref: "./api/user/logout.yaml"
+  /user/token:
+    $ref: "./api/user/token.yaml"
+  /chatroom:
+    $ref: "./api/chatroom/chatroom.yaml"
+  /chatroom/schedule_follow:
+    $ref: "./api/chatroom/schedule_follow.yaml"
+  /chatroom/participants:
+    $ref: "./api/chatroom/participants.yaml"
+  /chatroom/settings:
+    $ref: "./api/chatroom/settings.yaml"
+  /chatroom/type:
+    $ref: "./api/chatroom/type.yaml"
+  /chatroom/enable_member_message:
+    $ref: "./api/chatroom/enable_member_message.yaml"
+  /chatroom/pin:
+    $ref: "./api/chatroom/pin.yaml"
+  /chatroom/auto_follow_members:
+    $ref: "./api/chatroom/auto_follow_members.yaml"
+  /chatroom/tag:
+    $ref: "./api/chatroom/tag.yaml"
+  /chatroom/<chatroom_id>/tag:
+    $ref: "./api/chatroom/tag.yaml"
+  /chatroom/files:
+    $ref: "./api/chatroom/files.yaml"
+  /chatroom/mine:
+    $ref: "./api/chatroom/mine.yaml"
+  /chatroom/seen:
+    $ref: "./api/chatroom/seen.yaml"
+  /chatroom/follow:
+    $ref: "./api/chatroom/follow.yaml"
+  /chatroom/mute:
+    $ref: "./api/chatroom/mute.yaml"
+  /chatroom/rename:
+    $ref: "./api/chatroom/rename.yaml"
+  /chatroom/share:
+    $ref: "./api/chatroom/share.yaml"
+  /chatroom/pending:
+    $ref: "./api/chatroom/pending.yaml"
+  /chatroom/sync:
+    $ref: "./api/chatroom/sync.yaml"
+  /chatroom/block:
+    $ref: "./api/chatroom/block.yaml"
+  /chatroom/search:
+    $ref: "./api/chatroom/search.yaml"
+  /chatroom/dm:
+    $ref: "./api/chatroom/dm.yaml"
+  /chatroom/dm/block:
+    $ref: "./api/chatroom/dm/block.yaml"
+  /chatroom/dm/limit:
+    $ref: "./api/chatroom/dm/limit.yaml"
+  /chatroom/dm/request:
+    $ref: "./api/chatroom/dm/request.yaml"
+  /chatroom/dm/create:
+    $ref: "./api/chatroom/dm/create.yaml"
+  /chatroom/cohort:
+    $ref: "./api/chatroom/cohort.yaml"
+  /chatroom/home:
+    $ref: "./api/chatroom/home.yaml"
+  /chatroom/mark_read:
+    $ref: "./api/chatroom/mark_read.yaml"
+    
+  /chatroom/event:
+    $ref: "./api/chatroom/event.yaml"
+  /chatroom/event/meta:
+    $ref: "./api/chatroom/event/meta.yaml"
+  /chatroom/event/link:
+    $ref: "./api/chatroom/event/link.yaml"
+  /chatroom/event/recordings:
+    $ref: "./api/chatroom/event/recordings.yaml"
+
+  /chatroom/event/instructors:
+    $ref: "./api/chatroom/event/instructors.yaml"
+  /chatroom/event/highlights:
+    $ref: "./api/chatroom/event/highlights.yaml"
+  /chatroom/event/testimonials:
+    $ref: "./api/chatroom/event/testimonials.yaml"
+  /chatroom/event/faq:
+    $ref: "./api/chatroom/event/faq.yaml"
+    
+  /chatroom/event/recordings/meta:
+    $ref: "./api/chatroom/event/recordings/meta.yaml"
+  /chatroom/event/unseen_count:
+    $ref: "./api/chatroom/event/unseen_count.yaml"
+
   /community/member:
     $ref: "./api/community/member.yaml"
   /community/report:
@@ -57,6 +153,6 @@ paths:
     $ref: "./api/widget.yaml"
   /webhooks:
     $ref: "./api/webhooks.yaml"
-  /search:
-    $ref: "./api/search/index.yaml"
+  # /search:
+    # $ref: "./api/search/index.yaml"
     

@@ -1,0 +1,183 @@
+get:
+  summary: Sync Chatrooms
+  operationId: syncChatrooms
+  tags:
+    - Chatroom
+  description: Retrieve synchronized chatrooms.
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: page
+      in: query
+      description: Page number
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    - name: page_size
+      in: query
+      description: Number of items per page
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+    - name: max_timestamp
+      in: query
+      description: Maximum timestamp for synchronization
+      required: true
+      schema:
+        type: integer
+    - name: min_timestamp
+      in: query
+      description: Minimum timestamp for synchronization
+      required: true
+      schema:
+        type: integer
+    - name: chatroom_types
+      in: query
+      description: Types of chatrooms (disabled in the request)
+      schema:
+        type: array
+        items:
+          type: integer
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  chatrooms:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        about_recording:
+                          type: null
+                        access_without_subscription:
+                          type: boolean
+                        answer_text:
+                          type: string
+                        attachment_count:
+                          type: integer
+                        attachments:
+                          type: array
+                          items: {}
+                        attachments_uploaded:
+                          type: boolean
+                        attending_count:
+                          type: integer
+                        attending_status:
+                          type: boolean
+                        audio_count:
+                          type: integer
+                        audios:
+                          type: array
+                          items: {}
+                        auto_follow_done:
+                          type: boolean
+                        card_creation_time:
+                          type: string
+                        cohorts:
+                          type: array
+                          items: {}
+                        community_id:
+                          type: integer
+                        community_name:
+                          type: string
+                        created_at:
+                          type: string
+                        date:
+                          type: string
+                        date_epoch:
+                          type: integer
+                        date_time:
+                          type: integer
+                        external_seen:
+                          type: boolean
+                        follow_status:
+                          type: boolean
+                        header:
+                          type: string
+                        id:
+                          type: integer
+                        image_count:
+                          type: integer
+                        images:
+                          type: array
+                          items: {}
+                        is_edited:
+                          type: boolean
+                        is_pending:
+                          type: boolean
+                        is_private:
+                          type: boolean
+                        is_private_member:
+                          type: boolean
+                        is_secret:
+                          type: boolean
+                        is_tagged:
+                          type: boolean
+                        member_can_message:
+                          type: boolean
+                        member_id:
+                          type: integer
+                        mute_status:
+                          type: boolean
+                        online_link_type:
+                          type: null
+                        pdf:
+                          type: array
+                          items: {}
+                        pdf_count:
+                          type: integer
+                        polls_count:
+                          type: integer
+                        reactions:
+                          type: array
+                          items: {}
+                        recording_url_og_tags:
+                          type: null
+                        recordings_attachments:
+                          type: array
+                          items: {}
+                        recordings_attachments_view:
+                          type: integer
+                        recordings_url:
+                          type: array
+                          items: {}
+                        secret_chatroom_left:
+                          type: boolean
+                        state:
+                          type: integer
+                        title:
+                          type: string
+                        type:
+                          type: integer
+                        unread_messages:
+                          type: integer
+                        video_count:
+                          type: integer
+                        videos:
+                          type: array
+                          items: {}
+
+    "404":
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string

@@ -1,0 +1,124 @@
+post:
+  summary: Create Chatroom Event Recording
+
+  operationId: createChatroomEventRecording
+
+  tags:
+    - Chatroom
+
+  description: |
+    This API creates a recording for a chatroom event in a community.
+
+  security:
+    - bearerAuth: []
+
+  requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          url:
+            type: string
+            description: URL for the recording
+          chatroom_id:
+            type: integer
+            description: Chatroom ID
+          type:
+            type: string
+            description: Type of recording (e.g., "image")
+          index:
+            type: integer
+            description: Index of the recording
+          height:
+            type: integer
+            description: Height of the recording
+          width:
+            type: integer
+            description: Width of the recording
+          is_recording:
+            type: boolean
+            description: Indicates whether it is a recording
+          about:
+            type: string
+            description: Description about the recording
+        required:
+          - url
+          - chatroom_id
+          - type
+          - index
+          - height
+          - width
+          - is_recording
+          - about
+
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+                nullable: true
+              data:
+                type: object
+                properties:
+                  chatroom:
+                    type: object
+                    nullable: true
+                  chatrooms:
+                    type: array
+                    items:
+                      type: object
+
+
+
+delete:
+  summary: Delete Chatroom Event Recording
+
+  operationId: deleteChatroomEventRecording
+
+  tags:
+    - Chatroom
+
+  description: |
+    This API deletes a recording from a chatroom event.
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            chatroom_id:
+              type: string
+            id:
+              type: integer
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+              data:
+                type: object
+                properties:
+                  chatroom:
+                    type: object
+                  chatrooms:
+                    type: array
+                    items:
+                      type: object

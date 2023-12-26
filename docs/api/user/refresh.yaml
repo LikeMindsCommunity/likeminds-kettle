@@ -1,0 +1,37 @@
+post:
+    operationId: refreshUserToken
+    description: This API refreshes and sends a new Authorization Token
+    tags:
+      - Login
+    security:
+      - bearer_token: []
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              refresh_token:
+                type: string
+            required:
+              - refresh_token
+
+    responses:
+      '200':
+        description: Token refreshed successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                error_message:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    access_token:
+                      type: string
+                    refresh_token:
+                      type: string
