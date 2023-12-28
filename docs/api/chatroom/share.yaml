@@ -3,6 +3,8 @@ get:
   operationId: shareChatroom
   tags:
     - Chatroom
+  security:
+    - bearerAuth: []
   parameters:
     - name: chatroom_id
       in: query

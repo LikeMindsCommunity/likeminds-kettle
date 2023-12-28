@@ -6,6 +6,9 @@ post:
   tags:
     - Chatroom
 
+  security:
+    - bearerAuth: []
+    
   description: |
     This API adds highlights to a chatroom event.
 

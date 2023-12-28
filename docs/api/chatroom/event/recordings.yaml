@@ -87,6 +87,9 @@ delete:
   tags:
     - Chatroom
 
+  security:
+    - bearerAuth: []
+    
   description: |
     This API deletes a recording from a chatroom event.
 

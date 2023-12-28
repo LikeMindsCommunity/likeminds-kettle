@@ -3,7 +3,8 @@ get:
   operationId: getDMLimit
   tags:
     - Chatroom
-    - Direct Message
+  security:
+    - bearerAuth: []
   parameters:
     - name: Authorization
       in: header

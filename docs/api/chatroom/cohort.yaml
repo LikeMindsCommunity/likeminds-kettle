@@ -3,6 +3,8 @@ post:
   operationId: addCohortsToChatroom
   tags:
     - Chatroom
+  security:
+    - bearerAuth: []
   requestBody:
     content:
       application/json:
@@ -31,6 +33,8 @@ delete:
   operationId: removeCohortFromChatroom
   tags:
     - Chatroom
+  security:
+    - bearerAuth: []
   requestBody:
     content:
       application/json:

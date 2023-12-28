@@ -3,6 +3,8 @@ post:
   operationId: sendDMRequest
   tags:
     - Chatroom
+  security:
+    - bearerAuth: []
   requestBody:
     content:
       application/json:

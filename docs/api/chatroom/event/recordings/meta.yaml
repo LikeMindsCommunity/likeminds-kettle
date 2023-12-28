@@ -6,6 +6,9 @@ post:
   tags:
     - Chatroom
 
+  security:
+    - bearerAuth: []
+
   description: |
     This API adds metadata for recordings to a chatroom event.
 
@@ -57,7 +60,10 @@ delete:
 
   tags:
     - Chatroom
-
+  
+  security:
+    - bearerAuth: []
+  
   description: |
     This API deletes metadata for recordings from a chatroom event.
 

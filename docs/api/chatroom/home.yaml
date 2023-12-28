@@ -3,7 +3,8 @@ get:
   operationId: getChatroomHome
   tags:
     - Chatroom
-    - Home
+  security:
+    - bearerAuth: []
   parameters:
     - name: chatroom_id
       in: query

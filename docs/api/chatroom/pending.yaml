@@ -3,6 +3,8 @@ get:
   operationId: getPendingChatrooms
   tags:
     - Chatroom
+  security:
+    - bearerAuth: []
   responses:
     '200':
       description: OK

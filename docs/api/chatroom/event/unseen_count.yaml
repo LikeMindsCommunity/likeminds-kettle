@@ -6,6 +6,9 @@ get:
   tags:
     - Chatroom
 
+  security:
+    - bearerAuth: []
+    
   description: |
     This API fetches the unseen count for a chatroom event.
 

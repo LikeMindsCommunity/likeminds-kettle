@@ -1,46 +1,48 @@
 put:
-      summary: Mute/Unmute Chatroom
-      operationId: muteChatroom
-      tags:
-        - Chatroom
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                chatroom_id:
-                  type: integer
-                value:
-                  type: boolean
-              required:
-                - chatroom_id
-                - value
-              example:
-                chatroom_id: 23663
-                value: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-              example:
-                success: true
-              description: Indicates whether the operation was successful.
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-              example:
-                error: "Chatroom not found"
-              description: Indicates that the specified chatroom was not found.
+  summary: Mute/Unmute Chatroom
+  operationId: muteChatroom
+  tags:
+    - Chatroom
+  security:
+    - bearerAuth: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            chatroom_id:
+              type: integer
+            value:
+              type: boolean
+          required:
+            - chatroom_id
+            - value
+          example:
+            chatroom_id: 23663
+            value: true
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+          example:
+            success: true
+          description: Indicates whether the operation was successful.
+    '404':
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+          example:
+            error: "Chatroom not found"
+          description: Indicates that the specified chatroom was not found.
