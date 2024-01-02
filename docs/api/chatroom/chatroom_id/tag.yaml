@@ -1,7 +1,7 @@
 get:
-  summary: Get Chatroom Tags
+  summary: Get Chatroom Tags by ID
 
-  operationId: getChatroomTags
+  operationId: getChatroomTagsById
 
   tags:
     - Chatroom
@@ -11,7 +11,7 @@ get:
 
   parameters:
     - name: chatroom_id
-      in: query
+      in: path
       required: true
       schema:
         type: integer
