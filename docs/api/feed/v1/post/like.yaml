@@ -1,0 +1,141 @@
+put:
+  summary: Like a Post
+
+  operationId: likePost
+
+  tags:
+    - Feed - V1
+
+  description: |
+    This API likes a Post.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
+    - name: post_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The ID of the post to like
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+                nullable: true
+
+
+get:
+  summary: Get Post Likes
+
+  operationId: getPostLikes
+
+  tags:
+    - Feed - V1
+
+  description: |
+    This API fetches likes for a Post.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
+    - name: post_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The ID of the post to fetch likes for
+    - name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+      description: Page number
+    - name: page_size
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+      description: Page size
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+                nullable: true
+              data:
+                type: object
+                properties:
+                  total_likes:
+                    type: integer
+                  likes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        user_id:
+                          type: string
+                        created_at:
+                          type: integer
+                        updated_at:
+                          type: integer
+                  users:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        user_id:
+                          type: string
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            image_url:
+                              type: string
+                            user_unique_id:
+                              type: string
+                            uuid:
+                              type: string
+                            sdk_client_info:
+                              type: object
+                              properties:
+                                community:
+                                  type: integer
+                                user:
+                                  type: integer
+                                user_unique_id:
+                                  type: string
+                                uuid:
+                                  type: string
+                            is_guest:
+                              type: boolean
+                            is_deleted:
+                              type: boolean

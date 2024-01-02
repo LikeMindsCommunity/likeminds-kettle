@@ -1,0 +1,109 @@
+post:
+  summary: Create a new topic
+
+  operationId: createTopic
+
+  tags:
+    - Feed - V1
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
+
+  requestBody:
+    description: New topic details
+    required: true
+    content:
+      application/json:
+        example: 
+          name: "Topic Name #1"
+    
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  topic:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      is_enabled:
+                        type: boolean
+                      name:
+                        type: string
+
+
+get:
+  summary: Get topics based on filters
+
+  operationId: getTopics
+
+  tags:
+    - Feed - V1
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
+    - name: is_enabled
+      in: query
+      description: Filter by enabled status
+      schema:
+        type: boolean
+    - name: search_type
+      in: query
+      description: Search type (e.g., name)
+      schema:
+        type: string
+    - name: search
+      in: query
+      description: Search term
+      schema:
+        type: string
+    - name: page
+      in: query
+      description: Page number
+      schema:
+        type: integer
+    - name: page_size
+      in: query
+      description: Page size
+      schema:
+        type: integer
+    
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  topics:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        is_enabled:
+                          type: boolean
+                        name:
+                          type: string

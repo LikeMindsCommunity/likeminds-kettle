@@ -1,0 +1,68 @@
+get:
+  summary: Fetch Feed Group
+
+  operationId: fetchFeedGroup
+
+  tags:
+    - Feed - V1
+
+  description: This API fetches feed groups.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - name: page
+      in: query
+      description: Page number
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        default: 1
+
+    - name: page_size
+      in: query
+      description: Page size
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        default: 10
+
+    - name: feedroom_id
+      in: query
+      description: Feedroom ID
+      schema:
+        type: integer
+        format: int32
+      example: 71107
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                    name:
+                      type: string
+                    description:
+                      type: string
+                    created_at:
+                      type: integer
+                    updated_at:
+                      type: integer

@@ -16,6 +16,7 @@ tags:
   - name: Chatroom
     description: APIs for chatroom and related.
   - name: Feedroom
+  - name: Poll
   - name: Community
   - name: Moderation
   - name: Conversation
@@ -24,7 +25,7 @@ tags:
   - name: Search
   - name: User
   - name: Feed
-  - name: Feed - Api Revamp V1
+  - name: Feed - V1
     description: APIs related to Feed (Api Revamp v1)
   - name: Community feed
   - name: Helpers
@@ -39,8 +40,10 @@ components:
 paths:
   /sdk/project:
     $ref: "./api/sdk/project.yaml"
+
   /user/bot:
     $ref: "./api/user/bot.yaml"
+
   /user/login:
     $ref: "./api/user/login.yaml"
   /sdk/initiate:
@@ -55,6 +58,7 @@ paths:
     $ref: "./api/user/logout.yaml"
   /user/token:
     $ref: "./api/user/token.yaml"
+  
   /chatroom:
     $ref: "./api/chatroom/chatroom.yaml"
   /chatroom/schedule_follow:
@@ -74,7 +78,7 @@ paths:
   /chatroom/tag:
     $ref: "./api/chatroom/tag.yaml"
   /chatroom/<chatroom_id>/tag:
-    $ref: "./api/chatroom/tag.yaml"
+    $ref: "./api/chatroom/chatroom_id/tag.yaml"
   /chatroom/files:
     $ref: "./api/chatroom/files.yaml"
   /chatroom/mine:
@@ -112,8 +116,7 @@ paths:
   /chatroom/home:
     $ref: "./api/chatroom/home.yaml"
   /chatroom/mark_read:
-    $ref: "./api/chatroom/mark_read.yaml"
-    
+    $ref: "./api/chatroom/mark_read.yaml"  
   /chatroom/event:
     $ref: "./api/chatroom/event.yaml"
   /chatroom/event/meta:
@@ -122,7 +125,6 @@ paths:
     $ref: "./api/chatroom/event/link.yaml"
   /chatroom/event/recordings:
     $ref: "./api/chatroom/event/recordings.yaml"
-
   /chatroom/event/instructors:
     $ref: "./api/chatroom/event/instructors.yaml"
   /chatroom/event/highlights:
@@ -131,7 +133,6 @@ paths:
     $ref: "./api/chatroom/event/testimonials.yaml"
   /chatroom/event/faq:
     $ref: "./api/chatroom/event/faq.yaml"
-    
   /chatroom/event/recordings/meta:
     $ref: "./api/chatroom/event/recordings/meta.yaml"
   /chatroom/event/unseen_count:
@@ -143,8 +144,57 @@ paths:
      $ref: "./api/community/report.yaml"
   /community/questions:
     $ref: "./api/community/questions.yaml"
+  
   /moderation/rights:
     $ref: "./api/moderation/rights.yaml"
+
+  /sdk/onboarding:
+    $ref: "./api/sdk/onboarding.yaml"
+
+  /feed/post:
+    $ref: "./api/feed/v1/post/post.yaml"
+  /feed/post/<post_id>:
+    $ref: "./api/feed/v1/post/post_id.yaml"
+  /feed/post/<post_id>/pin:
+    $ref: "./api/feed/v1/post/pin.yaml"
+  /feed/post/<post_id>/like:
+    $ref: "./api/feed/v1/post/like.yaml"
+  /feed/post/<post_id>/comment:
+    $ref: "./api/feed/v1/post/comment/comment.yaml"
+  /feed/post/<post_id>/comment/<comment_id>:
+    $ref: "./api/feed/v1/post/comment/comment_id.yaml"
+  /feed/post/<post_id>/save:
+    $ref: "./api/feed/v1/post/save.yaml"
+  /feed/post/<post_id>/comment/<comment_id>/comment:
+    $ref: "./api/feed/v1/post/comment/comment_id/comment.yaml"
+  /feed/post/<post_id>/comment/<comment_id>/like:
+    $ref: "./api/feed/v1/post/comment/comment_id/like.yaml"
+  /feed/user/<user_id>/save:
+    $ref: "./api/feed/v1/user/save.yaml"
+  /feed/user/<user_id>/post:
+    $ref: "./api/feed/v1/user/post.yaml"
+  /feed/user/<user_id>/activity:
+    $ref: "./api/feed/v1/user/activity/activity.yaml"
+  /feed/user/activity:
+    $ref: "./api/feed/v1/user/activity.yaml"
+  /feed/user/activity/<activity_id>/mark_read:
+    $ref: "./api/feed/v1/user/activity/mark_read.yaml"
+  /feed/user/activity/unread_count:
+    $ref: "./api/feed/v1/user/activity/unread_count.yaml"
+  /feed/universal:
+    $ref: "./api/feed/v1/universal.yaml"
+  /feed/group:
+    $ref: "./api/feed/v1/group.yaml"
+  /feed/topic:
+    $ref: "./api/feed/v1/topic/topic.yaml"
+  /feed/topic/<topic_id>:
+    $ref: "./api/feed/v1/topic/topic_id.yaml"
+
+  /poll/<poll_id>:
+    $ref: "./api/poll/poll.yaml"
+  /poll/<poll_id>/vote:
+    $ref: "./api/poll/vote.yaml"
+
   /helper/url:
     $ref: "./api/helper/url.yaml"
   /helper/media/upload:

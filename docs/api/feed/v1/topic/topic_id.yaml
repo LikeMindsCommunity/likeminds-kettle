@@ -1,0 +1,39 @@
+put:
+  summary: Update a topic by ID
+
+  operationId: updateTopicById
+
+  tags:
+    - Feed - V1
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
+    - name: topic_id
+      in: path
+      description: ID of the topic to be updated
+      required: true
+      schema:
+        type: string
+
+  requestBody:
+    description: Updated topic details
+    required: true
+    content:
+      application/json:
+        example: 
+          name: "Topic Name"
+          is_enabled: false
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

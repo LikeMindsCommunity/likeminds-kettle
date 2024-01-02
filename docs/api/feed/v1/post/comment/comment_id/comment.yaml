@@ -1,0 +1,122 @@
+put:
+  summary: Edit Comment on Post
+
+  operationId: editComment
+
+  tags:
+    - Feed - V1
+
+  description: |
+    This API edits a user comment on a Post.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../../../../components/parameters/headers/authToken.yaml"
+    - name: post_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The ID of the post to which the comment belongs
+    - name: comment_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The ID of the comment to be edited
+    - name: body
+      in: body
+      required: true
+      schema:
+        type: object
+        properties:
+          text:
+            type: string
+      description: The updated text of the comment
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+                nullable: true
+              data:
+                type: object
+                properties:
+                  comment:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      comments_count:
+                        type: integer
+                      community_id:
+                        type: integer
+                      created_at:
+                        type: integer
+                      is_edited:
+                        type: boolean
+                      is_liked:
+                        type: boolean
+                      level:
+                        type: integer
+                      likes_count:
+                        type: integer
+                      menu_items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            title:
+                              type: string
+                      post_id:
+                        type: string
+                      replies:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            // Define properties for replies here
+                      text:
+                        type: string
+                      updated_at:
+                        type: integer
+                      user_id:
+                        type: string
+                  users:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        user_id:
+                          type: string
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            image_url:
+                              type: string
+                            user_unique_id:
+                              type: string
+                            is_guest:
+                              type: boolean
+                            is_deleted:
+                              type: boolean
+                            custom_title:
+                              type: string

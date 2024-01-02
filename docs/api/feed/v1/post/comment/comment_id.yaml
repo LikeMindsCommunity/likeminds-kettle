@@ -1,0 +1,132 @@
+put:
+  summary: Edit a comment on a post
+
+  operationId: editCommentOnPost
+
+  tags:
+    - Feed - V1
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../../components/parameters/headers/authToken.yaml"
+    - name: post_id
+      in: path
+      description: ID of the post containing the comment
+      required: true
+      schema:
+        type: string
+    - name: comment_id
+      in: path
+      description: ID of the comment to be edited
+      required: true
+      schema:
+        type: string
+
+  requestBody:
+    description: Updated comment details
+    required: true
+    content:
+      application/json:
+        example:
+          text: "Edit comment Text"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  comment:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      comments_count:
+                        type: integer
+                      community_id:
+                        type: integer
+                      created_at:
+                        type: integer
+                      is_edited:
+                        type: boolean
+                      is_liked:
+                        type: boolean
+                      level:
+                        type: integer
+                      likes_count:
+                        type: integer
+                      menu_items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            title:
+                              type: string
+                      post_id:
+                        type: string
+                      replies:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            text:
+                              type: string
+                            level:
+                              type: integer
+                            likes_count:
+                              type: integer
+                            comments_count:
+                              type: integer
+                            menu_items:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  title:
+                                    type: string
+                            user_id:
+                              type: string
+                            post_id:
+                              type: string
+                            created_at:
+                              type: integer
+                            updated_at:
+                              type: integer
+                      text:
+                        type: string
+                      updated_at:
+                        type: integer
+                      user_id:
+                        type: string
+                  users:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        image_url:
+                          type: string
+                        user_unique_id:
+                          type: string
+                        is_guest:
+                          type: boolean
+                        is_deleted:
+                          type: boolean
+                        custom_title:
+                          type: string

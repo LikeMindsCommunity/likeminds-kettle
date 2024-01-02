@@ -1,0 +1,236 @@
+post:
+  summary: Create a New Post
+
+  operationId: createNewPost
+
+  tags:
+    - Feed - V1
+
+  description: This API creates a new Post.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../../components/parameters/headers/versionCode.yaml"
+    - name: x-accept-version
+      in: header
+      schema:
+        type: string
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            text:
+              type: string
+              description: Text of the Post
+            heading:
+              type: string
+              description: Heading of the Post
+            on_behalf_of_uuid:
+              type: string
+              description: User on whose behalf you are creating a post
+            attachments:
+              type: array
+              description: Attachments on the Post
+              items:
+                type: object
+                properties:
+                  attachment_type:
+                    type: integer
+                    enum: [1, 2, 3, 4, 5, 6, 7]
+                    description: |
+                      Attachment type
+                      - 1 - Image
+                      - 2 - Video
+                      - 3 - Document
+                      - 4 - Link
+                      - 5 - Custom widget
+                      - 6 - Article widget
+                      - 7 - Poll widget
+                  attachment_meta:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                        nullable: true
+                        description: URL of the attachment
+                      format:
+                        type: string
+                        nullable: true
+                        description: Format of the attachment (pdf, etc.)
+                      size:
+                        type: integer
+                        nullable: true
+                        description: Size of the attachment
+                      duration:
+                        type: integer
+                        nullable: true
+                        description: Duration of the video
+                      page_count:
+                        type: integer
+                        nullable: true
+                        description: Page count of the file
+                      og_tags:
+                        type: object
+                        properties:
+                          title:
+                            type: string
+                            nullable: true
+                            description: Link Title
+                          image:
+                            type: string
+                            nullable: true
+                            description: Link Image URL
+                          description:
+                            type: string
+                            nullable: true
+                            description: Link description
+                          url:
+                            type: string
+                            nullable: true
+                            description: Link URL
+    required:
+      - text
+      - on_behalf_of_uuid
+      - attachments
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+                nullable: true
+              data:
+                type: object
+                properties:
+                  post:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      text:
+                        type: string
+                      attachments:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            attachment_type:
+                              type: integer
+                            attachment_meta:
+                              type: object
+                              properties:
+                                url:
+                                  type: string
+                                  nullable: true
+                                format:
+                                  type: string
+                                  nullable: true
+                                size:
+                                  type: integer
+                                  nullable: true
+                                duration:
+                                  type: integer
+                                  nullable: true
+                                page_count:
+                                  type: integer
+                                  nullable: true
+                                og_tags:
+                                  type: object
+                                  properties:
+                                    title:
+                                      type: string
+                                      nullable: true
+                                    image:
+                                      type: string
+                                      nullable: true
+                                    description:
+                                      type: string
+                                      nullable: true
+                                    url:
+                                      type: string
+                                      nullable: true
+                      community_id:
+                        type: integer
+                      is_pinned:
+                        type: boolean
+                      is_edited:
+                        type: boolean
+                      is_saved:
+                        type: boolean
+                      user_id:
+                        type: string
+                      uuid:
+                        type: string
+                      likes_count:
+                        type: integer
+                      comments_count:
+                        type: integer
+                      menu_items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            title:
+                              type: string
+                      replies:
+                        type: array
+                      created_at:
+                        type: integer
+                      updated_at:
+                        type: integer
+                  users:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        user_id:
+                          type: string
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            image_url:
+                              type: string
+                            user_unique_id:
+                              type: string
+                            uuid:
+                              type: string
+                            sdk_client_info:
+                              type: object
+                              properties:
+                                community:
+                                  type: integer
+                                user:
+                                  type: integer
+                                user_unique_id:
+                                  type: string
+                                uuid:
+                                  type: string
+                            is_guest:
+                              type: boolean
+                            is_deleted:
+                              type: boolean
+                  widgets:
+                    type: object
+                    properties:
+                      widget_id:
+                        type: string
+                      widget:
+                        type: object

@@ -1,0 +1,78 @@
+put:
+  summary: Vote on a poll
+
+  operationId: voteOnPoll
+
+  tags:
+    - Poll
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - name: poll_id
+      in: path
+      description: ID of the poll to vote on
+      required: true
+      schema:
+        type: string
+
+  requestBody:
+    description: Votes on poll options
+    required: true
+    content:
+      application/json:
+        example:
+          votes:
+            - "03457cc0-4d18-44b4-a3e6-b0234dd1f28d"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+
+
+get:
+  summary: Get votes for a poll
+
+  operationId: getPollVotes
+
+  tags:
+    - Poll
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - name: poll_id
+      in: path
+      description: ID of the poll to get votes for
+      required: true
+      schema:
+        type: string
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  votes:
+                    type: array
+                    items:
+                      type: string

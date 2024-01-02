@@ -1,0 +1,33 @@
+put:
+  summary: Save Post for User
+
+  operationId: savePostForUser
+
+  tags:
+    - Feed - V1
+
+  description: This API saves a Post for a User.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
+    - name: post_id
+      in: path
+      description: ID of the post to be saved
+      schema:
+        type: string
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
