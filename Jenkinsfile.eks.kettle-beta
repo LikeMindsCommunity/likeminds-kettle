@@ -9,20 +9,20 @@ pipeline {
         
         stage ('Build Image') {
             steps {
-                sh "docker build -t 1434565581.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication:$BUILD_NUMBER ."
+                sh "docker build -f Dockerfile.kettle-beta -t 081371230266.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:$BUILD_NUMBER ."
             }
         }
         
         stage ('Push Image') {
             steps {
-                sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 143941255581.dkr.ecr.ap-south-1.amazonaws.com"
-                sh "docker push 143941255581.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication:$BUILD_NUMBER"
+                sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 081371230266.dkr.ecr.ap-south-1.amazonaws.com"
+                sh "docker push 081371230266.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:$BUILD_NUMBER"
             }
         }
         
         stage ('Remove Image from jenkins') {
             steps {
-                sh "docker rmi 143941255581.dkr.ecr.ap-south-1.amazonaws.com/vehicle-routing-prod:$BUILD_NUMBER"
+                sh "docker rmi 081371230266.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:$BUILD_NUMBER"
             }
         }
     }
