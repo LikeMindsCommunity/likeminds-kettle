@@ -34,6 +34,12 @@ func GetCommunityConfigurations(c *gin.Context) {
 		return
 	}
 
+	// Get bot id if call is from dashboard
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
+	}
+
 	params := map[string]string{
 		ParamConfigurationTypes: c.Query(ParamConfigurationTypes),
 	}
@@ -51,6 +57,12 @@ func UpdateCommunityConfigurations(c *gin.Context) {
 	userId := user.GetRequestingUserId(c)
 	if userId == "" {
 		return
+	}
+
+	// Get bot id if call is from dashboard
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
 	}
 
 	//Parse request
