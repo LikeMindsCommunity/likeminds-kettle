@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    stages {
+        stage("Checkout code") {
+            steps {
+                checkout scm
+            }
+         }
+        
+        stage ('Build Image') {
+            steps {
+                sh "docker build -t 1434565581.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication:$BUILD_NUMBER ."
+            }
+        }
+        
+        stage ('Push Image') {
+            steps {
+                sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 143941255581.dkr.ecr.ap-south-1.amazonaws.com"
+                sh "docker push 143941255581.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication:$BUILD_NUMBER"
+            }
+        }
+        
+        stage ('Remove Image from jenkins') {
+            steps {
+                sh "docker rmi 143941255581.dkr.ecr.ap-south-1.amazonaws.com/vehicle-routing-prod:$BUILD_NUMBER"
+            }
+        }
+    }
+}
