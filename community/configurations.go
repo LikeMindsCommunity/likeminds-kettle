@@ -6,9 +6,6 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-// type communityConfigurationsValue struct {
-// }
-
 type UpdateCommunityConfigurationsRequest struct {
 	Type  string                 `json:"type" binding:"required"`
 	Value map[string]interface{} `json:"value" binding:"required"`
