@@ -207,6 +207,7 @@ func main() {
 	router.GET("/community/intro_examples", LTMorVTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetIntroExamples)
 	router.POST("/community/invite", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.SendCommunityInvite)
 	router.GET("/community/configurations", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetCommunityConfigurations)
+	router.PATCH("/community/configurations", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.UpdateCommunityConfigurations)
 	router.GET("/community/member/pending", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetPendingCommunityMembers)
 	router.GET("/community/removal_reports", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetRemovalReports)
 	router.POST("/community/member/:user_id/connection", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.CreateMemberConnection)
