@@ -3,7 +3,6 @@ post:
   operationId: blockDirectMessageChatroom
   tags:
     - Chatroom
-    - Direct Message
   security:
     - bearerAuth: []
   parameters:
