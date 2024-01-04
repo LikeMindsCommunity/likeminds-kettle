@@ -1,0 +1,80 @@
+get:
+  summary: Get Cohort Access Data
+
+  operationId: getCohortAccessData
+
+  tags:
+    - Feedroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - name: feedroom_id
+      in: query
+      required: true
+      schema:
+        type: integer
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  cohort_data:
+                    type: array
+                    items: {}
+
+
+
+put:
+  summary: Update Cohort Access
+
+  operationId: updateCohortAccess
+
+  tags:
+    - Feedroom
+
+  security:
+    - apiKey: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            feedroom_id:
+              type: integer
+            cohort_id:
+              type: integer
+            cohort_access:
+              type: integer
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

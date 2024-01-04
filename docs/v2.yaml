@@ -27,7 +27,7 @@ tags:
   - name: Feed
   - name: Feed - V1
     description: APIs related to Feed (Api Revamp v1)
-  - name: Community feed
+  - name: Community Feed
   - name: Helpers
   - name: Channel
   - name: Widget
@@ -195,14 +195,82 @@ paths:
   /poll/<poll_id>/vote:
     $ref: "./api/poll/vote.yaml"
 
+  /feedroom:
+    $ref: "./api/feedroom/feedroom.yaml"
+  /feedroom/action:
+    $ref: "./api/feedroom/action.yaml"
+  /feedroom/settings:
+    $ref: "./api/feedroom/settings.yaml"
+  /feedroom/type:
+    $ref: "./api/feedroom/type.yaml"
+  /feedroom/enable_member_post:
+    $ref: "./api/feedroom/enable_member_post.yaml"
+  /feedroom/pin:
+    $ref: "./api/feedroom/pin.yaml"
+  /feedroom/auto_join_members:
+    $ref: "./api/feedroom/auto_join_members.yaml"
+  /feedroom/participants:
+    $ref: "./api/feedroom/participants.yaml"
+  /feedroom/cohort/access:
+    $ref: "./api/feedroom/access.yaml"
+  /feedroom/mine:
+    $ref: "./api/feedroom/mine.yaml"
+  /feedroom/follow:
+    $ref: "./api/feedroom/follow.yaml"
+  /feedroom/tag:
+    $ref: "./api/feedroom/tag.yaml"
+  /feedroom/<feedroom_id>/tag:
+    $ref: "./api/feedroom/feedroom_tag.yaml"
+
+  /home/dm/meta:
+    $ref: "./api/dm/meta.yaml"
+  /community/feed/dm:
+    $ref: "./api/dm/dms.yaml"
+  /community/dm/status:
+    $ref: "./api/dm/status.yaml"
+
+  /community/member/search:
+    $ref: "./api/search/member_search.yaml"
+  /search:
+    $ref: "./api/search/search.yaml"
+  /search/post:
+    $ref: "./api/search/post.yaml"
+  /search/post/user/:user_id:
+    $ref: "./api/search/user.yaml"
+  /search/channel:
+    $ref: "./api/search/channel.yaml"
+  /search/message:
+    $ref: "./api/search/message.yaml"
+
+  /user/subscription/whatsapp:
+    $ref: "./api/user/whatsapp.yaml"
+  /user/device/push:
+    $ref: "./api/user/push.yaml"
+  /user/meta:
+    $ref: "./api/user/meta.yaml"
+  /user/config:
+    $ref: "./api/user/config.yaml"
+  /user/otp:
+    $ref: "./api/user/otp.yaml"
+  /user/otp/verify:
+    $ref: "./api/user/verify.yaml"
+
+  /community/feed:
+    $ref: "./api/community_feed.yaml"
+
   /helper/url:
     $ref: "./api/helper/url.yaml"
   /helper/media/upload:
     $ref: "./api/helper/media_upload.yaml"
+  /logs:
+    $ref: "./api/helper/logs.yaml"
+
   /widget:
     $ref: "./api/widget.yaml"
-  /webhooks:
-    $ref: "./api/webhooks.yaml"
-  # /search:
-    # $ref: "./api/search/index.yaml"
-    
+  /widget/<widget_id>:
+    $ref: "./api/widget_id.yaml"
+
+  /webhook:
+    $ref: "./api/webhook.yaml"
+  /webhook/<webhook_id>:
+    $ref: "./api/webhook_id.yaml"

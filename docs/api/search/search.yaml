@@ -1,0 +1,35 @@
+get:
+  summary: Search
+
+  operationId: search
+
+  tags:
+    - Search
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - name: search
+      in: query
+      description: keyword to search
+      required: true
+      schema:
+        type: string
+    - name: page
+      in: query
+      description: page number
+      required: true
+      schema:
+        type: integer
+    - name: page_size
+      in: query
+      description: page size
+      required: true
+      schema:
+        type: integer
+
+  responses:
+    "200":
+      description: OK

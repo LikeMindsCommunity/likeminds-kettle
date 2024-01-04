@@ -1,0 +1,35 @@
+put:
+  summary: Follow Feedroom
+
+  operationId: followFeedroom
+
+  tags:
+    - Feedroom
+
+  security:
+    - apiKey: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - name: feedroom_id
+      in: query
+      required: true
+      schema:
+        type: integer
+    - name: value
+      in: query
+      required: true
+      schema:
+        type: boolean
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

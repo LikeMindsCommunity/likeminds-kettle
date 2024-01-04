@@ -1,0 +1,150 @@
+post:
+  summary: Add Participants to Chatroom
+
+  operationId: addParticipants
+
+  tags:
+    - Feedroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            is_secret:
+              type: boolean
+            feedroom_id:
+              type: integer
+            participants:
+              type: array
+              items:
+                type: string
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+                nullable: true
+
+
+get:
+  summary: Get Chatroom Participants
+
+  operationId: getParticipants
+
+  tags:
+    - Feedroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - name: feedroom_id
+      in: query
+      required: true
+      schema:
+        type: integer
+    - name: is_secret
+      in: query
+      required: true
+      schema:
+        type: boolean
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+                nullable: true
+              data:
+                type: object
+                properties:
+                  can_edit_participant:
+                    type: boolean
+                  participants:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        image_url:
+                          type: string
+                        is_guest:
+                          type: boolean
+                        name:
+                          type: string
+                          description: User Name
+
+
+delete:
+  summary: Remove Participant from Chatroom
+
+  operationId: removeParticipant
+
+  tags:
+    - Feedroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            feedroom_id:
+              type: integer
+            participant_id:
+              type: string
+            is_secret:
+              type: boolean
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+                nullable: true

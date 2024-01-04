@@ -1,0 +1,32 @@
+get:
+  summary: Community Feed DM
+
+  operationId: communityFeedDM
+
+  tags:
+    - DM
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  total_cm_communities_count:
+                    type: integer
+                  total_member_communities_count:
+                    type: integer

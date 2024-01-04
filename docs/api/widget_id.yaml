@@ -1,0 +1,32 @@
+put:
+  summary: Update Widget
+  operationId: updateWidget
+  tags:
+    - Widget
+  parameters:
+    - $ref: "../components/parameters/headers/authToken.yaml"
+    - name: widget_id
+      in: path
+      description: ID of the widget to update
+      required: true
+      schema:
+        type: string
+  security:
+    - bearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        example:
+          metadata:
+            another_test:
+              test_2: "test23"
+            test: "value"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          example:
+            success: true
+            data: {}

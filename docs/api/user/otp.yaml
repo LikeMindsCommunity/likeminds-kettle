@@ -1,0 +1,37 @@
+post:
+  summary: User OTP
+
+  operationId: userOTP
+
+  tags:
+    - User
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            otp_mode:
+              type: string
+            mobile_no:
+              type: integer
+            country_code:
+              type: integer
+            is_retry:
+              type: boolean
+        required:
+          - otp_mode
+          - mobile_no
+          - country_code
+          - is_retry
+
+  responses:
+    "200":
+      description: OK

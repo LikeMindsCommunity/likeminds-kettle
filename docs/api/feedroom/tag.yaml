@@ -1,0 +1,47 @@
+get:
+  summary: Get Feedroom Tags
+
+  operationId: getFeedroomTags
+
+  tags:
+    - Feedroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - name: feedroom_id
+      in: query
+      required: true
+      schema:
+        type: integer
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  group_tags:
+                    type: array
+                    items: {}
+                  members:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: {}
+                        image_url: {}
+                        is_guest: {}
+                        name: {}
+                        user_unique_id: {}
+                  participants: {}

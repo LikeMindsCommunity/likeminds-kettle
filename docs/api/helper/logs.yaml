@@ -1,0 +1,30 @@
+post:
+  summary: Logs
+  operationId: postLogs
+  tags:
+    - Helpers
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        example:
+          logs:
+            - stack_trace:
+                errors: "string"
+            - device_meta:
+                key1: "string"
+            # sdk_meta: {}
+            - timestamp: 1701352500000
+            # severity: "string"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          example:
+            success: true
+            data: {}

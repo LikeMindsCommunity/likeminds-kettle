@@ -1,0 +1,50 @@
+get:
+  summary: Search Post by User
+
+  operationId: searchPostByUser
+
+  tags:
+    - Search
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - name: user_id
+      in: path
+      description: User ID
+      required: true
+      schema:
+        type: string
+    - name: search
+      in: query
+      description: keyword to search
+      required: true
+      schema:
+        type: string
+    - name: search_type
+      in: query
+      description: Search type
+      required: true
+      schema:
+        type: string
+      enum:
+        - heading
+        # Add other possible values if applicable
+    - name: page
+      in: query
+      description: page number
+      required: true
+      schema:
+        type: integer
+    - name: page_size
+      in: query
+      description: page size
+      required: true
+      schema:
+        type: integer
+
+  responses:
+    "200":
+      description: OK
