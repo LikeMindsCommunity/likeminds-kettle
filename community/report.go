@@ -39,8 +39,9 @@ type CloseReportRequest struct {
 	ReportID int `json:"report_id" binding:"required"`
 }
 
-type CloseReportV1Request struct {
-	ReportIds []int `json:"report_ids" binding:"required"`
+type CloseReportsNewRequest struct {
+	ReportIds []int  `json:"report_ids" binding:"required"`
+	Status    string `json:"status,omitempty"`
 }
 
 func parsePushReportRequest(c *gin.Context) (*PushReportRequest, error) {
@@ -78,9 +79,9 @@ func parseCloseReportRequest(c *gin.Context) (*CloseReportRequest, error) {
 	return &crr, nil
 }
 
-func parseCloseReportV1Request(c *gin.Context) (*CloseReportV1Request, error) {
+func parseCloseReportsNewRequest(c *gin.Context) (*CloseReportsNewRequest, error) {
 	//POST body params
-	var crr CloseReportV1Request
+	var crr CloseReportsNewRequest
 
 	if err := c.ShouldBindJSON(&crr); err != nil {
 		return nil, err
@@ -115,6 +116,11 @@ func CloseReport(c *gin.Context) {
 	Report(c, utils.DELETEMethod)
 }
 
+// CloseReportsNew is used to close a report in community
+func CloseReportsNew(c *gin.Context) {
+	Report(c, utils.PatchMethod)
+}
+
 // Report method handles community reports
 func Report(c *gin.Context, method int) {
 
@@ -122,6 +128,12 @@ func Report(c *gin.Context, method int) {
 	userId := user.GetRequestingUserId(c)
 	if userId == "" {
 		return
+	}
+
+	// Get Bot Id if request from dashboard
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
 	}
 
 	//Send request
@@ -142,33 +154,19 @@ func Report(c *gin.Context, method int) {
 			pushReportsInternalOld(c, userId)
 		}
 
+	case utils.PatchMethod:
+
+		closeReportsNew(c, userId)
+
 	case utils.DELETEMethod:
 
-		botId := user.GetBotId(c)
-		if botId != "" {
-			userId = botId
-		}
-
-		apiRevampCheckV1 := utils.ApiRevampV1Check(c)
-
-		if apiRevampCheckV1 {
-			// If ApiRevampV1Check is true, call api/community/report with DELETE method
-			closeReportsInternalV1(c, userId)
-		} else {
-			// Else call api/close_report with POST method
-			closeReportsInternalOld(c, userId)
-		}
+		//call api/close_report with POST method
+		closeReportsInternalOld(c, userId)
 
 	}
 }
 
 func getReportsInternal(c *gin.Context, userId string) {
-
-	// Get Bot Id if request from dashboard
-	botId := user.GetBotId(c)
-	if botId != "" {
-		userId = botId
-	}
 
 	//Params to be sent with pagination and filter support in API
 	params := map[string]string{
@@ -265,10 +263,10 @@ func closeReportsInternalOld(c *gin.Context, userId string) {
 }
 
 // Internal method to close reports ApiRevamp v1
-func closeReportsInternalV1(c *gin.Context, userId string) {
+func closeReportsNew(c *gin.Context, userId string) {
 
 	//Body to be sent in the close report api internally
-	closeReportV1Request, err := parseCloseReportV1Request(c)
+	crnr, err := parseCloseReportsNewRequest(c)
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
@@ -276,7 +274,7 @@ func closeReportsInternalV1(c *gin.Context, userId string) {
 	}
 
 	//Send Request to api/community/report/close
-	utils.SendRequest(c, utils.CoreService, CommunityReportV1EndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, closeReportV1Request)
+	utils.SendRequest(c, utils.CoreService, CommunityReportV1EndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, crnr)
 }
 
 // Internal method to fetch posts and comments data for the reports

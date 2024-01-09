@@ -170,6 +170,7 @@ func main() {
 	router.GET("/community/report", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetReport)
 	router.POST("/community/report", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.PushReport)
 	router.DELETE("/community/report", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.CloseReport)
+	router.PATCH("/community/report", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.CloseReportsNew)
 	router.GET("/community/report/tag", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetReportTags)
 	router.GET("/community/settings", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetCommunitySettings)
 	router.PUT("/community/settings", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.UpdateCommunitySettings)
