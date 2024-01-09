@@ -9,6 +9,7 @@ const (
 	ReportTypePostInt
 	ReportTypeCommentInt
 	ReportTypeReplyInt
+	ReportTypePendingPostInt
 )
 
 const (
@@ -20,6 +21,7 @@ const (
 	ReportTypePost         = "post"
 	ReportTypeComment      = "comment"
 	ReportTypeReply        = "reply"
+	ReportTypePendingPost  = "pending_post"
 )
 
 func ReportTypeStrintToInt(reportType string) int {
@@ -47,6 +49,9 @@ func ReportTypeStrintToInt(reportType string) int {
 
 	case ReportTypeReply:
 		return ReportTypeReplyInt
+
+	case ReportTypePendingPost:
+		return ReportTypePendingPostInt
 
 	default:
 		return -1

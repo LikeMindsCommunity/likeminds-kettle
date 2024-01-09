@@ -116,8 +116,8 @@ func CloseReport(c *gin.Context) {
 	Report(c, utils.DELETEMethod)
 }
 
-// CloseReportsNew is used to close a report in community
-func CloseReportsNew(c *gin.Context) {
+// UpdateReports is used to close a report in community
+func UpdateReports(c *gin.Context) {
 	Report(c, utils.PatchMethod)
 }
 
@@ -156,7 +156,7 @@ func Report(c *gin.Context, method int) {
 
 	case utils.PatchMethod:
 
-		closeReportsNew(c, userId)
+		updateReportsInternal(c, userId)
 
 	case utils.DELETEMethod:
 
@@ -263,7 +263,7 @@ func closeReportsInternalOld(c *gin.Context, userId string) {
 }
 
 // Internal method to close reports ApiRevamp v1
-func closeReportsNew(c *gin.Context, userId string) {
+func updateReportsInternal(c *gin.Context, userId string) {
 
 	//Body to be sent in the close report api internally
 	crnr, err := parseCloseReportsNewRequest(c)
@@ -282,6 +282,7 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 	map[string]interface{}, map[string]interface{}, map[string]user.MemberMeta) {
 
 	var post_ids []string
+	var pending_post_ids []string
 	var comment_ids []string
 	var user_ids []string
 
@@ -308,6 +309,10 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 
 			if int(typeValue.(float64)) == feed.COMMENT_REPORT_TYPE || int(typeValue.(float64)) == feed.REPLY_REPORT_TYPE {
 				comment_ids = append(comment_ids, report.(map[string]interface{})["entity_id"].(string))
+			}
+
+			if int(typeValue.(float64)) == feed.PENDING_POST_REPORT_TYPE {
+				pending_post_ids = append(pending_post_ids, report.(map[string]interface{})["entity_id"].(string))
 			}
 
 		}
@@ -351,12 +356,21 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 	}
 
 	// if post_ids are not empty then fetch posts data
-	if len(post_ids) > 0 {
+	if len(post_ids) > 0 || len(pending_post_ids) > 0 {
 
 		// create params for the request
 		params := map[string]string{
-			feed.ParamPostIds:  utils.ParseStringArrayToString(post_ids),
 			feed.ParamUserIsCm: "true",
+		}
+
+		// If post_ids are not empty, add post_ids to params
+		if len(post_ids) > 0 {
+			params[feed.ParamPostIds] = utils.ParseStringArrayToString(post_ids)
+		}
+
+		// If pending_post_ids are not empty, add pending_post_ids to params
+		if len(pending_post_ids) > 0 {
+			params[feed.ParamPendingPostIds] = utils.ParseStringArrayToString(pending_post_ids)
 		}
 
 		//Send request to swarm service

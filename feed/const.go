@@ -39,6 +39,7 @@ const ParamPageSize = "page_size"
 const ParamUserIsCm = "user_is_cm"
 const ParamFeedroomId = "feedroom_id"
 const ParamPostIds = "post_ids"
+const ParamPendingPostIds = "pending_post_ids"
 const ParamCommentIds = "comment_ids"
 const ParamTopicIds = "topic_ids"
 const ParamWidgetIds = "widget_ids"
@@ -71,9 +72,10 @@ const (
 )
 
 const (
-	POST_REPORT_TYPE    = 5
-	COMMENT_REPORT_TYPE = 6
-	REPLY_REPORT_TYPE   = 7
+	POST_REPORT_TYPE         = 5
+	COMMENT_REPORT_TYPE      = 6
+	REPLY_REPORT_TYPE        = 7
+	PENDING_POST_REPORT_TYPE = 8
 )
 
 // constants for attachment_type
