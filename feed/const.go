@@ -13,6 +13,7 @@ const SingleCommentReplyEndPoint = "/post/%s/comment/%s/comment"
 const FetchUserSavedPostsEndPoint = "/user/%s/save"
 const FetchUserCreatedPostsEndPoint = "/user/%s/post"
 const SingleUserActivityEndPoint = "/user/%s/activity"
+const CreatePendingPostEndPoint = "/post/pending"
 
 // GetUserActivityEndPoint | swarm API endpoint for user activity list
 const GetUserActivityEndPoint = "/user/activity"

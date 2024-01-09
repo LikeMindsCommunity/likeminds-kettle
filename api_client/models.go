@@ -8,7 +8,7 @@ import (
 type APIClientResponse struct {
 	Success      bool                   `json:"success"`
 	ErrorMessage string                 `json:"error_message"`
-	ErrorMeta    map[string]interface{} `json:"error_meta"`
+	ErrorMeta    map[string]interface{} `json:"error_meta,omitempty"`
 	Response     map[string]interface{} `json:"-"`
 }
 
