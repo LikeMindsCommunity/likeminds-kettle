@@ -274,7 +274,7 @@ func updateReportsInternal(c *gin.Context, userId string) {
 	}
 
 	//Send Request to api/community/report/close
-	utils.SendRequest(c, utils.CoreService, CommunityReportV1EndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, crnr)
+	utils.SendRequest(c, utils.CoreService, CommunityReportV1EndPoint, utils.PATCHRequest, utils.CreateHeaders(c, userId), nil, crnr)
 }
 
 // Internal method to fetch posts and comments data for the reports

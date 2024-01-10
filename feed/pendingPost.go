@@ -15,7 +15,7 @@ func CreatePendingPost(c *gin.Context) {
 		return
 	}
 
-	//Body to be sent in the /post POST request
+	// Use Create post body params to create Pending post
 	cppr, err := parseCreatePostRequest(c)
 	if err != nil {
 		//If POST body params are missing
