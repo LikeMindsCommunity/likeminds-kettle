@@ -9,12 +9,11 @@ import (
 )
 
 type CreateTopicsRequest struct {
-	Name  string   `json:"name,omitempty"`
-	Names []string `json:"names,omitempty"`
+	Names []string `json:"names" binding:"required"`
 }
 
 type DeleteTopicsRequest struct {
-	TopicIds []string `json:"topic_ids"`
+	TopicIds []string `json:"topic_ids" binding:"required"`
 }
 
 type EditTopicRequest struct {
