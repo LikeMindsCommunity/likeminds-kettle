@@ -73,6 +73,8 @@ func FetchUserCreatedPosts(c *gin.Context) {
 			}
 		}
 
+		user_ids = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_ids)
+
 		//Fetch user data for given user_unique_ids
 		user_data, err := user.FetchMemberMeta(utils.CreateHeaders(c, userId), user_ids)
 		if err != nil {

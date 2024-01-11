@@ -96,13 +96,14 @@ func GeneralSearch(c *gin.Context) {
 			dataResponse["posts"] = apiCR["posts"]
 			dataResponse["topics"] = apiCR["topics"]
 			dataResponse["widgets"] = apiCR["widgets"]
+			dataResponse["reposted_posts"] = apiCR["reposted_posts"]
 
 			// Fetch users meta for the posts
 			if value, ok := dataResponse["posts"]; ok {
 
 				posts := value.([]interface{})
 
-				user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts)
+				user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts, dataResponse)
 
 				if err != nil {
 					utils.GenerateResponse(c, nil, false)
