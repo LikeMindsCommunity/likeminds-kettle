@@ -4,7 +4,7 @@ put:
   operationId: joinCommunity
 
   tags:
-    - Community Member
+    - Community
 
   security:
     - bearerAuth: []

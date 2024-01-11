@@ -49,7 +49,6 @@ delete:
   operationId: removeReactionFromConversation
   tags:
     - Conversation
-    - Reaction
   security:
     - bearerAuth: []
   parameters:

@@ -4,7 +4,7 @@ get:
   operationId: getCommunityMemberHomeMeta
 
   tags:
-    - Community Member
+    - Community
 
   security:
     - bearerAuth: []
