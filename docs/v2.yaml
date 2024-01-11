@@ -372,6 +372,15 @@ paths:
   /logs:
     $ref: "./api/helper/logs.yaml"
 
+  /channel:
+    $ref: "./api/channel/channel.yaml"
+  /channel/invites:
+    $ref: "./api/channel/invites.yaml"
+  /channel/invite:
+    $ref: "./api/channel/invite.yaml"
+  /channel/<channel_id>/settings/member/<uuid>:
+    $ref: "./api/channel/settings.yaml"
+
   /widget:
     $ref: "./api/widget.yaml"
   /widget/<widget_id>:

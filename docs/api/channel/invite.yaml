@@ -1,0 +1,52 @@
+put:
+  summary: Accept or Reject Channel Invite
+
+  operationId: acceptRejectChannelInvite
+
+  tags:
+    - Channel
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - name: x-api-key
+      in: header
+      description: API key of community
+      schema:
+        type: string
+    - name: x-platform-code
+      in: header
+      description: Platform Code
+      schema:
+        type: string
+    - name: x-version-code
+      in: header
+      description: Version Code
+      schema:
+        type: string
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            channel_id:
+              type: string
+            invite_status:
+              type: integer
+          required:
+            - channel_id
+            - invite_status
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
