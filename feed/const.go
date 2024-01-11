@@ -13,9 +13,10 @@ const SingleCommentReplyEndPoint = "/post/%s/comment/%s/comment"
 const FetchUserSavedPostsEndPoint = "/user/%s/save"
 const FetchUserCreatedPostsEndPoint = "/user/%s/post"
 const SingleUserActivityEndPoint = "/user/%s/activity"
+const CreatePendingPostEndPoint = "/post/pending"
 
 // GetUserActivityEndPoint | swarm API endpoint for user activity list
-const GetUserActivityEndPoint = "/user/%s/activity"
+const GetUserActivityEndPoint = "/user/activity"
 
 // GetUserActivityUnreadCountEndPoint | swarm API endpoint for user activity unread count
 const GetUserActivityUnreadCountEndPoint = "/user/%s/activity/unread_count"
@@ -31,12 +32,14 @@ const FetchPostsEndpoint = "/post"
 const FetchCommentsEndpoint = "/comment"
 const TopicEndPoint = "/topic"
 const SingleTopicEndPoint = "/topic/%s"
+const ConnectionFeedEndPoint = "/feed/connection"
 
 const ParamPage = "page"
 const ParamPageSize = "page_size"
 const ParamUserIsCm = "user_is_cm"
 const ParamFeedroomId = "feedroom_id"
 const ParamPostIds = "post_ids"
+const ParamPendingPostIds = "pending_post_ids"
 const ParamCommentIds = "comment_ids"
 const ParamTopicIds = "topic_ids"
 const ParamWidgetIds = "widget_ids"
@@ -44,6 +47,7 @@ const ParamIsEnabled = "is_enabled"
 const ParamSearchType = "search_type"
 const ParamSearch = "search"
 const ParamMinPosts = "min_posts"
+const ParamUserId = "user_id"
 
 const (
 	CREATE_POST_ACTION     = "create_post"
@@ -59,6 +63,7 @@ const (
 	DELETE_COMMENT_ACTION  = "delete_comment"
 	LIKE_COMMENT_ACTION    = "like_comment"
 	CREATE_ACTIVITY_ACTION = "create_activity"
+	VIEW_USER_ACTIVITY     = "view_user_activity"
 	VIEW_ACTIVITY_ACTION   = "view_activity"
 	VIEW_REPORT_ENTITY     = "view_report_entity"
 	CREATE_TOPIC_ACTION    = "create_topic"
@@ -69,9 +74,10 @@ const (
 )
 
 const (
-	POST_REPORT_TYPE    = 5
-	COMMENT_REPORT_TYPE = 6
-	REPLY_REPORT_TYPE   = 7
+	POST_REPORT_TYPE         = 5
+	COMMENT_REPORT_TYPE      = 6
+	REPLY_REPORT_TYPE        = 7
+	PENDING_POST_REPORT_TYPE = 8
 )
 
 // constants for attachment_type
