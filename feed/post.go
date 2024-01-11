@@ -311,6 +311,9 @@ func GetPostInternal(c *gin.Context, userId string, postId string) map[string]in
 }
 
 func createPostInternal(c *gin.Context, userId string) {
+
+	headers := utils.CreateHeaders(c, userId)
+
 	//Body to be sent in the /post POST request
 	createPostRequest, err := parseCreatePostRequest(c)
 	if err != nil {
@@ -335,7 +338,21 @@ func createPostInternal(c *gin.Context, userId string) {
 	createPostRequest.UserIsCm = response.IsCm
 
 	if createPostRequest.IsRepost {
-		//success = utility.GetCommunitySettingsInternal(c, userId)
+		communitySettings, err := utils.GetCommunitySettingsInternal(headers)
+		if err != nil {
+		}
+
+		var feedRepostCommunitySetting utils.CommunitySetting
+		for _, setting := range communitySettings {
+			if setting.SettingType == FeedRepostCommunitySettingType {
+				feedRepostCommunitySetting = setting
+			}
+		}
+
+		if feedRepostCommunitySetting.IsEnabled != true {
+			utils.GeneralBadRequestError(c, utils.ErrorRepostSettingNotEnabled)
+			return
+		}
 	}
 
 	if createPostRequest.OnBehalfOfUUID != "" {

@@ -47,6 +47,7 @@ const ParamIsEnabled = "is_enabled"
 const ParamSearchType = "search_type"
 const ParamSearch = "search"
 const ParamUserId = "user_id"
+const FeedRepostCommunitySettingType = "feed_repost"
 
 const (
 	CREATE_POST_ACTION     = "create_post"

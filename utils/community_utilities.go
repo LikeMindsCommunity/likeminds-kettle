@@ -19,6 +19,19 @@ type CommunityConfiguration struct {
 	Value       map[string]interface{} `json:"value"`
 }
 
+// CommunitySetting | schema for community settings
+type CommunitySetting struct {
+	SettingType     string `json:"setting_type"  binding:"required"`
+	SettingTitle    string `json:"setting_title"  binding:"required"`
+	SettingSubTitle string `json:"setting_sub_title"  binding:"required"`
+	IsEnabled       bool   `json:"enabled"  binding:"required"`
+}
+
+type CommunitySettingsResponse struct {
+	Success           bool               `json:"success"`
+	CommunitySettings []CommunitySetting `json:"community_settings"`
+}
+
 type CommunityConfigurationsResponse struct {
 	Success                 bool                     `json:"success"`
 	CommunityConfigurations []CommunityConfiguration `json:"community_configurations"`
@@ -104,6 +117,28 @@ func getCommunityConfigurationInternal(headers map[string]interface{}, configura
 	communityConfiguration := ccr.CommunityConfigurations[0]
 
 	return &communityConfiguration, nil
+}
+
+// GetCommunitySettingsInternal | fetch community setting for application internal use
+func GetCommunitySettingsInternal(headers map[string]interface{}) ([]CommunitySetting, error) {
+
+	// Send request to internal service
+	respBytes, statusCode, err := GetRequestResponseWithoutContext(CoreService, FetchCommunitySettingsEndpoint, GETRequest, headers, nil, nil)
+	if err != nil || statusCode != http.StatusOK {
+		return nil, err
+	}
+
+	// Parse response
+	var csr CommunitySettingsResponse
+	if err = json.Unmarshal(respBytes, &csr); err != nil {
+		return nil, err
+	}
+
+	if len(csr.CommunitySettings) == 0 {
+		return nil, errors.New(ErrorCommunitySettingsNotFound)
+	}
+
+	return csr.CommunitySettings, nil
 }
 
 // utility method to fetch profile_meta configurations from Cache
