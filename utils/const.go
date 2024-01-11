@@ -99,3 +99,4 @@ const ParamWidgetIds = "widget_ids"
 // Endpoints
 const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
 const WidgetEndPoint = "/widget"
+const FetchCommunitySettingsEndpoint = "/api/community/fetch_community_settings"
