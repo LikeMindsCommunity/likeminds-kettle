@@ -1,0 +1,99 @@
+get:
+  summary: Get Community Direct Message Settings
+  operationId: getCommunityDMSettings
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+        format: text
+    - name: x-api-key
+      in: header
+      schema:
+        type: string
+        format: text
+    - name: x-platform-code
+      in: header
+      schema:
+        type: string
+        format: text
+    - name: x-version-code
+      in: header
+      schema:
+        type: string
+        format: text
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  community_dm_settings:
+                    type: object
+                    properties:
+                      community:
+                        type: integer
+                      duration:
+                        type: string
+                      number_in_duration:
+                        type: integer
+                      state:
+                        type: integer
+
+
+
+
+put:
+  summary: Update Community Direct Message Settings
+  operationId: updateCommunityDMSettings
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+        format: text
+    - name: x-api-key
+      in: header
+      schema:
+        type: string
+        format: text
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            state:
+              type: integer
+            duration:
+              type: string
+            number_in_duration:
+              type: integer
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

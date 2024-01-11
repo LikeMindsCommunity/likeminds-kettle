@@ -1,0 +1,82 @@
+get:
+  summary: Get Community Member State
+  operationId: getCommunityMemberState
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: x-platform-code
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: x-version-code
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: x-sdk-source
+      in: header
+      required: true
+      schema:
+        type: string
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  created_at:
+                    type: integer
+                  edit_required:
+                    type: boolean
+                  member:
+                    type: object
+                    properties:
+                      custom_title:
+                        type: string
+                      id:
+                        type: integer
+                      image_url:
+                        type: string
+                      is_guest:
+                        type: boolean
+                      is_owner:
+                        type: boolean
+                      name:
+                        type: string
+                      organisation_name:
+                        type: null
+                      state:
+                        type: integer
+                      updated_at:
+                        type: integer
+                      user_unique_id:
+                        type: string
+                  member_rights:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        is_locked:
+                          type: boolean
+                        is_selected:
+                          type: boolean
+                        state:
+                          type: integer
+                        title:
+                          type: string
+                  state:
+                    type: integer
+                  tool_state:
+                    type: integer

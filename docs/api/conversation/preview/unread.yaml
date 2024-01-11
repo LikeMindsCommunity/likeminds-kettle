@@ -1,0 +1,49 @@
+get:
+  summary: Get Unread Conversations
+  operationId: getUnreadConversations
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      description: API Key
+      schema:
+        type: string
+    - name: chatroom_id
+      in: query
+      description: Chatroom ID
+      schema:
+        type: integer
+    - name: paginate_by
+      in: query
+      description: Items per page for pagination
+      schema:
+        type: integer
+    - name: page
+      in: query
+      description: Page number for pagination
+      schema:
+        type: integer
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  conversations:
+                    type: array
+                    items: {}

@@ -1,0 +1,24 @@
+delete:
+  summary: Leave Community
+  operationId: leaveCommunity
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+      required: true
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

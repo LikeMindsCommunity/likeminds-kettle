@@ -1,0 +1,50 @@
+get:
+  summary: Get Community Configurations
+
+  operationId: getCommunityConfigurations
+
+  tags:
+    - Community
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+
+    - name: configuration_types
+      in: query
+      description: Configuration types to get
+      schema:
+        type: array
+        items:
+          type: string
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  community_configurations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        description:
+                          type: string
+                        type:
+                          type: string
+                        value:
+                          type: object

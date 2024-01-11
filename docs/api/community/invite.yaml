@@ -1,0 +1,36 @@
+post:
+  summary: Invite to Community
+
+  operationId: inviteToCommunity
+
+  tags:
+    - Community
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+        format: text
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            type:
+              type: string
+              description: Type of invitation (e.g., "mobile")
+            mobile_no:
+              type: string
+              description: Mobile number to invite
+          required:
+            - type
+            - mobile_no
+
+  responses: {}

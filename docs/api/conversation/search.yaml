@@ -1,0 +1,74 @@
+get:
+  summary: Search Conversations
+  operationId: searchConversations
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      description: API Key
+      schema:
+        type: string
+    - name: x-platform-code
+      in: header
+      description: Platform Code
+      schema:
+        type: string
+    - name: x-version-code
+      in: header
+      description: Version Code
+      schema:
+        type: string
+    - name: search
+      in: query
+      description: Keyword to search
+      schema:
+        type: string
+      required: true
+    - name: follow_status
+      in: query
+      description: Follow status of chatroom to search on
+      schema:
+        type: boolean
+      required: true
+    - name: chatroom_id
+      in: query
+      description: Chatroom ID to search in
+      schema:
+        type: integer
+      required: false
+    - name: page
+      in: query
+      description: Page number
+      schema:
+        type: integer
+      required: false
+    - name: page_size
+      in: query
+      description: Page size
+      schema:
+        type: integer
+      required: false
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  conversations:
+                    type: array
+                    items: {}

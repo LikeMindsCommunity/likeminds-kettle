@@ -1,0 +1,59 @@
+get:
+  summary: Get Community Feed Notification Settings
+  operationId: getCommunityFeedNotificationSettings
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: x-api-key
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+  responses:
+    "200":
+      description: OK
+
+
+put:
+  summary: Update Community Feed Notification Settings
+  operationId: updateCommunityFeedNotificationSettings
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: x-api-key
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            notification_settings:
+              type: array
+              items:
+                type: object
+                properties:
+                  notification_type:
+                    type: integer
+                  enabled:
+                    type: boolean
+  responses:
+    "200":
+      description: OK

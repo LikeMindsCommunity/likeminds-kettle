@@ -1,0 +1,56 @@
+post:
+  summary: Create Poll in Conversation
+  operationId: createPollInConversation
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      description: API Key
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            poll:
+              type: object
+              properties:
+                text:
+                  type: string
+            conversation_id:
+              type: integer
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  poll:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      text:
+                        type: string
+                      user_id:
+                        type: integer
+
+
+

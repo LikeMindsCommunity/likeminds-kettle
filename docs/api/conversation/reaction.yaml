@@ -1,0 +1,85 @@
+put:
+  summary: Add Reaction to Conversation
+  operationId: addReactionToConversation
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      description: API Key
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            chatroom_id:
+              type: integer
+              description: Chtatroom id is nullable
+            reaction:
+              type: string
+              description: any string
+            conversation_id:
+              type: integer
+              description: Conversation id is nullable
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+
+
+
+delete:
+  summary: Remove Reaction from Conversation
+  operationId: removeReactionFromConversation
+  tags:
+    - Conversation
+    - Reaction
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      description: API Key
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            chatroom_id:
+              type: integer
+            conversation_id:
+              type: integer
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

@@ -1,0 +1,107 @@
+get:
+  summary: Get Chatroom Cohort Access
+  operationId: getChatroomCohortAccess
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: x-api-key
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: chatroom_id
+      in: query
+      description: ID of the chatroom
+      schema:
+        type: integer
+      required: true
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  cohort_data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        chatroom_id:
+                          type: integer
+                        cohort_access:
+                          type: integer
+                        cohort_id:
+                          type: integer
+
+
+put:
+  summary: Update Chatroom Cohort Access
+  operationId: updateChatroomCohortAccess
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: x-api-key
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: x-platform-code
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: x-version-code
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: body
+      in: body
+      description: Chatroom cohort access update request body
+      required: true
+      schema:
+        type: object
+        properties:
+          chatroom_id:
+            type: integer
+          cohort_id:
+            type: integer
+          cohort_access:
+            type: integer
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

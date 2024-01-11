@@ -1,0 +1,43 @@
+get:
+  summary: Fetch Community Removal Reports
+  operationId: fetchCommunityRemovalReports
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+      required: true
+    - name: x-platform-type
+      in: header
+      description: Platform Type
+      schema:
+        type: string
+      required: true
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  removal_reports:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        last_modified:
+                          type: string
+                          format: date-time
+                        url:
+                          type: string

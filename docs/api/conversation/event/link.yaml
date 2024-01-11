@@ -1,0 +1,39 @@
+get:
+  summary: Get Event Link
+  operationId: getEventLink
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      description: API Key
+      schema:
+        type: string
+    - name: conversation_id
+      in: query
+      description: Conversation ID
+      required: true
+      schema:
+        type: integer
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  online_link:
+                    type: string

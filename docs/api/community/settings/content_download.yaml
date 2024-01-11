@@ -1,0 +1,89 @@
+get:
+  summary: Get Community Content Download Settings
+  operationId: getCommunityContentDownloadSettings
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      required: true
+      schema:
+        type: text
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          example: |
+            {
+              "success": true,
+              "data": {}
+            }
+
+
+
+put:
+  summary: Update Community Content Download Settings
+  operationId: updateCommunityContentDownloadSettings
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      required: true
+      schema:
+        type: text
+    - name: body
+      in: body
+      required: true
+      schema:
+        type: object
+        properties:
+          content_download_settings:
+            type: array
+            items:
+              type: object
+              properties:
+                community_id:
+                  type: integer
+                download_setting_type:
+                  type: string
+                download_setting_title:
+                  type: string
+                enabled:
+                  type: boolean
+        example:
+          content_download_settings:
+            - community_id: 49827
+              download_setting_type: "image"
+              download_setting_title: "Images"
+              enabled: true
+            - community_id: 49827
+              download_setting_type: "video"
+              download_setting_title: "Videos"
+              enabled: true
+            # ... (repeat for other settings)
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          example: |
+            {
+              "success": true,
+              "data": {}
+            }

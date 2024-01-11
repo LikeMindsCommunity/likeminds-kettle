@@ -1,0 +1,49 @@
+get:
+  summary: Get Events
+  operationId: getEvents
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      description: API Key
+      schema:
+        type: string
+    - name: past_events
+      in: query
+      description: Flag to include past events
+      schema:
+        type: boolean
+    - name: attending_status
+      in: query
+      description: Flag to filter by attending status
+      schema:
+        type: boolean
+    - name: page
+      in: query
+      description: Page number for pagination
+      schema:
+        type: integer
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items: {}

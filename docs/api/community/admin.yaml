@@ -1,0 +1,37 @@
+delete:
+  summary: Remove Admin Privileges
+  operationId: removeAdminPrivileges
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+        format: text
+    - name: x-platform-type
+      in: header
+      schema:
+        type: string
+        format: text
+    - name: uuid
+      in: body
+      required: true
+      schema:
+        type: object
+        properties:
+          uuid:
+            type: string
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

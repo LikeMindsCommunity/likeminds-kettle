@@ -1,0 +1,271 @@
+post:
+  summary: Create Community Cohort
+  operationId: createCommunityCohort
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: x-api-key
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: body
+      in: body
+      description: Cohort creation request body
+      required: true
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+          member_ids:
+            type: array
+            items:
+              type: integer
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  cohort_data:
+                    type: object
+                    properties:
+                      cohort_id:
+                        type: integer
+                      community_id:
+                        type: integer
+                      member_ids:
+                        type: array
+                        items:
+                          type: integer
+                      name:
+                        type: string
+                      rights:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            is_locked:
+                              type: boolean
+                            is_selected:
+                              type: boolean
+                            state:
+                              type: integer
+                            title:
+                              type: string
+                            sub_title:
+                              type: string
+                      type:
+                        type: integer
+
+
+
+get:
+  summary: Get Community Cohort
+  operationId: getCommunityCohort
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: x-platform-type
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: cohort_id
+      in: query
+      schema:
+        type: integer
+      required: true
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  cohorts:
+                    type: object
+                    properties:
+                      member_count:
+                        type: integer
+                      members:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            image_url:
+                              type: string
+                            is_guest:
+                              type: boolean
+                            name:
+                              type: string
+                            organisation_name:
+                              type: string
+                            updated_at:
+                              type: integer
+                            user_unique_id:
+                              type: string
+                      name:
+                        type: string
+                      rights:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            is_locked:
+                              type: boolean
+                            is_selected:
+                              type: boolean
+                            state:
+                              type: integer
+                            title:
+                              type: string
+                            sub_title:
+                              type: string
+                      type:
+                        type: integer
+
+
+
+
+delete:
+  summary: Delete Community Cohort
+  operationId: deleteCommunityCohort
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: x-api-key
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: body
+      in: body
+      description: Cohort deletion request body
+      required: true
+      schema:
+        type: object
+        properties:
+          cohort_id:
+            type: integer
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+
+
+
+
+put:
+  summary: Update Community Cohort
+  operationId: updateCommunityCohort
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: x-api-key
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: body
+      in: body
+      description: Cohort update request body
+      required: true
+      schema:
+        type: object
+        properties:
+          cohort_id:
+            type: integer
+          rights:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                state:
+                  type: integer
+                is_selected:
+                  type: boolean
+                is_locked:
+                  type: boolean
+          member_ids:
+            type: array
+            items:
+              type: integer
+          name:
+            type: string
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

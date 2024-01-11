@@ -1,0 +1,19 @@
+get:
+  summary: Get Community Member Home Meta
+
+  operationId: getCommunityMemberHomeMeta
+
+  tags:
+    - Community Member
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - name: Authorization
+      in: header
+      description: Authorization Token
+      schema:
+        type: string
+
+  responses: {}

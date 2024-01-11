@@ -1,0 +1,39 @@
+delete:
+  summary: Delete Community Cohort
+  operationId: deleteCommunityCohort
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: x-api-key
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: body
+      in: body
+      description: Cohort deletion request body
+      required: true
+      schema:
+        type: object
+        properties:
+          cohort_id:
+            type: integer
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

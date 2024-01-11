@@ -1,0 +1,51 @@
+put:
+  summary: Set Conversation Topic
+  operationId: setConversationTopic
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      description: API Key
+      schema:
+        type: string
+    - name: chatroom_id
+      in: query
+      description: ID of the chatroom
+      required: true
+      schema:
+        type: integer
+    - name: conversation_id
+      in: query
+      description: ID of the conversation
+      required: true
+      schema:
+        type: integer
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            chatroom_id:
+              type: integer
+            conversation_id:
+              type: integer
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

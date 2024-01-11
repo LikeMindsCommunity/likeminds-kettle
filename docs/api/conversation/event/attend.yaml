@@ -1,0 +1,36 @@
+put:
+  summary: Attend Event
+  operationId: attendEvent
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      description: API Key
+      schema:
+        type: string
+    - name: conversation_id
+      in: query
+      description: ID of the conversation
+      required: true
+      schema:
+        type: integer
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            conversation_id:
+              type: integer
+            attending_status:
+              type: boolean
+  responses: {}

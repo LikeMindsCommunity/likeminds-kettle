@@ -138,15 +138,122 @@ paths:
   /chatroom/event/unseen_count:
     $ref: "./api/chatroom/event/unseen_count.yaml"
 
+  /community:
+    $ref: "./api/community/community.yaml"
+  /community/removal_reports:
+    $ref: "./api/community/removal.yaml"
   /community/member:
-    $ref: "./api/community/member.yaml"
-  /community/report:
-     $ref: "./api/community/report.yaml"
+    $ref: "./api/community/member/member.yaml"
+  /community/member/leave:
+    $ref: "./api/community/member/leave.yaml"
+  /community/member/state:
+    $ref: "./api/community/member/state.yaml"
+  /community/member/role:
+    $ref: "./api/community/member/role.yaml"
+  /community/member/remove:
+    $ref: "./api/community/member/remove.yaml"
+  /community/member/pending:
+    $ref: "./api/community/member/pending.yaml"
+  /community/member/profile:
+    $ref: "./api/community/member/profile.yaml"
+  /community/member/chatroom:
+    $ref: "./api/community/member/chatroom.yaml"
+  /community/member/channel/status:
+    $ref: "./api/community/member/status.yaml"
+  /community/member/<user_id>/channel:
+    $ref: "./api/community/member/channel.yaml"
+  /community/member/home/meta:
+    $ref: "./api/community/member/meta.yaml"
+  /community/member/join:
+    $ref: "./api/community/member/join.yaml"
   /community/questions:
     $ref: "./api/community/questions.yaml"
-  
+  /community/report:
+     $ref: "./api/community/report.yaml"
+  /community/report/tag:
+     $ref: "./api/community/tag.yaml"
+  /community/manager/remove:
+     $ref: "./api/community/manager.yaml"
+  /community/admin:
+     $ref: "./api/community/admin.yaml"
+  /community/management/tool:
+     $ref: "./api/community/tool.yaml"
+  /community/rights:
+     $ref: "./api/community/rights.yaml"
+  /community/cohort:
+     $ref: "./api/community/cohort/cohort.yaml"
+  /community/cohort/<cohort_id>:
+     $ref: "./api/community/cohort/cohort_id.yaml"
+  /community/cohort/member:
+     $ref: "./api/community/cohort/member.yaml"
+  /community/cohort/access:
+     $ref: "./api/community/cohort/access.yaml"
+  /community/join:
+     $ref: "./api/community/join.yaml"
+  /community/settings:
+     $ref: "./api/community/settings/settings.yaml"
+  /community/settings/notification:
+     $ref: "./api/community/settings/notification/notification.yaml"
+  /community/settings/notification/feed:
+     $ref: "./api/community/settings/notification/feed.yaml"
+  /community/settings/notification/conversation:
+     $ref: "./api/community/settings/notification/conversation.yaml"
+  /community/settings/content_download:
+     $ref: "./api/community/settings/content_download.yaml"
+  /community/settings/dm:
+     $ref: "./api/community/settings/dm.yaml"
+  /community/tag:
+     $ref: "./api/community/tag.yaml"
+  /community/branding:
+     $ref: "./api/community/branding.yaml"
+  /home/fetch_communities:
+     $ref: "./api/community/home.yaml"
+  /community/question/filters:
+     $ref: "./api/community/filters.yaml"
+  /community/intro_examples:
+     $ref: "./api/community/intro.yaml"
+  /community/invite:
+     $ref: "./api/community/invite.yaml"
+  /community/configurations:
+     $ref: "./api/community/configuration.yaml"
+
   /moderation/rights:
     $ref: "./api/moderation/rights.yaml"
+
+  /conversation:
+    $ref: "./api/conversation/conversation.yaml"
+  /conversation/reaction:
+    $ref: "./api/conversation/reaction.yaml"
+  /conversation/poll:
+    $ref: "./api/conversation/poll/poll.yaml"
+  /conversation/poll/submit:
+    $ref: "./api/conversation/poll/submit.yaml"
+  /conversation/poll/users:
+    $ref: "./api/conversation/poll/users.yaml"
+  /conversation/topic:
+    $ref: "./api/conversation/topic.yaml"
+  /conversation/event:
+    $ref: "./api/conversation/event/event.yaml"
+  /conversation/event/attend:
+    $ref: "./api/conversation/event/attend.yaml"
+  /conversation/event/attended:
+    $ref: "./api/conversation/event/attended.yaml"
+  /conversation/event/unseen:
+    $ref: "./api/conversation/event/unseen.yaml"
+  /conversation/event/last_seen:
+    $ref: "./api/conversation/event/last_seen.yaml"
+  /conversation/event/link:
+    $ref: "./api/conversation/event/link.yaml"
+  /conversation/preview/unread:
+    $ref: "./api/conversation/preview/unread.yaml"
+  /conversation/preview/unread_count:
+    $ref: "./api/conversation/preview/unread_count.yaml"
+  /conversation/notification/unread:
+    $ref: "./api/conversation/notification.yaml"
+  /conversation/sync:
+    $ref: "./api/conversation/sync.yaml"
+  /conversation/search:
+    $ref: "./api/conversation/search.yaml"
 
   /sdk/onboarding:
     $ref: "./api/sdk/onboarding.yaml"

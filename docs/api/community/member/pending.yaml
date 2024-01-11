@@ -1,0 +1,34 @@
+get:
+  summary: Fetch Pending Community Members
+  operationId: fetchPendingMembers
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+        format: text
+    - name: x-platform-type
+      in: header
+      schema:
+        type: string
+        format: text
+    - name: x-platform-code
+      in: header
+      schema:
+        type: string
+        format: text
+    - name: x-version-code
+      in: header
+      schema:
+        type: string
+        format: text
+    - name: x-sdk-source
+      in: header
+      schema:
+        type: string
+        format: text
+  responses: {}

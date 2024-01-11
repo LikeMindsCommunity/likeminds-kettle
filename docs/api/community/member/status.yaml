@@ -1,0 +1,60 @@
+get:
+  summary: Get Community Member Channel Status
+  operationId: getCommunityMemberChannelStatus
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: uuid
+      in: query
+      required: true
+      schema:
+        type: string
+    - name: channel_type
+      in: query
+      required: true
+      schema:
+        type: integer
+        enum: [1, 2]
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          example: |
+            {
+              "success": true,
+              "data": {
+                "chatrooms_data": [
+                  {
+                    "about": "",
+                    "access": null,
+                    "access_without_subscription": false,
+                    "attachment_count": 0,
+                    "attachments_uploaded": false,
+                    "attending_status": false,
+                    "auto_follow_done": false,
+                    "card_id": 78206,
+                    "chatroom_image_url": "https://www.google.com",
+                    "chatroom_with_user_id": null,
+                    "co_hosts": "[]",
+                    "community_id": 50477,
+                    "created_at": 1677930091086,
+                    "date_epoch": 1677930091,
+                    "header": "",
+                    "id": 78206,
+                    "is_secret": true,
+                    "title": "Test feedroom",
+                    "type": 11,
+                    "user_id": 88090
+                  }
+                ],
+                "total_chatrooms_count": 1
+              }
+            }

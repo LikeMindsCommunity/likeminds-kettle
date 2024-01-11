@@ -1,0 +1,52 @@
+get:
+  summary: Get Community Management Tools
+  operationId: getCommunityManagementTools
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+        format: text
+    - name: x-api-key
+      in: header
+      schema:
+        type: string
+        format: text
+    - name: x-platform-type
+      in: header
+      schema:
+        type: string
+        format: text
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  header:
+                    type: string
+                  management_tools:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        count:
+                          type: integer
+                        image_url:
+                          type: string
+                        route:
+                          type: string
+                        title:
+                          type: string

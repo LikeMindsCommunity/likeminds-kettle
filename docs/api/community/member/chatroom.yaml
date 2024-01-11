@@ -1,0 +1,204 @@
+get:
+  summary: Get Community Member Chatrooms
+  operationId: getMemberChatrooms
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: x-platform-code
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: x-version-code
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: x-api-key
+      in: header
+      schema:
+        type: string
+        format: text
+      required: true
+    - name: user_id
+      in: query
+      schema:
+        type: integer
+      required: true
+    - name: state
+      in: query
+      schema:
+        type: integer
+      required: true
+    - name: page
+      in: query
+      schema:
+        type: integer
+      required: true
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              chatrooms:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                    community_id:
+                      type: integer
+                    answer_text:
+                      type: string
+                    share_link:
+                      type: string
+                    image_count:
+                      type: integer
+                    pdf_count:
+                      type: integer
+                    video_count:
+                      type: integer
+                    audio_count:
+                      type: integer
+                    type:
+                      type: integer
+                    date_time:
+                      type: integer
+                    duration:
+                      type: integer
+                    is_pending:
+                      type: boolean
+                    answers_count:
+                      type: integer
+                    attending_count:
+                      type: integer
+                    polls_count:
+                      type: integer
+                    card_creation_time:
+                      type: string
+                    community_name:
+                      type: string
+                    date:
+                      type: string
+                    created_at:
+                      type: string
+                    date_epoch:
+                      type: integer
+                    has_been_named:
+                      type: boolean
+                    member_id:
+                      type: integer
+                    image_url_round:
+                      type: string
+                    header:
+                      type: string
+                    share_url:
+                      type: string
+                    creator_share_url:
+                      type: string
+                    link_created_at:
+                      type: string
+                    chatroom_category:
+                      type: string
+                    state:
+                      type: integer
+                    mute_status:
+                      type: boolean
+                    follow_status:
+                      type: boolean
+                    attending_status:
+                      type: boolean
+                    is_guest:
+                      type: boolean
+                    active:
+                      type: boolean
+                    is_tagged:
+                      type: boolean
+                    member:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        image_url:
+                          type: string
+                        question_answers:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              community_id:
+                                type: integer
+                              member_id:
+                                type: integer
+                              question_title:
+                                type: string
+                              value:
+                                type: string
+                              question_id:
+                                type: integer
+                              state:
+                                type: integer
+                              is_hidden:
+                                type: boolean
+                              directory_fields:
+                                type: boolean
+                        state:
+                          type: integer
+                        is_owner:
+                          type: boolean
+                        route:
+                          type: string
+                        member_since:
+                          type: string
+                        community_id:
+                          type: integer
+                    images:
+                      type: array
+                      items:
+                        type: object
+                        properties: {}  # Define image properties if needed
+                    pdf:
+                      type: array
+                      items:
+                        type: object
+                        properties: {}  # Define pdf properties if needed
+                    audios:
+                      type: array
+                      items:
+                        type: object
+                        properties: {}  # Define audio properties if needed
+                    videos:
+                      type: array
+                      items:
+                        type: object
+                        properties: {}  # Define video properties if needed
+                    conversation_users:
+                      type: array
+                      items:
+                        type: object
+                        properties: {}  # Define conversation user properties if needed
+                    reactions:
+                      type: array
+                      items:
+                        type: object
+                        properties: {}  # Define reaction properties if needed
+              total_chatrooms_created:
+                type: integer

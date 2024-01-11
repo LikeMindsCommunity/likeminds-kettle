@@ -1,0 +1,43 @@
+post:
+  summary: Submit Poll in Conversation
+  operationId: submitPollInConversation
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      description: API Key
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            conversation_id:
+              type: integer
+            polls:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

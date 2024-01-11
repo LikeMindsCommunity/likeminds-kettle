@@ -1,0 +1,407 @@
+get:
+  summary: Get Conversations
+  operationId: getConversations
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: x-api-key
+      in: header
+      description: API Key
+      schema:
+        type: string
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+  requestBody:
+    required: false
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  conversations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        answer:
+                          type: string
+                        attachment_count:
+                          type: integer
+                        attachments_uploaded:
+                          type: boolean
+                        chatroom_id:
+                          type: integer
+                        community_id:
+                          type: integer
+                        created_at:
+                          type: string
+                        created_epoch:
+                          type: integer
+                        date:
+                          type: string
+                        has_files:
+                          type: boolean
+                        id:
+                          type: integer
+                        is_edited:
+                          type: boolean
+                        member:
+                          type: object
+                          properties:
+                            custom_intro_text:
+                              type: string
+                            custom_title:
+                              type: string
+                            id:
+                              type: integer
+                            image_url:
+                              type: string
+                            is_guest:
+                              type: boolean
+                            is_owner:
+                              type: boolean
+                            member_since:
+                              type: string
+                            member_since_epoch:
+                              type: integer
+                            name:
+                              type: string
+                            organisation_name:
+                              type: null
+                            route:
+                              type: string
+                            state:
+                              type: integer
+                            updated_at:
+                              type: integer
+                            user_unique_id:
+                              type: string
+                        reactions:
+                          type: array
+                          items: []
+                        state:
+                          type: integer
+
+
+
+post:
+  summary: Create Conversation
+  operationId: createConversation
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+    - name: x-member-id
+      in: header
+      description: Member ID
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      description: API Key
+      schema:
+        type: string
+    - name: x-platform-code
+      in: header
+      description: Platform Code
+      schema:
+        type: string
+    - name: x-version-code
+      in: header
+      description: Version Code
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            chatroom_id:
+              type: integer
+            text:
+              type: string
+    required:
+      - chatroom_id
+      - text
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              id:
+                type: integer
+              conversation:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  answer:
+                    type: string
+                  state:
+                    type: integer
+                  attachments_count:
+                    type: integer
+                  attachments_uploaded:
+                    type: boolean
+                  is_edited:
+                    type: boolean
+                  created_at:
+                    type: string
+                  has_files:
+                    type: boolean
+                  chatroom_id:
+                    type: integer
+                  community_id:
+                    type: integer
+                  member_id:
+                    type: integer
+                  date:
+                    type: string
+                  is_anonymous:
+                    type: boolean
+                  allow_add_option:
+                    type: boolean
+                  poll_type:
+                    type: integer
+                  expiry_time:
+                    type: integer
+                  polls:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        text:
+                          type: string
+                        is_selected:
+                          type: boolean
+                        no_votes:
+                          type: integer
+                        percentage:
+                          type: integer
+                  reactions:
+                    type: array
+                    items: []
+
+
+
+delete:
+  summary: Delete Conversation
+  operationId: deleteConversation
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      description: API Key
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            conversation_ids:
+              type: array
+              items:
+                type: integer
+            reason:
+              type: string
+    required:
+      - conversation_ids
+      - reason
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  conversations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        allow_add_option:
+                          type: boolean
+                        answer:
+                          type: string
+                        attachment_count:
+                          type: integer
+                        attachments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              index:
+                                type: integer
+                              type:
+                                type: string
+                              url:
+                                type: string
+                        attachments_uploaded:
+                          type: boolean
+                        audios:
+                          type: array
+                          items: []
+                        chatroom_id:
+                          type: integer
+                        community_id:
+                          type: integer
+                        created_at:
+                          type: string
+                        created_epoch:
+                          type: integer
+                        date:
+                          type: string
+                        deleted_by:
+                          type: integer
+                        end_time:
+                          type: integer
+                        has_event_recording:
+                          type: boolean
+                        has_files:
+                          type: boolean
+                        id:
+                          type: integer
+                        images:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              image_url:
+                                type: string
+                              index:
+                                type: integer
+                              type:
+                                type: string
+                        is_anonymous:
+                          type: boolean
+                        is_edited:
+                          type: boolean
+                        member_id:
+                          type: integer
+                        pdf:
+                          type: array
+                          items: []
+                        poll_answer_text:
+                          type: string
+                        reactions:
+                          type: array
+                          items: []
+                        start_time:
+                          type: integer
+                        state:
+                          type: integer
+                        videos:
+                          type: array
+                          items: []
+
+
+
+put:
+  summary: Edit Conversation
+  operationId: editConversation
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+    - name: x-api-key
+      in: header
+      description: API Key
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            conversation_id:
+              type: integer
+            text:
+              type: string
+            share_link:
+              type: string
+    required:
+      - conversation_id
+      - text
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              conversation:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  answer:
+                    type: string
+                  state:
+                    type: integer
+                  is_edited:
+                    type: boolean
+                  created_at:
+                    type: string
+                  has_files:
+                    type: boolean
+                  chatroom_id:
+                    type: integer
+                  community_id:
+                    type: integer
+                  member_id:
+                    type: integer
+                  date:
+                    type: string

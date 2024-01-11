@@ -1,0 +1,45 @@
+delete:
+  summary: Remove Community Manager
+  operationId: removeCommunityManager
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+        format: text
+    - name: x-api-key
+      in: header
+      required: true
+      schema:
+        type: string
+        format: text
+    - name: x-platform-type
+      in: header
+      schema:
+        type: string
+        format: text
+      disabled: true
+    - name: user_id
+      in: body
+      required: true
+      schema:
+        type: object
+        properties:
+          user_id:
+            type: string
+            format: uuid
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

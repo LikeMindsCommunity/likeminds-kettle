@@ -6,10 +6,10 @@ get:
       description: |-
         This API fetches members of a community
       parameters:
-        - $ref: "../../components/parameters/headers/platformCode.yaml"
-        - $ref: "../../components/parameters/headers/versionCode.yaml"
-        - $ref: "../../components/parameters/headers/platformType.yaml"
-        - $ref: "../../components/parameters/headers/apiKey.yaml"
+        - $ref: "../../../components/parameters/headers/platformCode.yaml"
+        - $ref: "../../../components/parameters/headers/versionCode.yaml"
+        - $ref: "../../../components/parameters/headers/platformType.yaml"
+        - $ref: "../../../components/parameters/headers/apiKey.yaml"
         - name: page
           in: query
           description: Page number
@@ -47,7 +47,7 @@ get:
                     type: object
                     properties:
                       community:
-                        $ref: "../../components/schemas/communityResponse.yaml"
+                        $ref: "../../../components/schemas/communityResponse.yaml"
                       members:
                         type: array
                         items:
@@ -113,16 +113,16 @@ post:
     description: |-
       This API create members of a community
     parameters:
-      - $ref: "../../components/parameters/headers/platformCode.yaml"
-      - $ref: "../../components/parameters/headers/versionCode.yaml"
-      - $ref: "../../components/parameters/headers/platformType.yaml"
-      - $ref: "../../components/parameters/headers/apiKey.yaml"
+      - $ref: "../../../components/parameters/headers/platformCode.yaml"
+      - $ref: "../../../components/parameters/headers/versionCode.yaml"
+      - $ref: "../../../components/parameters/headers/platformType.yaml"
+      - $ref: "../../../components/parameters/headers/apiKey.yaml"
     requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "../../components/schemas/requests/communitymember.yaml"
+              $ref: "../../../components/schemas/requests/communitymember.yaml"
     responses:
         '200':
           description: Successful response
@@ -137,7 +137,7 @@ post:
                     type: object
                     properties:
                       community:
-                        $ref: "../../components/schemas/communityResponse.yaml"
+                        $ref: "../../../components/schemas/communityResponse.yaml"
                       user:
                         type: object
                         properties:
@@ -168,16 +168,16 @@ put:
   description: |-
     This API updates members of a community
   parameters:
-    - $ref: "../../components/parameters/headers/platformCode.yaml"
-    - $ref: "../../components/parameters/headers/versionCode.yaml"
-    - $ref: "../../components/parameters/headers/platformType.yaml"
-    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
   requestBody:
       required: true
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/requests/communitymember.yaml"
+            $ref: "../../../components/schemas/requests/communitymember.yaml"
   responses:
     '200':
       description: Successful response
@@ -188,3 +188,64 @@ put:
             properties:
               success:
                 type: boolean
+
+
+delete:
+  summary: Remove Members from Community
+  operationId: removeMembers
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      description: JWT token
+      schema:
+        type: string
+      required: true
+    - name: x-platform-type
+      in: header
+      description: Platform Type
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            uuids:
+              type: array
+              items:
+                type: string
+          required:
+            - uuids
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  removal_status:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        is_removed:
+                          type: boolean
+                        lm_uuid:
+                          type: string
+                        status:
+                          type: string
+                        uuid:
+                          type: string

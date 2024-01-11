@@ -1,0 +1,99 @@
+get:
+  summary: Get Community Member Channels
+  operationId: getCommunityMemberChannels
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: state
+      in: query
+      required: true
+      schema:
+        type: integer
+    - name: page
+      in: query
+      required: true
+      schema:
+        type: integer
+    - name: channel_type
+      in: query
+      required: true
+      schema:
+        type: integer
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          example: |
+            {
+              "success": true,
+              "data": {
+                "chatrooms": [
+                  {
+                    "access": null,
+                    "answer_text": "",
+                    "answers_count": 0,
+                    "attachment_count": 0,
+                    "attachments": [],
+                    "attachments_uploaded": false,
+                    "attending_count": 0,
+                    "attending_status": false,
+                    "auto_follow_done": true,
+                    "card_creation_time": "06:05 PM",
+                    "community_id": 50447,
+                    "community_name": "Flutter GC Example",
+                    "created_at": "18:05",
+                    "date": "11 Apr 2023",
+                    "date_epoch": 1673613304,
+                    "duration": 0,
+                    "follow_status": true,
+                    "header": "General Chat Room",
+                    "id": 70989,
+                    "is_secret": false,
+                    "title": "This chatroom is to have off-topic conversations with the community members.",
+                    "type": 0,
+                    "video_count": 0,
+                    "videos": []
+                  },
+                  {
+                    "access": null,
+                    "answer_text": "",
+                    "answers_count": 0,
+                    "attachment_count": 0,
+                    "attachments": [],
+                    "attachments_uploaded": false,
+                    "attending_count": 0,
+                    "attending_status": false,
+                    "auto_follow_done": false,
+                    "card_creation_time": "06:05 PM",
+                    "community_id": 50447,
+                    "community_name": "Flutter GC Example",
+                    "created_at": "18:05",
+                    "date": "11 Apr 2023",
+                    "date_epoch": 1673613302,
+                    "duration": 0,
+                    "follow_status": true,
+                    "header": "Announcement Room 📣",
+                    "id": 70988,
+                    "is_secret": false,
+                    "title": "We will send all the announcements here on this chatroom.",
+                    "type": 7,
+                    "video_count": 0,
+                    "videos": []
+                  }
+                ],
+                "total_chatrooms_followed": 2
+              }
+            }

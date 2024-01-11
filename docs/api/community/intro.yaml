@@ -1,0 +1,55 @@
+get:
+  summary: Get Community Intro Examples
+
+  operationId: getCommunityIntroExamples
+
+  tags:
+    - Community
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+        format: text
+    - name: x-platorm-code
+      in: header
+      description: Platform Code
+      schema:
+        type: string
+    - name: x-version-code
+      in: header
+      description: Version Code
+      schema:
+        type: string
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  intro_examples:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        header:
+                          type: string
+                        sub_header:
+                          type: string
+                        sub_title:
+                          type: string
+                        title:
+                          type: string
