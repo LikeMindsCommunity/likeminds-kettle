@@ -59,6 +59,7 @@ type CreatePostRequest struct {
 	FeedroomID     int                 `json:"feedroom_id"`
 	UUIDs          []string            `json:"uuids"`
 	OnBehalfOfUUID string              `json:"on_behalf_of_uuid,omitempty"`
+	IsRepost       bool                `json:"is_repost"`
 	Visibility     string              `json:"visibility,omitempty"`
 	UserIsCm       bool                `json:"user_is_cm,omitempty"`
 	CreatedAt      int                 `json:"created_at"`
@@ -182,6 +183,8 @@ func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{
 				}
 			}
 		}
+
+		user_ids = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_ids)
 
 		// Get userId
 		userId := user.GetRequestingUserId(c)
@@ -330,6 +333,10 @@ func createPostInternal(c *gin.Context, userId string) {
 
 	//Update user_is_cm in request
 	createPostRequest.UserIsCm = response.IsCm
+
+	if createPostRequest.IsRepost {
+		//success = utility.GetCommunitySettingsInternal(c, userId)
+	}
 
 	if createPostRequest.OnBehalfOfUUID != "" {
 		//Fetch member access to change author

@@ -292,6 +292,7 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 	var users map[string]user.MemberMeta
 	var topics map[string]interface{}
 	var widgets map[string]interface{}
+	var repostedPosts map[string]interface{}
 
 	// Iterate over reports and get post and comment ids
 	for _, report := range reports {
@@ -370,13 +371,17 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 			posts = response["posts"].(map[string]interface{})
 			topics = response["topics"].(map[string]interface{})
 			widgets = response["widgets"].(map[string]interface{})
+			repostedPosts = response["reposted_posts"].(map[string]interface{})
 
 			// Iterate over posts and get user ids
 			for _, post := range posts {
 				user_ids = append(user_ids, post.(map[string]interface{})["uuid"].(string))
 			}
-		}
 
+			for _, repostedPost := range repostedPosts {
+				user_ids = append(user_ids, repostedPost.(map[string]interface{})["uuid"].(string))
+			}
+		}
 	}
 
 	// If user_ids are not empty, get users data
