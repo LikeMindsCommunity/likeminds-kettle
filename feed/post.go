@@ -342,14 +342,7 @@ func createPostInternal(c *gin.Context, userId string) {
 		if err != nil {
 		}
 
-		var feedRepostCommunitySetting utils.CommunitySetting
-		for _, setting := range communitySettings {
-			if setting.SettingType == FeedRepostCommunitySettingType {
-				feedRepostCommunitySetting = setting
-			}
-		}
-
-		if feedRepostCommunitySetting.IsEnabled != true {
+		if !utils.CheckCommunitySettingEnabled(communitySettings, FeedRepostCommunitySettingType) {
 			utils.GeneralBadRequestError(c, utils.ErrorRepostSettingNotEnabled)
 			return
 		}

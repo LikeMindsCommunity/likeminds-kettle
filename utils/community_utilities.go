@@ -141,6 +141,16 @@ func GetCommunitySettingsInternal(headers map[string]interface{}) ([]CommunitySe
 	return csr.CommunitySettings, nil
 }
 
+// CheckCommunitySettingEnabled | check is setting type is enabled in the community
+func CheckCommunitySettingEnabled(communitySettings []CommunitySetting, settingType string) bool {
+	for _, setting := range communitySettings {
+		if setting.SettingType == settingType {
+			return setting.IsEnabled
+		}
+	}
+	return false
+}
+
 // utility method to fetch profile_meta configurations from Cache
 func fetchProfileMetaConfigfromCache(redisClient *redis.Client, apiKey string) (*CommunityConfiguration, bool, error) {
 
