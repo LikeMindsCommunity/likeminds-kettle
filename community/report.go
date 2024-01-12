@@ -196,7 +196,7 @@ func getReportsInternal(c *gin.Context, userId string) {
 	if reports, ok := dataResponse["reports"]; ok {
 
 		// Get Posts & comments data for the reports
-		posts, comments, topics, widgets, users := fetchReportsEntityData(c, userId, reports.([]interface{}))
+		posts, comments, topics, widgets, users, repostedPosts := fetchReportsEntityData(c, userId, reports.([]interface{}))
 
 		// Add data to response if not empty
 		if posts != nil {
@@ -213,6 +213,9 @@ func getReportsInternal(c *gin.Context, userId string) {
 		}
 		if users != nil {
 			dataResponse["users"] = users
+		}
+		if repostedPosts != nil {
+			dataResponse["reposted_posts"] = repostedPosts
 		}
 
 	}
@@ -281,7 +284,7 @@ func closeReportsInternalV1(c *gin.Context, userId string) {
 
 // Internal method to fetch posts and comments data for the reports
 func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}) (map[string]interface{}, map[string]interface{},
-	map[string]interface{}, map[string]interface{}, map[string]user.MemberMeta) {
+	map[string]interface{}, map[string]interface{}, map[string]user.MemberMeta, map[string]interface{}) {
 
 	var post_ids []string
 	var comment_ids []string
@@ -395,6 +398,6 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 		}
 	}
 
-	return posts, comments, topics, widgets, users
+	return posts, comments, topics, widgets, users, repostedPosts
 
 }
