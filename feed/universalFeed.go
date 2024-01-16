@@ -50,7 +50,7 @@ func FetchUniversalFeed(c *gin.Context) {
 
 	//If flow succeeds
 	dataResponse := apiCR.Response
-	if value, ok := dataResponse["posts"]; ok {
+	/*if value, ok := dataResponse["posts"]; ok {
 		posts := value.([]interface{})
 
 		user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts, dataResponse)
@@ -61,7 +61,7 @@ func FetchUniversalFeed(c *gin.Context) {
 
 		//Update user data in dataResponse
 		dataResponse["users"] = user_data
-	}
+	}*/
 
 	//Send response
 	utils.GenerateResponse(c, dataResponse, true)
