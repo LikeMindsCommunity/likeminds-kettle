@@ -50,7 +50,9 @@ func PushLogs(c *gin.Context) {
 	// Get front logger for pushing frontend logs
 	logger, err := logging.GetFrontendLogger()
 	if err != nil {
-		utils.GeneralAPIError(c, err.Error())
+		// we'll be sending 200 until we have implemented another library
+		logging.Error(err.Error())
+		utils.GenerateResponse(c, map[string]interface{}{}, false)
 		return
 	}
 
