@@ -2,6 +2,7 @@ package feed
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
@@ -50,19 +51,25 @@ func FetchUniversalFeed(c *gin.Context) {
 
 	//If flow succeeds
 	dataResponse := apiCR.Response
-	/*if value, ok := dataResponse["posts"]; ok {
-		posts := value.([]interface{})
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		if value, ok := dataResponse["posts"]; ok {
+			posts := value.([]interface{})
 
-		user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts, dataResponse)
-		if err != nil {
-			utils.GenerateResponse(c, nil, false)
-			return
+			user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts, dataResponse)
+			if err != nil {
+				utils.GenerateResponse(c, nil, false)
+				return
+			}
+
+			//Update user data in dataResponse
+			dataResponse["users"] = user_data
 		}
-
-		//Update user data in dataResponse
-		dataResponse["users"] = user_data
-	}*/
+		wg.Done()
+	}()
 
 	//Send response
+	wg.Wait()
 	utils.GenerateResponse(c, dataResponse, true)
 }
