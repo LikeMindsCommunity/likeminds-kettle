@@ -12,42 +12,48 @@ pipeline {
                 checkout scm
             }
         }
-      
-        stage("Building Application Docker Image"){
-            steps{
+        stage("Show current directory") {
+            steps {
                 script{
-                    sh 'gcloud auth configure-docker asia.gcr.io'
-                    sh 'docker build -f Dockerfile.kettle-beta -t asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/nateshr/likeminds-authentication/kettle:${BUILD_NUMBER} . '
+                    sh 'pwd'
                     }
-                }
-            }
-         stage("Pushing Application Docker Image to Google Artifact Registry"){
-            steps{
-                script{
-                    sh 'gcloud auth configure-docker asia.gcr.io'
-                    sh 'docker push asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/nateshr/likeminds-authentication/kettle:${BUILD_NUMBER}'
-                      }
-                 }
-            }
-              
-        stage('Deploy to GKE') {
-            steps{
-                sh '''
-                sed -i 's/kettle:.*/kettle:'${BUILD_NUMBER}'"/g' deployment-kettle-beta.yaml
-                gcloud container clusters get-credentials ${CLUSTER_NAME} --region ${LOCATION} --project ${PROJECT_ID} --internal-ip
-                kubectl apply -f /var/lib/jenkins/workspace/likeminds-kettle-beta/deployment-kettle-beta.yaml
-                '''
             }
         }
+        // stage("Building Application Docker Image"){
+        //     steps{
+        //         script{
+        //             sh 'gcloud auth configure-docker asia.gcr.io'
+        //             sh 'docker build -f Dockerfile.kettle-beta -t asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/nateshr/likeminds-authentication/kettle:${BUILD_NUMBER} . '
+        //             }
+        //         }
+        //     }
+        //  stage("Pushing Application Docker Image to Google Artifact Registry"){
+        //     steps{
+        //         script{
+        //             sh 'gcloud auth configure-docker asia.gcr.io'
+        //             sh 'docker push asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/nateshr/likeminds-authentication/kettle:${BUILD_NUMBER}'
+        //               }
+        //          }
+        //     }
+              
+        // stage('Deploy to GKE') {
+        //     steps{
+        //         sh '''
+        //         sed -i 's/kettle:.*/kettle:'${BUILD_NUMBER}'"/g' deployment-kettle-beta.yaml
+        //         gcloud container clusters get-credentials ${CLUSTER_NAME} --region ${LOCATION} --project ${PROJECT_ID} --internal-ip
+        //         kubectl apply -f /var/lib/jenkins/workspace/likeminds-kettle-beta/deployment-kettle-beta.yaml
+        //         '''
+        //     }
+        // }
         
-        stage("Build and Push OpenAPI Spec file to S3") {
-            steps{
-                sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
-                withAWS(region:"${region}", credentials:"${aws_credential}"){
-                     s3Upload(file:"${TAG_NAME}", bucket:"${bucket}", path:"${TAG_NAME}/")
-                }
-            }
-        } 
+        // stage("Build and Push OpenAPI Spec file to S3") {
+        //     steps{
+        //         sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
+        //         withAWS(region:"${region}", credentials:"${aws_credential}"){
+        //              s3Upload(file:"${TAG_NAME}", bucket:"${bucket}", path:"${TAG_NAME}/")
+        //         }
+        //     }
+        // } 
     }  
         post { 
         always { 
