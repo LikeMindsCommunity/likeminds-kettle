@@ -88,7 +88,7 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 
 		posts := value.([]interface{})
 
-		user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts)
+		user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts, dataResponse)
 		if err != nil {
 			utils.GenerateResponse(c, nil, false)
 			return

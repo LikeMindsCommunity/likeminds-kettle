@@ -46,7 +46,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.16.0"
+	var AppVersion string = "2.17.0"
 
 	initGin()
 	redisClient = cache.InitRedis()
@@ -268,8 +268,9 @@ func main() {
 	router.POST("/feed/user/activity/:activity_id/mark_read", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.UserActivityMarkRead)
 	router.GET("/feed/universal", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.FetchUniversalFeed)
 	router.GET("/feed/group", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.FetchGroupFeed)
-	router.POST("/feed/topic", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.CreateTopic)
+	router.POST("/feed/topic", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.CreateTopics)
 	router.GET("/feed/topic", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.GetTopic)
+	router.DELETE("/feed/topic", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.DeleteTopics)
 	router.PUT("/feed/topic/:topic_id", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.EditTopic)
 	router.GET("/feed/connection", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.GetConnectionFeed)
 	router.POST("feed/post/pending", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.CreatePendingPost)

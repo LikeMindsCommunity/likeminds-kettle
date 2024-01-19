@@ -80,7 +80,7 @@ func FetchMemberMeta(headers map[string]interface{}, member_ids []string) (map[s
 }
 
 // This function is used to fetch members meta from user_ids of feed entity data
-func GetUsersMetaFromFeedData(headers map[string]interface{}, feedDataArray []interface{}) (map[string]MemberMeta, error) {
+func GetUsersMetaFromFeedData(headers map[string]interface{}, feedDataArray []interface{}, dataResponse map[string]interface{}) (map[string]MemberMeta, error) {
 
 	user_unique_ids := []string{}
 
@@ -90,6 +90,8 @@ func GetUsersMetaFromFeedData(headers map[string]interface{}, feedDataArray []in
 			user_unique_ids = append(user_unique_ids, user_unique_id.(string))
 		}
 	}
+
+	user_unique_ids = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_unique_ids)
 
 	// Fetch user data for given user_unique_ids
 	user_data, err := FetchMemberMeta(headers, user_unique_ids)
