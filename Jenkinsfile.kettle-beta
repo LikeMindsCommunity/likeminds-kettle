@@ -16,6 +16,14 @@ pipeline {
             steps {
                 script{
                     sh 'pwd'
+                    sh 'ls -al'
+
+                    sh 'cd ~/..'
+                    sh 'pwd'
+                    sh 'ls -al'
+
+                    sh 'cd /'
+                    sh 'ls -al'
                     }
             }
         }
