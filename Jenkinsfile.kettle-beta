@@ -12,21 +12,13 @@ pipeline {
                 checkout scm
             }
         }
-        stage("Show current directory") {
-            steps {
-                script{
-                    sh 'pwd'
-                    sh 'ls -al'
-
-                    sh 'cd ~/..'
-                    sh 'pwd'
-                    sh 'ls -al'
-
-                    sh 'cd /'
-                    sh 'ls -al'
-                    }
-            }
-        }
+        // stage("Show current directory") {
+        //     steps {
+        //         script{
+        //             sh 'uname -a'
+        //             }
+        //     }
+        // }
         // stage("Building Application Docker Image"){
         //     steps{
         //         script{
@@ -54,14 +46,16 @@ pipeline {
         //     }
         // }
         
-        // stage("Build and Push OpenAPI Spec file to S3") {
-        //     steps{
-        //         sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
-        //         withAWS(region:"${region}", credentials:"${aws_credential}"){
-        //              s3Upload(file:"${TAG_NAME}", bucket:"${bucket}", path:"${TAG_NAME}/")
-        //         }
-        //     }
-        // } 
+        stage("Build and Push OpenAPI Spec file to S3") {
+            steps{
+                sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
+                sh 'cd _build'
+                sh 'ls -al'
+                // withAWS(region:"${region}", credentials:"${aws_credential}"){
+                //      s3Upload(file:"${TAG_NAME}", bucket:"${bucket}", path:"${TAG_NAME}/")
+                // }
+            }
+        } 
     }  
         post { 
         always { 
