@@ -59,6 +59,8 @@ type CreatePostRequest struct {
 	FeedroomID     int                 `json:"feedroom_id"`
 	UUIDs          []string            `json:"uuids"`
 	OnBehalfOfUUID string              `json:"on_behalf_of_uuid,omitempty"`
+	IsRepost       bool                `json:"is_repost"`
+	Visibility     string              `json:"visibility,omitempty"`
 	UserIsCm       bool                `json:"user_is_cm,omitempty"`
 	CreatedAt      int                 `json:"created_at"`
 }
@@ -68,6 +70,7 @@ type EditPostRequest struct {
 	TopicIDs    []string            `json:"topic_ids"`
 	Heading     string              `json:"heading,omitempty"`
 	Attachments []AttachmentRequest `json:"attachments"`
+	Visibility  string              `json:"visibility,omitempty"`
 	UserIsCm    bool                `json:"user_is_cm"`
 }
 
@@ -180,6 +183,8 @@ func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{
 				}
 			}
 		}
+
+		user_ids = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_ids)
 
 		// Get userId
 		userId := user.GetRequestingUserId(c)
@@ -306,6 +311,9 @@ func GetPostInternal(c *gin.Context, userId string, postId string) map[string]in
 }
 
 func createPostInternal(c *gin.Context, userId string) {
+
+	headers := utils.CreateHeaders(c, userId)
+
 	//Body to be sent in the /post POST request
 	createPostRequest, err := parseCreatePostRequest(c)
 	if err != nil {
@@ -328,6 +336,17 @@ func createPostInternal(c *gin.Context, userId string) {
 
 	//Update user_is_cm in request
 	createPostRequest.UserIsCm = response.IsCm
+
+	if createPostRequest.IsRepost {
+		communitySettings, err := utils.GetCommunitySettingsInternal(headers)
+		if err != nil {
+		}
+
+		if !utils.CheckCommunitySettingEnabled(communitySettings, FeedRepostCommunitySettingType) {
+			utils.GeneralBadRequestError(c, utils.ErrorRepostSettingNotEnabled)
+			return
+		}
+	}
 
 	if createPostRequest.OnBehalfOfUUID != "" {
 		//Fetch member access to change author

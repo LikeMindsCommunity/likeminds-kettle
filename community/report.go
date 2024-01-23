@@ -39,8 +39,9 @@ type CloseReportRequest struct {
 	ReportID int `json:"report_id" binding:"required"`
 }
 
-type CloseReportV1Request struct {
-	ReportIds []int `json:"report_ids" binding:"required"`
+type CloseReportsNewRequest struct {
+	ReportIds []int  `json:"report_ids" binding:"required"`
+	Status    string `json:"status,omitempty"`
 }
 
 func parsePushReportRequest(c *gin.Context) (*PushReportRequest, error) {
@@ -78,9 +79,9 @@ func parseCloseReportRequest(c *gin.Context) (*CloseReportRequest, error) {
 	return &crr, nil
 }
 
-func parseCloseReportV1Request(c *gin.Context) (*CloseReportV1Request, error) {
+func parseCloseReportsNewRequest(c *gin.Context) (*CloseReportsNewRequest, error) {
 	//POST body params
-	var crr CloseReportV1Request
+	var crr CloseReportsNewRequest
 
 	if err := c.ShouldBindJSON(&crr); err != nil {
 		return nil, err
@@ -115,6 +116,11 @@ func CloseReport(c *gin.Context) {
 	Report(c, utils.DELETEMethod)
 }
 
+// UpdateReports is used to close a report in community
+func UpdateReports(c *gin.Context) {
+	Report(c, utils.PatchMethod)
+}
+
 // Report method handles community reports
 func Report(c *gin.Context, method int) {
 
@@ -122,6 +128,12 @@ func Report(c *gin.Context, method int) {
 	userId := user.GetRequestingUserId(c)
 	if userId == "" {
 		return
+	}
+
+	// Get Bot Id if request from dashboard
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
 	}
 
 	//Send request
@@ -142,33 +154,19 @@ func Report(c *gin.Context, method int) {
 			pushReportsInternalOld(c, userId)
 		}
 
+	case utils.PatchMethod:
+
+		updateReportsInternal(c, userId)
+
 	case utils.DELETEMethod:
 
-		botId := user.GetBotId(c)
-		if botId != "" {
-			userId = botId
-		}
-
-		apiRevampCheckV1 := utils.ApiRevampV1Check(c)
-
-		if apiRevampCheckV1 {
-			// If ApiRevampV1Check is true, call api/community/report with DELETE method
-			closeReportsInternalV1(c, userId)
-		} else {
-			// Else call api/close_report with POST method
-			closeReportsInternalOld(c, userId)
-		}
+		//call api/close_report with POST method
+		closeReportsInternalOld(c, userId)
 
 	}
 }
 
 func getReportsInternal(c *gin.Context, userId string) {
-
-	// Get Bot Id if request from dashboard
-	botId := user.GetBotId(c)
-	if botId != "" {
-		userId = botId
-	}
 
 	//Params to be sent with pagination and filter support in API
 	params := map[string]string{
@@ -196,7 +194,7 @@ func getReportsInternal(c *gin.Context, userId string) {
 	if reports, ok := dataResponse["reports"]; ok {
 
 		// Get Posts & comments data for the reports
-		posts, comments, topics, widgets, users := fetchReportsEntityData(c, userId, reports.([]interface{}))
+		posts, comments, topics, widgets, users, repostedPosts := fetchReportsEntityData(c, userId, reports.([]interface{}))
 
 		// Add data to response if not empty
 		if posts != nil {
@@ -213,6 +211,9 @@ func getReportsInternal(c *gin.Context, userId string) {
 		}
 		if users != nil {
 			dataResponse["users"] = users
+		}
+		if repostedPosts != nil {
+			dataResponse["reposted_posts"] = repostedPosts
 		}
 
 	}
@@ -265,10 +266,10 @@ func closeReportsInternalOld(c *gin.Context, userId string) {
 }
 
 // Internal method to close reports ApiRevamp v1
-func closeReportsInternalV1(c *gin.Context, userId string) {
+func updateReportsInternal(c *gin.Context, userId string) {
 
 	//Body to be sent in the close report api internally
-	closeReportV1Request, err := parseCloseReportV1Request(c)
+	crnr, err := parseCloseReportsNewRequest(c)
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralAPIError(c, err.Error())
@@ -276,14 +277,15 @@ func closeReportsInternalV1(c *gin.Context, userId string) {
 	}
 
 	//Send Request to api/community/report/close
-	utils.SendRequest(c, utils.CoreService, CommunityReportV1EndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, closeReportV1Request)
+	utils.SendRequest(c, utils.CoreService, CommunityReportV1EndPoint, utils.PATCHRequest, utils.CreateHeaders(c, userId), nil, crnr)
 }
 
 // Internal method to fetch posts and comments data for the reports
 func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}) (map[string]interface{}, map[string]interface{},
-	map[string]interface{}, map[string]interface{}, map[string]user.MemberMeta) {
+	map[string]interface{}, map[string]interface{}, map[string]user.MemberMeta, map[string]interface{}) {
 
 	var post_ids []string
+	var pending_post_ids []string
 	var comment_ids []string
 	var user_ids []string
 
@@ -292,6 +294,7 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 	var users map[string]user.MemberMeta
 	var topics map[string]interface{}
 	var widgets map[string]interface{}
+	var repostedPosts map[string]interface{}
 
 	// Iterate over reports and get post and comment ids
 	for _, report := range reports {
@@ -310,6 +313,10 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 
 			if int(typeValue.(float64)) == feed.COMMENT_REPORT_TYPE || int(typeValue.(float64)) == feed.REPLY_REPORT_TYPE {
 				comment_ids = append(comment_ids, report.(map[string]interface{})["entity_id"].(string))
+			}
+
+			if int(typeValue.(float64)) == feed.PENDING_POST_REPORT_TYPE {
+				pending_post_ids = append(pending_post_ids, report.(map[string]interface{})["entity_id"].(string))
 			}
 
 		}
@@ -353,12 +360,21 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 	}
 
 	// if post_ids are not empty then fetch posts data
-	if len(post_ids) > 0 {
+	if len(post_ids) > 0 || len(pending_post_ids) > 0 {
 
 		// create params for the request
 		params := map[string]string{
-			feed.ParamPostIds:  utils.ParseStringArrayToString(post_ids),
 			feed.ParamUserIsCm: "true",
+		}
+
+		// If post_ids are not empty, add post_ids to params
+		if len(post_ids) > 0 {
+			params[feed.ParamPostIds] = utils.ParseStringArrayToString(post_ids)
+		}
+
+		// If pending_post_ids are not empty, add pending_post_ids to params
+		if len(pending_post_ids) > 0 {
+			params[feed.ParamPendingPostIds] = utils.ParseStringArrayToString(pending_post_ids)
 		}
 
 		//Send request to swarm service
@@ -370,13 +386,17 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 			posts = response["posts"].(map[string]interface{})
 			topics = response["topics"].(map[string]interface{})
 			widgets = response["widgets"].(map[string]interface{})
+			repostedPosts = response["reposted_posts"].(map[string]interface{})
 
 			// Iterate over posts and get user ids
 			for _, post := range posts {
 				user_ids = append(user_ids, post.(map[string]interface{})["uuid"].(string))
 			}
-		}
 
+			for _, repostedPost := range repostedPosts {
+				user_ids = append(user_ids, repostedPost.(map[string]interface{})["uuid"].(string))
+			}
+		}
 	}
 
 	// If user_ids are not empty, get users data
@@ -390,6 +410,6 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 		}
 	}
 
-	return posts, comments, topics, widgets, users
+	return posts, comments, topics, widgets, users, repostedPosts
 
 }

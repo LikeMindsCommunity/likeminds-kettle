@@ -66,7 +66,7 @@ func UserCreatedPostSearch(c *gin.Context) {
 	if value, ok := dataResponse["posts"]; ok {
 		posts := value.([]interface{})
 
-		user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts)
+		user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts, dataResponse)
 
 		if err != nil {
 			utils.GenerateResponse(c, nil, false)

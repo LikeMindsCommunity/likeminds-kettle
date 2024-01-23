@@ -8,6 +8,7 @@ const HeadersSdkSource = "x-sdk-source"
 const HeadersDeviceId = "x-device-id"
 const HeadersApiKey = "x-api-key"
 const HeadersAcceptVersion = "x-accept-version"
+const HeadersApiVersion = "x-api-version"
 
 const GETMethod = 0
 const POSTMethod = 1
@@ -98,3 +99,4 @@ const ParamWidgetIds = "widget_ids"
 // Endpoints
 const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
 const WidgetEndPoint = "/widget"
+const FetchCommunitySettingsEndpoint = "/api/community/fetch_community_settings"
