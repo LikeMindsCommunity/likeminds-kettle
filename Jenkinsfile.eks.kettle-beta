@@ -7,37 +7,48 @@ pipeline {
             }
          }
         
-        stage ('Build Image') {
-            steps {
-                sh "sudo docker build -f Dockerfile.kettle-beta -t 081371230266.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:kettle-V$BUILD_NUMBER ."
-            }
-        }
+        // stage ('Build Image') {
+        //     steps {
+        //         sh "sudo docker build -f Dockerfile.kettle-beta -t 081371230266.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:kettle-V$BUILD_NUMBER ."
+        //     }
+        // }
         
-        stage ('Push Image') {
-            steps {
-                sh "aws ecr get-login-password --region ap-south-1 | sudo docker login --username AWS --password-stdin 081371230266.dkr.ecr.ap-south-1.amazonaws.com"
-                sh "sudo docker push 081371230266.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:kettle-V$BUILD_NUMBER"
-            }
-        }
+        // stage ('Push Image') {
+        //     steps {
+        //         sh "aws ecr get-login-password --region ap-south-1 | sudo docker login --username AWS --password-stdin 081371230266.dkr.ecr.ap-south-1.amazonaws.com"
+        //         sh "sudo docker push 081371230266.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:kettle-V$BUILD_NUMBER"
+        //     }
+        // }
         
-        stage ('Remove Image from jenkins') {
-            steps {
-                sh "sudo docker rmi 081371230266.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:kettle-V$BUILD_NUMBER"
-            }
-        }
-        stage ("update tag and push helm charts") {
-          steps {
-             script{
-                  git branch: 'LM-10466-aws-migration', url: 'git@github.com:LikeMindsCommunity/LikeMinds-Infra-Config.git'
-                  sh "ls"
-                  sh 'sed -i "s/tag: kettle-V[0-9]*/tag: kettle-V${BUILD_NUMBER}/g" ./stag/kettle-beta/values.yaml'
-                  sh "git add ./stag/kettle-beta/values.yaml"
-                  sh "git status"
-                  sh 'git commit -m "CI/CD pipeline updated $IMAGE_TAG image to new image tag"'
-                  sh 'git config --global credential.helper cache'
-		  sh "git push origin LM-10466-aws-migration"
+        // stage ('Remove Image from jenkins') {
+        //     steps {
+        //         sh "sudo docker rmi 081371230266.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:kettle-V$BUILD_NUMBER"
+        //     }
+        // }
+        // stage ("update tag and push helm charts") {
+        //   steps {
+        //      script{
+        //           git branch: 'LM-10466-aws-migration', url: 'git@github.com:LikeMindsCommunity/LikeMinds-Infra-Config.git'
+        //           sh "ls"
+        //           sh 'sed -i "s/tag: kettle-V[0-9]*/tag: kettle-V${BUILD_NUMBER}/g" ./stag/kettle-beta/values.yaml'
+        //           sh "git add ./stag/kettle-beta/values.yaml"
+        //           sh "git status"
+        //           sh 'git commit -m "CI/CD pipeline updated $IMAGE_TAG image to new image tag"'
+        //           sh 'git config --global credential.helper cache'
+		//   sh "git push origin LM-10466-aws-migration"
+        //         }
+        //     }
+        // }
+         stage("Build and Push OpenAPI Spec file to S3") {
+            steps{
+                sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
+                sh 'cd _build'
+                sh 'ls -al'
+                sh "aws s3 cp _build/v2.yaml s3://beta-likeminds-media/ --recursive"
+                withAWS(region:"ap-south-1", credentials:"AWS-S3-CREDS"){
+                    s3Upload(file:'_build/v2.yaml', bucket:'beta-likeminds-media', path:'/api-docs/v2.yaml')
                 }
             }
-        }
+        } 
     }
 }
