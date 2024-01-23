@@ -52,8 +52,10 @@ pipeline {
                 sh 'cd _build'
                 sh 'ls -al'
                 withAWS(region:"ap-south-1", credentials:"AWS-S3-CREDS"){
-                        s3Upload(file:'_build/v2.yaml', bucket:'beta-likeminds-media', path:'/api-docs/v2.yaml')
+                        s3Upload(file:'_build/v2.yaml', bucket:'beta-likeminds-media', path:'api-docs/v2.yaml')
                 }
+                exists = s3DoesObjectExist(bucket:'beta-likeminds-media', path:'api-docs/v2.yaml')
+                sh "echo $exists"
             }
         } 
     }  
