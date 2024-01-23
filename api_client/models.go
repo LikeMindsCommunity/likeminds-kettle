@@ -4,14 +4,15 @@ import (
 	"encoding/json"
 )
 
-//APIClientResponse Used only for internal API calls
+// APIClientResponse Used only for internal API calls
 type APIClientResponse struct {
 	Success      bool                   `json:"success"`
 	ErrorMessage string                 `json:"error_message"`
+	ErrorMeta    map[string]interface{} `json:"error_meta,omitempty"`
 	Response     map[string]interface{} `json:"-"`
 }
 
-//UnmarshalAPIClientResponse used to unmarshal APIClientResponse i.e internal API call response
+// UnmarshalAPIClientResponse used to unmarshal APIClientResponse i.e internal API call response
 func UnmarshalAPIClientResponse(resp []byte, apiCR *APIClientResponse) error {
 	if err := json.Unmarshal(resp, &apiCR); err != nil {
 		return err

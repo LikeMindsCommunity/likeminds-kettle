@@ -24,6 +24,7 @@ func SyncChatrooms(c *gin.Context) {
 		ParamChatroomTypes:              c.Query(ParamChatroomTypes),
 		ParamIsLocalDb:                  c.Query(ParamIsLocalDb),
 		ParamIncludedConversationStates: c.Query(ParamIncludedConversationStates),
+		ParamChatroomId:                 c.Query(ParamChatroomId),
 	}
 
 	//Get Request response

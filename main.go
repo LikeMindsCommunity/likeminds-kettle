@@ -46,7 +46,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.17.0"
+	var AppVersion string = "2.18.0"
 
 	initGin()
 	redisClient = cache.InitRedis()
@@ -170,6 +170,7 @@ func main() {
 	router.GET("/community/report", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetReport)
 	router.POST("/community/report", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.PushReport)
 	router.DELETE("/community/report", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.CloseReport)
+	router.PATCH("/community/report", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.UpdateReports)
 	router.GET("/community/report/tag", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetReportTags)
 	router.GET("/community/settings", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetCommunitySettings)
 	router.PUT("/community/settings", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.UpdateCommunitySettings)
@@ -272,6 +273,7 @@ func main() {
 	router.DELETE("/feed/topic", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.DeleteTopics)
 	router.PUT("/feed/topic/:topic_id", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.EditTopic)
 	router.GET("/feed/connection", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.GetConnectionFeed)
+	router.POST("feed/post/pending", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.CreatePendingPost)
 
 	// Utility Apis
 	router.GET("/helper/url", LTMValidationMiddleware(), APIKeyValidationMiddleware(), utility.DecodeUrl)
