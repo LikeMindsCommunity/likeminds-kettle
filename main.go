@@ -46,7 +46,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.14.0"
+	var AppVersion string = "2.18.0"
 
 	initGin()
 	redisClient = cache.InitRedis()
@@ -170,6 +170,7 @@ func main() {
 	router.GET("/community/report", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetReport)
 	router.POST("/community/report", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.PushReport)
 	router.DELETE("/community/report", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.CloseReport)
+	router.PATCH("/community/report", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.UpdateReports)
 	router.GET("/community/report/tag", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetReportTags)
 	router.GET("/community/settings", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetCommunitySettings)
 	router.PUT("/community/settings", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.UpdateCommunitySettings)
@@ -207,8 +208,12 @@ func main() {
 	router.GET("/community/intro_examples", LTMorVTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetIntroExamples)
 	router.POST("/community/invite", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.SendCommunityInvite)
 	router.GET("/community/configurations", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetCommunityConfigurations)
+	router.PATCH("/community/configurations", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.UpdateCommunityConfigurations)
 	router.GET("/community/member/pending", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetPendingCommunityMembers)
 	router.GET("/community/removal_reports", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetRemovalReports)
+	router.POST("/community/member/:user_id/connection", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.CreateMemberConnection)
+	router.PATCH("/community/member/:user_id/connection", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.AcceptRejectMemberConnection)
+	router.GET("/community/member/:user_id/connection", LTMValidationMiddleware(), APIKeyValidationMiddleware(), community.GetMemberConnection)
 
 	// Moderation Apis
 	router.GET("/moderation/rights", LTMValidationMiddleware(), APIKeyValidationMiddleware(), moderation.GetRights)
@@ -263,9 +268,12 @@ func main() {
 	router.POST("/feed/user/activity/:activity_id/mark_read", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.UserActivityMarkRead)
 	router.GET("/feed/universal", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.FetchUniversalFeed)
 	router.GET("/feed/group", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.FetchGroupFeed)
-	router.POST("/feed/topic", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.CreateTopic)
+	router.POST("/feed/topic", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.CreateTopics)
 	router.GET("/feed/topic", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.GetTopic)
+	router.DELETE("/feed/topic", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.DeleteTopics)
 	router.PUT("/feed/topic/:topic_id", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.EditTopic)
+	router.GET("/feed/connection", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.GetConnectionFeed)
+	router.POST("feed/post/pending", LTMValidationMiddleware(), APIKeyValidationMiddleware(), feed.CreatePendingPost)
 
 	// Utility Apis
 	router.GET("/helper/url", LTMValidationMiddleware(), APIKeyValidationMiddleware(), utility.DecodeUrl)

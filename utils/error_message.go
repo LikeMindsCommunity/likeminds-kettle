@@ -23,9 +23,11 @@ const ErrorInvalidChannelType = "Invalid channel type!"
 const ErrorFetchingUserData = "Error while fetching user data!"
 const ErrorInvalidUserId = "Invalid user_id!"
 const ErrorCommunityConfigurationsNotFound = "Community configurations not found!"
+const ErrorCommunitySettingsNotFound = "Community settings not found!"
 const ErrorApiKeyNotFound = "Api key not found!"
 const ErrorInvalidNotificationType = "Invalid notification type sent"
 const ErrorInvalidNotificationSettings = "Invalid notification settings sent"
+const ErrorRepostSettingNotEnabled = "cannot create repost in this community. Request community manager to enable the setting"
 
 func GeneralAPIError(c *gin.Context, errorMessage string) {
 	c.JSON(http.StatusInternalServerError, Response{
