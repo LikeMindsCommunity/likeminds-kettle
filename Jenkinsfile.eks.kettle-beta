@@ -43,7 +43,7 @@ pipeline {
             steps{
                 sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
                 withAWS(region:"ap-south-1", credentials:"AWS-S3-CREDS"){
-                        s3Upload(file:'_build/v2.yaml', bucket:'beta-likeminds-media', path:'api-docs/v2.yaml')
+                        s3Upload(file:'_build/v2.yaml', bucket:'beta-likeminds-media', path:'api-docs/v2.yaml', acl:'PublicRead')
                 }
             }
         }
