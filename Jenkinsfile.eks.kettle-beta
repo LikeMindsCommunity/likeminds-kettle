@@ -42,13 +42,10 @@ pipeline {
          stage("Build and Push OpenAPI Spec file to S3") {
             steps{
                 sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
-                sh 'cd _build'
-                sh 'ls -al'
-                //sh "aws s3 cp _build/v2.yaml s3://beta-likeminds-media/ --recursive"
                 withAWS(region:"ap-south-1", credentials:"AWS-S3-CREDS"){
-                    s3Upload(file:'_build/v2.yaml', bucket:'beta-likeminds-media', path:'/api-docs/v2.yaml')
+                        s3Upload(file:'_build/v2.yaml', bucket:'beta-likeminds-media', path:'api-docs/v2.yaml')
                 }
             }
-        } 
+        }
     }
 }
