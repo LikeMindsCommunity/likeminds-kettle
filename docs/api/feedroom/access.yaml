@@ -13,11 +13,7 @@ get:
     - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
-    - name: feedroom_id
-      in: query
-      required: true
-      schema:
-        type: integer
+    - $ref: "../../components/parameters/query/feedroomId.yaml"
 
   responses:
     "200":

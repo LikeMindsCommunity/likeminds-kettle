@@ -3,9 +3,9 @@ post:
   tags: 
     - Login
   security:
-    - api_key: []
-    - bearer_token: []
+    - bearerAuth: []
   parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/device.yaml"

@@ -6,7 +6,10 @@ get:
     - Widget
   operationId: getWidgets
   summary: Get widgets based on search criteria
+  security:
+    - bearerAuth: []
   parameters:
+    - $ref: "../components/parameters/headers/authToken.yaml"
     - name: search_key
       in: query
       required: true
@@ -82,6 +85,10 @@ post:
   tags: 
     - Widget
   summary: Create a new widget
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../components/parameters/headers/authToken.yaml"
   requestBody:
     required: true
     content:

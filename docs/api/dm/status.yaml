@@ -27,18 +27,9 @@ get:
         - member_directory
         - chatroom
         - user_channel
-    - name: member_id
-      in: query
-      description: Member ID
-      required: true
-      schema:
-        type: integer
-    - name: chatroom_id
-      in: query
-      description: Chatroom ID
-      required: false
-      schema:
-        type: integer
+    - $ref: "../../components/parameters/query/memberId.yaml"
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
+
 
   responses:
     "200":

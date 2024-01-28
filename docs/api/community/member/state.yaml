@@ -6,21 +6,10 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: x-platform-code
-      in: header
-      required: true
-      schema:
-        type: string
-    - name: x-version-code
-      in: header
-      required: true
-      schema:
-        type: string
-    - name: x-sdk-source
-      in: header
-      required: true
-      schema:
-        type: string
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../components/parameters/headers/sdkSource.yaml"
   responses:
     "200":
       description: OK

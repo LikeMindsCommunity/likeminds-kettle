@@ -6,28 +6,10 @@ put:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      description: JWT token
-      schema:
-        type: string
-    - name: x-api-key
-      in: header
-      description: API Key
-      schema:
-        type: string
-    - name: chatroom_id
-      in: query
-      description: ID of the chatroom
-      required: true
-      schema:
-        type: integer
-    - name: conversation_id
-      in: query
-      description: ID of the conversation
-      required: true
-      schema:
-        type: integer
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
+    - $ref: "../../components/parameters/query/conversationId.yaml"
   requestBody:
     required: true
     content:

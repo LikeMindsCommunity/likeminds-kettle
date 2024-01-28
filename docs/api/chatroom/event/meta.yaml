@@ -13,14 +13,11 @@ get:
     - bearerAuth: []
 
   parameters:
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../../components/parameters/headers/versionCode.yaml"
-    - name: past_events
-      in: query
-      description: Indicates whether to include past events
-      schema:
-        type: boolean
+    - $ref: "../../../components/parameters/query/pastEvents.yaml"
 
   responses:
     "200":

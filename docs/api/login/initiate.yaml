@@ -3,11 +3,13 @@ post:
   tags:
     - Login
   summary: sdk/initiate
-  description: > 
-    This API creates or login the user based on details provided from sdk
-    client
-
-  
+  description: This API creates or login the user based on details provided from sdk client
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/sdkSource.yaml"
   requestBody:
     required: true
     content:
@@ -31,10 +33,6 @@ post:
               type: string
               description: User Image Url
               nullable: true
-
-  parameters:
-    - $ref: "../../components/parameters/headers/apiKey.yaml"
-    - $ref: "../../components/parameters/headers/sdkSource.yaml"
 
   responses:
     "200":

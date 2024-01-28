@@ -4,7 +4,7 @@ post:
     tags:
       - Login
     security:
-      - bearer_token: []
+    - bearerAuth: []
     requestBody:
       content:
         application/json:

@@ -6,49 +6,13 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      description: JWT token
-      required: true
-      schema:
-        type: string
-    - name: x-api-key
-      in: header
-      description: API key
-      required: true
-      schema:
-        type: string
-    - name: search
-      in: query
-      description: Keyword to search
-      required: true
-      schema:
-        type: string
-    - name: search_type
-      in: query
-      description: Search type
-      required: true
-      schema:
-        type: string
-        enum: ['title', 'header', 'chatroom_id']
-    - name: follow_status
-      in: query
-      description: To only search followed or un-followed chatrooms
-      required: false
-      schema:
-        type: boolean
-    - name: page
-      in: query
-      description: Page number
-      required: false
-      schema:
-        type: integer
-    - name: page_size
-      in: query
-      description: Page size
-      required: false
-      schema:
-        type: integer
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/search.yaml"
+    - $ref: "../../components/parameters/query/searchType.yaml"
+    - $ref: "../../components/parameters/query/followStatus.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
+    - $ref: "../../components/parameters/query/pageSize.yaml"
   description: 
     This API searches chatrooms in a community based on search term.
 

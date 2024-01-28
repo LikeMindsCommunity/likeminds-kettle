@@ -13,33 +13,12 @@ get:
   parameters:
     - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
-    - name: search
-      in: query
-      description: keyword to search
-      required: true
-      schema:
-        type: string
-    - name: search_type
-      in: query
-      description: Search type
-      required: true
-      schema:
-        type: string
-      enum:
-        - name
-        - tag
-        - cohort_name
-        - user_unique_id
-        - client_user_unique_id
-    - name: order_type
-      in: query
-      description: order type of search results
-      required: false
-      schema:
-        type: string
-      enum:
-        - last_updated
-        - Alphabetical
+    - $ref: "../../components/parameters/query/search.yaml"
+    - $ref: "../../components/parameters/query/searchType.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
+    - $ref: "../../components/parameters/query/pageSize.yaml"
+    - $ref: "../../components/parameters/query/orderType.yaml"
+    - $ref: "../../components/parameters/query/questionAnswerVersions.yaml"
     - name: member_states
       in: query
       description: State of member to filter on
@@ -48,25 +27,6 @@ get:
         type: array
         items:
           type: integer
-    - name: page
-      in: query
-      description: page number
-      required: false
-      schema:
-        type: integer
-    - name: page_size
-      in: query
-      description: page size
-      required: false
-      schema:
-        type: integer
-    - name: question_answers_version
-      in: query
-      description: which question answers version to send
-      required: false
-      schema:
-        type: string
-      default: v1
 
   responses:
     "200":

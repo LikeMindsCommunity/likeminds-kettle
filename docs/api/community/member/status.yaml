@@ -6,16 +6,8 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      required: true
-      schema:
-        type: string
-    - name: uuid
-      in: query
-      required: true
-      schema:
-        type: string
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/query/uuid.yaml"
     - name: channel_type
       in: query
       required: true

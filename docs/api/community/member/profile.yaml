@@ -6,11 +6,7 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      schema:
-        type: string
-        format: text
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
   responses:
     "200":
       description: OK
@@ -100,7 +96,6 @@ get:
 
 
 
-
 put:
   summary: Update Community Member Profile
   operationId: updateMemberProfile
@@ -109,29 +104,10 @@ put:
   security:
     - bearerAuth: []
   parameters:
-    - name: x-platform-type
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: x-version-code
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: x-platform-code
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: Authorization
-      in: header
-      schema:
-        type: string
-        format: text
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
   requestBody:
     content:
       application/json:

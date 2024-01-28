@@ -61,14 +61,11 @@ get:
     - bearerAuth: []
 
   parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
-    - name: page
-      in: query
-      description: Page No.
-      schema:
-        type: integer
+    - $ref: "../../components/parameters/query/page.yaml"
 
   responses:
     "200":

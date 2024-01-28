@@ -6,31 +6,11 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      schema:
-        type: string
-        format: text
-    - name: x-platform-type
-      in: header
-      schema:
-        type: string
-        format: text
-    - name: x-platform-code
-      in: header
-      schema:
-        type: string
-        format: text
-    - name: x-version-code
-      in: header
-      schema:
-        type: string
-        format: text
-    - name: x-sdk-source
-      in: header
-      schema:
-        type: string
-        format: text
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/sdkSource.yaml"
   responses:
     "200":
       description: OK
@@ -73,16 +53,8 @@ patch:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      schema:
-        type: string
-        format: text
-    - name: x-platform-type
-      in: header
-      schema:
-        type: string
-        format: text
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
   requestBody:
     content:
       application/json:

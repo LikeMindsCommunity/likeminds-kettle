@@ -5,6 +5,8 @@ put:
     - Chatroom
   security:
     - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
   requestBody:
     content:
       application/json:

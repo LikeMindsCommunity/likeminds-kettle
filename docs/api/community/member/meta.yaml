@@ -10,10 +10,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - name: Authorization
-      in: header
-      description: Authorization Token
-      schema:
-        type: string
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
 
   responses: {}

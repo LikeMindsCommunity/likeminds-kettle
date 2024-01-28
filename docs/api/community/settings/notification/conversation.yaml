@@ -6,11 +6,7 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      required: true
-      schema:
-        type: string
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
   responses:
     "200":
       description: OK
@@ -39,11 +35,7 @@ put:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      required: true
-      schema:
-        type: string
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
   requestBody:
     content:
       application/json:

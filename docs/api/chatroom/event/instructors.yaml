@@ -9,6 +9,9 @@ post:
   security:
     - bearerAuth: []
     
+  parameters:
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    
   description: |
     This API adds instructors to a chatroom event.
 

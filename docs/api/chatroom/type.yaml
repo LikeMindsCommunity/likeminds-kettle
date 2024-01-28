@@ -10,12 +10,7 @@ put:
     - bearerAuth: []
 
   parameters:
-    - name: chatroom_id
-      in: path
-      required: true
-      schema:
-        type: integer
-      description: ID of the chatroom to be updated
+    - $ref: "../../components/parameters/path/chatroomId.yaml"
 
   requestBody:
     required: true

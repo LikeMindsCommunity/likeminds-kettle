@@ -13,18 +13,9 @@ get:
     - bearerAuth: []
 
   parameters:
-    - name: chatroom_id
-      in: query
-      description: Chatroom ID
-      required: false
-      schema:
-        type: integer
-    - name: page
-      in: query
-      description: Page No.
-      required: false
-      schema:
-        type: integer
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
 
   responses:
     "200":
@@ -159,6 +150,9 @@ post:
   security:
     - bearerAuth: []
 
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+
   requestBody:
     required: true
     content:
@@ -198,6 +192,9 @@ put:
 
   security:
     - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
 
   requestBody:
     required: true
@@ -239,13 +236,9 @@ delete:
     - bearerAuth: []
 
   parameters:
-    - name: chatroom_id
-      in: path
-      required: true
-      schema:
-        type: integer
-      description: ID of the chatroom to be deleted
-
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
+    
   requestBody:
     required: true
     content:

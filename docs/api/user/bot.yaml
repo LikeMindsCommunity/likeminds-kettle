@@ -5,8 +5,7 @@ get:
   tags: 
     - Bot
   security:
-    - api_key: []
-    - bearer_token: []
+    - bearerAuth: []
   parameters:
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/headers/authToken.yaml"

@@ -16,18 +16,8 @@ put:
     - $ref: "../../../../../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../../../../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../../../../../components/parameters/headers/authToken.yaml"
-    - name: post_id
-      in: path
-      required: true
-      schema:
-        type: string
-      description: The ID of the post to which the comment belongs
-    - name: comment_id
-      in: path
-      required: true
-      schema:
-        type: string
-      description: The ID of the comment to be edited
+    - $ref: "../../../../../../components/parameters/path/post_id.yaml"
+    - $ref: "../../../../../../components/parameters/path/comment_id.yaml"
     - name: body
       in: body
       required: true

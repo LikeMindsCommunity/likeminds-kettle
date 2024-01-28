@@ -6,18 +6,8 @@ post:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: x-api-key
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
     - name: body
       in: body
       description: Cohort creation request body
@@ -87,18 +77,8 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: x-platform-type
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/platformType.yaml"
     - name: cohort_id
       in: query
       schema:
@@ -174,18 +154,8 @@ delete:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: x-api-key
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
     - name: body
       in: body
       description: Cohort deletion request body
@@ -217,18 +187,8 @@ put:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: x-api-key
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
     - name: body
       in: body
       description: Cohort update request body

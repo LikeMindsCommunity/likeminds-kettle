@@ -1,0 +1,6 @@
+name: otp
+in: query
+description: OTP sent via SMS
+required: true
+schema:
+  type: string

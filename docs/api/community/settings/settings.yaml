@@ -4,29 +4,12 @@ get:
   tags:
     - Community
   security:
-    - bearerAuth: []    
+    - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      required: true
-      schema:
-        type: string
-        format: text
-    - name: x-api-key
-      in: header
-      schema:
-        type: string
-        format: text
-    - name: x-platform-code
-      in: header
-      schema:
-        type: string
-        format: text
-    - name: x-version-code
-      in: header
-      schema:
-        type: string
-        format: text
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
   responses:
     "200":
       description: OK
@@ -66,22 +49,9 @@ put:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      required: true
-      schema:
-        type: string
-        format: text
-    - name: x-api-key
-      in: header
-      schema:
-        type: string
-        format: text
-    - name: x-platform-type
-      in: header
-      schema:
-        type: string
-        format: text
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../../components/parameters/headers/platformType.yaml"
   requestBody:
     required: true
     content:

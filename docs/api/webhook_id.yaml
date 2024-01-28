@@ -8,12 +8,7 @@ get:
     - bearerAuth: []
   parameters:
     - $ref: "../components/parameters/headers/authToken.yaml"
-    - name: webhook_id
-      in: path
-      required: true
-      description: ID of the webhook
-      schema:
-        type: string
+    - $ref: "../components/parameters/path/webhook_id.yaml"
   responses:
     '200':
       description: OK
@@ -42,12 +37,7 @@ patch:
     - bearerAuth: []
   parameters:
     - $ref: "../components/parameters/headers/authToken.yaml"
-    - name: webhook_id
-      in: path
-      required: true
-      description: ID of the webhook
-      schema:
-        type: string
+    - $ref: "../components/parameters/path/webhook_id.yaml"
   requestBody:
     required: true
     content:
@@ -83,12 +73,7 @@ delete:
     - bearerAuth: []
   parameters:
     - $ref: "../components/parameters/headers/authToken.yaml"
-    - name: webhook_id
-      in: path
-      required: true
-      description: ID of the webhook
-      schema:
-        type: string
+    - $ref: "../components/parameters/path/webhook_id.yaml"
   responses:
     '200':
       description: OK

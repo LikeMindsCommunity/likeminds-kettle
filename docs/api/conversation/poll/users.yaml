@@ -6,28 +6,10 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      description: JWT token
-      schema:
-        type: string
-    - name: x-api-key
-      in: header
-      description: API Key
-      schema:
-        type: string
-    - name: conversation_id
-      in: query
-      description: ID of the conversation
-      required: true
-      schema:
-        type: integer
-    - name: poll_id
-      in: query
-      description: ID of the poll
-      required: true
-      schema:
-        type: integer
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../../components/parameters/query/conversationId.yaml"
+    - $ref: "../../../components/parameters/query/poll_id.yaml"
   responses:
     "200":
       description: OK

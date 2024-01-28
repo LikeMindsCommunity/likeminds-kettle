@@ -16,12 +16,7 @@ post:
     - $ref: "../../../../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../../../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../../../../components/parameters/headers/authToken.yaml"
-    - name: post_id
-      in: path
-      required: true
-      schema:
-        type: string
-      description: The ID of the post to which the comment will be added
+    - $ref: "../../../../../components/parameters/path/post_id.yaml"
     - name: body
       in: body
       required: true

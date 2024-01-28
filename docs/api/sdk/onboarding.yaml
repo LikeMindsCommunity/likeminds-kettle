@@ -15,11 +15,7 @@ get:
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/headers/authToken.yaml"
-    - name: screen_id
-      in: query
-      description: Screen ID
-      schema:
-        type: integer
+    - $ref: "../../components/parameters/query/screenId.yaml"
 
   responses:
     "200":
@@ -73,11 +69,7 @@ put:
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/headers/authToken.yaml"
-    - name: screen_id
-      in: query
-      description: Screen ID
-      schema:
-        type: integer
+    - $ref: "../../components/parameters/query/screenId.yaml"
 
   responses:
     "200":
@@ -105,11 +97,7 @@ delete:
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/headers/authToken.yaml"
-    - name: screen_id
-      in: query
-      description: Screen ID
-      schema:
-        type: integer
+    - $ref: "../../components/parameters/query/screenId.yaml"
 
   responses:
     "200":

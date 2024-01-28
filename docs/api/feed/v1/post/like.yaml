@@ -14,12 +14,7 @@ put:
 
   parameters:
     - $ref: "../../../../components/parameters/headers/authToken.yaml"
-    - name: post_id
-      in: path
-      required: true
-      schema:
-        type: string
-      description: The ID of the post to like
+    - $ref: "../../../../components/parameters/path/post_id.yaml"
 
   responses:
     "200":
@@ -52,26 +47,9 @@ get:
 
   parameters:
     - $ref: "../../../../components/parameters/headers/authToken.yaml"
-    - name: post_id
-      in: path
-      required: true
-      schema:
-        type: string
-      description: The ID of the post to fetch likes for
-    - name: page
-      in: query
-      required: false
-      schema:
-        type: integer
-        format: int32
-      description: Page number
-    - name: page_size
-      in: query
-      required: false
-      schema:
-        type: integer
-        format: int32
-      description: Page size
+    - $ref: "../../../../components/parameters/path/post_id.yaml"
+    - $ref: "../../../../components/parameters/query/page.yaml"
+    - $ref: "../../../../components/parameters/query/pageSize.yaml"
 
   responses:
     "200":

@@ -10,36 +10,12 @@ get:
     - bearerAuth: []
 
   parameters:
-    - name: x-api-key
-      in: header
-      description: API key of community
-      schema:
-        type: string
-    - name: x-platform-code
-      in: header
-      description: Platform Code
-      schema:
-        type: string
-    - name: x-version-code
-      in: header
-      description: Version Code
-      schema:
-        type: string
-    - name: channel_type
-      in: query
-      description: Channel Type
-      schema:
-        type: integer
-    - name: page
-      in: query
-      description: Page number
-      schema:
-        type: integer
-    - name: page_size
-      in: query
-      description: Page size
-      schema:
-        type: integer
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/query/channelType.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
+    - $ref: "../../components/parameters/query/pageSize.yaml"
 
   responses:
     "200":

@@ -6,18 +6,9 @@ get:
     security:
       - bearer_token: []
     parameters:
-      - name: country_code
-        in: query
-        description: User Country Code
-        required: true
-        schema:
-          type: string
-      - name: mobile_no
-        in: query
-        description: User Mobile Number
-        required: true
-        schema:
-          type: string
+      - $ref: "../../components/parameters/headers/authToken.yaml"
+      - $ref: "../../components/parameters/query/countryCode.yaml"
+      - $ref: "../../components/parameters/query/mobileNumber.yaml"
 
     responses:
       '200':

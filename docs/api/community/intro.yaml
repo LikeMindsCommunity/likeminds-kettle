@@ -10,22 +10,9 @@ get:
     - bearerAuth: []
 
   parameters:
-    - name: Authorization
-      in: header
-      required: true
-      schema:
-        type: string
-        format: text
-    - name: x-platorm-code
-      in: header
-      description: Platform Code
-      schema:
-        type: string
-    - name: x-version-code
-      in: header
-      description: Version Code
-      schema:
-        type: string
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
 
   responses:
     "200":

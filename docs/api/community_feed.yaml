@@ -10,18 +10,8 @@ get:
     - $ref: "../components/parameters/headers/apiKey.yaml"
     - $ref: "../components/parameters/headers/platformCode.yaml"
     - $ref: "../components/parameters/headers/versionCode.yaml"
-    - name: x-accept-version
-      in: header
-      description: Accept Version
-      schema:
-        type: string
-    - name: page
-      in: query
-      description: Page number
-      required: true
-      schema:
-        type: integer
-        default: 1
+    - $ref: "../components/parameters/headers/acceptVersion.yaml"
+    - $ref: "../components/parameters/query/page.yaml"
     - name: order_type
       in: query
       description: Order type

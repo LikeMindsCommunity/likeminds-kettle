@@ -7,41 +7,12 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: page
-      in: query
-      description: Page number
-      required: true
-      schema:
-        type: integer
-        minimum: 1
-    - name: page_size
-      in: query
-      description: Number of items per page
-      required: true
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-    - name: max_timestamp
-      in: query
-      description: Maximum timestamp for synchronization
-      required: true
-      schema:
-        type: integer
-    - name: min_timestamp
-      in: query
-      description: Minimum timestamp for synchronization
-      required: true
-      schema:
-        type: integer
-    - name: chatroom_types
-      in: query
-      description: Types of chatrooms (disabled in the request)
-      schema:
-        type: array
-        items:
-          type: integer
-
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
+    - $ref: "../../components/parameters/query/pageSize.yaml"
+    - $ref: "../../components/parameters/query/minTimestamp.yaml"
+    - $ref: "../../components/parameters/query/maxTimestamp.yaml"
+    - $ref: "../../components/parameters/query/chatroomTypes.yaml"
   responses:
     "200":
       description: OK

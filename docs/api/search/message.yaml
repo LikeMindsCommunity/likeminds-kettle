@@ -11,24 +11,9 @@ get:
 
   parameters:
     - $ref: "../../components/parameters/headers/authToken.yaml"
-    - name: search
-      in: query
-      description: keyword to search
-      required: true
-      schema:
-        type: string
-    - name: page
-      in: query
-      description: page number
-      required: true
-      schema:
-        type: integer
-    - name: page_size
-      in: query
-      description: page size
-      required: true
-      schema:
-        type: integer
+    - $ref: "../../components/parameters/query/search.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
+    - $ref: "../../components/parameters/query/pageSize.yaml"
 
   responses:
     "200":

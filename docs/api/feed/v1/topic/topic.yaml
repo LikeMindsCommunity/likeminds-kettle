@@ -62,26 +62,10 @@ get:
       description: Filter by enabled status
       schema:
         type: boolean
-    - name: search_type
-      in: query
-      description: Search type (e.g., name)
-      schema:
-        type: string
-    - name: search
-      in: query
-      description: Search term
-      schema:
-        type: string
-    - name: page
-      in: query
-      description: Page number
-      schema:
-        type: integer
-    - name: page_size
-      in: query
-      description: Page size
-      schema:
-        type: integer
+    - $ref: "../../../../components/parameters/query/search.yaml"
+    - $ref: "../../../../components/parameters/query/searchType.yaml"
+    - $ref: "../../../../components/parameters/query/page.yaml"
+    - $ref: "../../../../components/parameters/query/pageSize.yaml"
     
   responses:
     "200":

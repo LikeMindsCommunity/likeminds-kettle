@@ -1,0 +1,6 @@
+name: channel_id
+in: path
+description: ID of the channel
+required: true
+schema:
+  type: integer

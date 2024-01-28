@@ -11,27 +11,12 @@ get:
 
   parameters:
     - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/query/mobileNumber.yaml"
+    - $ref: "../../components/parameters/query/countryCode.yaml"
+    - $ref: "../../components/parameters/query/otp.yaml"
     - name: otp_mode
       in: query
       description: OTP Mode
-      required: true
-      schema:
-        type: string
-    - name: mobile_no
-      in: query
-      description: Mobile Number
-      required: true
-      schema:
-        type: integer
-    - name: country_code
-      in: query
-      description: Country Code
-      required: true
-      schema:
-        type: integer
-    - name: otp
-      in: query
-      description: OTP
       required: true
       schema:
         type: string

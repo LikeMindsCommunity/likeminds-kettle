@@ -1,0 +1,6 @@
+name: mobile_no
+in: query
+description: User Mobile Number
+required: true
+schema:
+  type: string

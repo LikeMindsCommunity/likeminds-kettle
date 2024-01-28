@@ -1,0 +1,5 @@
+name: state
+in: query
+required: true
+schema:
+  type: integer

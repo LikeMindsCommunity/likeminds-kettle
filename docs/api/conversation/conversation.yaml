@@ -6,16 +6,8 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: x-api-key
-      in: header
-      description: API Key
-      schema:
-        type: string
-    - name: Authorization
-      in: header
-      description: JWT token
-      schema:
-        type: string
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
   requestBody:
     required: false
   responses:

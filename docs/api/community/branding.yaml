@@ -10,23 +10,9 @@ get:
     - bearerAuth: []
 
   parameters:
-    - name: Authorization
-      in: header
-      required: true
-      schema:
-        type: string
-        format: text
-    - name: x-api-key
-      in: header
-      required: true
-      schema:
-        type: string
-        format: text
-    - name: x-platform-code
-      in: header
-      description: Platform Code
-      schema:
-        type: string
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
 
   responses:
     "200":

@@ -6,17 +6,8 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      required: true
-      schema:
-        type: string
-    - name: x-api-key
-      in: header
-      required: true
-      schema:
-        type: string
-        format: text
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
     - name: entity_type
       in: query
       required: true

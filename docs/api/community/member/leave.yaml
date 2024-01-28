@@ -6,12 +6,7 @@ delete:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      description: JWT token
-      schema:
-        type: string
-      required: true
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
   responses:
     "200":
       description: OK

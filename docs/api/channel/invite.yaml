@@ -10,21 +10,9 @@ put:
     - bearerAuth: []
 
   parameters:
-    - name: x-api-key
-      in: header
-      description: API key of community
-      schema:
-        type: string
-    - name: x-platform-code
-      in: header
-      description: Platform Code
-      schema:
-        type: string
-    - name: x-version-code
-      in: header
-      description: Version Code
-      schema:
-        type: string
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
 
   requestBody:
     content:

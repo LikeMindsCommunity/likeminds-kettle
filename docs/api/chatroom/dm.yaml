@@ -5,19 +5,9 @@ get:
     - Chatroom
   security:
     - bearerAuth: []
-
   parameters:
-    - name: Authorization
-      in: header
-      description: JWT token
-      schema:
-        type: string
-    - name: x-api-key
-      in: header
-      description: API Key
-      schema:
-        type: string
-
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
   responses:
     '200':
       description: OK

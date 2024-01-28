@@ -4,7 +4,9 @@ post:
     tags:
       - Login
     security:
-      - bearer_token: []
+      - bearerAuth: []
+    parameters:
+      - $ref: "../../components/parameters/headers/authToken.yaml"
     requestBody:
       content:
         application/json:

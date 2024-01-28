@@ -14,11 +14,7 @@ get:
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
-    - name: page
-      in: query
-      required: true
-      schema:
-        type: integer
+    - $ref: "../../components/parameters/query/page.yaml"
 
   responses:
     "200":

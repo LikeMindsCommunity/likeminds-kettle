@@ -15,10 +15,7 @@ post:
     - $ref: "../../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../../../components/parameters/headers/versionCode.yaml"
-    - name: x-accept-version
-      in: header
-      schema:
-        type: string
+    - $ref: "../../../../components/parameters/headers/acceptVersion.yaml"
 
   requestBody:
     content:

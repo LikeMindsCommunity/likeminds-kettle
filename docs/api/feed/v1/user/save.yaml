@@ -13,21 +13,9 @@ get:
 
   parameters:
     - $ref: "../../../../components/parameters/headers/authToken.yaml"
-    - name: user_id
-      in: path
-      description: ID of the user whose saved posts are to be fetched
-      schema:
-        type: string
-    - name: page
-      in: query
-      description: Page number
-      schema:
-        type: integer
-    - name: page_size
-      in: query
-      description: Page size
-      schema:
-        type: integer
+    - $ref: "../../../../components/parameters/path/user_id.yaml"
+    - $ref: "../../../../components/parameters/query/page.yaml"
+    - $ref: "../../../../components/parameters/query/pageSize.yaml"
 
   responses:
     "200":

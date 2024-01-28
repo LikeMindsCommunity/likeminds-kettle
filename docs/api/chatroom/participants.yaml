@@ -52,19 +52,8 @@ get:
   parameters:
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/headers/authToken.yaml"
-    - name: chatroom_id
-      in: query
-      required: true
-      schema:
-        type: integer
-      description: ID of the chatroom
-
-    - name: is_secret
-      in: query
-      required: true
-      schema:
-        type: boolean
-      description: Whether the chatroom is secret or not
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
+    - $ref: "../../components/parameters/query/isSecret.yaml"
 
   responses:
     "200":

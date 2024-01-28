@@ -10,12 +10,7 @@ get:
     - bearerAuth: []
 
   parameters:
-    - name: Authorization
-      in: header
-      description: JWT token
-      schema:
-        type: string
-
+    - $ref: "../../components/parameters/headers/authToken.yaml"
     - name: configuration_types
       in: query
       description: Configuration types to get

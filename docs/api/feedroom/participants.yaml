@@ -60,16 +60,8 @@ get:
     - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
-    - name: feedroom_id
-      in: query
-      required: true
-      schema:
-        type: integer
-    - name: is_secret
-      in: query
-      required: true
-      schema:
-        type: boolean
+    - $ref: "../../components/parameters/query/feedroomId.yaml"
+    - $ref: "../../components/parameters/query/isSecret.yaml"
 
   responses:
     "200":

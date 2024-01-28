@@ -6,7 +6,7 @@ get:
     tags:
       - Login
     security:
-      - bearer_token: []
+    - bearerAuth: []
 
     responses:
       '200':

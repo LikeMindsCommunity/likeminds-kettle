@@ -13,16 +13,8 @@ put:
 
   parameters:
     - $ref: "../../../../../../components/parameters/headers/authToken.yaml"
-    - name: post_id
-      in: path
-      description: ID of the post containing the comment
-      schema:
-        type: string
-    - name: comment_id
-      in: path
-      description: ID of the comment to be liked
-      schema:
-        type: string
+    - $ref: "../../../../../../components/parameters/path/post_id.yaml"
+    - $ref: "../../../../../../components/parameters/path/comment_id.yaml"
 
   responses:
     "200":
@@ -53,26 +45,10 @@ get:
 
   parameters:
     - $ref: "../../../../../../components/parameters/headers/authToken.yaml"
-    - name: post_id
-      in: path
-      description: ID of the post containing the comment
-      schema:
-        type: string
-    - name: comment_id
-      in: path
-      description: ID of the comment to fetch likes for
-      schema:
-        type: string
-    - name: page
-      in: query
-      description: Page number
-      schema:
-        type: integer
-    - name: page_size
-      in: query
-      description: Page size
-      schema:
-        type: integer
+    - $ref: "../../../../../../components/parameters/path/post_id.yaml"
+    - $ref: "../../../../../../components/parameters/path/comment_id.yaml"
+    - $ref: "../../../../../../components/parameters/query/page.yaml"
+    - $ref: "../../../../../../components/parameters/query/pageSize.yaml"
 
   responses:
     "200":

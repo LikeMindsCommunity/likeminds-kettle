@@ -15,12 +15,7 @@ get:
     - $ref: "../../../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../../../components/parameters/headers/authToken.yaml"
-    - name: post_id
-      in: path
-      required: true
-      schema:
-        type: string
-      description: The ID of the post to fetch details for
+    - $ref: "../../../../components/parameters/path/post_id.yaml"
 
   responses:
     "200":
@@ -179,12 +174,7 @@ put:
     - $ref: "../../../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../../../components/parameters/headers/authToken.yaml"
-    - name: post_id
-      in: path
-      required: true
-      schema:
-        type: string
-      description: The ID of the post to edit
+    - $ref: "../../../../components/parameters/path/post_id.yaml"
 
   requestBody:
     required: true
@@ -391,12 +381,7 @@ delete:
 
   parameters:
     - $ref: "../../../../components/parameters/headers/authToken.yaml"
-    - name: post_id
-      in: path
-      required: true
-      schema:
-        type: string
-      description: The ID of the post to delete
+    - $ref: "../../../../components/parameters/path/post_id.yaml"
       
   requestBody:
     required: true

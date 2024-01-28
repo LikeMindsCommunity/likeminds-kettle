@@ -15,12 +15,7 @@ get:
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/headers/authToken.yaml"
-    - name: chatroom_id
-      in: query
-      required: true
-      schema:
-        type: integer
-      description: ID of the chatroom
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
 
   responses:
     "200":

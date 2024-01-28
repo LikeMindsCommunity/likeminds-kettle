@@ -5,6 +5,8 @@ get:
     - Chatroom
   security:
     - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
   responses:
     '200':
       description: OK
@@ -198,16 +200,8 @@ put:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      description: Authorization token
-      schema:
-        type: string
-    - name: x-api-key
-      in: header
-      description: API Key
-      schema:
-        type: string
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
   requestBody:
     content:
       application/json:

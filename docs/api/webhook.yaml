@@ -6,8 +6,8 @@ get:
     - Webhooks
   security:
     - bearerAuth: []
-
   parameters:
+    - $ref: "../components/parameters/headers/authToken.yaml"
     - $ref: "../components/parameters/headers/platformCode.yaml"
     - $ref: "../components/parameters/headers/apiKey.yaml"
   summary: Fetch all webhooks
@@ -76,6 +76,7 @@ post:
     - bearerAuth: []
 
   parameters:
+    - $ref: "../components/parameters/headers/authToken.yaml"
     - $ref: "../components/parameters/headers/platformCode.yaml"
     - $ref: "../components/parameters/headers/apiKey.yaml"
   description: This API enables webhooks for an Community App

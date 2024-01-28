@@ -6,11 +6,14 @@ post:
   tags:
     - Chatroom
 
-  security:
-    - bearerAuth: []
-    
   description: |
     This API adds frequently asked questions (FAQ) to a chatroom event.
+
+  security:
+    - bearerAuth: []
+        
+  parameters:
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
 
   requestBody:
     content:

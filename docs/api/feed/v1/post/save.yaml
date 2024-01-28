@@ -13,11 +13,7 @@ put:
 
   parameters:
     - $ref: "../../../../components/parameters/headers/authToken.yaml"
-    - name: post_id
-      in: path
-      description: ID of the post to be saved
-      schema:
-        type: string
+    - $ref: "../../../../components/parameters/path/post_id.yaml"
 
   responses:
     "200":

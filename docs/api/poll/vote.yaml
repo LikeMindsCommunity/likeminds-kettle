@@ -11,12 +11,7 @@ put:
 
   parameters:
     - $ref: "../../components/parameters/headers/authToken.yaml"
-    - name: poll_id
-      in: path
-      description: ID of the poll to vote on
-      required: true
-      schema:
-        type: string
+    - $ref: "../../components/parameters/path/poll_id.yaml"
 
   requestBody:
     description: Votes on poll options
@@ -52,12 +47,7 @@ get:
 
   parameters:
     - $ref: "../../components/parameters/headers/authToken.yaml"
-    - name: poll_id
-      in: path
-      description: ID of the poll to get votes for
-      required: true
-      schema:
-        type: string
+    - $ref: "../../components/parameters/path/poll_id.yaml"
 
   responses:
     "200":

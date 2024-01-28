@@ -6,24 +6,9 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: x-api-key
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: chatroom_id
-      in: query
-      description: ID of the chatroom
-      schema:
-        type: integer
-      required: true
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../../components/parameters/query/chatroomId.yaml"
   responses:
     "200":
       description: OK
@@ -58,30 +43,10 @@ put:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: x-api-key
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: x-platform-code
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: x-version-code
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
     - name: body
       in: body
       description: Chatroom cohort access update request body

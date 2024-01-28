@@ -10,22 +10,9 @@ get:
     - bearerAuth: []
 
   parameters:
-    - name: Authorization
-      in: header
-      description: JWT token
-      schema:
-        type: string
-    - name: x-platform-type
-      in: header
-      description: Platform Type
-      schema:
-        type: string
-    - name: x-api-key
-      in: header
-      description: API key of community
-      schema:
-        type: string
-      required: false
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
 
   requestBody:
     content:

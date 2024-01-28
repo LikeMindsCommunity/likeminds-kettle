@@ -10,11 +10,7 @@ post:
     - bearerAuth: []
 
   parameters:
-      - name: token
-        in: header
-        description: JWT token
-        schema:
-          type: string
+    - $ref: "../../components/parameters/headers/authToken.yaml"
 
   requestBody:
     content:

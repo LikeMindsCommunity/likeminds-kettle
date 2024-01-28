@@ -6,18 +6,8 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      description: JWT token
-      schema:
-        type: string
-      required: true
-    - name: x-platform-type
-      in: header
-      description: Platform Type
-      schema:
-        type: string
-      required: true
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
   responses:
     "200":
       description: OK

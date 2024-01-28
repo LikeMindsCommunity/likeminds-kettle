@@ -13,16 +13,8 @@ get:
     - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
-    - name: feedroom_id
-      in: query
-      description: Chatroom ID (Nullable)
-      schema:
-        type: integer
-    - name: page
-      in: query
-      description: Page number (Nullable)
-      schema:
-        type: integer
+    - $ref: "../../components/parameters/query/feedroomId.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
 
   responses:
     "200":

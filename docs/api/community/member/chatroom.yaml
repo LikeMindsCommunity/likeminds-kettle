@@ -6,45 +6,13 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: x-platform-code
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: x-version-code
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: x-api-key
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: user_id
-      in: query
-      schema:
-        type: integer
-      required: true
-    - name: state
-      in: query
-      schema:
-        type: integer
-      required: true
-    - name: page
-      in: query
-      schema:
-        type: integer
-      required: true
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../components/parameters/query/user_id.yaml"
+    - $ref: "../../../components/parameters/query/state.yaml"
+    - $ref: "../../../components/parameters/query/page.yaml"
   responses:
     "200":
       description: OK

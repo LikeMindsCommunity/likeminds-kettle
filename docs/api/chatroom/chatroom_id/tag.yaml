@@ -10,26 +10,9 @@ get:
     - bearerAuth: []
 
   parameters:
-    - name: chatroom_id
-      in: path
-      required: true
-      schema:
-        type: integer
-      description: ID of the chatroom to get tags
-
-    - name: search_name
-      in: query
-      required: false
-      schema:
-        type: string
-      description: Search term for tags
-
-    - name: is_secret
-      in: query
-      required: false
-      schema:
-        type: boolean
-      description: Filter by secret status
+    - $ref: "../../../components/parameters/path/chatroomId.yaml"
+    - $ref: "../../../components/parameters/query/searchName.yaml"
+    - $ref: "../../../components/parameters/query/isSecret.yaml"
 
   responses:
     "200":

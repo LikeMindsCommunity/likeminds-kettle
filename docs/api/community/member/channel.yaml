@@ -6,31 +6,11 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      required: true
-      schema:
-        type: string
-    - name: user_id
-      in: path
-      required: true
-      schema:
-        type: string
-    - name: state
-      in: query
-      required: true
-      schema:
-        type: integer
-    - name: page
-      in: query
-      required: true
-      schema:
-        type: integer
-    - name: channel_type
-      in: query
-      required: true
-      schema:
-        type: integer
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/path/user_id.yaml"
+    - $ref: "../../../components/parameters/query/state.yaml"
+    - $ref: "../../../components/parameters/query/page.yaml"
+    - $ref: "../../../components/parameters/query/channelType.yaml"
   responses:
     "200":
       description: OK

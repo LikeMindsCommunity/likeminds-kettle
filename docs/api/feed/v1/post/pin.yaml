@@ -14,12 +14,7 @@ put:
 
   parameters:
     - $ref: "../../../../components/parameters/headers/authToken.yaml"
-    - name: post_id
-      in: path
-      required: true
-      schema:
-        type: string
-      description: The ID of the post to pin
+    - $ref: "../../../../components/parameters/path/post_id.yaml"
 
   responses:
     "200":

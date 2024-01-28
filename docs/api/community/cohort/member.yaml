@@ -6,18 +6,8 @@ delete:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
-    - name: x-api-key
-      in: header
-      schema:
-        type: string
-        format: text
-      required: true
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
     - name: body
       in: body
       description: Cohort member removal request body

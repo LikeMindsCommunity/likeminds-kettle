@@ -6,11 +6,8 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: chatroom_id
-      in: query
-      required: true
-      schema:
-        type: integer
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
   responses: 
     "200":
       description: OK

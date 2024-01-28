@@ -12,11 +12,7 @@ put:
   parameters:
     - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
-    - name: feedroom_id
-      in: query
-      required: true
-      schema:
-        type: integer
+    - $ref: "../../components/parameters/query/feedroomId.yaml"
     - name: value
       in: query
       required: true
