@@ -32,28 +32,4 @@ post:
                 type: object
                 properties:
                   conversation:
-                    type: object
-                    properties:
-                      allow_add_option: boolean
-                      answer: string
-                      attachment_count: integer
-                      attachments_uploaded: boolean
-                      chatroom_id: integer
-                      community_id: integer
-                      created_at: string
-                      created_epoch: integer
-                      date: string
-                      end_time: integer
-                      has_event_recording: boolean
-                      has_files: boolean
-                      id: integer
-                      is_anonymous: boolean
-                      is_edited: boolean
-                      member_id: integer
-                      poll_answer_text: string
-                      reactions:
-                        type: array
-                        items:
-                          type: string
-                      start_time: integer
-                      state: integer
+                    $ref: "../../../components/schemas/responses/conversation.yaml"

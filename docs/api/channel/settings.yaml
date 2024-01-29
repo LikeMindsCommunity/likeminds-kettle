@@ -26,40 +26,7 @@ get:
                 type: object
                 properties:
                   channel_settings:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        changed_by:
-                          type: integer
-                        chatroom_id:
-                          type: integer
-                        enabled:
-                          type: boolean
-                        setting_type:
-                          type: string
-                        user:
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                            image_link:
-                              type: string
-                            is_guest:
-                              type: boolean
-                            name:
-                              type: string
-                            sdk_client_info:
-                              type: object
-                              properties:
-                                community:
-                                  type: integer
-                                user:
-                                  type: integer
-                                user_unique_id:
-                                  type: string
-                            user_unique_id:
-                              type: string
+                    $ref: "../../components/schemas/responses/channelSettings.yaml"
 
 
 
@@ -107,37 +74,4 @@ put:
                 type: object
                 properties:
                   channel_settings:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        changed_by:
-                          type: integer
-                        chatroom_id:
-                          type: integer
-                        enabled:
-                          type: boolean
-                        setting_type:
-                          type: string
-                        user:
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                            image_link:
-                              type: string
-                            is_guest:
-                              type: boolean
-                            name:
-                              type: string
-                            sdk_client_info:
-                              type: object
-                              properties:
-                                community:
-                                  type: integer
-                                user:
-                                  type: integer
-                                user_unique_id:
-                                  type: string
-                            user_unique_id:
-                              type: string
+                    $ref: "../../components/schemas/responses/channelSettings.yaml"

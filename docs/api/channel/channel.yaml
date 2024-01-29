@@ -62,128 +62,15 @@ get:
                   can_access_secret_chatroom:
                     type: boolean
                   chatroom:
-                    type: object
-                    properties:
-                      about_recording: null
-                      access: null
-                      access_without_subscription: boolean
-                      answer_text: string
-                      answers_count: integer
-                      attachment_count: integer
-                      attachments_uploaded: boolean
-                      attended: boolean
-                      attending_count: integer
-                      attending_status: boolean
-                      audio_count: integer
-                      auto_follow_done: boolean
-                      card_creation_time: string
-                      chat_request_created_at: null
-                      chat_request_state: null
-                      chat_requested_by: null
-                      chatroom_image_url: string
-                      cohorts: array
-                      community_id: integer
-                      community_name: string
-                      created_at: string
-                      date: string
-                      date_epoch: integer
-                      date_time: integer
-                      duration: integer
-                      external_seen: boolean
-                      follow_status: boolean
-                      header: string
-                      id: integer
-                      image_count: integer
-                      include_members_later: boolean
-                      is_edited: boolean
-                      is_guest: boolean
-                      is_paid: boolean
-                      is_pending: boolean
-                      is_pinned: boolean
-                      is_private: boolean
-                      is_private_member: boolean
-                      is_secret: boolean
-                      is_tagged: boolean
-                      member:
-                        type: object
-                        properties:
-                          community_id: integer
-                          created_at: integer
-                          custom_title: string
-                          id: integer
-                          image_url: string
-                          is_guest: boolean
-                          is_owner: boolean
-                          member_since: string
-                          name: string
-                          route: string
-                          state: integer
-                          user_unique_id: string
-                      member_can_message: boolean
-                      mute_status: boolean
-                      online_link_enable_before: integer
-                      online_link_type: null
-                      participants_count: integer
-                      pdf_count: integer
-                      polls_count: integer
-                      reactions: array
-                      recordings_attachments: array
-                      recordings_attachments_view: integer
-                      recordings_url: array
-                      share_link: string
-                      show_follow_auto_tag: boolean
-                      show_follow_telescope: boolean
-                      state: integer
-                      third_party_unique_id: null
-                      title: string
-                      total_response_count: integer
-                      type: integer
-                      updated_at: integer
-                      video_count: integer
+                    $ref: "../../components/schemas/responses/chatroom.yaml"
                   chatroom_actions:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id: integer
-                        title: string
+                    $ref: "../../components/schemas/responses/chatroomActions.yaml"
                   community:
-                    type: object
-                    properties:
-                      auto_approval: boolean
-                      branding:
-                        type: object
-                        properties:
-                          advanced:
-                            type: object
-                            properties:
-                              buttons_icons_colour: string
-                              header_colour: string
-                              text_links_colour: string
-                          basic:
-                            type: object
-                            properties:
-                              primary_colour: string
-                      community_setting_rights: array
-                      fee_event: integer
-                      fee_membership: integer
-                      fee_payment_pages: integer
-                      grace_period: integer
-                      hide_dm_tab: boolean
-                      id: integer
-                      image_url: string
-                      is_discoverable: boolean
-                      is_freemium_community: boolean
-                      is_paid: boolean
-                      is_whitelabel: boolean
-                      members_count: integer
-                      name: string
-                      purpose: string
-                      referral_enabled: boolean
-                      sub_type: integer
-                      type: integer
-                      updated_at: integer
-                      whitelabel_info: null
-                  conversation_users: array
-                  participant_count: integer
-                  unread_messages: integer
+                    $ref: "../../components/schemas/responses/community.yaml"
+                  conversation_users:
+                    type: array
+                    items: {}
+                  participant_count:
+                    type: integer
+                  unread_messages:
+                    type: integer

@@ -1,0 +1,201 @@
+type: object
+properties:
+  about_recording:
+    type: string
+  access:
+    type: string
+  access_without_subscription: 
+    type: string
+  answer_text:
+    type: string
+  answers_count:
+    type: integer
+  attachment_count:
+    type: integer
+  attachments:
+    type: array
+    items: {}
+  attachments_uploaded:
+    type: boolean
+  attended:
+    type: boolean
+  attending_count:
+    type: integer
+  attending_status:
+    type: boolean
+  audio_count:
+    type: integer
+  audios:
+    type: array
+    items: {}
+  auto_follow_done:
+    type: boolean
+  card_creation_time:
+    type: string
+  chat_request_created_at:
+    type: string
+  chat_request_state:
+    type: string
+  chat_requested_by:
+    type: string
+  chatroom_image_url:
+    type: string
+    format: uri
+  cohorts:
+    type: array
+    items: {}
+  community_id:
+    type: integer
+  community_name:
+    type: string
+  created_at:
+    type: string
+  custom_tag:
+    type: string
+  date:
+    type: string
+  date_epoch:
+    type: integer
+  date_time:
+    type: integer
+  duration:
+    type: integer
+  external_seen:
+    type: boolean
+  follow_status:
+    type: boolean
+  has_event_recording:
+    type: boolean
+  header:
+    type: string
+  id:
+    type: integer
+  image_count:
+    type: integer
+  images:
+    type: array
+    items: {}
+  include_members_later:
+    type: boolean
+  is_edited:
+    type: boolean
+  is_guest:
+    type: boolean
+  is_paid:
+    type: boolean
+  is_pending:
+    type: boolean
+  is_pinned:
+    type: boolean
+  is_private:
+    type: boolean
+  is_private_member:
+    type: boolean
+  is_secret:
+    type: boolean
+  is_tagged:
+    type: boolean
+  member:
+    type: object
+    properties:
+      community_id:
+        type: integer
+      created_at:
+        type: integer
+      custom_intro_text:
+        type: string
+      custom_title:
+        type: string
+      id:
+        type: integer
+      image_url:
+        type: string
+        format: uri
+      is_guest:
+        type: boolean
+      is_owner:
+        type: boolean
+      member_since:
+        type: string
+      member_since_epoch:
+        type: integer
+      name:
+        type: string
+      organisation_name:
+        type: string
+      route:
+        type: string
+      sdk_client_info:
+        type: object
+        properties:
+          community:
+            type: integer
+          user:
+            type: integer
+          user_unique_id:
+            type: string
+          uuid:
+            type: string
+          widget_id:
+            type: string
+      state:
+        type: integer
+      updated_at:
+        type: integer
+      user_unique_id:
+        type: string
+      uuid:
+        type: string
+  member_can_message:
+    type: boolean
+  participants_count:
+    type: integer
+  recordings_attachments:
+    type: array
+    items: {}
+  recordings_attachments_view:
+    type: integer
+  recordings_url:
+    type: array
+    items: {}
+  show_follow_auto_tag:
+    type: boolean
+  show_follow_telescope:
+    type: boolean
+  third_party_unique_id:
+    type: string
+  total_response_count:
+    type: integer
+  updated_at:
+    type: integer
+  mute_status:
+    type: boolean
+  online_link_enable_before:
+    type: integer
+  online_link_type:
+    type: string
+  pdf:
+    type: array
+    items: {}
+  pdf_count:
+    type: integer
+  polls_count:
+    type: integer
+  reactions:
+    type: array
+    items: {}
+  secret_chatroom_left:
+    type: boolean
+  share_link:
+    type: string
+  state:
+    type: integer
+  title:
+    type: string
+  type:
+    type: integer
+  video_count:
+    type: integer
+  videos:
+    type: array
+    items: {}

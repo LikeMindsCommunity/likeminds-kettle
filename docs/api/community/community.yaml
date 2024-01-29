@@ -28,76 +28,7 @@ get:
                 type: object
                 properties:
                   community:
-                    type: object
-                    properties:
-                      auto_approval:
-                        type: boolean
-                      branding:
-                        type: object
-                        properties:
-                          advanced:
-                            type: object
-                            properties:
-                              buttons_icons_colour:
-                                type: string
-                              header_colour:
-                                type: string
-                              text_links_colour:
-                                type: string
-                          basic:
-                            type: object
-                            properties:
-                              primary_colour:
-                                type: string
-                      date:
-                        type: string
-                        format: date
-                      grace_period:
-                        type: integer
-                      id:
-                        type: integer
-                      image_url:
-                        type: string
-                      is_discoverable:
-                        type: boolean
-                      is_member:
-                        type: string
-                      is_paid:
-                        type: boolean
-                      location:
-                        type: string
-                      members_count:
-                        type: integer
-                      min_referrer_member:
-                        type: integer
-                      name:
-                        type: string
-                      private_link:
-                        type: string
-                      private_link_members_directory:
-                        type: string
-                      private_link_text_admin:
-                        type: string
-                      private_link_text_members_directory:
-                        type: string
-                      purpose:
-                        type: string
-                      referral_enabled:
-                        type: boolean
-                      share_text_admin:
-                        type: string
-                      share_text_anonymous:
-                        type: string
-                      share_text_member:
-                        type: string
-                      share_url:
-                        type: string
-                      state:
-                        type: integer
-                      sub_type:
-                        type: integer
-                      type:
-                        type: integer
+                    $ref: "../../components/schemas/responses/community.yaml"
                   menu:
                     type: array
                     items:

@@ -29,32 +29,6 @@ get:
                 type: object
                 properties:
                   members:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        image_url:
-                          type: string
-                        is_guest:
-                          type: boolean
-                        name:
-                          type: string
-                        user_unique_id:
-                          type: string
+                    $ref: "../../components/schemas/responses/members.yaml"
                   participants:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        image_url:
-                          type: string
-                        is_guest:
-                          type: boolean
-                        name:
-                          type: string
-                        user_unique_id:
-                          type: string
+                    $ref: "../../components/schemas/responses/participants.yaml"

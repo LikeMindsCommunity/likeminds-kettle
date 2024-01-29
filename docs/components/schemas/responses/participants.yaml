@@ -1,0 +1,14 @@
+type: array
+items:
+  type: object
+  properties:
+    id:
+      type: integer
+    image_url:
+      type: string
+    is_guest:
+      type: boolean
+    name:
+      type: string
+    user_unique_id:
+      type: string

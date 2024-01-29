@@ -31,13 +31,5 @@ get:
                     type: array
                     items: {}
                   members:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id: {}
-                        image_url: {}
-                        is_guest: {}
-                        name: {}
-                        user_unique_id: {}
+                    $ref: "../../components/schemas/responses/members.yaml"
                   participants: {}

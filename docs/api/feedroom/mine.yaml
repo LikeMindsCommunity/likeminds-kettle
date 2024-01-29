@@ -35,61 +35,9 @@ get:
                       type: object
                       properties:
                         chatroom:
-                          type: object
-                          properties:
-                            access: {}
-                            answer_text: {}
-                            answers_count: {}
-                            attachment_count: {}
-                            attachments: {}
-                            attachments_uploaded: {}
-                            attending_count: {}
-                            attending_status: {}
-                            audio_count: {}
-                            audios: {}
-                            auto_follow_done: {}
-                            card_creation_time: {}
-                            community_id: {}
-                            community_name: {}
-                            created_at: {}
-                            date: {}
-                            date_epoch: {}
-                            date_time: {}
-                            duration: {}
-                            follow_status: {}
-                            has_been_named: {}
-                            has_event_recording: {}
-                            header: {}
-                            id: {}
-                            image_count: {}
-                            images: {}
-                            include_members_later: {}
-                            is_edited: {}
-                            is_guest: {}
-                            is_paid: {}
-                            is_pending: {}
-                            is_private: {}
-                            is_private_member: {}
-                            is_secret: {}
-                            is_tagged: {}
-                            member: {}
-                            member_id: {}
-                            mute_status: {}
-                            online_link_enable_before: {}
-                            online_link_type: {}
-                            pdf: {}
-                            pdf_count: {}
-                            polls_count: {}
-                            reactions: {}
-                            secret_chatroom_left: {}
-                            share_link: {}
-                            state: {}
-                            title: {}
-                            type: {}
-                            video_count: {}
-                            videos: {}
-
-                        community: {}
+                          $ref: "../../components/schemas/responses/chatroom.yaml"
+                        community:
+                          $ref: "../../components/schemas/responses/community.yaml"
                         conversation_users: {}
                         is_draft: {}
                         last_conversation_time: {}
