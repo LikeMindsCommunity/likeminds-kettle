@@ -34,4 +34,3 @@ post:
       description: OK
       content:
         application/json: {}
-

@@ -45,4 +45,3 @@ get:
                 $ref: "../../components/schemas/responses/og_tags.yaml"
     '400':
       description: Bad Request
-

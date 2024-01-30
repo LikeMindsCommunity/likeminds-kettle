@@ -56,4 +56,3 @@ post:
                     type: array
                     items:
                       $ref: "../../../components/schemas/responses/chatroom.yaml"
-
