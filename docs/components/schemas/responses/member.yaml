@@ -1,0 +1,56 @@
+type: object
+properties:
+  custom_title:
+    type: string
+  id:
+    type: integer
+  image_url:
+    type: string
+  is_guest:
+    type: boolean
+  is_owner:
+    type: boolean
+  name:
+    type: string
+  organisation_name:
+    type: null
+  question_answers:
+    type: array
+    items:
+      type: object
+      properties:
+        community_id:
+          type: integer
+        directory_fields:
+          type: boolean
+        is_hidden:
+          type: boolean
+        member_id:
+          type: integer
+        question_id:
+          type: integer
+        question_title:
+          type: string
+        state:
+          type: integer
+        tag:
+          type: null
+        value:
+          type: string
+  sdk_client_info:
+    type: object
+    properties:
+      community:
+        type: integer
+      user:
+        type: integer
+      user_unique_id:
+        type: string
+      uuid:
+        type: string
+  updated_at:
+    type: integer
+  user_unique_id:
+    type: string
+  uuid:
+    type: string

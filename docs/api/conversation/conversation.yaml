@@ -97,29 +97,13 @@ post:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      description: JWT token
-      schema:
-        type: string
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
     - name: x-member-id
       in: header
       description: Member ID
-      schema:
-        type: string
-    - name: x-api-key
-      in: header
-      description: API Key
-      schema:
-        type: string
-    - name: x-platform-code
-      in: header
-      description: Platform Code
-      schema:
-        type: string
-    - name: x-version-code
-      in: header
-      description: Version Code
       schema:
         type: string
   requestBody:
@@ -211,16 +195,8 @@ delete:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      description: JWT token
-      schema:
-        type: string
-    - name: x-api-key
-      in: header
-      description: API Key
-      schema:
-        type: string
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
   requestBody:
     content:
       application/json:
@@ -339,16 +315,8 @@ put:
   security:
     - bearerAuth: []
   parameters:
-    - name: Authorization
-      in: header
-      description: JWT token
-      schema:
-        type: string
-    - name: x-api-key
-      in: header
-      description: API Key
-      schema:
-        type: string
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
   requestBody:
     content:
       application/json:

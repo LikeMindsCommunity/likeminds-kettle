@@ -8,19 +8,19 @@ post:
   parameters:
     - $ref: "../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../components/parameters/headers/apiKey.yaml"
-    - name: body
-      in: body
-      description: Cohort creation request body
-      required: true
-      schema:
-        type: object
-        properties:
-          name:
-            type: string
-          member_ids:
-            type: array
-            items:
-              type: integer
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            member_ids:
+              type: array
+              items:
+                type: integer
   responses:
     "200":
       description: OK
@@ -156,15 +156,15 @@ delete:
   parameters:
     - $ref: "../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../components/parameters/headers/apiKey.yaml"
-    - name: body
-      in: body
-      description: Cohort deletion request body
-      required: true
-      schema:
-        type: object
-        properties:
-          cohort_id:
-            type: integer
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            cohort_id:
+              type: integer
   responses:
     "200":
       description: OK
@@ -189,36 +189,36 @@ put:
   parameters:
     - $ref: "../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../components/parameters/headers/apiKey.yaml"
-    - name: body
-      in: body
-      description: Cohort update request body
-      required: true
-      schema:
-        type: object
-        properties:
-          cohort_id:
-            type: integer
-          rights:
-            type: array
-            items:
-              type: object
-              properties:
-                id:
-                  type: integer
-                title:
-                  type: string
-                state:
-                  type: integer
-                is_selected:
-                  type: boolean
-                is_locked:
-                  type: boolean
-          member_ids:
-            type: array
-            items:
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            cohort_id:
               type: integer
-          name:
-            type: string
+            rights:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  state:
+                    type: integer
+                  is_selected:
+                    type: boolean
+                  is_locked:
+                    type: boolean
+            member_ids:
+              type: array
+              items:
+                type: integer
+            name:
+              type: string
   responses:
     "200":
       description: OK

@@ -75,36 +75,3 @@ get:
                           type: integer
                         user_id:
                           type: string
-                  users:
-                    type: object
-                    properties:
-                      user_id:
-                        type: string
-                        properties:
-                          id:
-                            type: integer
-                          name:
-                            type: string
-                          image_url:
-                            type: string
-                          user_unique_id:
-                            type: string
-                          uuid:
-                            type: string
-                          sdk_client_info:
-                            type: object
-                            properties:
-                              community:
-                                type: integer
-                              user:
-                                type: integer
-                              user_unique_id:
-                                type: string
-                              uuid:
-                                type: string
-                          is_guest:
-                            type: boolean
-                          is_deleted:
-                            type: boolean
-                  total_count:
-                    type: integer

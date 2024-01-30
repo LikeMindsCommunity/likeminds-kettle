@@ -23,40 +23,4 @@ get:
               member:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    name:
-                      type: string
-                    state:
-                      type: integer
-                    is_owner:
-                      type: boolean
-                    community_id:
-                      type: integer
-                    route:
-                      type: string
-                    created_at:
-                      type: integer
-                    member_since:
-                      type: string
-                    image_url:
-                      type: string
-                    question_answer:
-                      type: object
-                      properties:
-                        member_id:
-                          type: integer
-                        community_id:
-                          type: integer
-                        state:
-                          type: integer
-                        value:
-                          type: string
-                        question_id:
-                          type: integer
-                        is_hidden:
-                          type: boolean
-                        directory_fields:
-                          type: boolean
+                  $ref: "../../../components/schemas/responses/member.yaml"

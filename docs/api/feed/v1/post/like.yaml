@@ -67,8 +67,6 @@ get:
               data:
                 type: object
                 properties:
-                  total_likes:
-                    type: integer
                   likes:
                     type: array
                     items:
@@ -82,38 +80,5 @@ get:
                           type: integer
                         updated_at:
                           type: integer
-                  users:
-                    type: object
-                    additionalProperties:
-                      type: object
-                      properties:
-                        user_id:
-                          type: string
-                        user:
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                            name:
-                              type: string
-                            image_url:
-                              type: string
-                            user_unique_id:
-                              type: string
-                            uuid:
-                              type: string
-                            sdk_client_info:
-                              type: object
-                              properties:
-                                community:
-                                  type: integer
-                                user:
-                                  type: integer
-                                user_unique_id:
-                                  type: string
-                                uuid:
-                                  type: string
-                            is_guest:
-                              type: boolean
-                            is_deleted:
-                              type: boolean
+                  total_count:
+                    type: integer

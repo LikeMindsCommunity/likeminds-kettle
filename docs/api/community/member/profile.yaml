@@ -23,26 +23,7 @@ get:
                   community_name:
                     type: string
                   member:
-                    type: object
-                    properties:
-                      custom_title:
-                        type: string
-                      id:
-                        type: integer
-                      image_url:
-                        type: string
-                      is_owner:
-                        type: boolean
-                      member_since:
-                        type: string
-                      name:
-                        type: string
-                      route:
-                        type: string
-                      state:
-                        type: integer
-                      updated_at:
-                        type: integer
+                    $ref: "../../../components/schemas/responses/member.yaml"
                   menu:
                     type: array
                     items: {}

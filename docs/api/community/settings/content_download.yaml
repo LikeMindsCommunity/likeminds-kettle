@@ -31,36 +31,37 @@ put:
   parameters:
     - $ref: "../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../components/parameters/headers/apiKey.yaml"
-    - name: body
-      in: body
-      required: true
-      schema:
-        type: object
-        properties:
-          content_download_settings:
-            type: array
-            items:
-              type: object
-              properties:
-                community_id:
-                  type: integer
-                download_setting_type:
-                  type: string
-                download_setting_title:
-                  type: string
-                enabled:
-                  type: boolean
-        example:
-          content_download_settings:
-            - community_id: 49827
-              download_setting_type: "image"
-              download_setting_title: "Images"
-              enabled: true
-            - community_id: 49827
-              download_setting_type: "video"
-              download_setting_title: "Videos"
-              enabled: true
-            # ... (repeat for other settings)
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            content_download_settings:
+              type: array
+              items:
+                type: object
+                properties:
+                  community_id:
+                    type: integer
+                  download_setting_type:
+                    type: string
+                  download_setting_title:
+                    type: string
+                  enabled:
+                    type: boolean
+            example:
+              content_download_settings:
+                - community_id: 49827
+                  download_setting_type: "image"
+                  download_setting_title: "Images"
+                  enabled: true
+                - community_id: 49827
+                  download_setting_type: "video"
+                  download_setting_title: "Videos"
+                  enabled: true
+                # ... (repeat for other settings)
   responses:
     "200":
       description: OK

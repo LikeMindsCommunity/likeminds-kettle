@@ -28,43 +28,9 @@ get:
                   edit_required:
                     type: boolean
                   member:
-                    type: object
-                    properties:
-                      custom_title:
-                        type: string
-                      id:
-                        type: integer
-                      image_url:
-                        type: string
-                      is_guest:
-                        type: boolean
-                      is_owner:
-                        type: boolean
-                      name:
-                        type: string
-                      organisation_name:
-                        type: null
-                      state:
-                        type: integer
-                      updated_at:
-                        type: integer
-                      user_unique_id:
-                        type: string
+                    $ref: "../../../components/schemas/responses/member.yaml"
                   member_rights:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        is_locked:
-                          type: boolean
-                        is_selected:
-                          type: boolean
-                        state:
-                          type: integer
-                        title:
-                          type: string
+                    $ref: "../../../components/schemas/responses/memberRights.yaml"
                   state:
                     type: integer
                   tool_state:

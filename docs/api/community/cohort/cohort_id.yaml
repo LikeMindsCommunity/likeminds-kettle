@@ -8,15 +8,15 @@ delete:
   parameters:
     - $ref: "../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../components/parameters/headers/apiKey.yaml"
-    - name: body
-      in: body
-      description: Cohort deletion request body
-      required: true
-      schema:
-        type: object
-        properties:
-          cohort_id:
-            type: integer
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            cohort_id:
+              type: integer
   responses:
     "200":
       description: OK
