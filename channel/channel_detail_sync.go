@@ -1,0 +1,26 @@
+package channel
+
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/utils"
+)
+
+// Get channel detail
+func GetChannelDetail(c *gin.Context) {
+
+	// Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
+		return
+	}
+
+	params := map[string]string{
+		ParamChannelId:          c.Param(ParamChannelId),
+		ParamChannelActionTypes: c.Param(ParamChannelActionTypes),
+	}
+
+	// Send Request
+	utils.SendRequest(c, utils.CoreService, SyncChannelDetailEndppoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
+}
