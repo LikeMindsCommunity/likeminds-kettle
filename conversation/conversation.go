@@ -55,7 +55,7 @@ type CreateConversationRequest struct {
 	TemporaryID           string                   `json:"temporary_id,omitempty"`
 	OGTags                interface{}              `json:"og_tags,omitempty"`
 	ShareLink             string                   `json:"share_link,omitempty"`
-	Attachment            []ConversationAttachment `json:"attachment,omitempty"`
+	Attachments           []ConversationAttachment `json:"attachments,omitempty"`
 }
 
 type EditConversationRequest struct {
