@@ -21,26 +21,41 @@ type ConversationPreview struct {
 	ActionRoute  string                    `json:"action_route"`
 }
 
+type ConversationAttachment struct {
+	Name         string      `json:"name,omitempty"`
+	Url          string      `json:"url,omitempty"`
+	Type         string      `json:"type,omitempty"`
+	ThumbnailUrl string      `json:"thumbnail_url,omitempty"`
+	Index        int         `json:"index,omitempty"`
+	Height       int         `json:"height,omitempty"`
+	Width        int         `json:"width,omitempty"`
+	Meta         interface{} `json:"meta,omitempty"`
+	LocationName string      `json:"location_name,omitempty"`
+	LocationLat  int         `json:"location_lat,omitempty"`
+	LocationLong int         `json:"location_long,omitempty"`
+}
+
 type CreateConversationRequest struct {
-	ChatroomID            interface{}         `json:"chatroom_id"`
-	Text                  string              `json:"text"`
-	PollType              *int32              `json:"poll_type,omitempty"`
-	AllowAddOption        bool                `json:"allow_add_option,omitempty"`
-	ExpiryTime            int64               `json:"expiry_time,omitempty"`
-	Polls                 []PollObject        `json:"polls,omitempty"`
-	MultilpleSelectState  *int64              `json:"multiple_select_state,omitempty"`
-	MultilpleSelectNo     int64               `json:"multiple_select_no,omitempty"`
-	AttachmentCount       int64               `json:"attachment_count,omitempty"`
-	RepliedConversationId interface{}         `json:"replied_conversation_id,omitempty"`
-	RepliedChatroomID     string              `json:"replied_chatroom_id,omitempty"`
-	InternalLink          string              `json:"internal_link,omitempty"`
-	Preview               ConversationPreview `json:"preview,omitempty"`
-	IsAnonymous           bool                `json:"is_anonymous,omitempty"`
-	State                 int32               `json:"state"`
-	HasFiles              bool                `json:"has_files,omitempty"`
-	TemporaryID           string              `json:"temporary_id,omitempty"`
-	OGTags                interface{}         `json:"og_tags,omitempty"`
-	ShareLink             string              `json:"share_link,omitempty"`
+	ChatroomID            interface{}              `json:"chatroom_id"`
+	Text                  string                   `json:"text"`
+	PollType              *int32                   `json:"poll_type,omitempty"`
+	AllowAddOption        bool                     `json:"allow_add_option,omitempty"`
+	ExpiryTime            int64                    `json:"expiry_time,omitempty"`
+	Polls                 []PollObject             `json:"polls,omitempty"`
+	MultilpleSelectState  *int64                   `json:"multiple_select_state,omitempty"`
+	MultilpleSelectNo     int64                    `json:"multiple_select_no,omitempty"`
+	AttachmentCount       int64                    `json:"attachment_count,omitempty"`
+	RepliedConversationId interface{}              `json:"replied_conversation_id,omitempty"`
+	RepliedChatroomID     string                   `json:"replied_chatroom_id,omitempty"`
+	InternalLink          string                   `json:"internal_link,omitempty"`
+	Preview               ConversationPreview      `json:"preview,omitempty"`
+	IsAnonymous           bool                     `json:"is_anonymous,omitempty"`
+	State                 int32                    `json:"state"`
+	HasFiles              bool                     `json:"has_files,omitempty"`
+	TemporaryID           string                   `json:"temporary_id,omitempty"`
+	OGTags                interface{}              `json:"og_tags,omitempty"`
+	ShareLink             string                   `json:"share_link,omitempty"`
+	Attachment            []ConversationAttachment `json:"attachment,omitempty"`
 }
 
 type EditConversationRequest struct {
