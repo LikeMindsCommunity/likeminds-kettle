@@ -17,7 +17,7 @@ func GetChannelDetail(c *gin.Context) {
 
 	params := map[string]string{
 		ParamChannelId:          c.Param(ParamChannelId),
-		ParamChannelActionTypes: c.Param(ParamChannelActionTypes),
+		ParamChannelActionTypes: c.Query(ParamChannelActionTypes),
 	}
 
 	// Send Request
