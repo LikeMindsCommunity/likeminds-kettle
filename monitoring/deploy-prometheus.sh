@@ -1,6 +1,6 @@
 #!/bin/bash
 branch_name="$(git rev-parse --abbrev-ref HEAD)"
-if [ "$branch_name" = "master" ]; then
+if [ "$branch_name" = "fix/migration-monitoring_LM_10466" ]; then
   curl -o ./.env https://likeminds-configs-prod.s3.ap-south-1.amazonaws.com/application-dot-envs-prod/kettle-prod/kettle-prod-dot-env-public
   git pull origin master
 else
