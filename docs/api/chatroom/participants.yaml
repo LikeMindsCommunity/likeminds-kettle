@@ -18,16 +18,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            is_secret:
-              type: boolean
-            chatroom_id:
-              type: integer
-            chatroom_participants:
-              type: array
-              items:
-                type: integer
+          $ref: "../../components/schemas/requests/chatroom_participants.yaml"
 
   responses:
     "200":

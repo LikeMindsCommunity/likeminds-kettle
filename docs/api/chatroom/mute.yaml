@@ -11,18 +11,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            chatroom_id:
-              type: integer
-            value:
-              type: boolean
-          required:
-            - chatroom_id
-            - value
-          example:
-            chatroom_id: 23663
-            value: true
+          $ref: "../../components/schemas/requests/chatroom_mute.yaml"
   responses:
     '200':
       description: OK

@@ -157,50 +157,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            text:
-              type: string
-            attachments:
-              type: array
-              items:
-                type: object
-                properties:
-                  attachment_type:
-                    type: integer
-                  attachment_meta:
-                    type: object
-                    properties:
-                      url:
-                        type: string
-                        nullable: true
-                      format:
-                        type: string
-                        nullable: true
-                      size:
-                        type: integer
-                        nullable: true
-                      duration:
-                        type: integer
-                        nullable: true
-                      page_count:
-                        type: integer
-                        nullable: true
-                      og_tags:
-                        type: object
-                        properties:
-                          title:
-                            type: string
-                            nullable: true
-                          image:
-                            type: string
-                            nullable: true
-                          description:
-                            type: string
-                            nullable: true
-                          url:
-                            type: string
-                            nullable: true
+          $ref: "../../../../components/schemas/requests/feed_post_edit.yaml"
 
   responses:
     "200":
@@ -364,10 +321,7 @@ delete:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            delete_reason:
-              type: string
+          $ref: "../../../../components/schemas/requests/feed_post_delete.yaml"
 
   responses:
     "200":

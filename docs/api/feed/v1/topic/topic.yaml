@@ -17,9 +17,9 @@ post:
     required: true
     content:
       application/json:
-        example: 
-          name: "Topic Name #1"
-    
+        schema:
+          $ref: "../../../../components/schemas/requests/feed_topic_create.yaml"
+
   responses:
     "200":
       description: OK

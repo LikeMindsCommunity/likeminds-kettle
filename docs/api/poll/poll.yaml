@@ -18,8 +18,8 @@ put:
     required: true
     content:
       application/json:
-        example:
-          text: "poll option"
+        schema:
+          $ref: "../../components/schemas/requests/poll_option_update.yaml"
 
   responses:
     "200":

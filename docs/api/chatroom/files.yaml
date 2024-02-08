@@ -18,23 +18,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            attachments:
-              type: array
-              items:
-                type: object
-                properties:
-                  url:
-                    type: string
-                  index:
-                    type: integer
-                  type:
-                    type: string
-                  height:
-                    type: integer
-                  width:
-                    type: integer
+          $ref: "../../components/schemas/requests/chatroom_files.yaml"
 
   responses:
     "200":

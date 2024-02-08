@@ -110,12 +110,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            chatroom_id:
-              type: integer
-            text:
-              type: string
+          $ref: "../../components/schemas/requests/conversation_create.yaml"
     required:
       - chatroom_id
       - text
@@ -201,14 +196,7 @@ delete:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            conversation_ids:
-              type: array
-              items:
-                type: integer
-            reason:
-              type: string
+          $ref: "../../components/schemas/requests/conversation_delete.yaml"
     required:
       - conversation_ids
       - reason
@@ -321,14 +309,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            conversation_id:
-              type: integer
-            text:
-              type: string
-            share_link:
-              type: string
+          $ref: "../../components/schemas/requests/conversation_update.yaml"
     required:
       - conversation_id
       - text

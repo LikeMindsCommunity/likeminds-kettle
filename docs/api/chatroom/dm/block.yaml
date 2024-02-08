@@ -12,12 +12,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            chatroom_id:
-              type: integer
-            status:
-              type: integer
+          $ref: "../../../components/schemas/requests/dm_block.yaml"
   responses:
     '200':
       description: OK

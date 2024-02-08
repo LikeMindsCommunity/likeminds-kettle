@@ -1,0 +1,6 @@
+type: object
+properties:
+  conversation_id:
+    type: integer
+  attending_status:
+    type: boolean

@@ -1,0 +1,6 @@
+type: object
+properties:
+  name:
+    type: string
+  is_enabled:
+    type: boolean

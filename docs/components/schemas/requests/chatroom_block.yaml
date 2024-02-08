@@ -1,0 +1,8 @@
+type: object
+properties:
+  chatroom_id:
+    type: integer
+    description: ID of the chatroom to block
+  status:
+    type: integer
+    description: Block status (e.g., 1 for block)

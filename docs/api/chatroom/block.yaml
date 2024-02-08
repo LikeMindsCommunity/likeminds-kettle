@@ -16,14 +16,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            chatroom_id:
-              type: integer
-              description: ID of the chatroom to block
-            status:
-              type: integer
-              description: Block status (e.g., 1 for block)
+          $ref: "../../components/schemas/requests/chatroom_block.yaml"
 
   responses:
     "200":

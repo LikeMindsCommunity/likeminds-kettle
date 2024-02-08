@@ -27,17 +27,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            notification_settings:
-              type: array
-              items:
-                type: object
-                properties:
-                  notification_type:
-                    type: integer
-                  enabled:
-                    type: boolean
+          $ref: "../../../../components/schemas/requests/community_feed_notifications.yaml"
   responses:
     "200":
       description: OK

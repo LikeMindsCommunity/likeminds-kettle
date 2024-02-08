@@ -14,10 +14,5 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            conversation_id:
-              type: integer
-            attending_status:
-              type: boolean
+          $ref: "../../../components/schemas/requests/conversation_attend_event.yaml"
   responses: {}

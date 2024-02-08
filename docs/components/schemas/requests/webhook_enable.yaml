@@ -1,0 +1,8 @@
+type: object
+properties:
+  webhook_type:
+    type: string
+  url:
+    type: string
+  is_active:
+    type: boolean

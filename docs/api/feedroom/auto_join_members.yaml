@@ -19,14 +19,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            feedroom_id:
-              type: integer
-            auto_follow_done:
-              type: boolean
-            include_members_later:
-              type: boolean
+          $ref: "../../components/schemas/requests/feedroom_autojoin.yaml"
 
   responses:
     "200":

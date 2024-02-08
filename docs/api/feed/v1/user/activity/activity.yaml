@@ -20,13 +20,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            action:
-              type: string
-              enum:
-                - create_post_permit_added
-              description: Type of action
+          $ref: "../../../../../components/schemas/requests/feed_user_activity.yaml"
 
   responses:
     "200":

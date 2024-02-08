@@ -16,45 +16,10 @@ post:
     - $ref: "../../../components/parameters/headers/authToken.yaml"
 
   requestBody:
-  content:
-    application/json:
-      schema:
-        type: object
-        properties:
-          url:
-            type: string
-            description: URL for the recording
-          chatroom_id:
-            type: integer
-            description: Chatroom ID
-          type:
-            type: string
-            description: Type of recording (e.g., "image")
-          index:
-            type: integer
-            description: Index of the recording
-          height:
-            type: integer
-            description: Height of the recording
-          width:
-            type: integer
-            description: Width of the recording
-          is_recording:
-            type: boolean
-            description: Indicates whether it is a recording
-          about:
-            type: string
-            description: Description about the recording
-        required:
-          - url
-          - chatroom_id
-          - type
-          - index
-          - height
-          - width
-          - is_recording
-          - about
-
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/chatroom_recording_create.yaml"
 
   responses:
     "200":
@@ -103,12 +68,7 @@ delete:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            chatroom_id:
-              type: string
-            id:
-              type: integer
+          $ref: "../../../components/schemas/requests/chatroom_recording_delete.yaml"
 
   responses:
     "200":

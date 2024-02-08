@@ -21,13 +21,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            chatroom_id:
-              type: string
-              description: ID of the chatroom to mark as read
-          required:
-            - chatroom_id
+          $ref: "../../components/schemas/requests/chatroom_markread.yaml"
 
   responses:
     "200":

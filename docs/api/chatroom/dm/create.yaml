@@ -11,12 +11,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            member_id:
-              type: integer
-            uuid:
-              type: string
+          $ref: "../../../components/schemas/requests/dm_create.yaml"
   responses:
     '200':
       description: OK

@@ -18,14 +18,8 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            value:
-              type: boolean
-            notify:
-              type: boolean
-          required:
-            - value
+          $ref: "../../components/schemas/requests/chatroom_pin.yaml"
+
   responses:
     "200":
       description: OK

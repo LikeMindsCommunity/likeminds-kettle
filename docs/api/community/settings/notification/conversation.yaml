@@ -39,10 +39,8 @@ put:
   requestBody:
     content:
       application/json:
-        example: |
-          {
-            "noti_state": 2
-          }
+        schema:
+          $ref: "../../../../components/schemas/requests/community_conversation_notifications.yaml"
   responses:
     "200":
       description: OK

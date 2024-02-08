@@ -1,0 +1,8 @@
+type: object
+properties:
+  conversation_ids:
+    type: array
+    items:
+      type: integer
+  reason:
+    type: string

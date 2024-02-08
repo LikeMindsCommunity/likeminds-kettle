@@ -93,19 +93,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            question_answers:
-              type: array
-              items:
-                type: object
-                properties:
-                  question_id:
-                    type: integer
-                  answer:
-                    type: string
-            image_url:
-              type: string
+          $ref: "../../../components/schemas/requests/community_member_profile.yaml"
   responses:
     "200":
       description: OK

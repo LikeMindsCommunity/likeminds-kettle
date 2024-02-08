@@ -18,12 +18,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            value:
-              type: boolean
-          required:
-            - value
+          $ref: "../../components/schemas/requests/chatroom_enable_messaging.yaml"
 
   responses:
     "200":

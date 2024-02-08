@@ -1,0 +1,18 @@
+type: object
+properties:
+  type:
+    type: integer
+  title:
+    type: string
+  header:
+    type: string
+  online_link:
+    type: string
+  end_date:
+    type: integer
+  is_paid:
+    type: boolean
+  date_time:
+    type: integer
+  access:
+    type: integer

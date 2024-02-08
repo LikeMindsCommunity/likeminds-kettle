@@ -43,23 +43,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            type:
-              type: string
-            notification_settings:
-              type: array
-              items:
-                type: object
-                properties:
-                  noti_state:
-                    type: integer
-                  notification_type:
-                    type: integer
-                  notification_title:
-                    type: string
-                  enabled:
-                    type: boolean
+          $ref: "../../../../components/schemas/requests/community_notifications.yaml"
   responses:
     "200":
       description: OK

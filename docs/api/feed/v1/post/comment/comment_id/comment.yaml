@@ -18,15 +18,14 @@ put:
     - $ref: "../../../../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../../../../components/parameters/path/post_id.yaml"
     - $ref: "../../../../../../components/parameters/path/comment_id.yaml"
-    - name: body
-      in: body
-      required: true
-      schema:
-        type: object
-        properties:
-          text:
-            type: string
-      description: The updated text of the comment
+
+  requestBody:
+    description: The updated text of the comment
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../../../components/schemas/requests/feed_comment.yaml"
 
   responses:
     "200":

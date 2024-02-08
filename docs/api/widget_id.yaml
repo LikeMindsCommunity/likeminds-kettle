@@ -17,11 +17,8 @@ put:
     required: true
     content:
       application/json:
-        example:
-          metadata:
-            another_test:
-              test_2: "test23"
-            test: "value"
+        schema:
+          $ref: "../components/schemas/requests/widget_update.yaml"
   responses:
     "200":
       description: OK

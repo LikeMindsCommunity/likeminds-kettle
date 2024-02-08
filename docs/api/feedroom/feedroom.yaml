@@ -1,7 +1,7 @@
 get:
-  summary: Fetch chatroom of a community
+  summary: Fetch feedroom of a community
 
-  operationId: fetchChatroomOfCommunity
+  operationId: fetchFeedroomOfCommunity
 
   tags:
     - Feedroom
@@ -37,9 +37,9 @@ get:
                       $ref: "../../components/schemas/responses/chatroom.yaml"
 
 post:
-  summary: Create Chatroom
+  summary: Create Feedroom
 
-  operationId: createChatroom
+  operationId: createFeedroom
 
   tags:
     - Feedroom
@@ -56,14 +56,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            is_secret:
-              type: boolean
-            title:
-              type: string
-            feedroom_image_url:
-              type: string
+          $ref: "../../components/schemas/requests/feedroom_create.yaml"
 
   responses:
     "200":
@@ -83,9 +76,9 @@ post:
 
 
 put:
-  summary: Update Chatroom
+  summary: Update Feedroom
 
-  operationId: updateChatroom
+  operationId: updateFeedroom
 
   tags:
     - Feedroom
@@ -102,16 +95,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            header:
-              type: string
-            title:
-              type: string
-            feedroom_id:
-              type: integer
-            feedroom_image_url:
-              type: string
+          $ref: "../../components/schemas/requests/feedroom_update.yaml"
 
   responses:
     "200":
@@ -126,9 +110,9 @@ put:
 
 
 delete:
-  summary: Delete Chatroom
+  summary: Delete Feedroom
 
-  operationId: deleteChatroom
+  operationId: deleteFeedroom
 
   tags:
     - Feedroom
@@ -147,14 +131,7 @@ delete:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            feedroom_id:
-              type: integer
-            tag_id:
-              type: integer
-            reason:
-              type: string
+          $ref: "../../components/schemas/requests/feedroom_delete.yaml"
 
   responses:
     "200":

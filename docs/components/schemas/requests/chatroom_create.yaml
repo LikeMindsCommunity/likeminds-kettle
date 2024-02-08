@@ -1,0 +1,14 @@
+type: object
+properties:
+  type:
+    type: integer
+  is_secret:
+    type: boolean
+  secret_chatroom_participants:
+    type: array
+    items:
+      type: integer
+  title:
+    type: string
+  chatroom_image_url:
+    type: string

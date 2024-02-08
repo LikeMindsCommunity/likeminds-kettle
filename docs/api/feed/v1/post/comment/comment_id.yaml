@@ -19,8 +19,8 @@ put:
     required: true
     content:
       application/json:
-        example:
-          text: "Edit comment Text"
+        schema:
+          $ref: "../../../../../components/schemas/requests/feed_comment.yaml"
 
   responses:
     "200":

@@ -1,0 +1,17 @@
+type: object
+properties:
+  chatroom_id:
+    type: string
+  instructors:
+    type: array
+    items:
+      type: object
+      properties:
+        chatroom_id:
+          type: string
+        about:
+          type: string
+        url:
+          type: string
+        name:
+          type: string

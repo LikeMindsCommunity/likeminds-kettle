@@ -13,12 +13,7 @@ delete:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            cohort_id:
-              type: integer
-            user_id:
-              type: integer
+          $ref: "../../../components/schemas/requests/cohort_member_delete.yaml"
   responses:
     "200":
       description: OK

@@ -1,0 +1,18 @@
+type: object
+properties:
+  name:
+    type: string
+    description: User Name
+    nullable: true
+  user_unique_id:
+    type: string
+    description: User Unique Id of user
+    nullable: true
+  is_guest:
+    type: boolean
+    description: If user is a guest user
+    nullable: true
+  image_url:
+    type: string
+    description: User Image Url
+    nullable: true

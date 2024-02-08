@@ -15,12 +15,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            chatroom_id:
-              type: integer
-            conversation_id:
-              type: integer
+          $ref: "../../components/schemas/requests/conversation_topic.yaml"
   responses:
     "200":
       description: OK

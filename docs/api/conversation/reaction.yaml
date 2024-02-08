@@ -12,17 +12,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            chatroom_id:
-              type: integer
-              description: Chtatroom id is nullable
-            reaction:
-              type: string
-              description: any string
-            conversation_id:
-              type: integer
-              description: Conversation id is nullable
+          $ref: "../../components/schemas/requests/conversation_reaction_add.yaml"
   responses:
     "200":
       description: OK
@@ -50,12 +40,7 @@ delete:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            chatroom_id:
-              type: integer
-            conversation_id:
-              type: integer
+          $ref: "../../components/schemas/requests/conversation_reaction_add.yaml"
   responses:
     "200":
       description: OK

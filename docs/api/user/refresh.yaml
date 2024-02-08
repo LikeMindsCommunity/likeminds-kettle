@@ -9,10 +9,7 @@ post:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              refresh_token:
-                type: string
+            $ref: "../../components/schemas/requests/user_refresh_token.yaml"
             required:
               - refresh_token
 

@@ -42,9 +42,8 @@ patch:
     required: true
     content:
       application/json:
-        example:
-          url: "https://eoja4x1itbjwnwc.m.pipedream.net"
-          is_active: true
+        schema:
+          $ref: "../components/schemas/requests/webhook_edit.yaml"
   responses:
     '200':
       description: OK

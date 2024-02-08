@@ -17,12 +17,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            is_secret:
-              type: boolean
-          required:
-            - is_secret
+          $ref: "../../components/schemas/requests/chatroom_type.yaml"
 
   responses:
     "200":

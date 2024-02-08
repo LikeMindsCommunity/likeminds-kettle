@@ -11,10 +11,7 @@ post:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              refresh_token:
-                type: string
+            $ref: "../../components/schemas/requests/user_logout.yaml"
             required:
               - refresh_token
 

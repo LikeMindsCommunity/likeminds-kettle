@@ -84,37 +84,7 @@ post:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                  questions:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        question_title:
-                          type: string
-                        value:
-                          type: string
-                        optional:
-                          type: boolean
-                        state:
-                          type: integer
-                        help_text:
-                          type: string
-                        is_hidden:
-                          type: boolean
-                        field:
-                          type: boolean
-                        rank:
-                          type: integer
-                        question_change_state:
-                          type: integer
-                        can_add_options:
-                          type: boolean
-                        is_compulsory:
-                          type: boolean
+              $ref: "../../components/schemas/requests/community_questions.yaml"
     responses:
         '200':
           description: Successful response

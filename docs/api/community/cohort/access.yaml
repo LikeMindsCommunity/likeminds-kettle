@@ -52,14 +52,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            chatroom_id:
-              type: integer
-            cohort_id:
-              type: integer
-            cohort_access:
-              type: integer
+          $ref: "../../../components/schemas/requests/cohort_access.yaml"
   responses:
     "200":
       description: OK

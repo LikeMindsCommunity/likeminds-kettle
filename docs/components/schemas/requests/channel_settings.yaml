@@ -1,0 +1,11 @@
+type: object
+properties:
+  channel_settings:
+    type: array
+    items:
+      type: object
+      properties:
+        setting_type:
+          type: string
+        enabled:
+          type: boolean

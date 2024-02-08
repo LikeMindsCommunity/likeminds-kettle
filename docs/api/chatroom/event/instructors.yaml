@@ -19,23 +19,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            chatroom_id:
-              type: string
-            instructors:
-              type: array
-              items:
-                type: object
-                properties:
-                  chatroom_id:
-                    type: string
-                  about:
-                    type: string
-                  url:
-                    type: string
-                  name:
-                    type: string
+          $ref: "../../../components/schemas/requests/chatroom_instructors.yaml"
 
   responses:
     "200":

@@ -19,18 +19,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            about_recording:
-              type: string
-            recording_url:
-              type: string
-            chatroom_id:
-              type: integer
-            is_recording:
-              type: boolean
-            recording_url_title:
-              type: string
+          $ref: "../../../../components/schemas/requests/chatroom_recording_meta_create.yaml"
 
   responses:
     "200":
@@ -77,12 +66,7 @@ delete:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            id:
-              type: string
-            chatroom_id:
-              type: string
+          $ref: "../../../../components/schemas/requests/chatroom_recording_meta_delete.yaml"
 
   responses:
     "200":

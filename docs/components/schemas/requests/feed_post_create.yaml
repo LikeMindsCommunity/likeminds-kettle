@@ -1,0 +1,71 @@
+type: object
+properties:
+  text:
+    type: string
+    description: Text of the Post
+  heading:
+    type: string
+    description: Heading of the Post
+  on_behalf_of_uuid:
+    type: string
+    description: User on whose behalf you are creating a post
+  attachments:
+    type: array
+    description: Attachments on the Post
+    items:
+      type: object
+      properties:
+        attachment_type:
+          type: integer
+          enum: [1, 2, 3, 4, 5, 6, 7]
+          description: |
+            Attachment type
+            - 1 - Image
+            - 2 - Video
+            - 3 - Document
+            - 4 - Link
+            - 5 - Custom widget
+            - 6 - Article widget
+            - 7 - Poll widget
+        attachment_meta:
+          type: object
+          properties:
+            url:
+              type: string
+              nullable: true
+              description: URL of the attachment
+            format:
+              type: string
+              nullable: true
+              description: Format of the attachment (pdf, etc.)
+            size:
+              type: integer
+              nullable: true
+              description: Size of the attachment
+            duration:
+              type: integer
+              nullable: true
+              description: Duration of the video
+            page_count:
+              type: integer
+              nullable: true
+              description: Page count of the file
+            og_tags:
+              type: object
+              properties:
+                title:
+                  type: string
+                  nullable: true
+                  description: Link Title
+                image:
+                  type: string
+                  nullable: true
+                  description: Link Image URL
+                description:
+                  type: string
+                  nullable: true
+                  description: Link description
+                url:
+                  type: string
+                  nullable: true
+                  description: Link URL

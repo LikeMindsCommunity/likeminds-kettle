@@ -11,15 +11,8 @@ post:
     required: true
     content:
       application/json:
-        example:
-          logs:
-            - stack_trace:
-                errors: "string"
-            - device_meta:
-                key1: "string"
-            # sdk_meta: {}
-            - timestamp: 1701352500000
-            # severity: "string"
+        schema:
+          $ref: "../../components/schemas/requests/logs.yaml"
   responses:
     "200":
       description: OK

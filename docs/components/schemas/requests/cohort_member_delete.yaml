@@ -1,0 +1,6 @@
+type: object
+properties:
+  cohort_id:
+    type: integer
+  user_id:
+    type: integer

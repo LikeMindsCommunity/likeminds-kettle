@@ -20,10 +20,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            token:
-              type: string
+          $ref: "../../components/schemas/requests/user_device_push.yaml"
         required:
           - token
 

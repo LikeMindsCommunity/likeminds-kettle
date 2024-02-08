@@ -1,0 +1,12 @@
+type: object
+properties:
+  about_recording:
+    type: string
+  recording_url:
+    type: string
+  chatroom_id:
+    type: integer
+  is_recording:
+    type: boolean
+  recording_url_title:
+    type: string

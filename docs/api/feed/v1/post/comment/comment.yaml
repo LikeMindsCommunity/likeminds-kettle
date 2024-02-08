@@ -27,6 +27,14 @@ post:
             type: string
       description: The text of the comment
 
+  requestBody:
+    description: The text of the comment
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../../components/schemas/requests/feed_comment.yaml"
+
   responses:
     "200":
       description: OK

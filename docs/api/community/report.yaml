@@ -263,14 +263,7 @@ post:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                entity_id:
-                  type: string
-                entity_type:
-                  type: string
-                accused_uuid:
-                  type: string
+              $ref: "../../components/schemas/requests/community_report_create.yaml"
     responses:
         '200':
           description: Successful response
@@ -315,10 +308,7 @@ delete:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                report_id:
-                  type: integer
+              $ref: "../../components/schemas/requests/community_report_delete.yaml"
   responses:
       '200':
         description: Successful response

@@ -12,17 +12,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            conversation_id:
-              type: integer
-            polls:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: integer
+          $ref: "../../../components/schemas/requests/conversation_poll_submit.yaml"
   responses:
     "200":
       description: OK

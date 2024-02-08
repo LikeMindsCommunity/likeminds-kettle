@@ -18,9 +18,8 @@ put:
     required: true
     content:
       application/json:
-        example:
-          votes:
-            - "03457cc0-4d18-44b4-a3e6-b0234dd1f28d"
+        schema:
+          $ref: "../../components/schemas/requests/poll_vote.yaml"
 
   responses:
     "200":

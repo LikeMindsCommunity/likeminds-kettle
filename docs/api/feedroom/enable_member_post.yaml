@@ -19,12 +19,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            feedroom_id:
-              type: integer
-            value:
-              type: boolean
+          $ref: "../../components/schemas/requests/feedroom_member_post.yaml"
 
   responses:
     "200":

@@ -1,0 +1,12 @@
+type: object
+properties:
+  metadata:
+    type: object
+    properties:
+      test:
+        type: string
+      another_test:
+        type: object
+        properties:
+          test_2:
+            type: string

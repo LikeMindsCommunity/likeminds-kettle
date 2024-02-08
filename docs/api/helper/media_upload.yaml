@@ -1,11 +1,11 @@
 post:
   operationId: uploadMediaUrl
-  summary: Fetch Moderation Rights
+  summary: Upload Media Url
 
   tags:
     - Helpers
 
-  description: This API fetches Moderation rights for a user
+  description: This API uploads media url
 
   security:
     - bearerAuth: []
@@ -20,30 +20,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            conversation_id:
-              type: string
-            url:
-              type: string
-              format: uri
-            type:
-              type: string
-            files_count:
-              type: integer
-            thumnail_url:
-              type: string
-            index:
-              type: integer
-            meta:
-              type: object
-              properties:
-                size:
-                  type: integer
-                number_of_page:
-                  type: integer
-            name:
-              type: string
+          $ref: "../../components/schemas/requests/media_upload.yaml"
 
   responses:
     "200":

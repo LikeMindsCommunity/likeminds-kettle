@@ -23,9 +23,8 @@ put:
     required: true
     content:
       application/json:
-        example: 
-          name: "Topic Name"
-          is_enabled: false
+        schema:
+          $ref: "../../../../components/schemas/requests/feed_topic_update.yaml"
 
   responses:
     "200":

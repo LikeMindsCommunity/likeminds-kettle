@@ -11,14 +11,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            chatroom_id:
-              type: integer
-            cohort_ids:
-              type: array
-              items:
-                type: integer
+          $ref: "../../components/schemas/requests/chatroom_cohort_create.yaml"
   responses:
     '200':
       description: OK
@@ -43,12 +36,7 @@ delete:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            chatroom_id:
-              type: integer
-            cohort_id:
-              type: integer
+          $ref: "../../components/schemas/requests/chatroom_cohort_delete.yaml"
   responses:
     '200':
       description: OK

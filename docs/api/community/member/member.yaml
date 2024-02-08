@@ -190,14 +190,7 @@ delete:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            uuids:
-              type: array
-              items:
-                type: string
-          required:
-            - uuids
+          $ref: "../../../components/schemas/requests/community_member_delete.yaml"
   responses:
     "200":
       description: OK

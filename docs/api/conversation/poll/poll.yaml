@@ -12,15 +12,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            poll:
-              type: object
-              properties:
-                text:
-                  type: string
-            conversation_id:
-              type: integer
+          $ref: "../../../components/schemas/requests/conversation_poll_create.yaml"
   responses:
     "200":
       description: OK

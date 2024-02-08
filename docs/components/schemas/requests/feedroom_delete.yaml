@@ -1,0 +1,8 @@
+type: object
+properties:
+  feedroom_id:
+    type: integer
+  tag_id:
+    type: integer
+  reason:
+    type: string

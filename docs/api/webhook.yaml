@@ -88,14 +88,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            webhook_type:
-              type: string
-            url:
-              type: string
-            is_active:
-              type: boolean
+          $ref: "../components/schemas/requests/webhook_enable.yaml"
           required:
             - webhook_type
             - url

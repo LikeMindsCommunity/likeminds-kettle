@@ -94,23 +94,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            parent_entity_id:
-              type: string
-            parent_entity_type:
-              type: string
-            metadata:
-              type: object
-              properties:
-                tags:
-                  type: array
-                  items:
-                    oneOf:
-                      - type: string
-                      - type: array
-                        items:
-                          type: string
+          $ref: "../components/schemas/requests/widget_create.yaml"
   responses:
     '200':
       description: Widget created successfully

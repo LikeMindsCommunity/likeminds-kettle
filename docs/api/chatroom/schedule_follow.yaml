@@ -17,10 +17,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            chatroom_id:
-              type: string
+          $ref: "../../components/schemas/requests/chatroom_schedule_follow.yaml"
 
   responses:
     "200":

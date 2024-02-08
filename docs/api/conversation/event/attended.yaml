@@ -13,10 +13,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            conversation_id:
-              type: integer
+          $ref: "../../../components/schemas/requests/conversation_attended_event.yaml"
   responses:
     "200":
       description: OK

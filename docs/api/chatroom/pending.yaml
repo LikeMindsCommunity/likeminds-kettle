@@ -37,18 +37,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            chatroom_id:
-              type: integer
-            value:
-              type: boolean
-            pre-approve:
-              type: boolean
-          required:
-            - chatroom_id
-            - value
-            - pre-approve
+          $ref: "../../components/schemas/requests/chatroom_pending.yaml"
   responses:
     "200":
       description: OK
