@@ -20,7 +20,13 @@ func GetChannelDetail(c *gin.Context) {
 		ParamChannelActionTypes: c.Query(ParamChannelActionTypes),
 	}
 
-	// Send Request
-	utils.SendRequest(c, utils.CoreService, SyncChannelDetailEndppoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	//Get Request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, SyncChannelDetailEndppoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	if respBytes == nil {
+		return
+	}
+
+	//Parse and generate response
+	utils.ParseResponse(c, respBytes, statusCode, true)
 
 }
