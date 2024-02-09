@@ -307,6 +307,7 @@ func main() {
 	router.PUT("/channel/invite", LTMValidationMiddleware(), APIKeyValidationMiddleware(), channel.UpdateChannelInvite)
 	router.GET("/channel/:channel_id/settings/member/:participant_uuid", LTMValidationMiddleware(), APIKeyValidationMiddleware(), channel.GetUserChannelSettings)
 	router.PUT("/channel/:channel_id/settings/member/:participant_uuid", LTMValidationMiddleware(), APIKeyValidationMiddleware(), channel.UpdateUserChannelSettings)
+	router.GET("/channel/:channel_id/sync", LTMValidationMiddleware(), APIKeyValidationMiddleware(), channel.GetChannelDetail)
 
 	// Search Apis
 	router.GET("/search/channel", LTMValidationMiddleware(), APIKeyValidationMiddleware(), search.ChannelSearch)
