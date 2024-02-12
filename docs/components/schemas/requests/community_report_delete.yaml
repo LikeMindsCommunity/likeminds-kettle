@@ -1,0 +1,4 @@
+type: object
+properties:
+  report_id:
+    type: integer

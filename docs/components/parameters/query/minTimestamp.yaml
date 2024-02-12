@@ -1,0 +1,6 @@
+name: min_timestamp
+in: query
+description: Minimum timestamp for synchronization
+required: true
+schema:
+  type: integer

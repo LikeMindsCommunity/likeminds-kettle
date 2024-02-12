@@ -1,0 +1,84 @@
+put:
+  summary: Like a Post
+
+  operationId: likePost
+
+  tags:
+    - Feed - V1
+
+  description: |
+    This API likes a Post.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../../components/parameters/path/post_id.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+                nullable: true
+
+
+get:
+  summary: Get Post Likes
+
+  operationId: getPostLikes
+
+  tags:
+    - Feed - V1
+
+  description: |
+    This API fetches likes for a Post.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../../components/parameters/path/post_id.yaml"
+    - $ref: "../../../../components/parameters/query/page.yaml"
+    - $ref: "../../../../components/parameters/query/pageSize.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+                nullable: true
+              data:
+                type: object
+                properties:
+                  likes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        user_id:
+                          type: string
+                        created_at:
+                          type: integer
+                        updated_at:
+                          type: integer
+                  total_count:
+                    type: integer

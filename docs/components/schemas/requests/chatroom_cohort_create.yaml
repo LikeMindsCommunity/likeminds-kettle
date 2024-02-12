@@ -1,0 +1,8 @@
+type: object
+properties:
+  chatroom_id:
+    type: integer
+  cohort_ids:
+    type: array
+    items:
+      type: integer

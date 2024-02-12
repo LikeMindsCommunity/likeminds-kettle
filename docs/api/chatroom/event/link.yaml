@@ -1,0 +1,48 @@
+get:
+  summary: Get Chatroom Event Link
+
+  operationId: getChatroomEventLink
+
+  tags:
+    - Chatroom
+
+  description: |
+    This API fetches links for chatroom events of a community.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../components/parameters/query/chatroomId.yaml"
+    - name: is_edit_mode
+      in: query
+      description: Indicates whether to enable edit mode
+      schema:
+        type: boolean
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+                nullable: true
+              data:
+                type: object
+                properties:
+                  chatroom:
+                    type: object
+                    nullable: true
+                  chatrooms:
+                    type: array
+                    items:
+                      $ref: "../../../components/schemas/responses/chatroom.yaml"

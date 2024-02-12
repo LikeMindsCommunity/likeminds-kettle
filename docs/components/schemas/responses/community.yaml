@@ -1,0 +1,76 @@
+type: object
+properties:
+  auto_approval:
+    type: boolean
+  branding:
+    type: object
+    properties:
+      advanced:
+        type: object
+        properties:
+          buttons_icons_colour:
+            type: string
+          header_colour:
+            type: string
+          text_links_colour:
+            type: string
+      basic:
+        type: object
+        properties:
+          primary_colour:
+            type: string
+  community_setting_rights:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        is_locked:
+          type: boolean
+        is_selected:
+          type: boolean
+        state:
+          type: integer
+        title:
+          type: string
+        sub_title:
+          type: string
+  fee_event:
+    type: integer
+  fee_membership:
+    type: integer
+  fee_payment_pages:
+    type: integer
+  grace_period:
+    type: integer
+  hide_dm_tab:
+    type: boolean
+  id:
+    type: integer
+  image_url:
+    type: string
+  is_discoverable:
+    type: boolean
+  is_freemium_community:
+    type: boolean
+  is_paid:
+    type: boolean
+  is_whitelabel:
+    type: boolean
+  members_count:
+    type: integer
+  name:
+    type: string
+  purpose:
+    type: string
+  referral_enabled:
+    type: boolean
+  sub_type:
+    type: integer
+  type:
+    type: integer
+  updated_at:
+    type: integer
+  whitelabel_info:
+    type: object

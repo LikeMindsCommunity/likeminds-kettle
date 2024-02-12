@@ -1,0 +1,26 @@
+delete:
+  summary: Remove Member from Community Cohort
+  operationId: removeMemberFromCommunityCohort
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/cohort_member_delete.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

@@ -1,0 +1,5 @@
+name: page
+in: query
+description: Page number
+schema:
+  type: integer

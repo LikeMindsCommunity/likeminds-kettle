@@ -1,0 +1,9 @@
+type: object
+properties:
+  auto_follow_done:
+    type: boolean
+  include_members_later:
+    type: boolean
+required:
+  - auto_follow_done
+  - include_members_later

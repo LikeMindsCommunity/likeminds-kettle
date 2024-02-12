@@ -1,0 +1,6 @@
+name: post_id
+in: path
+required: true
+schema:
+  type: string
+description: The ID of the post to which the comment belongs

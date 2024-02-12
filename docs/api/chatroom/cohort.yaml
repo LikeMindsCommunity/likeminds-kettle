@@ -1,0 +1,54 @@
+post:
+  summary: Add Cohorts to Chatroom
+  operationId: addCohortsToChatroom
+  tags:
+    - Chatroom
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/chatroom_cohort_create.yaml"
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+
+delete:
+  summary: Remove Cohort from Chatroom
+  operationId: removeCohortFromChatroom
+  tags:
+    - Chatroom
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/chatroom_cohort_delete.yaml"
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  removed_participant_count:
+                    type: integer

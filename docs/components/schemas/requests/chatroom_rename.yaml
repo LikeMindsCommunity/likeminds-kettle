@@ -1,0 +1,16 @@
+type: object
+properties:
+  chatroom_id:
+    type: integer
+  header:
+    type: string
+  first_time_rename:
+    type: boolean
+required:
+  - chatroom_id
+  - header
+  - first_time_rename
+example:
+  chatroom_id: 26957
+  header: "New chatroom Name"
+  first_time_rename: true

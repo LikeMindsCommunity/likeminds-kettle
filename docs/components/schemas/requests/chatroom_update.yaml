@@ -1,0 +1,10 @@
+type: object
+properties:
+  header:
+    type: string
+  title:
+    type: string
+  chatroom_id:
+    type: integer
+  chatroom_image_url:
+    type: string

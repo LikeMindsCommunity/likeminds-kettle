@@ -1,0 +1,6 @@
+name: search
+in: query
+description: Keyword to search
+required: true
+schema:
+  type: string

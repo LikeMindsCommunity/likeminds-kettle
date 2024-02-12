@@ -1,0 +1,5 @@
+name: x-accept-version
+in: header
+required: true
+schema:
+  type: string

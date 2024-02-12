@@ -1,0 +1,29 @@
+post:
+  summary: Send DM Request
+  operationId: sendDMRequest
+  tags:
+    - Chatroom
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/dm_request.yaml"
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  conversation:
+                    $ref: "../../../components/schemas/responses/conversation.yaml"

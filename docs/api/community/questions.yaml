@@ -1,0 +1,95 @@
+get:
+      operationId: getCommunityQuestions
+      tags:
+        - Community
+      summary: Fetch Community Questions
+      description: |-
+        This API fetches Community Questions
+      parameters:
+        - $ref: "../../components/parameters/headers/platformCode.yaml"
+        - $ref: "../../components/parameters/headers/versionCode.yaml"
+        - $ref: "../../components/parameters/headers/platformType.yaml"
+        - $ref: "../../components/parameters/headers/apiKey.yaml"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: 
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      community:
+                        $ref: "../../components/schemas/communityResponse.yaml"
+                      header:
+                        type: string
+                      questions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            can_add_options:
+                              type: boolean
+                            community_id:
+                              type: integer
+                            dropdown_selection_limit:
+                              type: integer
+                            field:
+                              type: boolean
+                            help_text:
+                              type: string
+                            id:
+                              type: integer
+                            image_url:
+                              type: string
+                            is_answer_editable:
+                              type: boolean
+                            is_compulsory:
+                              type: boolean
+                            is_hidden:
+                              type: boolean
+                            optional:
+                              type: boolean
+                            options_only_for_self:
+                              type: boolean
+                            question_title:
+                              type: string
+                            rank:
+                              type: integer
+                            state:
+                              type: integer
+                            tag:
+                              type: string
+                            value:
+                              type: string
+             
+post:
+    operationId: createCommunityQuestions
+    tags:
+        - Community
+    summary: Create Community Question
+    description: |-
+      This API creates members of a community
+    parameters:
+      - $ref: "../../components/parameters/headers/platformCode.yaml"
+      - $ref: "../../components/parameters/headers/versionCode.yaml"
+      - $ref: "../../components/parameters/headers/platformType.yaml"
+      - $ref: "../../components/parameters/headers/apiKey.yaml"
+    requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "../../components/schemas/requests/community_questions.yaml"
+    responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                success: true
+#TOD0: /community/question/filters

@@ -1,0 +1,34 @@
+get:
+  summary: Get Chatroom Tags by ID
+
+  operationId: getChatroomTagsById
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../components/parameters/path/chatroomId.yaml"
+    - $ref: "../../../components/parameters/query/searchName.yaml"
+    - $ref: "../../../components/parameters/query/isSecret.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  members:
+                    $ref: "../../../components/schemas/responses/members.yaml"
+                  participants:
+                    $ref: "../../../components/schemas/responses/participants.yaml"
+

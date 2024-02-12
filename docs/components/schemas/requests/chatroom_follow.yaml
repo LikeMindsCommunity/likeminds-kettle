@@ -1,0 +1,16 @@
+type: object
+properties:
+  chatroom_id:
+    type: integer
+  uuid:
+    type: string
+  value:
+    type: boolean
+required:
+  - chatroom_id
+  - uuid
+  - value
+example:
+  chatroom_id: 72932
+  uuid: "user_unique_id 2"
+  value: false

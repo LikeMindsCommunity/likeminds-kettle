@@ -1,0 +1,16 @@
+type: object
+properties:
+  collabcard_id:
+    type: integer
+  member_id:
+    type: integer
+  collabcard_type:
+    type: integer
+required:
+  - collabcard_id
+  - member_id
+  - collabcard_type
+example:
+  collabcard_id: 26959
+  member_id: 792
+  collabcard_type: 0

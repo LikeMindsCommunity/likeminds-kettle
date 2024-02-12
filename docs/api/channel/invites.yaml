@@ -1,0 +1,88 @@
+get:
+  summary: Get Channel Invites
+
+  operationId: getChannelInvites
+
+  tags:
+    - Channel
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/query/channelType.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
+    - $ref: "../../components/parameters/query/pageSize.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  user_invites:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        chatroom:
+                          type: object
+                          properties:
+                            chatroom_image_url:
+                              type: string
+                            created_at:
+                              type: integer
+                            header:
+                              type: string
+                            id:
+                              type: integer
+                            is_secret:
+                              type: boolean
+                            title:
+                              type: string
+                            updated_at:
+                              type: integer
+                        created_at:
+                          type: integer
+                        id:
+                          type: integer
+                        invite_receiver:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            image_link:
+                              type: string
+                            is_guest:
+                              type: boolean
+                            name:
+                              type: string
+                            user_unique_id:
+                              type: string
+                        invite_sender:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            image_link:
+                              type: string
+                            is_guest:
+                              type: boolean
+                            name:
+                              type: string
+                            user_unique_id:
+                              type: string
+                        invite_status:
+                          type: integer
+                        updated_at:
+                          type: integer

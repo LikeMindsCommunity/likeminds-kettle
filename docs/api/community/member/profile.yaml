@@ -1,0 +1,156 @@
+get:
+  summary: Get Community Member Profile
+  operationId: getMemberProfile
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  community_name:
+                    type: string
+                  member:
+                    $ref: "../../../components/schemas/responses/member.yaml"
+                  menu:
+                    type: array
+                    items: {}
+                  question_answers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        question:
+                          type: object
+                          properties:
+                            can_add_options:
+                              type: boolean
+                            community:
+                              type: integer
+                            field:
+                              type: boolean
+                            help_text:
+                              type: string
+                            id:
+                              type: integer
+                            is_compulsory:
+                              type: boolean
+                            is_hidden:
+                              type: boolean
+                            optional:
+                              type: boolean
+                            question_title:
+                              type: string
+                            rank:
+                              type: integer
+                            remove_state:
+                              type: boolean
+                            state:
+                              type: integer
+                            value:
+                              type: string
+                        question_answer:
+                          type: object
+                          properties:
+                            answer:
+                              type: string
+                            community_id:
+                              type: integer
+                            image_url:
+                              type: string
+                            member_id:
+                              type: integer
+                            question_id:
+                              type: integer
+
+
+
+put:
+  summary: Update Community Member Profile
+  operationId: updateMemberProfile
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/community_member_profile.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  question_answers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        question:
+                          type: object
+                          properties:
+                            can_add_options:
+                              type: boolean
+                            community:
+                              type: integer
+                            field:
+                              type: boolean
+                            help_text:
+                              type: string
+                            id:
+                              type: integer
+                            is_compulsory:
+                              type: boolean
+                            is_hidden:
+                              type: boolean
+                            optional:
+                              type: boolean
+                            question_title:
+                              type: string
+                            rank:
+                              type: integer
+                            remove_state:
+                              type: boolean
+                            state:
+                              type: integer
+                            value:
+                              type: string
+                        question_answer:
+                          type: object
+                          properties:
+                            answer:
+                              type: string
+                            community_id:
+                              type: integer
+                            image_url:
+                              type: string
+                            member_id:
+                              type: integer
+                            question_id:
+                              type: integer

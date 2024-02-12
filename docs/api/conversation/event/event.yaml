@@ -1,0 +1,33 @@
+get:
+  summary: Get Events
+  operationId: getEvents
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../../components/parameters/query/pastEvents.yaml"
+    - name: attending_status
+      in: query
+      description: Flag to filter by attending status
+      schema:
+        type: boolean
+    - $ref: "../../../components/parameters/query/page.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items: {}

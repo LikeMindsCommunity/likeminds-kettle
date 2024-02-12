@@ -1,0 +1,77 @@
+get:
+  summary: Fetch Universal Feed
+
+  operationId: fetchUniversalFeed
+
+  tags:
+    - Feed - V1
+
+  description: This API fetches Universal Feed.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/query/page.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+              data:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        attachments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              file_type:
+                                type: integer
+                              file_url:
+                                type: string
+                              file_format:
+                                type: string
+                              file_size:
+                                type: string
+                        comments_count:
+                          type: integer
+                        community_id:
+                          type: integer
+                        created_at:
+                          type: integer
+                        is_pinned:
+                          type: boolean
+                        is_saved:
+                          type: boolean
+                        likes_count:
+                          type: integer
+                        menu_items:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                        text:
+                          type: string
+                        updated_at:
+                          type: integer
+                        user_id:
+                          type: string

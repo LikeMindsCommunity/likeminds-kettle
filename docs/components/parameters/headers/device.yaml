@@ -1,0 +1,5 @@
+name: x-device-id
+in: header
+description: Device ID
+schema:
+  type: integer

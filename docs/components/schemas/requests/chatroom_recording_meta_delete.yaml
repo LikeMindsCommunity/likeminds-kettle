@@ -1,0 +1,6 @@
+type: object
+properties:
+  id:
+    type: string
+  chatroom_id:
+    type: string

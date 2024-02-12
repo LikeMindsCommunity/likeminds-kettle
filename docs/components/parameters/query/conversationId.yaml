@@ -1,0 +1,6 @@
+name: conversation_id
+in: query
+description: ID of the conversation
+required: true
+schema:
+  type: integer

@@ -1,0 +1,29 @@
+get:
+  summary: Get user's activity unread count
+
+  operationId: getActivityUnreadCount
+
+  tags:
+    - Feed - V1
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../../components/parameters/headers/authToken.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  count:
+                    type: integer

@@ -1,0 +1,7 @@
+type: object
+properties:
+  action:
+    type: string
+    enum:
+      - create_post_permit_added
+    description: Type of action

@@ -1,0 +1,29 @@
+get:
+  summary: Search Post
+
+  operationId: searchPost
+
+  tags:
+    - Search
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/query/search.yaml"
+    - $ref: "../../components/parameters/query/searchType.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
+    - $ref: "../../components/parameters/query/pageSize.yaml"
+    - name: excluded_chatroom_ids
+      in: query
+      description: List of excluded chatroom IDs
+      required: true
+      schema:
+        type: array
+        items:
+          type: string
+
+  responses:
+    "200":
+      description: OK

@@ -1,0 +1,34 @@
+put:
+  summary: Upload Chatroom Files
+
+  operationId: uploadChatroomFiles
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/chatroom_files.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              chatroom:
+                $ref: "../../components/schemas/responses/chatroom.yaml"
+              success:
+                type: boolean
