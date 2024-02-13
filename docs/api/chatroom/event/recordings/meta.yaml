@@ -1,0 +1,91 @@
+post:
+  summary: Add Recording Metadata to Chatroom Event
+
+  operationId: addChatroomEventRecordingMeta
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
+
+  description: |
+    This API adds metadata for recordings to a chatroom event.
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../components/schemas/requests/chatroom_recording_meta_create.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+              data:
+                type: object
+                properties:
+                  chatroom:
+                    type: object
+                  chatrooms:
+                    type: array
+                    items:
+                      $ref: "../../../../components/schemas/responses/chatroom.yaml"
+
+
+
+delete:
+  summary: Delete Recording Metadata from Chatroom Event
+
+  operationId: deleteChatroomEventRecordingMeta
+
+  tags:
+    - Chatroom
+  
+  security:
+    - bearerAuth: []
+  
+  parameters:
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
+
+  description: |
+    This API deletes metadata for recordings from a chatroom event.
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../components/schemas/requests/chatroom_recording_meta_delete.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+              data:
+                type: object
+                properties:
+                  chatroom:
+                    type: object
+                  chatrooms:
+                    type: array
+                    items:
+                      type: object

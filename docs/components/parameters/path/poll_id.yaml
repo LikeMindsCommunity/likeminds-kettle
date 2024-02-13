@@ -1,0 +1,6 @@
+name: poll_id
+in: path
+description: ID of the poll to be updated
+required: true
+schema:
+  type: string

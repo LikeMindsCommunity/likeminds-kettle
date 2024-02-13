@@ -1,0 +1,60 @@
+post:
+  summary: Fetch User Activity
+
+  operationId: fetchUserActivity
+
+  tags:
+    - Feed - V1
+
+  description: This API fetches User Activity.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../../../components/parameters/path/user_id.yaml"
+    - $ref: "../../../../../components/parameters/query/page.yaml"
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../../components/schemas/requests/feed_user_activity.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+              data:
+                type: object
+                properties:
+                  activity:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        action_by:
+                          type: string
+                        action_on:
+                          type: string
+                        entity_type:
+                          type: string
+                        entity_id:
+                          type: string
+                        action:
+                          type: string
+                        action_message:
+                          type: string
+                        created_at:
+                          type: integer
+                        updated_at:
+                          type: integer

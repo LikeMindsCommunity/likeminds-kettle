@@ -1,0 +1,116 @@
+get:
+  summary: Get Unread Conversation Notifications
+  operationId: getUnreadConversationNotifications
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  unread_conversation:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        chatroom_id:
+                          type: integer
+                        chatroom_last_conversation:
+                          type: string
+                        chatroom_last_conversation_timestamp:
+                          type: integer
+                        chatroom_last_conversation_user_image:
+                          type: string
+                        chatroom_last_conversation_user_name:
+                          type: string
+                        chatroom_name:
+                          type: string
+                        chatroom_title:
+                          type: string
+                        chatroom_unread_conversation_count:
+                          type: integer
+                        chatroom_user_image:
+                          type: string
+                        chatroom_user_name:
+                          type: string
+                        community_id:
+                          type: string
+                        community_image:
+                          type: string
+                        community_name:
+                          type: string
+                        notification_id:
+                          type: string
+                        route:
+                          type: string
+                        route_child:
+                          type: string
+                        attachments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              index:
+                                type: integer
+                              meta:
+                                type: object
+                                properties:
+                                  duration:
+                                    type: integer
+                                  size:
+                                    type: integer
+                              name:
+                                type: string
+                              thumbnail_url:
+                                type: string
+                              type:
+                                type: string
+                              url:
+                                type: string
+                        audios:
+                          type: array
+                          items:
+                            type: object
+                            properties: {}
+                        images:
+                          type: array
+                          items: {}
+                        pdf:
+                          type: array
+                          items: {}
+                        videos:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              index:
+                                type: integer
+                              meta:
+                                type: object
+                                properties:
+                                  duration:
+                                    type: integer
+                                  size:
+                                    type: integer
+                              name:
+                                type: string
+                              thumbnail_url:
+                                type: string
+                              type:
+                                type: string
+                              video_url:
+                                type: string

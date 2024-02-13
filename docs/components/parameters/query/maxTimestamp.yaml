@@ -1,0 +1,6 @@
+name: max_timestamp
+in: query
+description: Maximum timestamp for synchronization
+required: true
+schema:
+  type: integer

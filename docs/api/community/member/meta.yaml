@@ -1,0 +1,15 @@
+get:
+  summary: Get Community Member Home Meta
+
+  operationId: getCommunityMemberHomeMeta
+
+  tags:
+    - Community
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+
+  responses: {}

@@ -1,0 +1,10 @@
+type: object
+properties:
+  header:
+    type: string
+  title:
+    type: string
+  feedroom_id:
+    type: integer
+  feedroom_image_url:
+    type: string

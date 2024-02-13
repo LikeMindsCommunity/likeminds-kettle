@@ -1,0 +1,42 @@
+post:
+  summary: Create a New Post
+
+  operationId: createNewPost
+
+  tags:
+    - Feed - V1
+
+  description: This API creates a new Post.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../../components/parameters/headers/acceptVersion.yaml"
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../components/schemas/requests/feed_post_create.yaml"
+    required:
+      - text
+      - on_behalf_of_uuid
+      - attachments
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+                nullable: true

@@ -1,0 +1,19 @@
+type: object
+properties:
+  logs:
+    type: object
+    properties:
+      stack_trace:
+        type: object
+        properties:
+          errors:
+            type: string
+      device_meta:
+        type: object
+        properties:
+          key1:
+            type: string
+      timestamp:
+        type: object
+        properties:
+          type: integer

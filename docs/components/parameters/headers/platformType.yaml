@@ -1,0 +1,5 @@
+name: x-platform-type
+in: header
+description: Platform Type
+schema:
+  type: string

@@ -1,0 +1,46 @@
+get:
+  summary: Community Feed
+  operationId: communityFeed
+  tags:
+    - Community Feed
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../components/parameters/headers/authToken.yaml"
+    - $ref: "../components/parameters/headers/apiKey.yaml"
+    - $ref: "../components/parameters/headers/platformCode.yaml"
+    - $ref: "../components/parameters/headers/versionCode.yaml"
+    - $ref: "../components/parameters/headers/acceptVersion.yaml"
+    - $ref: "../components/parameters/query/page.yaml"
+    - name: order_type
+      in: query
+      description: Order type
+      required: true
+      schema:
+        type: integer
+        default: 0
+    - name: pinned
+      in: query
+      description: Pinned status
+      required: false
+      schema:
+        type: boolean
+        default: false
+ 
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  chatrooms:
+                    type: array
+                    items:
+                      $ref: "../components/schemas/responses/chatroom.yaml"

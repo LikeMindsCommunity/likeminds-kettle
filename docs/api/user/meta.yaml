@@ -1,0 +1,35 @@
+get:
+  summary: User Meta
+
+  operationId: userMeta
+
+  tags:
+    - User
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/contentType.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  community_ids:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer

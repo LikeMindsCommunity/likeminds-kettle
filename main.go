@@ -46,7 +46,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.19.0"
+	var AppVersion string = "2.20.0"
 
 	initGin()
 	redisClient = cache.InitRedis()
@@ -307,6 +307,7 @@ func main() {
 	router.PUT("/channel/invite", LTMValidationMiddleware(), APIKeyValidationMiddleware(), channel.UpdateChannelInvite)
 	router.GET("/channel/:channel_id/settings/member/:participant_uuid", LTMValidationMiddleware(), APIKeyValidationMiddleware(), channel.GetUserChannelSettings)
 	router.PUT("/channel/:channel_id/settings/member/:participant_uuid", LTMValidationMiddleware(), APIKeyValidationMiddleware(), channel.UpdateUserChannelSettings)
+	router.GET("/channel/:channel_id/sync", LTMValidationMiddleware(), APIKeyValidationMiddleware(), channel.GetChannelDetail)
 
 	// Search Apis
 	router.GET("/search/channel", LTMValidationMiddleware(), APIKeyValidationMiddleware(), search.ChannelSearch)

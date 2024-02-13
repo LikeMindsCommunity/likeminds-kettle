@@ -1,0 +1,14 @@
+type: object
+properties:
+  og_tags:
+    type: object
+    properties:
+      description:
+        type: string
+      image:
+        type: string
+        format: uri
+      title:
+        type: string
+      url:
+        type: string

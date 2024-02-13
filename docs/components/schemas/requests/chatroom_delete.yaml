@@ -1,0 +1,10 @@
+type: object
+properties:
+  tag_id:
+    type: integer
+  reason:
+    type: string
+required:
+  - chatroom_id
+  - tag_id
+  - reason

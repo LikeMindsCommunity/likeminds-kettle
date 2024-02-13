@@ -1,0 +1,44 @@
+get:
+  summary: Sync Chatrooms
+  operationId: syncChatrooms
+  tags:
+    - Chatroom
+  description: Retrieve synchronized chatrooms.
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
+    - $ref: "../../components/parameters/query/pageSize.yaml"
+    - $ref: "../../components/parameters/query/minTimestamp.yaml"
+    - $ref: "../../components/parameters/query/maxTimestamp.yaml"
+    - $ref: "../../components/parameters/query/chatroomTypes.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  chatrooms:
+                    type: array
+                    items:
+                      $ref: "../../components/schemas/responses/chatroom.yaml"
+
+    "404":
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string

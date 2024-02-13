@@ -1,0 +1,29 @@
+get:
+  summary: Get Community Member Chatrooms
+  operationId: getMemberChatrooms
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../components/parameters/query/user_id.yaml"
+    - $ref: "../../../components/parameters/query/state.yaml"
+    - $ref: "../../../components/parameters/query/page.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              chatrooms:
+                type: array
+                items:
+                  $ref: "../../../components/schemas/responses/chatroom.yaml"
+              total_chatrooms_created:
+                type: integer

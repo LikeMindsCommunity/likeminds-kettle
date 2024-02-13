@@ -1,0 +1,6 @@
+name: uuid
+in: path
+description: UUID of the user
+required: true
+schema:
+  type: string

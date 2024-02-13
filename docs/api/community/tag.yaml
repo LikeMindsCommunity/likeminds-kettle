@@ -1,0 +1,47 @@
+get:
+  summary: Fetch Reporting Tags in a Community (Api Revamp v1)
+  operationId: fetchReportingTags
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - name: entity_type
+      in: query
+      required: true
+      schema:
+        type: string
+        enum:
+          - member
+          - chatroom
+          - conversation
+          - link
+          - post
+          - comment
+          - reply
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+              data:
+                type: object
+                properties:
+                  report_tags:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string

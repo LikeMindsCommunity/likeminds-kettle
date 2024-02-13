@@ -21,7 +21,8 @@ pipeline {
                     }
                 }
             }
-         stage("Pushing Application Docker Image to Google Artifact Registry"){
+
+        stage("Pushing Application Docker Image to Google Artifact Registry"){
             steps{
                 script{
                     sh 'gcloud auth configure-docker asia.gcr.io'
@@ -39,7 +40,14 @@ pipeline {
                 '''
             }
         }
-    }  
+        stage ("Build and Push OpenAPI Spec file to S3") {
+            steps{
+                sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
+                withAWS(region:"ap-south-1", credentials:"AWS-S3-CREDS"){
+                        s3Upload(file:'_build/v2.yaml', bucket:'prod-likeminds-media', path:'api-docs/v2.yaml', acl:'PublicRead')
+                }
+            }
+        }
         post { 
         always { 
             cleanWs()

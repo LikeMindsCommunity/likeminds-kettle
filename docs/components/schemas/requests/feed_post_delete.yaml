@@ -1,0 +1,4 @@
+type: object
+properties:
+  delete_reason:
+    type: string

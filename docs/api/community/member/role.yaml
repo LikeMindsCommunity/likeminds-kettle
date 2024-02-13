@@ -1,0 +1,47 @@
+get:
+  summary: Get Community Member Role and Rights
+  operationId: getCommunityMemberRole
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../components/parameters/headers/sdkSource.yaml"
+    - $ref: "../../../components/parameters/headers/acceptVersion.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+              data:
+                type: object
+                properties:
+                  admin_rights:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        is_selected:
+                          type: boolean
+                        title:
+                          type: string
+                  created_at:
+                    type: integer
+                  member:
+                    $ref: "../../../components/schemas/responses/member.yaml"
+                  member_rights:
+                    $ref: "../../../components/schemas/responses/memberRights.yaml"
+                  role:
+                    type: string

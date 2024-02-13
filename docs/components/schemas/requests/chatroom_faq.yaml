@@ -1,0 +1,15 @@
+type: object
+properties:
+  chatroom_id:
+    type: string
+  faq:
+    type: array
+    items:
+      type: object
+      properties:
+        chatroom_id:
+          type: string
+        question:
+          type: string
+        answer:
+          type: string

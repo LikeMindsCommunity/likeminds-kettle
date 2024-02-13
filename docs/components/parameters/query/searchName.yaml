@@ -1,0 +1,5 @@
+name: search_name
+in: query
+schema:
+  type: string
+description: Search term for tags

@@ -1,0 +1,7 @@
+type: object
+properties:
+  chatroom_id:
+    type: string
+    description: ID of the chatroom to mark as read
+required:
+  - chatroom_id

@@ -1,0 +1,5 @@
+name: screen_id
+in: query
+description: Screen ID
+schema:
+  type: integer

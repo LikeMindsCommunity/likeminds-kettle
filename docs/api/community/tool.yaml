@@ -1,0 +1,39 @@
+get:
+  summary: Get Community Management Tools
+  operationId: getCommunityManagementTools
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  header:
+                    type: string
+                  management_tools:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        count:
+                          type: integer
+                        image_url:
+                          type: string
+                        route:
+                          type: string
+                        title:
+                          type: string

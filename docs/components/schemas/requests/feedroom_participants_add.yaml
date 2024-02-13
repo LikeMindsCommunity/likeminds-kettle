@@ -1,0 +1,10 @@
+type: object
+properties:
+  is_secret:
+    type: boolean
+  feedroom_id:
+    type: integer
+  participants:
+    type: array
+    items:
+      type: string

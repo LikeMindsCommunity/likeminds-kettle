@@ -1,0 +1,37 @@
+post:
+  summary: Update activity with given ID as read by the user
+
+  operationId: markActivityAsRead
+
+  tags:
+    - Feed - V1
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../../components/parameters/headers/authToken.yaml"
+    - name: activity_id
+      in: path
+      description: ID of the activity to mark as read
+      required: true
+      schema:
+        type: string
+
+  requestBody:
+    description: Activity ID to mark as read
+    required: true
+    content:
+      application/json:
+        example: {}
+    
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

@@ -1,0 +1,11 @@
+type: object
+properties:
+  conversation_id:
+    type: integer
+  polls:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer

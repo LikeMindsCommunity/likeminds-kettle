@@ -1,0 +1,29 @@
+post:
+    operationId: logoutUser
+    description: This API logs out the user and expires the authorization and refresh tokens
+    tags:
+      - Login
+    security:
+      - bearerAuth: []
+    parameters:
+      - $ref: "../../components/parameters/headers/authToken.yaml"
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/requests/user_logout.yaml"
+            required:
+              - refresh_token
+
+    responses:
+      '200':
+        description: User logged out successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                error_message:
+                  type: string

@@ -1,0 +1,12 @@
+type: object
+properties:
+  chatroom_id:
+    type: integer
+  value:
+    type: boolean
+  pre-approve:
+    type: boolean
+required:
+  - chatroom_id
+  - value
+  - pre-approve

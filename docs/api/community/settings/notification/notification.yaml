@@ -1,0 +1,49 @@
+get:
+  summary: Get Community Notification Settings
+  operationId: getCommunityNotificationSettings
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
+    - name: type
+      in: query
+      required: true
+      schema:
+        type: string
+      description: Type of notification settings (chat or feed)
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          example:
+            success: true
+            data:
+              community_notification_settings:
+                community: 50492
+                created_at: 1686910306449
+                id: "83994157-bc19-49fd-9b5b-d9adffd84f65"
+                noti_state: 1
+                notification_title: all_messages
+                updated_at: 1686910306469
+
+
+put:
+  summary: Update Community Notification Settings
+  operationId: updateCommunityNotificationSettings
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../components/schemas/requests/community_notifications.yaml"
+  responses:
+    "200":
+      description: OK

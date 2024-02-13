@@ -1,0 +1,8 @@
+get:
+  summary: Join Community
+  operationId: joinCommunity
+  tags:
+    - Community
+  responses:
+    "200":
+      description: OK

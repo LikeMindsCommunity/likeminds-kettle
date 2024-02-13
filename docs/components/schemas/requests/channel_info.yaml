@@ -1,0 +1,27 @@
+type: object
+properties:
+  method:
+    type: string
+    default: GET
+  url:
+    type: object
+    properties:
+      raw:
+        type: string
+      host:
+        type: array
+        items:
+          type: string
+      path:
+        type: array
+        items:
+          type: string
+      query:
+        type: array
+        items:
+          type: object
+          properties:
+            key:
+              type: string
+            value:
+              type: string

@@ -25,6 +25,16 @@ pipeline {
                 sh "sudo docker rmi 081371230266.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:kettle-V$BUILD_NUMBER"
             }
         }
+
+        stage ("Build and Push OpenAPI Spec file to S3") {
+            steps{
+                sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
+                withAWS(region:"ap-south-1", credentials:"AWS-S3-CREDS"){
+                        s3Upload(file:'_build/v2.yaml', bucket:'beta-likeminds-media', path:'api-docs/v2.yaml', acl:'PublicRead')
+                }
+            }
+        }
+
         stage ("update tag and push helm charts") {
           steps {
              script{
@@ -35,9 +45,10 @@ pipeline {
                   sh "git status"
                   sh 'git commit -m "CI/CD pipeline updated $IMAGE_TAG image to new image tag"'
                   sh 'git config --global credential.helper cache'
-		  sh "git push origin LM-10466-aws-migration"
+		          sh "git push origin LM-10466-aws-migration"
                 }
             }
         }
+
     }
 }

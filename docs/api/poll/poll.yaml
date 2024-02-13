@@ -1,0 +1,33 @@
+put:
+  summary: Update a poll option by ID
+
+  operationId: updatePollOptionById
+
+  tags:
+    - Poll
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/path/poll_id.yaml"
+
+  requestBody:
+    description: Updated poll option details
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/poll_option_update.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

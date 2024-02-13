@@ -1,0 +1,5 @@
+name: x-platform-code
+in: header
+description: Platform Code
+schema:
+  type: string

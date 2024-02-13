@@ -1,0 +1,25 @@
+get:
+    operationId: getUserToken
+    description: 
+      This API retrieves the user token.
+
+    tags:
+      - Login
+    security:
+    - bearerAuth: []
+
+    responses:
+      '200':
+        description: User token retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                data:
+                  type: object
+                  properties:
+                    access_token:
+                      type: string

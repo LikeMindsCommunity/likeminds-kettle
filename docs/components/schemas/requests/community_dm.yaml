@@ -1,0 +1,8 @@
+type: object
+properties:
+  state:
+    type: integer
+  duration:
+    type: string
+  number_in_duration:
+    type: integer

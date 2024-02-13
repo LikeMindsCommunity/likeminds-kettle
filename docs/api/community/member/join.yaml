@@ -1,0 +1,21 @@
+put:
+  summary: Join Community
+
+  operationId: joinCommunity
+
+  tags:
+    - Community
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/community_join.yaml"
+
+  responses: {}

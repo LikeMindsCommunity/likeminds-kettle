@@ -1,0 +1,6 @@
+name: follow_status
+in: query
+description: To only search followed or un-followed chatrooms
+required: false
+schema:
+  type: boolean

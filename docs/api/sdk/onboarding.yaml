@@ -1,0 +1,108 @@
+get:
+  summary: SDK Onboarding
+
+  operationId: sdkOnboarding
+
+  tags:
+    - Onboarding Screens
+
+  description: This API retrieves SDK onboarding information.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/query/screenId.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+
+
+post:
+  summary: SDK Onboarding
+
+  operationId: sdkOnboarding
+
+  tags:
+    - Onboarding Screens
+
+  description: This API retrieves SDK onboarding information.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+
+put:
+  summary: SDK Onboarding
+
+  operationId: sdkOnboarding
+
+  tags:
+    - Onboarding Screens
+
+  description: This API retrieves SDK onboarding information.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/query/screenId.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+
+
+delete:
+  summary: SDK Onboarding
+
+  operationId: sdkOnboarding
+
+  tags:
+    - Onboarding Screens
+
+  description: This API retrieves SDK onboarding information.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/query/screenId.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object

@@ -1,0 +1,28 @@
+delete:
+  summary: Remove Admin Privileges
+  operationId: removeAdminPrivileges
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - name: uuid
+      in: body
+      required: true
+      schema:
+        type: object
+        properties:
+          uuid:
+            type: string
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean

@@ -1,0 +1,4 @@
+type: object
+properties:
+  noti_state:
+    type: integer

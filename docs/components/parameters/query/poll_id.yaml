@@ -1,0 +1,6 @@
+name: poll_id
+in: query
+description: ID of the poll
+required: true
+schema:
+  type: integer

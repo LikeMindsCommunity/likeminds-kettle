@@ -1,0 +1,47 @@
+get:
+  summary: Community Member Search
+
+  operationId: communityMemberSearch
+
+  tags:
+    - Search
+
+  security:
+    - noauth: []
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/search.yaml"
+    - $ref: "../../components/parameters/query/searchType.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
+    - $ref: "../../components/parameters/query/pageSize.yaml"
+    - $ref: "../../components/parameters/query/orderType.yaml"
+    - $ref: "../../components/parameters/query/questionAnswerVersions.yaml"
+    - name: member_states
+      in: query
+      description: State of member to filter on
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+              data:
+                type: object
+                properties:
+                  members:
+                    $ref: "../../components/schemas/responses/members.yaml"

@@ -1,0 +1,9 @@
+get:
+  summary: Fetch Communities
+
+  operationId: fetchCommunities
+
+  tags:
+    - Community
+
+  responses: {}

@@ -1,0 +1,10 @@
+name: question_answers_version
+in: query
+description: Question answers version to send in response
+required: false
+schema:
+  type: string
+  default: v1
+  enum:
+    - v1
+    - v2

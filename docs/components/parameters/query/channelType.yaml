@@ -1,0 +1,5 @@
+name: channel_type
+in: query
+description: Channel Type
+schema:
+  type: integer

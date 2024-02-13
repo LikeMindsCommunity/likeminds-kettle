@@ -1,0 +1,221 @@
+get:
+      operationId: getCommunityMembers
+      tags:
+        - Community
+      summary: Fetch Community Members
+      description: |-
+        This API fetches members of a community
+      parameters:
+        - $ref: "../../../components/parameters/headers/platformCode.yaml"
+        - $ref: "../../../components/parameters/headers/versionCode.yaml"
+        - $ref: "../../../components/parameters/headers/platformType.yaml"
+        - $ref: "../../../components/parameters/headers/apiKey.yaml"
+        - $ref: "../../../components/parameters/query/page.yaml"
+        - $ref: "../../../components/parameters/query/questionAnswerVersions.yaml"
+        - name: member_state
+          in: query
+          description: Member state filter
+          required: false
+          schema:
+            type: integer
+        
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      community:
+                        $ref: "../../../components/schemas/responses/community.yaml"
+                      members:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            custom_intro_text:
+                              type: string
+                            custom_title:
+                              type: string
+                            id:
+                              type: integer
+                            image_url:
+                              type: string
+                            is_guest:
+                              type: boolean
+                            is_owner:
+                              type: boolean
+                            member_since:
+                              type: string
+                            member_since_epoch:
+                              type: integer
+                            menu:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  route:
+                                    type: string
+                                  title:
+                                    type: string
+                            name:
+                              type: string
+                            organisation_name:
+                              type: string
+                            question_answers:
+                              type: object
+                            route:
+                              type: string
+                            sdk_client_info:
+                              type: object
+                            state:
+                              type: integer
+                            updated_at:
+                              type: integer
+                            user_unique_id:
+                              type: string
+                            uuid:
+                              type: string
+                      total_filtered_members:
+                        type: integer
+                      total_members:
+                        type: integer
+                      total_only_members:
+                        type: integer
+                      total_pending_members:
+                        type: integer
+
+post:
+    operationId: createCommunityMember
+    tags:
+        - Community
+    summary: Create Community Members
+    description: |-
+      This API create members of a community
+    parameters:
+      - $ref: "../../../components/parameters/headers/platformCode.yaml"
+      - $ref: "../../../components/parameters/headers/versionCode.yaml"
+      - $ref: "../../../components/parameters/headers/platformType.yaml"
+      - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "../../../components/schemas/requests/communitymember.yaml"
+    responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      community:
+                        $ref: "../../../components/schemas/responses/community.yaml"
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          image_url:
+                            type: string
+                          is_guest:
+                            type: boolean
+                          name:
+                            type: string
+                          organisation_name:
+                            type: string
+                          sdk_client_info:
+                            type: object
+                          updated_at:
+                            type: integer
+                          user_unique_id:
+                            type: string
+                          uuid:
+                            type: string
+
+put:
+  operationId: updateCommunityMember
+  tags:
+        - Community
+  summary: Update Community Members
+  description: |-
+    This API updates members of a community
+  parameters:
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+  requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/requests/communitymember.yaml"
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+
+
+delete:
+  summary: Remove Members from Community
+  operationId: removeMembers
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../components/parameters/headers/platformType.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/community_member_delete.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  removal_status:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        is_removed:
+                          type: boolean
+                        lm_uuid:
+                          type: string
+                        status:
+                          type: string
+                        uuid:
+                          type: string

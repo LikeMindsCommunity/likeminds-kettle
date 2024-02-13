@@ -1,0 +1,21 @@
+post:
+  summary: Invite to Community
+
+  operationId: inviteToCommunity
+
+  tags:
+    - Community
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/authToken.yaml"
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/community_invite.yaml"
+
+  responses: {}

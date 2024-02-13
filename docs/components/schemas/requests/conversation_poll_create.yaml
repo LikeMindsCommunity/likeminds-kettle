@@ -1,0 +1,9 @@
+type: object
+properties:
+  poll:
+    type: object
+    properties:
+      text:
+        type: string
+  conversation_id:
+    type: integer

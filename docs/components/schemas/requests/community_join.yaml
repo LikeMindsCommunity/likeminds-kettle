@@ -1,0 +1,11 @@
+type: object
+properties:
+  uuid:
+    type: string
+    description: User Unique ID
+  is_accepted:
+    type: boolean
+    description: Whether the join request is accepted or not
+required:
+  - uuid
+  - is_accepted

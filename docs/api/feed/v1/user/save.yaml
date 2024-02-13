@@ -1,0 +1,125 @@
+get:
+  summary: Fetch User Saved Posts
+
+  operationId: fetchUserSavedPosts
+
+  tags:
+    - Feed - V1
+
+  description: This API fetches User Saved Posts.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/authToken.yaml"
+    - $ref: "../../../../components/parameters/path/user_id.yaml"
+    - $ref: "../../../../components/parameters/query/page.yaml"
+    - $ref: "../../../../components/parameters/query/pageSize.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+              data:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        text:
+                          type: string
+                        attachments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              file_type:
+                                type: integer
+                              file_url:
+                                type: string
+                              file_format:
+                                type: string
+                              file_size:
+                                type: string
+                        community_id:
+                          type: string
+                        is_pinned:
+                          type: boolean
+                        user_id:
+                          type: string
+                        likes_count:
+                          type: integer
+                        comments_count:
+                          type: integer
+                        is_saved:
+                          type: boolean
+                        menu_items:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                        created_at:
+                          type: integer
+                        updated_at:
+                          type: integer
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            image_url:
+                              type: string
+                            user_unique_id:
+                              type: string
+                            is_guest:
+                              type: boolean
+                  users:
+                    type: object
+                    properties:
+                      user_id:
+                        type: string
+                        properties:
+                          id:
+                            type: integer
+                          name:
+                            type: string
+                          image_url:
+                            type: string
+                          user_unique_id:
+                            type: string
+                          uuid:
+                            type: string
+                          sdk_client_info:
+                            type: object
+                            properties:
+                              community:
+                                type: integer
+                              user:
+                                type: integer
+                              user_unique_id:
+                                type: string
+                              uuid:
+                                type: string
+                          is_guest:
+                            type: boolean
+                          is_deleted:
+                            type: boolean
+                  total_count:
+                    type: integer
