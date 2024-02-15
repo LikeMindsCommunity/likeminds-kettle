@@ -1,6 +1,7 @@
 get:
     operationId: verifyOTP
     description: This API verifies generated OTP
+    x-internal: true
     tags:
       - Login
     security:

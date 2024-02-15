@@ -1,6 +1,7 @@
 get:
     operationId: generateOTP
     description: This API generates OTP
+    x-internal: true
     tags:
       - Login
     security:

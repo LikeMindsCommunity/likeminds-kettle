@@ -1,6 +1,8 @@
 post:
   summary: Create SDK Project
 
+  x-internal: true
+
   operationId: createSdkProject
 
   tags:
@@ -33,6 +35,8 @@ post:
 
 get:
   summary: Fetch SDK Projects
+
+  x-internal: true
    
   operationId: getSdkProjects
 
@@ -60,6 +64,8 @@ get:
 
 put:
   summary: Update SDK Project
+
+  x-internal: true
 
   operationId: editSdkProjects
 
@@ -93,6 +99,8 @@ put:
 
 delete:
   summary: Deletes SDK Project
+
+  x-internal: true
 
   operationId: deleteSdkProjects
 
