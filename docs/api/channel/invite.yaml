@@ -26,7 +26,4 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/channel_invite.yaml"

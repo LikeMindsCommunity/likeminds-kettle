@@ -33,14 +33,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  chatrooms:
-                    type: array
-                    items:
-                      $ref: "../components/schemas/responses/chatroom.yaml"
+            $ref: "../components/schemas/responses/community_feed.yaml"

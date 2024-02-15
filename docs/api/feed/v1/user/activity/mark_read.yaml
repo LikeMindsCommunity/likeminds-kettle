@@ -31,7 +31,4 @@ post:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../../../../components/schemas/responses/feed_activity_markread.yaml"

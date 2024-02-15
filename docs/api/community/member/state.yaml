@@ -16,22 +16,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  created_at:
-                    type: integer
-                  edit_required:
-                    type: boolean
-                  member:
-                    $ref: "../../../components/schemas/responses/member.yaml"
-                  member_rights:
-                    $ref: "../../../components/schemas/responses/memberRights.yaml"
-                  state:
-                    type: integer
-                  tool_state:
-                    type: integer
+            $ref: "../../../components/schemas/responses/community_member_state.yaml"

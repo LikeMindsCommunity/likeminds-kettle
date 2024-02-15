@@ -14,25 +14,7 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              community_share:
-                type: object
-                properties:
-                  public_link:
-                    type: string
-                  private_link:
-                    type: string
-                  private_link_text:
-                    type: string
-                  private_link_members_directory:
-                    type: string
-                  public_link_text:
-                    type: string
-                  private_link_text_members_directory:
-                    type: string
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/chatroom_share.yaml"
           example:
             community_share:
               public_link: "https://collabmates.app.link/rVuPhAn1Veb"

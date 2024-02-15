@@ -19,17 +19,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  community_ids:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
+            $ref: "../../components/schemas/responses/user_meta.yaml"

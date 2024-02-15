@@ -23,34 +23,7 @@ post:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  access_token:
-                    type: string
-                  refresh_token:
-                    type: string
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                      image_url:
-                        type: string
-                      name:
-                        type: string
-                      is_guest:
-                        type: boolean
-                      organisation_name:
-                        type: string
-                      user_unique_id:
-                        type: string
-                  community:
-                    $ref: "../../components/schemas/responses/community.yaml"
+            $ref: "../../components/schemas/responses/sdk_initiate.yaml"
     "401":
       description: Unauthorized
       content:

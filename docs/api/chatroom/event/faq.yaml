@@ -27,18 +27,4 @@ post:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              error_message:
-                type: string
-              data:
-                type: object
-                properties:
-                  chatroom:
-                    type: object
-                  chatrooms:
-                    type: array
-                    items:
-                      $ref: "../../../components/schemas/responses/chatroom.yaml"
+            $ref: "../../../components/schemas/responses/chatroom_faq.yaml"

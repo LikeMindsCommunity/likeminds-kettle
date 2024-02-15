@@ -1,0 +1,18 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      topics:
+        type: array
+        items:
+          type: object
+          properties:
+            _id:
+              type: string
+            is_enabled:
+              type: boolean
+            name:
+              type: string

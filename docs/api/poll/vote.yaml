@@ -27,10 +27,7 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/poll_vote_put.yaml"
 
 
 get:
@@ -54,14 +51,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  votes:
-                    type: array
-                    items:
-                      type: string
+            $ref: "../../components/schemas/responses/poll_vote_get.yaml"

@@ -26,25 +26,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  can_access_secret_chatroom:
-                    type: boolean
-                  chatroom:
-                    $ref: "../../components/schemas/responses/chatroom.yaml"
-                  chatroom_actions:
-                    $ref: "../../components/schemas/responses/chatroomActions.yaml"
-                  community:
-                    $ref: "../../components/schemas/responses/community.yaml"
-                  conversation_users:
-                    type: array
-                    items: {}
-                  participant_count:
-                    type: integer
-                  unread_messages:
-                    type: integer
+            $ref: "../../components/schemas/responses/channel_info.yaml"

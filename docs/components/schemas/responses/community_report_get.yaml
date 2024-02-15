@@ -1,0 +1,228 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      posts:
+        type: object
+        additionalProperties:
+          type: object
+          properties:
+            _id:
+              type: string
+            attachments:
+              type: array
+              items:
+                type: object
+                properties:
+                  attachment_meta:
+                    type: object
+                    properties:
+                      entity_id:
+                        type: string
+                      name:
+                        type: string
+                      og_tags:
+                        type: object
+                      size:
+                        type: integer
+                      url:
+                        type: string
+                  attachment_type:
+                    type: integer
+            comments_count:
+              type: integer
+            community_id:
+              type: integer
+            created_at:
+              type: integer
+            heading:
+              type: string
+            is_edited:
+              type: boolean
+            is_liked:
+              type: boolean
+            is_pinned:
+              type: boolean
+            is_saved:
+              type: boolean
+            likes_count:
+              type: integer
+            menu_items:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+            temp_id:
+              type: string
+            text:
+              type: string
+            topics:
+              type: string
+            updated_at:
+              type: integer
+            user_id:
+              type: string
+            uuid:
+              type: string
+      reports:
+        type: array
+        items:
+          type: object
+          properties:
+            community_id:
+              type: integer
+            community_name:
+              type: string
+            entity_id:
+              type: string
+            id:
+              type: integer
+            is_closed:
+              type: boolean
+            reported_by:
+              type: object
+              properties:
+                id:
+                  type: integer
+                image_url:
+                  type: string
+                is_guest:
+                  type: boolean
+                is_owner:
+                  type: boolean
+                member_since:
+                  type: string
+                member_since_epoch:
+                  type: integer
+                name:
+                  type: string
+                organisation_name:
+                  type: string
+                route:
+                  type: string
+                sdk_client_info:
+                  type: object
+                  properties:
+                    community:
+                      type: integer
+                    user:
+                      type: integer
+                    user_unique_id:
+                      type: string
+                    uuid:
+                      type: string
+                    widget_id:
+                      type: string
+                state:
+                  type: integer
+                updated_at:
+                  type: integer
+                user_unique_id:
+                  type: string
+                uuid:
+                  type: string
+            reported_on:
+              type: integer
+            tag:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+            type:
+              type: integer
+            user_reported:
+              type: object
+              properties:
+                custom_intro_text:
+                  type: string
+                custom_title:
+                  type: string
+                id:
+                  type: integer
+                image_url:
+                  type: string
+                is_guest:
+                  type: boolean
+                is_owner:
+                  type: boolean
+                member_since:
+                  type: string
+                member_since_epoch:
+                  type: integer
+                name:
+                  type: string
+                organisation_name:
+                  type: string
+                route:
+                  type: string
+                sdk_client_info:
+                  type: object
+                  properties:
+                    community:
+                      type: integer
+                    user:
+                      type: integer
+                    user_unique_id:
+                      type: string
+                    uuid:
+                      type: string
+                    widget_id:
+                      type: string
+                state:
+                  type: integer
+                updated_at:
+                  type: integer
+                user_unique_id:
+                  type: string
+                uuid:
+                  type: string
+      topics:
+        type: object
+        properties: {}
+      users:
+        type: object
+        properties:
+          user_id:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              image_url:
+                type: string
+              user_unique_id:
+                type: string
+              sdk_client_info:
+                type: object
+                properties:
+                  community:
+                    type: integer
+                  user:
+                    type: integer
+                  user_unique_id:
+                    type: string
+                  uuid:
+                    type: string
+                  widget_id:
+                    type: string
+              uuid:
+                type: string
+              is_guest:
+                type: boolean
+              is_deleted:
+                type: boolean
+              custom_title:
+                type: string
+              question_answers:
+                type: string
+      widget: {}

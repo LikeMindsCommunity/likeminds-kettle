@@ -1,0 +1,13 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      comment:
+        $ref: "./partials/comment.yaml"
+      users:
+        type: object
+        additionalProperties:
+          $ref: "./partials/user.yaml"

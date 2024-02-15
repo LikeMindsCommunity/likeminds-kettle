@@ -25,9 +25,4 @@ post:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              chatroom:
-                    $ref: "../../components/schemas/responses/chatroom.yaml"
+            $ref: "../../components/schemas/responses/chatroom_schedule_follow.yaml"

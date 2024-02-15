@@ -16,47 +16,7 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  my_chatrooms:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        chatroom:
-                          $ref: "../../components/schemas/responses/chatroom.yaml"
-                        community:
-                          $ref: "../../components/schemas/responses/community.yaml"
-                        conversation_users:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              id: integer
-                              image_url: string
-                              name: string
-                        custom_tag:
-                          type: string
-                        is_draft:
-                          type: boolean
-                        last_conversation:
-                          $ref: "../../components/schemas/responses/lastConversation.yaml"
-                        last_conversation_time:
-                          type: string
-                        member_right_states:
-                          type: array
-                          items: integer
-                        member_state:
-                          type: integer
-                        second_last_conversation:
-                          $ref: "../../components/schemas/responses/lastConversation.yaml"
-                        unseen_conversation_count:
-                          type: integer
+            $ref: "../../components/schemas/responses/chatroom_mine.yaml"
 
     "404":
       description: Not Found

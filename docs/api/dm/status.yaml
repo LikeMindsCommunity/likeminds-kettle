@@ -37,16 +37,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              error_message:
-                type: string
-              data:
-                type: object
-                properties:
-                  cta:
-                    type: string
-                  show_dm:
-                    type: boolean
+            $ref: "../../components/schemas/responses/dm_status.yaml"

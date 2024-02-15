@@ -28,16 +28,4 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  comment:
-                    $ref: "../../../../../components/schemas/responses/comment.yaml"
-                  users:
-                    type: object
-                    additionalProperties:
-                      $ref: "../../../../../components/schemas/responses/user.yaml"
+            $ref: "../../../../../components/schemas/responses/feed_comment_edit.yaml"

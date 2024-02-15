@@ -1,0 +1,21 @@
+type: object
+properties:
+  success:
+    type: boolean
+  error_message:
+    type: string
+    nullable: true
+  data:
+    type: object
+    properties:
+      comment:
+        $ref: "./partials/comment.yaml"
+      users:
+        type: object
+        additionalProperties:
+          type: object
+          properties:
+            user_id:
+              type: string
+            user:
+              $ref: "./partials/user.yaml"

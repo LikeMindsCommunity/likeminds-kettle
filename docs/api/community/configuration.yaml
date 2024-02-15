@@ -25,21 +25,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  community_configurations:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        description:
-                          type: string
-                        type:
-                          type: string
-                        value:
-                          type: object
+            $ref: "../../components/schemas/responses/community_configurations.yaml"

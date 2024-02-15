@@ -14,12 +14,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  count:
-                    type: integer
+            $ref: "../../../components/schemas/responses/conversation_unseen.yaml"

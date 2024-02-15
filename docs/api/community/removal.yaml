@@ -14,20 +14,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  removal_reports:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        last_modified:
-                          type: string
-                          format: date-time
-                        url:
-                          type: string
+            $ref: "../../components/schemas/responses/community_removal.yaml"

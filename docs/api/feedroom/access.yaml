@@ -21,16 +21,7 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  cohort_data:
-                    type: array
-                    items: {}
+            $ref: "../../components/schemas/responses/feedroom_cohort_access_get.yaml"
 
 
 
@@ -63,7 +54,4 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/feedroom_cohort_access_update.yaml"

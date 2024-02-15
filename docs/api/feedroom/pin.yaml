@@ -27,10 +27,4 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              error_message:
-                type: string
-                nullable: true
+            $ref: "../../components/schemas/responses/feedroom_pin.yaml"

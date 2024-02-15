@@ -21,18 +21,7 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              error_message:
-                type: string
-                nullable: true
-              data:
-                type: object
-                properties:
-                  is_converting:
-                    type: boolean
+            $ref: "../../components/schemas/responses/feedroom_type_get.yaml"
 
 
 
@@ -65,7 +54,4 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/feedroom_type_update.yaml"

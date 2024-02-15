@@ -20,16 +20,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  community:
-                    $ref: "../../components/schemas/responses/community.yaml"
-                  menu:
-                    type: array
-                    items:
-                      type: string
+            $ref: "../../components/schemas/responses/community.yaml"

@@ -18,6 +18,5 @@ post:
       description: OK
       content:
         application/json:
-          example:
-            success: true
-            data: {}
+          schema:
+            $ref: "../../components/schemas/responses/logs.yaml"

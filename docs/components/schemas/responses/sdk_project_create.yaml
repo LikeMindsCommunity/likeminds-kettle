@@ -1,0 +1,9 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      api_key:
+        type: string

@@ -16,9 +16,4 @@ get:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                success:
-                  type: boolean
-                error_message:
-                  type: string
+              $ref: "../../components/schemas/responses/otp_generate.yaml"

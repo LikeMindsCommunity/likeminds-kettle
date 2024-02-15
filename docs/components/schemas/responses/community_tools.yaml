@@ -1,0 +1,22 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      header:
+        type: string
+      management_tools:
+        type: array
+        items:
+          type: object
+          properties:
+            count:
+              type: integer
+            image_url:
+              type: string
+            route:
+              type: string
+            title:
+              type: string

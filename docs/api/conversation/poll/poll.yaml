@@ -19,19 +19,4 @@ post:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  poll:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                      text:
-                        type: string
-                      user_id:
-                        type: integer
+            $ref: "../../../components/schemas/responses/conversation_poll_create.yaml"

@@ -23,21 +23,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  settings:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        is_selected:
-                          type: boolean
-                        title:
-                          type: string
+            $ref: "../../components/schemas/responses/chatroom_settings.yaml"

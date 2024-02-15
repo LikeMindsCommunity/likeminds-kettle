@@ -1,0 +1,36 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      widgets:
+        type: array
+        items:
+          type: object
+          properties:
+            _id:
+              type: string
+            _lm_meta:
+              type: string
+              nullable: true
+            created_at:
+              type: integer
+            metadata:
+              type: object
+              properties:
+                tags:
+                  type: array
+                  items:
+                    oneOf:
+                      - type: string
+                      - type: array
+                        items:
+                          type: string
+            parent_entity_id:
+              type: string
+            parent_entity_type:
+              type: string
+            updated_at:
+              type: integer

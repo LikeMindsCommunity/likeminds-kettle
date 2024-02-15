@@ -1,0 +1,22 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      can_access_secret_chatroom:
+        type: boolean
+      chatroom:
+        $ref: "./partials/chatroom.yaml"
+      chatroom_actions:
+        $ref: "./partials/chatroomActions.yaml"
+      community:
+        $ref: "./partials/community.yaml"
+      conversation_users:
+        type: array
+        items: {}
+      participant_count:
+        type: integer
+      unread_messages:
+        type: integer

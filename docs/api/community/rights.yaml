@@ -17,31 +17,7 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  rights:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        is_locked:
-                          type: boolean
-                        is_selected:
-                          type: boolean
-                        state:
-                          type: integer
-                        title:
-                          type: string
-                        sub_title:
-                          type: string
-
+            $ref: "../../components/schemas/responses/community_rights_get.yaml"
 
 
 
@@ -66,7 +42,4 @@ patch:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/community_rights_update.yaml"

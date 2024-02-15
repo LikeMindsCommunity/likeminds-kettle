@@ -26,10 +26,7 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/chatroom_autofollow.yaml"
     "404":
       description: Not found
       content:

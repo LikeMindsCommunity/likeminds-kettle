@@ -13,14 +13,7 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              chatrooms:
-                type: array
-                items:
-                  $ref: "../../components/schemas/responses/chatroom.yaml"
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/chatroom_pending.yaml"
 
 
 put:

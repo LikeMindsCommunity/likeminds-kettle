@@ -1,0 +1,19 @@
+type: object
+properties:
+  community_share:
+    type: object
+    properties:
+      public_link:
+        type: string
+      private_link:
+        type: string
+      private_link_text:
+        type: string
+      private_link_members_directory:
+        type: string
+      public_link_text:
+        type: string
+      private_link_text_members_directory:
+        type: string
+  success:
+    type: boolean

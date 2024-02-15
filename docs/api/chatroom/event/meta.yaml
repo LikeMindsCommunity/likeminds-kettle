@@ -25,20 +25,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              error_message:
-                type: string
-                nullable: true
-              data:
-                type: object
-                properties:
-                  chatroom:
-                    type: object
-                    nullable: true
-                  chatrooms:
-                    type: array
-                    items:
-                      $ref: "../../../components/schemas/responses/chatroom.yaml"
+            $ref: "../../../components/schemas/responses/chatroom_meta.yaml"

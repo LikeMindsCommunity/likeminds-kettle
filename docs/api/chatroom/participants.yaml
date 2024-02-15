@@ -52,16 +52,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              error_message:
-                type: string
-              data:
-                type: object
-                properties:
-                  can_edit_participant:
-                    type: boolean
-                  participants:
-                    $ref: "../../components/schemas/responses/participants.yaml"
+            $ref: "../../components/schemas/responses/chatroom_participants.yaml"

@@ -25,71 +25,7 @@ get:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  data:
-                    type: object
-                    properties:
-                      community:
-                        $ref: "../../../components/schemas/responses/community.yaml"
-                      members:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            custom_intro_text:
-                              type: string
-                            custom_title:
-                              type: string
-                            id:
-                              type: integer
-                            image_url:
-                              type: string
-                            is_guest:
-                              type: boolean
-                            is_owner:
-                              type: boolean
-                            member_since:
-                              type: string
-                            member_since_epoch:
-                              type: integer
-                            menu:
-                              type: array
-                              items:
-                                type: object
-                                properties:
-                                  route:
-                                    type: string
-                                  title:
-                                    type: string
-                            name:
-                              type: string
-                            organisation_name:
-                              type: string
-                            question_answers:
-                              type: object
-                            route:
-                              type: string
-                            sdk_client_info:
-                              type: object
-                            state:
-                              type: integer
-                            updated_at:
-                              type: integer
-                            user_unique_id:
-                              type: string
-                            uuid:
-                              type: string
-                      total_filtered_members:
-                        type: integer
-                      total_members:
-                        type: integer
-                      total_only_members:
-                        type: integer
-                      total_pending_members:
-                        type: integer
+                $ref: "../../../components/schemas/responses/community_member_get.yaml"
 
 post:
     operationId: createCommunityMember
@@ -115,36 +51,7 @@ post:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  data:
-                    type: object
-                    properties:
-                      community:
-                        $ref: "../../../components/schemas/responses/community.yaml"
-                      user:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                          image_url:
-                            type: string
-                          is_guest:
-                            type: boolean
-                          name:
-                            type: string
-                          organisation_name:
-                            type: string
-                          sdk_client_info:
-                            type: object
-                          updated_at:
-                            type: integer
-                          user_unique_id:
-                            type: string
-                          uuid:
-                            type: string
+                $ref: "../../../components/schemas/responses/community_member_create.yaml"
 
 put:
   operationId: updateCommunityMember
@@ -170,10 +77,7 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../../components/schemas/responses/community_member_update.yaml"
 
 
 delete:
@@ -197,25 +101,4 @@ delete:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  removal_status:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        is_removed:
-                          type: boolean
-                        lm_uuid:
-                          type: string
-                        status:
-                          type: string
-                        uuid:
-                          type: string
+            $ref: "../../../components/schemas/responses/community_member_delete.yaml"
