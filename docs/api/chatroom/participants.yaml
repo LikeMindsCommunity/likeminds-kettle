@@ -11,7 +11,6 @@ post:
 
   parameters:
     - $ref: "../../components/parameters/headers/apiKey.yaml"
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     
   requestBody:
     required: true
@@ -42,7 +41,6 @@ get:
 
   parameters:
     - $ref: "../../components/parameters/headers/apiKey.yaml"
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/query/chatroomId.yaml"
     - $ref: "../../components/parameters/query/isSecret.yaml"
 

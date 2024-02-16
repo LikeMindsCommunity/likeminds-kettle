@@ -12,9 +12,6 @@ post:
   security:
     - bearerAuth: []
 
-  parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
-
   requestBody:
     content:
       application/json:
@@ -41,9 +38,6 @@ delete:
 
   security:
     - bearerAuth: []
-
-  parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
 
   description: |
     This API deletes a recording from a chatroom event.

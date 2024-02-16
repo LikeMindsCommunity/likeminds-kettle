@@ -6,7 +6,6 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/query/chatroomId.yaml"
   responses:
     '200':

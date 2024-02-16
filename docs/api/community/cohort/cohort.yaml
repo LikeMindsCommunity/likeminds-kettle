@@ -6,7 +6,6 @@ post:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../components/parameters/headers/apiKey.yaml"
   requestBody:
     required: true
@@ -39,7 +38,6 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../components/parameters/headers/platformType.yaml"
     - name: cohort_id
       in: query
@@ -65,7 +63,6 @@ delete:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../components/parameters/headers/apiKey.yaml"
   requestBody:
     required: true
@@ -98,7 +95,6 @@ put:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../components/parameters/headers/apiKey.yaml"
   requestBody:
     required: true

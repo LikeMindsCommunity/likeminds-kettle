@@ -12,9 +12,6 @@ post:
   description: |
     This API adds testimonials to a chatroom event.
 
-  parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
-
   requestBody:
     content:
       application/json:

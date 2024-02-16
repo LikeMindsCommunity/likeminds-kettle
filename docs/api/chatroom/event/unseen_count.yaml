@@ -8,9 +8,6 @@ get:
 
   security:
     - bearerAuth: []
-
-  parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
     
   description: |
     This API fetches the unseen count for a chatroom event.

@@ -12,7 +12,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
@@ -43,7 +42,6 @@ put:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
@@ -84,7 +82,6 @@ patch:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"

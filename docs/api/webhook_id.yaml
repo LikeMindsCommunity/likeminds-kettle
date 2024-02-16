@@ -7,7 +7,6 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../components/parameters/headers/authToken.yaml"
     - $ref: "../components/parameters/path/webhook_id.yaml"
   responses:
     '200':
@@ -26,7 +25,6 @@ patch:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../components/parameters/headers/authToken.yaml"
     - $ref: "../components/parameters/path/webhook_id.yaml"
   requestBody:
     required: true
@@ -52,7 +50,6 @@ delete:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../components/parameters/headers/authToken.yaml"
     - $ref: "../components/parameters/path/webhook_id.yaml"
   responses:
     '200':

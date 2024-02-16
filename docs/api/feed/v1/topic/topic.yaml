@@ -9,9 +9,6 @@ post:
   security:
     - bearerAuth: []
 
-  parameters:
-    - $ref: "../../../../components/parameters/headers/authToken.yaml"
-
   requestBody:
     description: New topic details
     required: true
@@ -41,7 +38,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../../../components/parameters/headers/authToken.yaml"
     - name: is_enabled
       in: query
       description: Filter by enabled status

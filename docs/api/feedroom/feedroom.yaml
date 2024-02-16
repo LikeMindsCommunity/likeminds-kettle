@@ -10,7 +10,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/query/feedroomId.yaml"
@@ -36,7 +35,6 @@ post:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
 
@@ -67,7 +65,6 @@ put:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
 
@@ -98,7 +95,6 @@ delete:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"

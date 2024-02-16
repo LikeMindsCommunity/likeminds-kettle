@@ -14,7 +14,6 @@ get:
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/query/chatroomId.yaml"
 
   responses:

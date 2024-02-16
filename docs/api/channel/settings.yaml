@@ -6,7 +6,6 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/path/channel_id.yaml"
     - $ref: "../../components/parameters/query/uuid.yaml"
 
@@ -29,7 +28,6 @@ put:
   parameters:
     - $ref: "../../components/parameters/path/channel_id.yaml"
     - $ref: "../../components/parameters/path/uuid.yaml"
-    - $ref: "../../components/parameters/headers/authToken.yaml"
 
   requestBody:
     required: true

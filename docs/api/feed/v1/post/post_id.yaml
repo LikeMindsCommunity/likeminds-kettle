@@ -14,7 +14,6 @@ get:
   parameters:
     - $ref: "../../../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../../../components/parameters/headers/versionCode.yaml"
-    - $ref: "../../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../../components/parameters/path/post_id.yaml"
 
   responses:
@@ -42,7 +41,6 @@ put:
   parameters:
     - $ref: "../../../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../../../components/parameters/headers/versionCode.yaml"
-    - $ref: "../../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../../components/parameters/path/post_id.yaml"
 
   requestBody:
@@ -75,7 +73,6 @@ delete:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../../components/parameters/path/post_id.yaml"
       
   requestBody:

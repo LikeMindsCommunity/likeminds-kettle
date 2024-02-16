@@ -10,7 +10,6 @@ put:
     - apiKey: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/query/feedroomId.yaml"
     - name: value

@@ -8,7 +8,6 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../components/parameters/headers/authToken.yaml"
     - name: search_key
       in: query
       required: true
@@ -51,8 +50,6 @@ post:
   summary: Create a new widget
   security:
     - bearerAuth: []
-  parameters:
-    - $ref: "../components/parameters/headers/authToken.yaml"
   requestBody:
     required: true
     content:

@@ -12,7 +12,6 @@ put:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../../../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../../../../components/parameters/path/post_id.yaml"
     - $ref: "../../../../../../components/parameters/path/comment_id.yaml"
 
@@ -39,7 +38,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../../../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../../../../components/parameters/path/post_id.yaml"
     - $ref: "../../../../../../components/parameters/path/comment_id.yaml"
     - $ref: "../../../../../../components/parameters/query/page.yaml"

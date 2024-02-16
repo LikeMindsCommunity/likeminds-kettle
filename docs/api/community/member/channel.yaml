@@ -6,7 +6,6 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../components/parameters/path/user_id.yaml"
     - $ref: "../../../components/parameters/query/state.yaml"
     - $ref: "../../../components/parameters/query/page.yaml"

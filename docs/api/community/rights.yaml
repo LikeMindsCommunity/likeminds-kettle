@@ -6,7 +6,6 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
@@ -29,7 +28,6 @@ patch:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
   requestBody:
     content:

@@ -13,7 +13,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/query/chatroomId.yaml"
     - $ref: "../../components/parameters/query/page.yaml"
 
@@ -36,9 +35,6 @@ post:
 
   security:
     - bearerAuth: []
-
-  parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
 
   requestBody:
     required: true
@@ -66,9 +62,6 @@ put:
 
   security:
     - bearerAuth: []
-
-  parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
 
   requestBody:
     required: true
@@ -101,7 +94,6 @@ delete:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/query/chatroomId.yaml"
     
   requestBody:

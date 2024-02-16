@@ -7,7 +7,6 @@ get:
     security:
       - bearer_token: []
     parameters:
-      - $ref: "../../components/parameters/headers/authToken.yaml"
       - $ref: "../../components/parameters/query/countryCode.yaml"
       - $ref: "../../components/parameters/query/mobileNumber.yaml"
 

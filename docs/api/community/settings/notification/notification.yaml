@@ -6,7 +6,6 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../../../components/parameters/headers/authToken.yaml"
     - name: type
       in: query
       required: true
@@ -37,8 +36,6 @@ put:
     - Community
   security:
     - bearerAuth: []
-  parameters:
-    - $ref: "../../../../components/parameters/headers/authToken.yaml"
   requestBody:
     content:
       application/json:

@@ -10,7 +10,6 @@ put:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/query/chatroomId.yaml"
 
   requestBody:

@@ -10,7 +10,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/query/search.yaml"
     - $ref: "../../components/parameters/query/searchType.yaml"
