@@ -1,0 +1,25 @@
+type: object
+properties:
+  success:
+    type: boolean
+  error_message:
+    type: string
+    nullable: true
+  data:
+    type: object
+    properties:
+      likes:
+        type: array
+        items:
+          type: object
+          properties:
+            _id:
+              type: string
+            user_id:
+              type: string
+            created_at:
+              type: integer
+            updated_at:
+              type: integer
+      total_count:
+        type: integer

@@ -6,7 +6,6 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../../components/parameters/headers/versionCode.yaml"
@@ -16,28 +15,7 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  community_settings:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        enabled:
-                          type: boolean
-                        enabled_by:
-                          type: integer
-                        setting_sub_title:
-                          type: string
-                        setting_title:
-                          type: string
-                        setting_type:
-                          type: string
+            $ref: "../../../components/schemas/responses/community_settings_get.yaml"
 
 
 
@@ -49,7 +27,6 @@ put:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../../components/parameters/headers/platformType.yaml"
   requestBody:
@@ -64,7 +41,4 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../../components/schemas/responses/community_settings_update.yaml"

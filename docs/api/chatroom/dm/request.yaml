@@ -5,8 +5,6 @@ post:
     - Chatroom
   security:
     - bearerAuth: []
-  parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
   requestBody:
     content:
       application/json:
@@ -18,12 +16,4 @@ post:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  conversation:
-                    $ref: "../../../components/schemas/responses/conversation.yaml"
+            $ref: "../../../components/schemas/responses/chatroom_dm_request.yaml"

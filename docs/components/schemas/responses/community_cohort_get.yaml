@@ -1,0 +1,52 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      cohorts:
+        type: object
+        properties:
+          member_count:
+            type: integer
+          members:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                image_url:
+                  type: string
+                is_guest:
+                  type: boolean
+                name:
+                  type: string
+                organisation_name:
+                  type: string
+                updated_at:
+                  type: integer
+                user_unique_id:
+                  type: string
+          name:
+            type: string
+          rights:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                is_locked:
+                  type: boolean
+                is_selected:
+                  type: boolean
+                state:
+                  type: integer
+                title:
+                  type: string
+                sub_title:
+                  type: string
+          type:
+            type: integer

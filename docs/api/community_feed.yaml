@@ -6,7 +6,6 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../components/parameters/headers/authToken.yaml"
     - $ref: "../components/parameters/headers/apiKey.yaml"
     - $ref: "../components/parameters/headers/platformCode.yaml"
     - $ref: "../components/parameters/headers/versionCode.yaml"
@@ -33,14 +32,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  chatrooms:
-                    type: array
-                    items:
-                      $ref: "../components/schemas/responses/chatroom.yaml"
+            $ref: "../components/schemas/responses/community_feed.yaml"

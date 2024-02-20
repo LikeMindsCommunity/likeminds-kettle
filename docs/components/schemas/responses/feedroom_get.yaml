@@ -1,0 +1,13 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      chatroom:
+        $ref: "./partials/chatroom.yaml"
+      chatrooms:
+        type: array
+        items:
+          $ref: "./partials/chatroom.yaml"

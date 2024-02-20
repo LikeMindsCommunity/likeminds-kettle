@@ -1,0 +1,11 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      members:
+        $ref: "./partials/members.yaml"
+      participants:
+        $ref: "./partials/participants.yaml"

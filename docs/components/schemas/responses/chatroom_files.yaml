@@ -1,0 +1,6 @@
+type: object
+properties:
+  chatroom:
+    $ref: "./partials/chatroom.yaml"
+  success:
+    type: boolean

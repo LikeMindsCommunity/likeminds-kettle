@@ -14,7 +14,6 @@ get:
   parameters:
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/query/screenId.yaml"
 
   responses:
@@ -42,7 +41,6 @@ post:
   parameters:
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
-    - $ref: "../../components/parameters/headers/authToken.yaml"
 
   responses:
     "200":
@@ -68,7 +66,6 @@ put:
   parameters:
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/query/screenId.yaml"
 
   responses:
@@ -96,7 +93,6 @@ delete:
   parameters:
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/query/screenId.yaml"
 
   responses:

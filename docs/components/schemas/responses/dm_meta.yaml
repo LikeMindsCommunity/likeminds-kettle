@@ -1,0 +1,13 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      hide_dm_tab:
+        type: boolean
+      is_cm:
+        type: boolean
+      unread_dm_count:
+        type: integer

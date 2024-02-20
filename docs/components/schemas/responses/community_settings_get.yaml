@@ -1,0 +1,22 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      community_settings:
+        type: array
+        items:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            enabled_by:
+              type: integer
+            setting_sub_title:
+              type: string
+            setting_title:
+              type: string
+            setting_type:
+              type: string

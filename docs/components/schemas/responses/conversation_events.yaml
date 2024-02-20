@@ -1,0 +1,10 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      events:
+        type: array
+        items: {}

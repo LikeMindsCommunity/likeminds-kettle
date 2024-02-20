@@ -7,11 +7,9 @@ get:
     - Search
 
   security:
-    - noauth: []
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/query/search.yaml"
     - $ref: "../../components/parameters/query/searchType.yaml"
@@ -34,14 +32,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              error_message:
-                type: string
-              data:
-                type: object
-                properties:
-                  members:
-                    $ref: "../../components/schemas/responses/members.yaml"
+            $ref: "../../components/schemas/responses/search_member.yaml"

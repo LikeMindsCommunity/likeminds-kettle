@@ -7,7 +7,6 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../components/parameters/headers/authToken.yaml"
     - $ref: "../components/parameters/headers/platformCode.yaml"
     - $ref: "../components/parameters/headers/apiKey.yaml"
   summary: Fetch all webhooks
@@ -17,32 +16,7 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  webhooks:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        community:
-                          type: integer
-                        created_at:
-                          type: integer
-                        id:
-                          type: integer
-                        is_active:
-                          type: boolean
-                        updated_at:
-                          type: integer
-                        url:
-                          type: string
-                        webhook_type:
-                          type: string
+            $ref: "../components/schemas/responses/webhooks_get.yaml"
           example:
             success: true
             data:
@@ -76,7 +50,6 @@ post:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../components/parameters/headers/authToken.yaml"
     - $ref: "../components/parameters/headers/platformCode.yaml"
     - $ref: "../components/parameters/headers/apiKey.yaml"
   description: This API enables webhooks for an Community App
@@ -99,30 +72,7 @@ post:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  webhook:
-                    type: object
-                    properties:
-                      community:
-                        type: integer
-                      created_at:
-                        type: integer
-                      id:
-                        type: integer
-                      is_active:
-                        type: boolean
-                      updated_at:
-                        type: integer
-                      url:
-                        type: string
-                      webhook_type:
-                        type: string
+            $ref: "../components/schemas/responses/webhook_enable.yaml"
           example:
             success: true
             data:

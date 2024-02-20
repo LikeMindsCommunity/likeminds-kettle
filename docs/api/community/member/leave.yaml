@@ -5,15 +5,10 @@ delete:
     - Community
   security:
     - bearerAuth: []
-  parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
   responses:
     "200":
       description: OK
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../../components/schemas/responses/community_member_leave.yaml"

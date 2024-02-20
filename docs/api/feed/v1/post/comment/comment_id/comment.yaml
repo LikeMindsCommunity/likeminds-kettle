@@ -15,7 +15,6 @@ put:
   parameters:
     - $ref: "../../../../../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../../../../../components/parameters/headers/versionCode.yaml"
-    - $ref: "../../../../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../../../../components/parameters/path/post_id.yaml"
     - $ref: "../../../../../../components/parameters/path/comment_id.yaml"
 
@@ -33,24 +32,4 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              error_message:
-                type: string
-                nullable: true
-              data:
-                type: object
-                properties:
-                  comment:
-                    $ref: "../../../../../../components/schemas/responses/comment.yaml"
-                  users:
-                    type: object
-                    additionalProperties:
-                      type: object
-                      properties:
-                        user_id:
-                          type: string
-                        user:
-                          $ref: "../../../../../../components/schemas/responses/user.yaml"
+            $ref: "../../../../../../components/schemas/responses/feed_comment_edit.yaml"

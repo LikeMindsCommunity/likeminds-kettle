@@ -6,7 +6,6 @@ delete:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../components/parameters/headers/apiKey.yaml"
   requestBody:
     required: true
@@ -20,7 +19,4 @@ delete:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../../components/schemas/responses/community_cohort_member_delete.yaml"

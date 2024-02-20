@@ -1,0 +1,11 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      votes:
+        type: array
+        items:
+          type: string

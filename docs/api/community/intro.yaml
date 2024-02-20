@@ -10,7 +10,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
 
@@ -20,23 +19,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  intro_examples:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        header:
-                          type: string
-                        sub_header:
-                          type: string
-                        sub_title:
-                          type: string
-                        title:
-                          type: string
+            $ref: "../../components/schemas/responses/community_intro.yaml"

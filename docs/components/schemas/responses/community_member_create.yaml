@@ -1,0 +1,30 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      community:
+        $ref: "./partials/community.yaml"
+      user:
+        type: object
+        properties:
+          id:
+            type: integer
+          image_url:
+            type: string
+          is_guest:
+            type: boolean
+          name:
+            type: string
+          organisation_name:
+            type: string
+          sdk_client_info:
+            type: object
+          updated_at:
+            type: integer
+          user_unique_id:
+            type: string
+          uuid:
+            type: string

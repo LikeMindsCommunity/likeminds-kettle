@@ -5,8 +5,6 @@ post:
       - Login
     security:
       - bearerAuth: []
-    parameters:
-      - $ref: "../../components/parameters/headers/authToken.yaml"
     requestBody:
       content:
         application/json:
@@ -21,9 +19,4 @@ post:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                success:
-                  type: boolean
-                error_message:
-                  type: string
+              $ref: "../../components/schemas/responses/user_logout.yaml"

@@ -10,7 +10,6 @@ put:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/path/poll_id.yaml"
 
   requestBody:
@@ -27,7 +26,4 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/poll_option_update.yaml"

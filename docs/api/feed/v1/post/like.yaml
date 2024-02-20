@@ -13,7 +13,6 @@ put:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../../components/parameters/path/post_id.yaml"
 
   responses:
@@ -22,13 +21,7 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              error_message:
-                type: string
-                nullable: true
+            $ref: "../../../../components/schemas/responses/feed_post_like.yaml"
 
 
 get:
@@ -46,7 +39,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../../components/parameters/path/post_id.yaml"
     - $ref: "../../../../components/parameters/query/page.yaml"
     - $ref: "../../../../components/parameters/query/pageSize.yaml"
@@ -57,28 +49,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              error_message:
-                type: string
-                nullable: true
-              data:
-                type: object
-                properties:
-                  likes:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        _id:
-                          type: string
-                        user_id:
-                          type: string
-                        created_at:
-                          type: integer
-                        updated_at:
-                          type: integer
-                  total_count:
-                    type: integer
+            $ref: "../../../../components/schemas/responses/feed_post_like_get.yaml"
