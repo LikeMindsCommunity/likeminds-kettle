@@ -1,12 +1,7 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"time"
 
 	"github.com/nateshr/likeminds-authentication/middleware"
 	"github.com/nateshr/likeminds-authentication/poll"
@@ -20,7 +15,6 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
-	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/cache"
 	"github.com/nateshr/likeminds-authentication/channel"
 	"github.com/nateshr/likeminds-authentication/chatroom"
@@ -35,7 +29,6 @@ import (
 	"github.com/nateshr/likeminds-authentication/search"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utility"
-	"github.com/nateshr/likeminds-authentication/utils"
 	"github.com/nateshr/likeminds-authentication/web"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -51,8 +44,8 @@ func main() {
 	initGin()
 	redisClient = cache.InitRedis()
 	router.Use(cors.New(enableCors()))
-	router.Use(ApiMiddleware(redisClient))
-	router.Use(LoggingMiddleware())
+	router.Use(middleware.ApiMiddleware(redisClient))
+	router.Use(middleware.LoggingMiddleware())
 	//Attach prometheus service as middleware
 	prometheusService := getPrometheusMetricService()
 	if prometheusService != nil {
@@ -343,165 +336,6 @@ func main() {
 func initGin() {
 	gin.SetMode(gin.ReleaseMode)
 	router = gin.Default()
-}
-
-// Method to process API request to log
-func processRequest(c *gin.Context) interface{} {
-	requestBodyData := gin.H{}
-
-	// Reading request body
-	requestBody, err := ioutil.ReadAll(c.Request.Body)
-
-	// Updating request body after read
-	c.Request.Body = ioutil.NopCloser(bytes.NewReader(requestBody))
-
-	// Unmarshalling request body
-	if err == nil {
-		_ = json.Unmarshal(requestBody, &requestBodyData)
-	}
-
-	return gin.H{
-		"host":         c.Request.Host,
-		"absolute_uri": c.Request.RequestURI,
-		"method":       c.Request.Method,
-		"headers":      c.Request.Header,
-		"body":         requestBodyData,
-	}
-}
-
-// responseBodyWriter | Custom Response Writer
-type responseBodyWriter struct {
-	gin.ResponseWriter
-	body *bytes.Buffer
-}
-
-// Write | Custom Write Method for responseBodyWriter
-func (r responseBodyWriter) Write(b []byte) (int, error) {
-	r.body.Write(b)
-	return r.ResponseWriter.Write(b)
-}
-
-// LoggingMiddleware will log the request and response of API
-func LoggingMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		if c.Request.RequestURI == "/" {
-
-			c.Next()
-
-		} else {
-
-			data := gin.H{}
-
-			// Starting time
-			startTime := time.Now()
-
-			// Implementing custom response body writer in the context
-			w := &responseBodyWriter{body: &bytes.Buffer{}, ResponseWriter: c.Writer}
-			c.Writer = w
-
-			// Updating Request Data
-			data["request"] = processRequest(c)
-
-			// Processing request
-			c.Next()
-
-			// End Time
-			endTime := time.Now()
-
-			response := gin.H{}
-			statusCode := c.Writer.Status()
-
-			// Unmarshalling Request Response
-			_ = json.Unmarshal(w.body.Bytes(), &response)
-
-			// Updating Request Response
-			data["response"] = gin.H{
-				"http_response_code": statusCode,
-				"content":            response,
-			}
-
-			if statusCode < http.StatusBadRequest {
-				data["response"].(gin.H)["content"] = gin.H{}
-			}
-
-			// Updating Request Meta Data
-			data["meta"] = gin.H{
-				"latency":   endTime.Sub(startTime),
-				"client_ip": c.ClientIP(),
-			}
-
-			// Marshalling the final Data
-			marshelledData, _ := json.Marshal(data)
-
-			if statusCode >= http.StatusOK && statusCode < http.StatusBadRequest {
-				// Logging the generated request data as Info
-				log.Info(string(marshelledData))
-			} else {
-				// Logging the generated request data as Error
-				log.Error(string(marshelledData))
-			}
-
-			c.Next()
-		}
-	}
-}
-
-// ApiMiddleware will add the db connection to the context
-func ApiMiddleware(client *redis.Client) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Set(cache.ParamRedisClient, client)
-		c.Next()
-	}
-}
-
-// GuestAccessCheckMiddleware | restrict guest access on endpoints
-func GuestAccessCheckMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		//Create internal API client
-		client := api_client.NewAPIClient()
-		options := api_client.GetRequestOptions{
-			Url:           client.CoreServiceBaseURL + user.UserFetchEndPoint,
-			CustomHeaders: utils.CreateHeaders(c, c.GetHeader(utils.HeadersMemberId)),
-		}
-		//Send request
-		respBytes, statusCode, err := client.GetRequest(&options)
-		if err != nil {
-			//If API fails or any other error
-			utils.GeneralAPIError(c, err.Error())
-			return
-		}
-		//Parse response
-		var apiCR api_client.APIClientResponse
-		err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-		if err != nil {
-			//Internal unmarshal error
-			utils.GeneralAPIError(c, err.Error())
-			return
-		}
-
-		if !apiCR.Success {
-			//If api/user/fetch returns success as false
-			c.JSON(statusCode, apiCR)
-			return
-		}
-
-		isGuest := apiCR.Response[user.ResponseUser].(map[string]interface{})[user.ResponseUserIsGuest].(bool)
-		if isGuest {
-			type GuestAccessDeniedResponseData struct {
-				Route string `json:"route"`
-			}
-			response := utils.Response{
-				Success:      false,
-				ErrorMessage: utils.ErrorGuestAccessDenied,
-				Data:         GuestAccessDeniedResponseData{Route: user.GuestLoginRoute},
-			}
-
-			// If user is guest returns success as false
-			utils.APIError(c, http.StatusUnauthorized, response)
-			return
-		}
-		c.Next()
-	}
 }
 
 func enableCors() cors.Config {
