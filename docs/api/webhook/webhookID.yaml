@@ -1,4 +1,5 @@
 get:
+  operationId: fetchWebhook
   summary: Get Webhook
   description: |
     This API fetches a single webhook using its ID.
@@ -6,51 +7,53 @@ get:
     - Webhooks
   security:
     - bearerAuth: []
-  parameters:
-    - $ref: "../components/parameters/path/webhook_id.yaml"
+  parameters:    
+      - $ref: "../../components/parameters/path/webhook_id.yaml"
   responses:
     '200':
       description: OK
       content:
         application/json:
           schema:
-            $ref: "../components/schemas/responses/webhook_get.yaml"
+            $ref: "../../components/schemas/responses/webhook_get.yaml"
 
 patch:
-  summary: Edit Webhook
+  operationId: updateWebhook
+  summary: Update Webhook
   description: |
-    This API is used to edit a webhook present in the community.
+    This API is used to update a registered webhook.
   tags:
     - Webhooks
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../components/parameters/path/webhook_id.yaml"
+    - $ref: "../../components/parameters/path/webhook_id.yaml"
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          $ref: "../components/schemas/requests/webhook_edit.yaml"
+          $ref: "../../components/schemas/requests/webhook_edit.yaml"
   responses:
     '200':
       description: OK
       content:
         application/json:
           schema:
-            $ref: "../components/schemas/responses/webhook_edit.yaml"
+            $ref: "../../components/schemas/responses/webhook_edit.yaml"
 
 
 delete:
+  operationId: deleteWebhook
   summary: Delete Webhook
   description: |
-    This API is used to delete a webhook present in the community.
+    This API is used to delete a registered webhook.
   tags:
     - Webhooks
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../components/parameters/path/webhook_id.yaml"
+    - $ref: "../../components/parameters/path/webhook_id.yaml"
   responses:
     '200':
       description: OK

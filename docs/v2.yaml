@@ -32,6 +32,7 @@ tags:
   - name: Channel
   - name: Widget
   - name: Webhooks
+    description: APIs for Creating, Updating, Fetching and Deleting webhooks
 components:
   securitySchemes:
     bearerAuth:
@@ -382,11 +383,11 @@ paths:
     $ref: "./api/channel/settings.yaml"
 
   /widget:
-    $ref: "./api/widget.yaml"
-  /widget/<widget_id>:
-    $ref: "./api/widget_id.yaml"
+    $ref: "./api/widget/widget.yaml"
+  /widget/{widget_id}:
+    $ref: "./api/widget/widget_id.yaml"
 
   /webhook:
-    $ref: "./api/webhook.yaml"
-  /webhook/<webhook_id>:
-    $ref: "./api/webhook_id.yaml"
+    $ref: "./api/webhook/webhook.yaml"
+  /webhook/{webhook_id}:
+    $ref: "./api/webhook/webhookID.yaml"
