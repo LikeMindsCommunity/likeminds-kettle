@@ -63,7 +63,7 @@ func VTMValidationMiddleware(isMandatory bool) gin.HandlerFunc {
 		} else {
 			// If valid, set "vtm" in context, to be used in later APIs
 			c.Set(token.ParamVTM, vtm)
-			
+
 			// // Set API key in request header
 			if vtm.ApiKey != "" {
 				c.Request.Header["X-Api-Key"] = []string{vtm.ApiKey}
