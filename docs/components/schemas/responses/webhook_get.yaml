@@ -5,5 +5,21 @@ properties:
   data: 
     type: object
     properties:
-      $ref: /webhook/WebhookObject.yaml
+      webhook:
+        type: object
+        properties:
+          community:
+            type: integer
+          created_at:
+            type: integer
+          id:
+            type: integer
+          is_active:
+            type: boolean
+          updated_at:
+            type: integer
+          url:
+            type: string
+          webhook_type:
+            type: string
 
