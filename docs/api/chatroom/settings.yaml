@@ -14,7 +14,6 @@ get:
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/query/chatroomId.yaml"
 
   responses:
@@ -23,21 +22,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  settings:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        is_selected:
-                          type: boolean
-                        title:
-                          type: string
+            $ref: "../../components/schemas/responses/chatroom_settings.yaml"

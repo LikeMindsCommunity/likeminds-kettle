@@ -1,0 +1,223 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      chatroom_meta:
+        type: object
+        additionalProperties:
+          type: object
+          properties:
+            about:
+              type: null
+            access:
+              type: null
+            access_without_subscription:
+              type: boolean
+            attachment_count:
+              type: integer
+            attachments_uploaded:
+              type: boolean
+            attending_status:
+              type: boolean
+            auto_follow_done:
+              type: boolean
+            card_id:
+              type: integer
+            chat_request_created_at:
+              type: null
+            chat_request_state:
+              type: null
+            chat_requested_by_id:
+              type: null
+            chatroom_image_url:
+              type: null
+            chatroom_with_user_id:
+              type: null
+            co_hosts:
+              type: null
+            community_id:
+              type: integer
+            created_at:
+              type: integer
+            custom_tag:
+              type: string
+            date:
+              type: string
+            date_epoch:
+              type: integer
+            date_time:
+              type: integer
+            deleted_by_user_id:
+              type: null
+            device_id:
+              type: null
+            expiry_time:
+              type: null
+            external_seen:
+              type: boolean
+            follow_status:
+              type: boolean
+            has_been_named:
+              type: boolean
+            has_files:
+              type: boolean
+            has_reactions:
+              type: boolean
+            header:
+              type: null
+            id:
+              type: integer
+            internal_link:
+              type: null
+            is_edited:
+              type: boolean
+            is_paid:
+              type: boolean
+            is_pending:
+              type: boolean
+            is_private:
+              type: boolean
+            is_private_member:
+              type: boolean
+            is_secret:
+              type: boolean
+            is_tagged:
+              type: boolean
+            last_seen_conversation_id:
+              type: null
+            member_can_message:
+              type: boolean
+            mute_status:
+              type: boolean
+            og_tags:
+              type: object
+            online_link:
+              type: null
+            online_link_type:
+              type: null
+            secret_chatroom_left:
+              type: boolean
+            secret_chatroom_participants:
+              type: null
+            share_link:
+              type: string
+            state:
+              type: integer
+            title:
+              type: string
+            topic_id:
+              type: null
+            type:
+              type: integer
+            updated_at:
+              type: integer
+            user_id:
+              type: integer
+      chatroom_reactions_meta:
+        type: object
+      community_meta:
+        type: object
+      conv_attachments_meta:
+        type: object
+      conv_polls_meta:
+        type: object
+      conv_reactions_meta:
+        type: object
+      conversations_data:
+        type: array
+        items:
+          type: object
+          properties:
+            allow_add_option:
+              type: boolean
+            answer:
+              type: string
+            api_version:
+              type: integer
+            attachment_count:
+              type: integer
+            attachments_uploaded:
+              type: boolean
+            card_id:
+              type: integer
+            co_hosts:
+              type: null
+            community_id:
+              type: integer
+            created_at:
+              type: string
+            created_epoch:
+              type: integer
+            date:
+              type: string
+            deleted_by_user_id:
+              type: null
+            device_id:
+              type: null
+            end_time:
+              type: integer
+            expiry_time:
+              type: null
+            has_files:
+              type: boolean
+            has_reactions:
+              type: boolean
+            header:
+              type: null
+            id:
+              type: integer
+            internal_link:
+              type: null
+            is_anonymous:
+              type: boolean
+            is_edited:
+              type: boolean
+            last_updated:
+              type: integer
+            location:
+              type: null
+            location_lat:
+              type: null
+            location_long:
+              type: null
+            multiple_select_no:
+              type: null
+            multiple_select_state:
+              type: null
+            og_tags:
+              type: null
+            online_link_enable_before:
+              type: integer
+            poll_answer_text:
+              type: string
+            poll_type:
+              type: null
+            poll_type_text:
+              type: null
+            preview_chatroom_id:
+              type: null
+            preview_community_id:
+              type: null
+            preview_type:
+              type: null
+            reply_chatroom_id:
+              type: null
+            reply_id:
+              type: null
+            start_time:
+              type: integer
+            state:
+              type: integer
+            submit_type_text:
+              type: null
+            temporary_id:
+              type: null
+            to_show_results:
+              type: boolean
+            user_id:
+              type: integer
+      user_meta:
+        type: object

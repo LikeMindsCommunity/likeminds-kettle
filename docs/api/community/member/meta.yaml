@@ -9,7 +9,4 @@ get:
   security:
     - bearerAuth: []
 
-  parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
-
   responses: {}

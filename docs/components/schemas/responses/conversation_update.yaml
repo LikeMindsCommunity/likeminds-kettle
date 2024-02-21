@@ -1,0 +1,27 @@
+type: object
+properties:
+  success:
+    type: boolean
+  conversation:
+    type: object
+    properties:
+      id:
+        type: integer
+      answer:
+        type: string
+      state:
+        type: integer
+      is_edited:
+        type: boolean
+      created_at:
+        type: string
+      has_files:
+        type: boolean
+      chatroom_id:
+        type: integer
+      community_id:
+        type: integer
+      member_id:
+        type: integer
+      date:
+        type: string

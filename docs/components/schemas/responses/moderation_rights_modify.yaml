@@ -1,0 +1,14 @@
+type: object
+properties:
+  user_id:
+    type: integer
+  is_cm: 
+    type: boolean
+  uuid: 
+    type: string
+  custom_title:
+    type: string
+  rights:
+    type: array
+    items:
+      $ref: "./partials/right.yaml"

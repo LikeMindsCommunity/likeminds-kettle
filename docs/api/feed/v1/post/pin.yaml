@@ -13,7 +13,6 @@ put:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../../components/parameters/path/post_id.yaml"
 
   responses:
@@ -22,10 +21,4 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              error_message:
-                type: string
-                nullable: true
+            $ref: "../../../../components/schemas/responses/feed_post_pin.yaml"

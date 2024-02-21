@@ -10,7 +10,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
@@ -21,16 +20,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  hide_dm_tab:
-                    type: boolean
-                  is_cm:
-                    type: boolean
-                  unread_dm_count:
-                    type: integer
+            $ref: "../../components/schemas/responses/dm_meta.yaml"

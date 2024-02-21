@@ -13,7 +13,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/query/chatroomId.yaml"
     - $ref: "../../components/parameters/query/page.yaml"
 
@@ -23,17 +22,7 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  chatrooms:
-                    type: array
-                    items:
-                      $ref: "../../components/schemas/responses/chatroom.yaml"
+            $ref: "../../components/schemas/responses/partials/chatroom.yaml"
 
 
 post:
@@ -46,9 +35,6 @@ post:
 
   security:
     - bearerAuth: []
-
-  parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
 
   requestBody:
     required: true
@@ -76,9 +62,6 @@ put:
 
   security:
     - bearerAuth: []
-
-  parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
 
   requestBody:
     required: true
@@ -111,7 +94,6 @@ delete:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/query/chatroomId.yaml"
     
   requestBody:

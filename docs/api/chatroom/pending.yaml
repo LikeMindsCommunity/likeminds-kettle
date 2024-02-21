@@ -5,22 +5,13 @@ get:
     - Chatroom
   security:
     - bearerAuth: []
-  parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
   responses:
     '200':
       description: OK
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              chatrooms:
-                type: array
-                items:
-                  $ref: "../../components/schemas/responses/chatroom.yaml"
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/chatroom_pending.yaml"
 
 
 put:
@@ -31,7 +22,6 @@ put:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
   requestBody:
     content:

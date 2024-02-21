@@ -6,7 +6,6 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/query/chatroomId.yaml"
   responses: 
     "200":
@@ -14,41 +13,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                description: Indicates whether the request was successful.
-              data:
-                type: object
-                properties:
-                  chatroom:
-                    $ref: "../../components/schemas/responses/chatroom.yaml"
-                  community:
-                    $ref: "../../components/schemas/responses/community.yaml"
-                  conversation_users:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        image_url:
-                          type: string
-                          format: uri
-                        name:
-                          type: string
-                  is_draft:
-                    type: boolean
-                  last_conversation:
-                    $ref: "../../components/schemas/responses/lastConversation.yaml"
-                  last_conversation_time:
-                    type: string
-                  member_right_states:
-                    type: array
-                    items:
-                      type: integer
-                  member_state:
-                    type: integer
-                  unseen_conversation_count:
-                    type: integer
+            $ref: "../../components/schemas/responses/chatroom_home.yaml"

@@ -6,7 +6,6 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../../components/parameters/query/conversationId.yaml"
     - $ref: "../../../components/parameters/query/poll_id.yaml"
@@ -16,11 +15,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: boolean
-              member:
-                type: array
-                items:
-                  $ref: "../../../components/schemas/responses/member.yaml"
+            $ref: "../../../components/schemas/responses/conversation_poll_users.yaml"

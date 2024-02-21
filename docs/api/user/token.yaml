@@ -14,12 +14,4 @@ get:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                success:
-                  type: boolean
-                data:
-                  type: object
-                  properties:
-                    access_token:
-                      type: string
+              $ref: "../../components/schemas/responses/user_token.yaml"

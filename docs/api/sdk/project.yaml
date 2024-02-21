@@ -1,6 +1,8 @@
 post:
   summary: Create SDK Project
 
+  x-internal: true
+
   operationId: createSdkProject
 
   tags:
@@ -12,7 +14,6 @@ post:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
@@ -29,19 +30,13 @@ post:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  api_key:
-                    type: string
+            $ref: "../../components/schemas/responses/sdk_project_create.yaml"
 
 get:
   summary: Fetch SDK Projects
 
+  x-internal: true
+   
   operationId: getSdkProjects
 
   tags:
@@ -53,7 +48,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
@@ -64,29 +58,12 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  projects:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        api_key:
-                          type: string
-                        community:
-                          $ref: "../../components/schemas/responses/community.yaml"
-                        firebase_server_key:
-                          type: string
-                        is_join_form_enabled:
-                          type: boolean
+            $ref: "../../components/schemas/responses/sdk_project_get.yaml"
 
 put:
   summary: Update SDK Project
+
+  x-internal: true
 
   operationId: editSdkProjects
 
@@ -99,7 +76,6 @@ put:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
@@ -116,13 +92,12 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/sdk_project_edit.yaml"
 
 delete:
   summary: Deletes SDK Project
+
+  x-internal: true
 
   operationId: deleteSdkProjects
 
@@ -135,7 +110,6 @@ delete:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
@@ -146,7 +120,4 @@ delete:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/sdk_project_delete.yaml"

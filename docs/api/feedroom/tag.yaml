@@ -10,7 +10,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/query/feedroomId.yaml"
 
@@ -20,16 +19,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  group_tags:
-                    type: array
-                    items: {}
-                  members:
-                    $ref: "../../components/schemas/responses/members.yaml"
-                  participants: {}
+            $ref: "../../components/schemas/responses/feedroom_tag.yaml"

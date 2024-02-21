@@ -1,0 +1,50 @@
+type: object
+properties:
+  success: 
+    type: boolean
+  data:
+    type: object
+    properties:
+      community:
+        $ref: "../communityResponse.yaml"
+      header:
+        type: string
+      questions:
+        type: array
+        items:
+          type: object
+          properties:
+            can_add_options:
+              type: boolean
+            community_id:
+              type: integer
+            dropdown_selection_limit:
+              type: integer
+            field:
+              type: boolean
+            help_text:
+              type: string
+            id:
+              type: integer
+            image_url:
+              type: string
+            is_answer_editable:
+              type: boolean
+            is_compulsory:
+              type: boolean
+            is_hidden:
+              type: boolean
+            optional:
+              type: boolean
+            options_only_for_self:
+              type: boolean
+            question_title:
+              type: string
+            rank:
+              type: integer
+            state:
+              type: integer
+            tag:
+              type: string
+            value:
+              type: string

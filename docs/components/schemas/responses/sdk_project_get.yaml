@@ -1,0 +1,20 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      projects:
+        type: array
+        items:
+          type: object
+          properties:
+            api_key:
+              type: string
+            community:
+              $ref: "./partials/community.yaml"
+            firebase_server_key:
+              type: string
+            is_join_form_enabled:
+              type: boolean

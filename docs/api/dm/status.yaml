@@ -10,7 +10,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
@@ -37,16 +36,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              error_message:
-                type: string
-              data:
-                type: object
-                properties:
-                  cta:
-                    type: string
-                  show_dm:
-                    type: boolean
+            $ref: "../../components/schemas/responses/dm_status.yaml"

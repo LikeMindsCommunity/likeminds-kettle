@@ -1,0 +1,18 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      cohort_data:
+        type: array
+        items:
+          type: object
+          properties:
+            chatroom_id:
+              type: integer
+            cohort_access:
+              type: integer
+            cohort_id:
+              type: integer

@@ -1,0 +1,24 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      my_chatrooms:
+        type: array
+        items:
+          type: object
+          properties:
+            chatroom:
+              $ref: "./partials/chatroom.yaml"
+            community:
+              $ref: "./partials/community.yaml"
+            conversation_users: {}
+            is_draft: {}
+            last_conversation_time: {}
+            member_right_states: {}
+            member_state: {}
+            unseen_conversation_count: {}
+    total_pages: {}
+    total_unseen_count: {}

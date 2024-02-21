@@ -12,9 +12,6 @@ post:
   security:
     - bearerAuth: []
 
-  parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
-
   requestBody:
     content:
       application/json:
@@ -27,23 +24,7 @@ post:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              error_message:
-                type: string
-                nullable: true
-              data:
-                type: object
-                properties:
-                  chatroom:
-                    type: object
-                    nullable: true
-                  chatrooms:
-                    type: array
-                    items:
-                      $ref: "../../../components/schemas/responses/chatroom.yaml"
+            $ref: "../../../components/schemas/responses/chatroom_recordings.yaml"
 
 
 
@@ -57,9 +38,6 @@ delete:
 
   security:
     - bearerAuth: []
-
-  parameters:
-    - $ref: "../../../components/parameters/headers/authToken.yaml"
 
   description: |
     This API deletes a recording from a chatroom event.
@@ -76,18 +54,4 @@ delete:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              error_message:
-                type: string
-              data:
-                type: object
-                properties:
-                  chatroom:
-                    type: object
-                  chatrooms:
-                    type: array
-                    items:
-                      $ref: "../../../components/schemas/responses/chatroom.yaml"
+            $ref: "../../../components/schemas/responses/chatroom_recordings.yaml"

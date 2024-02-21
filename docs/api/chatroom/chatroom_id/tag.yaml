@@ -20,15 +20,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  members:
-                    $ref: "../../../components/schemas/responses/members.yaml"
-                  participants:
-                    $ref: "../../../components/schemas/responses/participants.yaml"
-
+            $ref: "../../../components/schemas/responses/chatroom_tags_get.yaml"

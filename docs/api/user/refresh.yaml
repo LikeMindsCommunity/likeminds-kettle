@@ -19,16 +19,4 @@ post:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                success:
-                  type: boolean
-                error_message:
-                  type: string
-                data:
-                  type: object
-                  properties:
-                    access_token:
-                      type: string
-                    refresh_token:
-                      type: string
+              $ref: "../../components/schemas/responses/user_refresh_token.yaml"

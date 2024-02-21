@@ -1,0 +1,16 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      admin_mobiles:
+        type: array
+        items: {}
+      member:
+        $ref: "./partials/member.yaml"
+      rights:
+        type: array
+        items:
+          $ref: "./partials/right.yaml"
