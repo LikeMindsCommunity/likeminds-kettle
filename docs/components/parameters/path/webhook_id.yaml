@@ -1,6 +1,6 @@
-name: webhook_id
 in: path
+name: webhook_id
 required: true
 description: ID of the webhook
 schema:
-  type: string
+  type: integer
