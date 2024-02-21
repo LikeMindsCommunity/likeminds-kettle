@@ -10,7 +10,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/query/feedroomId.yaml"
@@ -22,19 +21,7 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  chatroom:
-                    $ref: "../../components/schemas/responses/chatroom.yaml"
-                  chatrooms:
-                    type: array
-                    items:
-                      $ref: "../../components/schemas/responses/chatroom.yaml"
+            $ref: "../../components/schemas/responses/feedroom_get.yaml"
 
 post:
   summary: Create Feedroom
@@ -48,7 +35,6 @@ post:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
 
@@ -64,15 +50,7 @@ post:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  chatroom:
-                    $ref: "../../components/schemas/responses/chatroom.yaml"
+            $ref: "../../components/schemas/responses/feedroom_create.yaml"
 
 
 put:
@@ -87,7 +65,6 @@ put:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
 
@@ -103,10 +80,7 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/feedroom_update.yaml"
 
 
 delete:
@@ -121,7 +95,6 @@ delete:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
@@ -139,7 +112,4 @@ delete:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/feedroom_delete.yaml"

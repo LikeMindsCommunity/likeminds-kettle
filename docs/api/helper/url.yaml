@@ -11,9 +11,6 @@ get:
   security:
     - bearerAuth: []
   
-  parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
-  
   responses:
     '200':
       description: Successful response
@@ -37,11 +34,6 @@ get:
                     url:
                       type: string
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                $ref: "../../components/schemas/responses/og_tags.yaml"
+            $ref: "../../components/schemas/responses/og_tags.yaml"
     '400':
       description: Bad Request

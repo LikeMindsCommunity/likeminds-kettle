@@ -1,0 +1,28 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      access:
+        type: boolean
+      email_exists:
+        type: boolean
+      existing_user:
+        type: boolean
+      user:
+        type: object
+        properties:
+          id:
+            type: integer
+          image_url:
+            type: string
+          is_guest:
+            type: boolean
+          name:
+            type: string
+          organisation_name:
+            type: null or string
+          user_unique_id:
+            type: string

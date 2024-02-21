@@ -1,0 +1,19 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      created_at:
+        type: integer
+      edit_required:
+        type: boolean
+      member:
+        $ref: "./partials/member.yaml"
+      member_rights:
+        $ref: "./partials/memberRights.yaml"
+      state:
+        type: integer
+      tool_state:
+        type: integer

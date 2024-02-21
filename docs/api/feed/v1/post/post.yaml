@@ -12,7 +12,6 @@ post:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../../../components/parameters/headers/authToken.yaml"
     - $ref: "../../../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../../../components/parameters/headers/acceptVersion.yaml"
@@ -33,10 +32,4 @@ post:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              error_message:
-                type: string
-                nullable: true
+            $ref: "../../../../components/schemas/responses/feed_post_create.yaml"

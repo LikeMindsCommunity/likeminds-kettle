@@ -1,0 +1,24 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      branding:
+        type: object
+        properties:
+          advanced:
+            type: object
+            properties:
+              buttons_icons_colour:
+                type: string
+              header_colour:
+                type: string
+              text_links_colour:
+                type: string
+          basic:
+            type: object
+            properties:
+              primary_colour:
+                type: string

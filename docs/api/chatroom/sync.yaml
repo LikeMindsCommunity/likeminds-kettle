@@ -7,7 +7,6 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/query/page.yaml"
     - $ref: "../../components/parameters/query/pageSize.yaml"
     - $ref: "../../components/parameters/query/minTimestamp.yaml"
@@ -19,17 +18,7 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  chatrooms:
-                    type: array
-                    items:
-                      $ref: "../../components/schemas/responses/chatroom.yaml"
+            $ref: "../../components/schemas/responses/chatroom_sync.yaml"
 
     "404":
       description: Not Found

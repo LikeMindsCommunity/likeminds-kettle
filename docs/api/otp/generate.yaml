@@ -1,12 +1,12 @@
 get:
     operationId: generateOTP
     description: This API generates OTP
+    x-internal: true
     tags:
       - Login
     security:
       - bearer_token: []
     parameters:
-      - $ref: "../../components/parameters/headers/authToken.yaml"
       - $ref: "../../components/parameters/query/countryCode.yaml"
       - $ref: "../../components/parameters/query/mobileNumber.yaml"
 
@@ -16,9 +16,4 @@ get:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                success:
-                  type: boolean
-                error_message:
-                  type: string
+              $ref: "../../components/schemas/responses/otp_generate.yaml"

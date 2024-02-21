@@ -1,0 +1,8 @@
+type: object
+properties:
+  chatrooms:
+    type: array
+    items:
+      $ref: "./partials/chatroom.yaml"
+  total_chatrooms_created:
+    type: integer

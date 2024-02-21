@@ -1,0 +1,22 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      message:
+        type: string
+      removal_status:
+        type: array
+        items:
+          type: object
+          properties:
+            is_removed:
+              type: boolean
+            lm_uuid:
+              type: string
+            status:
+              type: string
+            uuid:
+              type: string

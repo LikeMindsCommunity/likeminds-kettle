@@ -1,0 +1,32 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      dm_chatrooms:
+        type: array
+        items:
+          type: object
+          properties:
+            chatroom:
+              $ref: "./partials/chatroom.yaml"
+            community:
+              $ref: "./partials/community.yaml"
+            is_draft:
+              type: boolean
+            is_private_member:
+              type: boolean
+            last_conversation:
+              $ref: "./partials/lastConversation.yaml"
+            last_conversation_time:
+              type: string
+            member_right_states:
+              type: array
+              items:
+                type: integer
+            member_state:
+              type: integer
+            unseen_conversation_count:
+              type: integer

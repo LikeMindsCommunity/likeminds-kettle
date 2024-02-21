@@ -9,9 +9,6 @@ post:
   security:
     - bearerAuth: []
 
-  parameters:
-    - $ref: "../../../../components/parameters/headers/authToken.yaml"
-
   requestBody:
     description: New topic details
     required: true
@@ -26,22 +23,7 @@ post:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  topic:
-                    type: object
-                    properties:
-                      _id:
-                        type: string
-                      is_enabled:
-                        type: boolean
-                      name:
-                        type: string
+            $ref: "../../../../components/schemas/responses/feed_topic_create.yaml"
 
 
 get:
@@ -56,7 +38,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../../../components/parameters/headers/authToken.yaml"
     - name: is_enabled
       in: query
       description: Filter by enabled status
@@ -73,21 +54,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  topics:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        _id:
-                          type: string
-                        is_enabled:
-                          type: boolean
-                        name:
-                          type: string
+            $ref: "../../../../components/schemas/responses/feed_topic_get.yaml"

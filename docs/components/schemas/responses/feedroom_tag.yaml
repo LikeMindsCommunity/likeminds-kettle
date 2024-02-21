@@ -1,0 +1,13 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      group_tags:
+        type: array
+        items: {}
+      members:
+        $ref: "./partials/members.yaml"
+      participants: {}

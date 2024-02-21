@@ -10,7 +10,6 @@ put:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/query/chatroomId.yaml"
 
   requestBody:
@@ -26,9 +25,4 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              chatroom:
-                $ref: "../../components/schemas/responses/chatroom.yaml"
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/chatroom_files.yaml"

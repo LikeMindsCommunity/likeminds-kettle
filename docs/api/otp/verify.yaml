@@ -1,12 +1,12 @@
 get:
     operationId: verifyOTP
     description: This API verifies generated OTP
+    x-internal: true
     tags:
       - Login
     security:
       - bearer_token: []
     parameters:
-      - $ref: "../../components/parameters/headers/authToken.yaml"
       - $ref: "../../components/parameters/query/countryCode.yaml"
       - $ref: "../../components/parameters/query/mobileNumber.yaml"
       - $ref: "../../components/parameters/query/otp.yaml"
@@ -16,65 +16,4 @@ get:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                success:
-                  type: boolean
-                error_message:
-                  type: string
-                data:
-                  type: object
-                  properties:
-                    access:
-                      type: boolean
-                    access_token:
-                      type: string
-                    profile_exists:
-                      type: boolean
-                    refresh_token:
-                      type: string
-                    user:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        image_url:
-                          type: string
-                        name:
-                          type: string
-                        is_guest:
-                          type: boolean
-                        user_unique_id:
-                          type: string
-                        emails:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              email:
-                                type: string
-                              id:
-                                type: integer
-                              state:
-                                type: integer
-                              user_id:
-                                type: integer
-                              verified:
-                                type: boolean
-                        mobiles:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              id:
-                                type: integer
-                              mobile_no:
-                                type: integer
-                              country_code:
-                                type: integer
-                              state:
-                                type: integer
-                              user_id:
-                                type: integer
-                        updated_at:
-                          type: integer
+              $ref: "../../components/schemas/responses/otp_verify.yaml"

@@ -1,0 +1,24 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      rights:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            is_locked:
+              type: boolean
+            is_selected:
+              type: boolean
+            state:
+              type: integer
+            title:
+              type: string
+            sub_title:
+              type: string

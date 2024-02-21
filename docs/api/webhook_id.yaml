@@ -7,25 +7,14 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../components/parameters/headers/authToken.yaml"
     - $ref: "../components/parameters/path/webhook_id.yaml"
   responses:
     '200':
       description: OK
       content:
         application/json:
-          example:
-            success: true
-            data:
-              webhook:
-                community: 50453
-                created_at: 1695111667877
-                id: 14
-                is_active: false
-                updated_at: 1695111667877
-                url: "https://eoja4x1itbjwnwc.m.pipedream.net"
-                webhook_type: "chatroom.joined"
-
+          schema:
+            $ref: "../components/schemas/responses/webhook_get.yaml"
 
 patch:
   summary: Edit Webhook
@@ -36,7 +25,6 @@ patch:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../components/parameters/headers/authToken.yaml"
     - $ref: "../components/parameters/path/webhook_id.yaml"
   requestBody:
     required: true
@@ -49,17 +37,8 @@ patch:
       description: OK
       content:
         application/json:
-          example:
-            success: true
-            data:
-              webhook:
-                community: 50453
-                created_at: 1695111667877
-                id: 14
-                is_active: true
-                updated_at: 1695111739320
-                url: "https://eoja4x1itbjwnwc.m.pipedream.net"
-                webhook_type: "chatroom.joined"
+          schema:
+            $ref: "../components/schemas/responses/webhook_edit.yaml"
 
 
 delete:
@@ -71,7 +50,6 @@ delete:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../components/parameters/headers/authToken.yaml"
     - $ref: "../components/parameters/path/webhook_id.yaml"
   responses:
     '200':

@@ -12,7 +12,6 @@ get:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
@@ -27,22 +26,7 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                type: object
-                properties:
-                  admin_mobiles:
-                    type: array
-                    items: {}
-                  member:
-                    $ref: "../../components/schemas/responses/member.yaml"
-                  rights:
-                    type: array
-                    items:
-                      $ref: "../../components/schemas/responses/right.yaml"
+            $ref: "../../components/schemas/responses/moderation_rights_get.yaml"
 
 put: 
   summary: Update Moderation Rights
@@ -58,7 +42,6 @@ put:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
@@ -71,14 +54,7 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            user_id:
-              type: integer
-            rights:
-              type: array
-              items:
-                $ref: "../../components/schemas/responses/right.yaml"
+          $ref: "../../components/schemas/responses/moderation_rights_update.yaml"
   responses:
     '200':
       description: OK
@@ -106,7 +82,6 @@ patch:
     - bearerAuth: []
 
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../components/parameters/headers/platformType.yaml"
@@ -120,20 +95,7 @@ patch:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            user_id:
-              type: integer
-            is_cm: 
-              type: boolean
-            uuid: 
-              type: string
-            custom_title:
-              type: string
-            rights:
-              type: array
-              items:
-                $ref: "../../components/schemas/responses/right.yaml"
+          $ref: "../../components/schemas/responses/moderation_rights_modify.yaml"
   responses:
     "200":
       description: OK

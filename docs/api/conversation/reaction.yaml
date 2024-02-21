@@ -6,7 +6,6 @@ put:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
   requestBody:
     content:
@@ -19,10 +18,7 @@ put:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/conversation_reaction.yaml"
 
 
 
@@ -34,7 +30,6 @@ delete:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../components/parameters/headers/authToken.yaml"
     - $ref: "../../components/parameters/headers/apiKey.yaml"
   requestBody:
     content:
@@ -47,7 +42,4 @@ delete:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
+            $ref: "../../components/schemas/responses/conversation_reaction.yaml"
