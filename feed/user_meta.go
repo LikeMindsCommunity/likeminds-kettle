@@ -18,7 +18,35 @@ func GetUserFeedMeta(c *gin.Context) {
 	// Access query params and url generation
 	userID := c.Param("user_id")
 
+	if userID == "" {
+		utils.GeneralBadRequestError(c, utils.ErrorInvalidUserId)
+	}
+
 	endpoint := fmt.Sprintf(FetchUserFeedMetaEndPoint, userID)
 
-	utils.SendRequest(c, utils.SwarmService, endpoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+	//Send Request
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endpoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+
+	// Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	// If flow succeeds
+	dataResponse := apiCR.Response
+
+	//Fetch user data for given user_unique_ids
+	userIds := []string{userID}
+
+	user_data, err := user.FetchMemberMeta(utils.CreateHeaders(c, userId), userIds)
+	if err != nil {
+		utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
+		return
+	}
+
+	dataResponse["users"] = user_data
+
+	//Send response
+	utils.GenerateResponse(c, dataResponse, true)
 }
