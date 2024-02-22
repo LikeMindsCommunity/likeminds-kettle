@@ -34,7 +34,7 @@ func GetUserFeedMeta(c *gin.Context) {
 	endpoint := fmt.Sprintf(FetchUserFeedMetaEndPoint, userID)
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endpoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endpoint, utils.GETRequest, utils.CreateHeaders(c, userUUID), nil, nil)
 
 	// Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
