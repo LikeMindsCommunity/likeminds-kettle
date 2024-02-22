@@ -129,6 +129,10 @@ func RTMValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 			//If valid and not blacklisted, set "rtm" in context, to be used in later APIs
 			c.Set(token.ParamRTM, rtm)
 		}
+		// Set API key in request header
+		if rtm.ApiKey != "" {
+			c.Request.Header["X-Api-Key"] = []string{rtm.ApiKey}
+		}
 		c.Next()
 	}
 }
@@ -151,6 +155,12 @@ func LTMorVTMValidationMiddleware() gin.HandlerFunc {
 
 		if ltmErr == nil {
 			c.Set(token.ParamLTM, ltm)
+
+			// Set API key in request header
+			if ltm.ApiKey != "" {
+				c.Request.Header["X-Api-Key"] = []string{ltm.ApiKey}
+			}
+
 			c.Next()
 		}
 
@@ -159,6 +169,12 @@ func LTMorVTMValidationMiddleware() gin.HandlerFunc {
 
 		if vtmErr == nil {
 			c.Set(token.ParamVTM, vtm)
+
+			// Set API key in request header
+			if vtm.ApiKey != "" {
+				c.Request.Header["X-Api-Key"] = []string{vtm.ApiKey}
+			}
+
 			c.Next()
 
 		} else {
