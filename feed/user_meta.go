@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/utility"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -22,6 +23,14 @@ func GetUserFeedMeta(c *gin.Context) {
 		utils.GeneralBadRequestError(c, utils.ErrorInvalidUserId)
 	}
 
+	//Get user_unique_id from user_id internally
+	userUUID, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), userID)
+
+	if err != nil {
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
 	endpoint := fmt.Sprintf(FetchUserFeedMetaEndPoint, userID)
 
 	//Send Request
@@ -37,7 +46,7 @@ func GetUserFeedMeta(c *gin.Context) {
 	dataResponse := apiCR.Response
 
 	//Fetch user data for given user_unique_ids
-	userIds := []string{userID}
+	userIds := []string{userUUID}
 
 	user_data, err := user.FetchMemberMeta(utils.CreateHeaders(c, userId), userIds)
 	if err != nil {
