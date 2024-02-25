@@ -23,7 +23,7 @@ get:
               public_link_text: "I am part of LikeMinds Beta Testing community on LikeMinds. Apply to join our community. https://collabmates.app.link/rVuPhAn1Veb"
               private_link_text_members_directory: "I have created a community directory for LikeMinds Beta Testing on LikeMinds. Signup and complete your profile to see detailed profiles of other members in the community using this exclusive link. Auto-verification is enabled for 24 hours: https://collabmates.app.link/tVuPhAn1Veb"
             success: true
-          description: Share URLs for the chatroom.
+
     '404':
       description: Not Found
       content:
@@ -35,4 +35,3 @@ get:
                 type: string
           example:
             error: "Chatroom not found"
-          description: Indicates that the specified chatroom was not found.

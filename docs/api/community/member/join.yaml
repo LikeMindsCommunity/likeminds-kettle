@@ -1,7 +1,7 @@
 put:
   summary: Join Community
 
-  operationId: joinCommunity
+  operationId: memberJoinCommunity
 
   tags:
     - Community
@@ -15,4 +15,10 @@ put:
         schema:
           $ref: "../../../components/schemas/requests/community_join.yaml"
 
-  responses: {}
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object

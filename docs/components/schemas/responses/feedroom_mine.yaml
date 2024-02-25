@@ -20,5 +20,5 @@ properties:
             member_right_states: {}
             member_state: {}
             unseen_conversation_count: {}
-    total_pages: {}
-    total_unseen_count: {}
+      total_pages: {}
+      total_unseen_count: {}

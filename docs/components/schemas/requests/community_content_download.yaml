@@ -13,14 +13,4 @@ properties:
           type: string
         enabled:
           type: boolean
-  example:
-    content_download_settings:
-      - community_id: 49827
-        download_setting_type: "image"
-        download_setting_title: "Images"
-        enabled: true
-      - community_id: 49827
-        download_setting_type: "video"
-        download_setting_title: "Videos"
-        enabled: true
       # ... (repeat for other settings)

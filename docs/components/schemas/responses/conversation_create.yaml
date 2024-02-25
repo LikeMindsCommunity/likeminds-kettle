@@ -56,4 +56,5 @@ properties:
               type: integer
       reactions:
         type: array
-        items: []
+        items: 
+          type: object

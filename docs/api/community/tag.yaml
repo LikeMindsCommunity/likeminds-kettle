@@ -1,6 +1,5 @@
 get:
   summary: Fetch Reporting Tags in a Community (Api Revamp v1)
-  operationId: fetchReportingTags
   tags:
     - Community
   security:

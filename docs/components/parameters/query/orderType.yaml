@@ -4,6 +4,3 @@ description: order type of search results
 required: false
 schema:
   type: string
-enum:
-  - last_updated
-  - Alphabetical

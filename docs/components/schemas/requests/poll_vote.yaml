@@ -1,2 +1,4 @@
-votes:
-  type: string
+type: object
+properties:
+  votes:
+    type: string

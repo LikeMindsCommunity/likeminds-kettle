@@ -14,11 +14,6 @@ post:
       application/json:
         schema:
           $ref: "../../components/schemas/requests/user_otp.yaml"
-        required:
-          - otp_mode
-          - mobile_no
-          - country_code
-          - is_retry
 
   responses:
     "200":

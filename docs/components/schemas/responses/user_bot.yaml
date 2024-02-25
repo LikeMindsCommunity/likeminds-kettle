@@ -23,6 +23,6 @@ properties:
           name:
             type: string
           organisation_name:
-            type: null or string
+            type: string
           user_unique_id:
             type: string
