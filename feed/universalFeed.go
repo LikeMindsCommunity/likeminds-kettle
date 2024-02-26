@@ -53,6 +53,15 @@ func FetchUniversalFeed(c *gin.Context) {
 	if value, ok := dataResponse["posts"]; ok {
 		posts := value.([]interface{})
 
+		if value, ok := dataResponse["filtered_comments"]; ok {
+			if commentData, ok := value.(map[string]interface{}); ok {
+
+				for _, val := range commentData {
+					posts = append(posts, val)
+				}
+			}
+		}
+
 		user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts, dataResponse)
 		if err != nil {
 			utils.GenerateResponse(c, nil, false)
