@@ -254,6 +254,7 @@ func main() {
 	router.GET("/feed/post/:post_id/comment/:comment_id/like", middleware.LTMValidationMiddleware(redisClient), feed.GetCommentLikes)
 	router.GET("/feed/user/:user_id/save", middleware.LTMValidationMiddleware(redisClient), feed.GetSavedPosts)
 	router.GET("/feed/user/:user_id/post", middleware.LTMValidationMiddleware(redisClient), feed.FetchUserCreatedPosts)
+	router.GET("/feed/user/:user_id/comment", middleware.LTMValidationMiddleware(redisClient), feed.GetUserComments)
 	router.GET("/feed/user/activity", middleware.LTMValidationMiddleware(redisClient), feed.GetUserActivity)
 	router.GET("/feed/user/:user_id/activity", middleware.LTMValidationMiddleware(redisClient), feed.FetchUserProfileActivity)
 	router.POST("/feed/user/:user_id/activity", middleware.LTMValidationMiddleware(redisClient), feed.CreateUserActivity)
