@@ -20,8 +20,6 @@ post:
       application/json:
         schema:
           $ref: "../../components/schemas/requests/user_device_push.yaml"
-        required:
-          - token
 
   responses:
     "200":

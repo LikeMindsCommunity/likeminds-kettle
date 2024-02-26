@@ -19,13 +19,6 @@ get:
       required: true
       schema:
         type: string
-      enum:
-        - member_profile
-        - community_detail
-        - dm_feed
-        - member_directory
-        - chatroom
-        - user_channel
     - $ref: "../../components/parameters/query/memberId.yaml"
     - $ref: "../../components/parameters/query/chatroomId.yaml"
 

@@ -7,8 +7,6 @@ get:
     - bearerAuth: []
   parameters:
     - $ref: "../../components/parameters/headers/apiKey.yaml"
-  requestBody:
-    required: false
   responses:
     "200":
       description: OK
@@ -40,9 +38,6 @@ post:
       application/json:
         schema:
           $ref: "../../components/schemas/requests/conversation_create.yaml"
-    required:
-      - chatroom_id
-      - text
   responses:
     "200":
       description: OK
@@ -67,9 +62,6 @@ delete:
       application/json:
         schema:
           $ref: "../../components/schemas/requests/conversation_delete.yaml"
-    required:
-      - conversation_ids
-      - reason
   responses:
     "200":
       description: OK
@@ -94,9 +86,6 @@ put:
       application/json:
         schema:
           $ref: "../../components/schemas/requests/conversation_update.yaml"
-    required:
-      - conversation_id
-      - text
   responses:
     "200":
       description: OK

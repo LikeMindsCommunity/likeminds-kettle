@@ -15,4 +15,10 @@ post:
         schema:
           $ref: "../../components/schemas/requests/community_invite.yaml"
 
-  responses: {}
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object

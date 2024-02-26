@@ -103,7 +103,7 @@ delete:
         schema:
           $ref: "../../components/schemas/requests/chatroom_delete.yaml"
 
-    responses:
+  responses:
     "200":
       description: OK
       content:

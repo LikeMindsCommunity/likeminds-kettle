@@ -1,7 +1,7 @@
 get:
   summary: SDK Onboarding
 
-  operationId: sdkOnboarding
+  operationId: getSdkOnboarding
 
   tags:
     - Onboarding Screens
@@ -28,7 +28,7 @@ get:
 post:
   summary: SDK Onboarding
 
-  operationId: sdkOnboarding
+  operationId: postSdkOnboarding
 
   tags:
     - Onboarding Screens
@@ -53,7 +53,7 @@ post:
 put:
   summary: SDK Onboarding
 
-  operationId: sdkOnboarding
+  operationId: putSdkOnboarding
 
   tags:
     - Onboarding Screens
@@ -80,7 +80,7 @@ put:
 delete:
   summary: SDK Onboarding
 
-  operationId: sdkOnboarding
+  operationId: deleteSdkOnboarding
 
   tags:
     - Onboarding Screens

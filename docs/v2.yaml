@@ -68,17 +68,17 @@ paths:
     $ref: "./api/chatroom/participants.yaml"
   /chatroom/settings:
     $ref: "./api/chatroom/settings.yaml"
-  /chatroom/type:
+  /chatroom/{chatroom_id}/type:
     $ref: "./api/chatroom/type.yaml"
-  /chatroom/enable_member_message:
+  /chatroom/{chatroom_id}/enable_member_message:
     $ref: "./api/chatroom/enable_member_message.yaml"
-  /chatroom/pin:
+  /chatroom/{chatroom_id}/pin:
     $ref: "./api/chatroom/pin.yaml"
-  /chatroom/auto_follow_members:
+  /chatroom/{chatroom_id}/auto_follow_members:
     $ref: "./api/chatroom/auto_follow_members.yaml"
   /chatroom/tag:
     $ref: "./api/chatroom/tag.yaml"
-  /chatroom/<chatroom_id>/tag:
+  /chatroom/{chatroom_id}/tag:
     $ref: "./api/chatroom/chatroom_id/tag.yaml"
   /chatroom/files:
     $ref: "./api/chatroom/files.yaml"
@@ -161,7 +161,7 @@ paths:
     $ref: "./api/community/member/chatroom.yaml"
   /community/member/channel/status:
     $ref: "./api/community/member/status.yaml"
-  /community/member/<user_id>/channel:
+  /community/member/{user_id}/channel:
     $ref: "./api/community/member/channel.yaml"
   /community/member/home/meta:
     $ref: "./api/community/member/meta.yaml"
@@ -183,8 +183,6 @@ paths:
      $ref: "./api/community/rights.yaml"
   /community/cohort:
      $ref: "./api/community/cohort/cohort.yaml"
-  /community/cohort/<cohort_id>:
-     $ref: "./api/community/cohort/cohort_id.yaml"
   /community/cohort/member:
      $ref: "./api/community/cohort/member.yaml"
   /community/cohort/access:
@@ -261,31 +259,31 @@ paths:
 
   /feed/post:
     $ref: "./api/feed/v1/post/post.yaml"
-  /feed/post/<post_id>:
+  /feed/post/{post_id}:
     $ref: "./api/feed/v1/post/post_id.yaml"
-  /feed/post/<post_id>/pin:
+  /feed/post/{post_id}/pin:
     $ref: "./api/feed/v1/post/pin.yaml"
-  /feed/post/<post_id>/like:
+  /feed/post/{post_id}/like:
     $ref: "./api/feed/v1/post/like.yaml"
-  /feed/post/<post_id>/comment:
+  /feed/post/{post_id}/comment:
     $ref: "./api/feed/v1/post/comment/comment.yaml"
-  /feed/post/<post_id>/comment/<comment_id>:
+  /feed/post/{post_id}/comment/{comment_id}:
     $ref: "./api/feed/v1/post/comment/comment_id.yaml"
-  /feed/post/<post_id>/save:
+  /feed/post/{post_id}/save:
     $ref: "./api/feed/v1/post/save.yaml"
-  /feed/post/<post_id>/comment/<comment_id>/comment:
+  /feed/post/{post_id}/comment/{comment_id}/comment:
     $ref: "./api/feed/v1/post/comment/comment_id/comment.yaml"
-  /feed/post/<post_id>/comment/<comment_id>/like:
+  /feed/post/{post_id}/comment/{comment_id}/like:
     $ref: "./api/feed/v1/post/comment/comment_id/like.yaml"
-  /feed/user/<user_id>/save:
+  /feed/user/{user_id}/save:
     $ref: "./api/feed/v1/user/save.yaml"
-  /feed/user/<user_id>/post:
+  /feed/user/{user_id}/post:
     $ref: "./api/feed/v1/user/post.yaml"
-  /feed/user/<user_id>/activity:
+  /feed/user/{user_id}/activity:
     $ref: "./api/feed/v1/user/activity/activity.yaml"
   /feed/user/activity:
     $ref: "./api/feed/v1/user/activity.yaml"
-  /feed/user/activity/<activity_id>/mark_read:
+  /feed/user/activity/{activity_id}/mark_read:
     $ref: "./api/feed/v1/user/activity/mark_read.yaml"
   /feed/user/activity/unread_count:
     $ref: "./api/feed/v1/user/activity/unread_count.yaml"
@@ -295,12 +293,12 @@ paths:
     $ref: "./api/feed/v1/group.yaml"
   /feed/topic:
     $ref: "./api/feed/v1/topic/topic.yaml"
-  /feed/topic/<topic_id>:
+  /feed/topic/{topic_id}:
     $ref: "./api/feed/v1/topic/topic_id.yaml"
 
-  /poll/<poll_id>:
+  /poll/{poll_id}:
     $ref: "./api/poll/poll.yaml"
-  /poll/<poll_id>/vote:
+  /poll/{poll_id}/vote:
     $ref: "./api/poll/vote.yaml"
 
   /feedroom:
@@ -327,7 +325,7 @@ paths:
     $ref: "./api/feedroom/follow.yaml"
   /feedroom/tag:
     $ref: "./api/feedroom/tag.yaml"
-  /feedroom/<feedroom_id>/tag:
+  /feedroom/{feedroom_id}/tag:
     $ref: "./api/feedroom/feedroom_tag.yaml"
 
   /home/dm/meta:
@@ -343,7 +341,7 @@ paths:
     $ref: "./api/search/search.yaml"
   /search/post:
     $ref: "./api/search/post.yaml"
-  /search/post/user/:user_id:
+  /search/post/user/{user_id}:
     $ref: "./api/search/user.yaml"
   /search/channel:
     $ref: "./api/search/channel.yaml"
@@ -379,7 +377,7 @@ paths:
     $ref: "./api/channel/invites.yaml"
   /channel/invite:
     $ref: "./api/channel/invite.yaml"
-  /channel/<channel_id>/settings/member/<uuid>:
+  /channel/{channel_id}/settings/member/{uuid}:
     $ref: "./api/channel/settings.yaml"
 
   /widget:

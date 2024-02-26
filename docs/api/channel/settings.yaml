@@ -7,7 +7,7 @@ get:
     - bearerAuth: []
   parameters:
     - $ref: "../../components/parameters/path/channel_id.yaml"
-    - $ref: "../../components/parameters/query/uuid.yaml"
+    - $ref: "../../components/parameters/path/uuid.yaml"
 
   responses:
     "200":

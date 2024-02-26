@@ -14,20 +14,6 @@ post:
       application/json:
         schema:
           $ref: "../../components/schemas/requests/user_whatsapp.yaml"
-        required:
-          - id
-          - created
-          - whatsappMessageId
-          - conversationId
-          - ticketId
-          - text
-          - type
-          - timestamp
-          - owner
-          - eventType
-          - statusString
-          - waId
-          - senderName
 
   responses:
     "200":

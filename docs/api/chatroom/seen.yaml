@@ -22,7 +22,7 @@ put:
                 type: boolean
           example:
             success: true
-          description: Indicates whether the operation was successful.
+
     '404':
       description: Not Found
       content:
@@ -36,4 +36,3 @@ put:
                 type: string
           example:
             error: "Chatroom not found"
-          description: Indicates that the specified chatroom was not found.

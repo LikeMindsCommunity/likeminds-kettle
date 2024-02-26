@@ -31,7 +31,8 @@ properties:
               type: boolean
             audios:
               type: array
-              items: []
+              items:
+                type: object
             chatroom_id:
               type: integer
             community_id:
@@ -71,16 +72,19 @@ properties:
               type: integer
             pdf:
               type: array
-              items: []
+              items:
+                type: object
             poll_answer_text:
               type: string
             reactions:
               type: array
-              items: []
+              items:
+                type: object
             start_time:
               type: integer
             state:
               type: integer
             videos:
               type: array
-              items: []
+              items:
+                type: object

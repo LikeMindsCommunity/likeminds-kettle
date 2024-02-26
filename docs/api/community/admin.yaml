@@ -7,14 +7,15 @@ delete:
     - bearerAuth: []
   parameters:
     - $ref: "../../components/parameters/headers/platformType.yaml"
-    - name: uuid
-      in: body
-      required: true
-      schema:
-        type: object
-        properties:
-          uuid:
-            type: string
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            uuid:
+              type: string
   responses:
     "200":
       description: OK
