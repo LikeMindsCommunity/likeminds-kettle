@@ -3,6 +3,7 @@ package feed
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/user"
@@ -10,9 +11,11 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-type UserCommentsResponse struct {
+type UserCommentsAPIResponse struct {
+	Success  bool                              `json:"success"`
 	Comments []map[string]interface{}          `json:"comments"`
 	Posts    map[string]map[string]interface{} `json:"posts"`
+	Response map[string]interface{}            `json:"-"`
 }
 
 func GetUserComments(c *gin.Context) {
@@ -43,14 +46,12 @@ func GetUserComments(c *gin.Context) {
 
 	// Access query params and url generation
 	userID := c.Param("user_id")
-
 	if userID == "" {
 		utils.GeneralBadRequestError(c, utils.ErrorInvalidUserId)
 	}
 
 	//Get user_unique_id from user_id internally
 	userUUID, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), userID)
-
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
 		return
@@ -58,8 +59,26 @@ func GetUserComments(c *gin.Context) {
 
 	endpoint := fmt.Sprintf(UserCommentsEndPoint, userUUID)
 
-	//Send Request
+	// Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endpoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
+	var userCommentsAPIResponse UserCommentsAPIResponse
+	var dataResponse map[string]interface{}
+
+	if statusCode != http.StatusOK {
+		// Validate response
+		apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+		if apiCR == nil {
+			return
+		}
+
+	} else {
+		if err := parseUserCommentsResponse(respBytes, &userCommentsAPIResponse); err != nil {
+			utils.GeneralAPIError(c, err.Error())
+		}
+
+		dataResponse = userCommentsAPIResponse.Response
+	}
 
 	// Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
@@ -67,41 +86,10 @@ func GetUserComments(c *gin.Context) {
 		return
 	}
 
-	// If flow succeeds
-	dataResponse := apiCR.Response
-
-	var userCommentsResponse *UserCommentsResponse
-
-	convertedDataResponse, _ := json.Marshal(dataResponse)
-	json.Unmarshal(convertedDataResponse, &userCommentsResponse)
-
-	//Fetch user data for given user_unique_ids
+	// Fetch user data for given user_unique_ids
 	userIds := []string{userUUID}
-	userIdsMap := map[string]interface{}{
-		userUUID: nil,
-	}
 
-	// Fetch user ids from comments data
-	for _, commentData := range userCommentsResponse.Comments {
-		if user_unique_id, ok := commentData["uuid"]; ok {
-			if _, ok := userIdsMap[user_unique_id.(string)]; !ok {
-				userIds = append(userIds, user_unique_id.(string))
-				userIdsMap[user_unique_id.(string)] = nil
-			}
-		}
-	}
-
-	// Fetch user ids from posts data
-	for _, postData := range userCommentsResponse.Posts {
-		if user_unique_id, ok := postData["uuid"]; ok {
-			if _, ok := userIdsMap[user_unique_id.(string)]; !ok {
-				userIds = append(userIds, user_unique_id.(string))
-				userIdsMap[user_unique_id.(string)] = nil
-			}
-		}
-	}
-
-	user_data, err := user.FetchMemberMeta(utils.CreateHeaders(c, userId), userIds)
+	user_data, err := populateUserData(c, userId, userCommentsAPIResponse.Comments, userCommentsAPIResponse.Posts, userIds)
 	if err != nil {
 		utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 		return
@@ -111,4 +99,58 @@ func GetUserComments(c *gin.Context) {
 
 	//Send response
 	utils.GenerateResponse(c, dataResponse, true)
+}
+
+func parseUserCommentsResponse(respBytes []byte, ucar *UserCommentsAPIResponse) error {
+	if err := json.Unmarshal(respBytes, &ucar); err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(respBytes, &ucar.Response); err != nil {
+		return err
+	}
+
+	delete(ucar.Response, "success")
+	delete(ucar.Response, "error_message")
+
+	return nil
+}
+
+func populateUserData(c *gin.Context, userId string, listData []map[string]interface{}, mapData map[string]map[string]interface{}, userIds []string) (map[string]user.MemberMeta, error) {
+	userIdsMap := map[string]interface{}{}
+
+	if userIds == nil {
+		userIds = []string{}
+	}
+
+	for _, userId := range userIds {
+		userIdsMap[userId] = nil
+	}
+
+	// Fetch user ids from []map[string]interface{} type data
+	for _, data := range listData {
+		if user_unique_id, ok := data["uuid"]; ok {
+			if _, ok := userIdsMap[user_unique_id.(string)]; !ok {
+				userIds = append(userIds, user_unique_id.(string))
+				userIdsMap[user_unique_id.(string)] = nil
+			}
+		}
+	}
+
+	// Fetch user ids from map[string]map[string]interface{} type data
+	for _, data := range mapData {
+		if user_unique_id, ok := data["uuid"]; ok {
+			if _, ok := userIdsMap[user_unique_id.(string)]; !ok {
+				userIds = append(userIds, user_unique_id.(string))
+				userIdsMap[user_unique_id.(string)] = nil
+			}
+		}
+	}
+
+	user_data, err := user.FetchMemberMeta(utils.CreateHeaders(c, userId), userIds)
+	if err != nil {
+		return nil, err
+	}
+
+	return user_data, nil
 }
