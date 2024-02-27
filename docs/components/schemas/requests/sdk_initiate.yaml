@@ -1,6 +1,6 @@
 type: object
 properties:
-  name:
+  user_name:
     type: string
     description: User Name
     nullable: true
