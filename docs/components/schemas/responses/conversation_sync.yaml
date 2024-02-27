@@ -11,9 +11,9 @@ properties:
           type: object
           properties:
             about:
-              type: null
+              type: string
             access:
-              type: null
+              type: string
             access_without_subscription:
               type: boolean
             attachment_count:
@@ -27,17 +27,18 @@ properties:
             card_id:
               type: integer
             chat_request_created_at:
-              type: null
+              type: string
             chat_request_state:
-              type: null
+              type: string
             chat_requested_by_id:
-              type: null
+              type: string
             chatroom_image_url:
-              type: null
+              type: string
+              format: uri
             chatroom_with_user_id:
-              type: null
+              type: string
             co_hosts:
-              type: null
+              type: string
             community_id:
               type: integer
             created_at:
@@ -51,11 +52,11 @@ properties:
             date_time:
               type: integer
             deleted_by_user_id:
-              type: null
+              type: integer
             device_id:
-              type: null
+              type: integer
             expiry_time:
-              type: null
+              type: integer
             external_seen:
               type: boolean
             follow_status:
@@ -67,11 +68,11 @@ properties:
             has_reactions:
               type: boolean
             header:
-              type: null
+              type: string
             id:
               type: integer
             internal_link:
-              type: null
+              type: string
             is_edited:
               type: boolean
             is_paid:
@@ -87,7 +88,7 @@ properties:
             is_tagged:
               type: boolean
             last_seen_conversation_id:
-              type: null
+              type: integer
             member_can_message:
               type: boolean
             mute_status:
@@ -95,13 +96,15 @@ properties:
             og_tags:
               type: object
             online_link:
-              type: null
+              type: string
             online_link_type:
-              type: null
+              type: string
             secret_chatroom_left:
               type: boolean
             secret_chatroom_participants:
-              type: null
+              type: array
+              items:
+                type: integer
             share_link:
               type: string
             state:
@@ -109,7 +112,7 @@ properties:
             title:
               type: string
             topic_id:
-              type: null
+              type: integer
             type:
               type: integer
             updated_at:
@@ -144,7 +147,7 @@ properties:
             card_id:
               type: integer
             co_hosts:
-              type: null
+              type: string
             community_id:
               type: integer
             created_at:
@@ -154,23 +157,23 @@ properties:
             date:
               type: string
             deleted_by_user_id:
-              type: null
+              type: integer
             device_id:
-              type: null
+              type: integer
             end_time:
               type: integer
             expiry_time:
-              type: null
+              type: integer
             has_files:
               type: boolean
             has_reactions:
               type: boolean
             header:
-              type: null
+              type: string
             id:
               type: integer
             internal_link:
-              type: null
+              type: string
             is_anonymous:
               type: boolean
             is_edited:
@@ -178,43 +181,43 @@ properties:
             last_updated:
               type: integer
             location:
-              type: null
+              type: string
             location_lat:
-              type: null
+              type: integer
             location_long:
-              type: null
+              type: integer
             multiple_select_no:
-              type: null
+              type: integer
             multiple_select_state:
-              type: null
+              type: string
             og_tags:
-              type: null
+              type: string
             online_link_enable_before:
               type: integer
             poll_answer_text:
               type: string
             poll_type:
-              type: null
+              type: string
             poll_type_text:
-              type: null
+              type: string
             preview_chatroom_id:
-              type: null
+              type: integer
             preview_community_id:
-              type: null
+              type: integer
             preview_type:
-              type: null
+              type: string
             reply_chatroom_id:
-              type: null
+              type: integer
             reply_id:
-              type: null
+              type: integer
             start_time:
               type: integer
             state:
               type: integer
             submit_type_text:
-              type: null
+              type: string
             temporary_id:
-              type: null
+              type: integer
             to_show_results:
               type: boolean
             user_id:

@@ -1,8 +1,6 @@
 put:
   summary: Pin Chatroom in Community
 
-  operationId: pinChatroom
-
   tags:
     - Feedroom
 

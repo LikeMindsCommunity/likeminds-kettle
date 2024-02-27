@@ -54,7 +54,7 @@ properties:
                 name:
                   type: string
                 organisation_name:
-                  type: null
+                  type: string
                 route:
                   type: string
                 state:
@@ -65,6 +65,7 @@ properties:
                   type: string
             reactions:
               type: array
-              items: []
+              items:
+                type: object
             state:
               type: integer

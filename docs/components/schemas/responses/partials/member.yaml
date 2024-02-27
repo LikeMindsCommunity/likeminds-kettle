@@ -13,7 +13,7 @@ properties:
   name:
     type: string
   organisation_name:
-    type: null
+    type: string
   question_answers:
     type: array
     items:
@@ -34,7 +34,7 @@ properties:
         state:
           type: integer
         tag:
-          type: null
+          type: string
         value:
           type: string
   sdk_client_info:

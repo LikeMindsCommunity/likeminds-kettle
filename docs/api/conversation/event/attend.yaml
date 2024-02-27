@@ -14,4 +14,10 @@ put:
       application/json:
         schema:
           $ref: "../../../components/schemas/requests/conversation_attend_event.yaml"
-  responses: {}
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object

@@ -15,7 +15,7 @@ properties:
   type:
     type: string
   data:
-    type: null
+    type: object
   timestamp:
     type: string
   owner:
@@ -25,18 +25,18 @@ properties:
   statusString:
     type: string
   avatarUrl:
-    type: null
+    type: string
   assignedId:
-    type: null
+    type: integer
   operatorName:
-    type: null
+    type: string
   operatorEmail:
-    type: null
+    type: string
   waId:
     type: string
   messageContact:
-    type: null
+    type: string
   senderName:
     type: string
   listReply:
-    type: null
+    type: string

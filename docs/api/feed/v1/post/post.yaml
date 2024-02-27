@@ -21,10 +21,6 @@ post:
       application/json:
         schema:
           $ref: "../../../../components/schemas/requests/feed_post_create.yaml"
-    required:
-      - text
-      - on_behalf_of_uuid
-      - attachments
 
   responses:
     "200":

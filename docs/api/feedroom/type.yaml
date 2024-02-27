@@ -27,8 +27,6 @@ get:
 put:
   summary: Update Chatroom Type
 
-  operationId: updateChatroomType
-
   tags:
     - Feedroom
 

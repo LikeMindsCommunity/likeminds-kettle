@@ -39,7 +39,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.21.1"
+	var AppVersion string = "2.22.0"
 
 	initGin()
 	redisClient = cache.InitRedis()
@@ -259,6 +259,7 @@ func main() {
 	router.POST("/feed/user/:user_id/activity", middleware.LTMValidationMiddleware(redisClient), feed.CreateUserActivity)
 	router.GET("/feed/user/activity/unread_count", middleware.LTMValidationMiddleware(redisClient), feed.GetUserActivityUnreadCount)
 	router.POST("/feed/user/activity/:activity_id/mark_read", middleware.LTMValidationMiddleware(redisClient), feed.UserActivityMarkRead)
+	router.GET("/feed/user/:user_id/meta", middleware.LTMValidationMiddleware(redisClient), feed.GetUserFeedMeta)
 	router.GET("/feed/universal", middleware.LTMValidationMiddleware(redisClient), feed.FetchUniversalFeed)
 	router.GET("/feed/group", middleware.LTMValidationMiddleware(redisClient), feed.FetchGroupFeed)
 	router.POST("/feed/topic", middleware.LTMValidationMiddleware(redisClient), feed.CreateTopics)

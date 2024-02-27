@@ -15,5 +15,3 @@ properties:
             type: string
       timestamp:
         type: object
-        properties:
-          type: integer
