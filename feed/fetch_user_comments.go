@@ -80,12 +80,6 @@ func GetUserComments(c *gin.Context) {
 		dataResponse = userCommentsAPIResponse.Response
 	}
 
-	// Validate response
-	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
-	if apiCR == nil {
-		return
-	}
-
 	// Fetch user data for given user_unique_ids
 	userIds := []string{userUUID}
 
