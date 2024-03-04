@@ -14,6 +14,7 @@ const FetchUserSavedPostsEndPoint = "/user/%s/save"
 const FetchUserCreatedPostsEndPoint = "/user/%s/post"
 const SingleUserActivityEndPoint = "/user/%s/activity"
 const FetchUserFeedMetaEndPoint = "/user/%s/meta"
+const UserCommentsEndPoint = "/user/%s/comment"
 const CreatePendingPostEndPoint = "/post/pending"
 
 // GetUserActivityEndPoint | swarm API endpoint for user activity list
