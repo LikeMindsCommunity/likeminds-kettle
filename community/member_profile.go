@@ -18,7 +18,7 @@ type MemberProfileRequest struct {
 	QuestionAnswers []QuestionAnswer       `json:"question_answers"`
 	ImageUrl        string                 `json:"image_url"`
 	Name            *string                `json:"name"`
-	WidgetId        *string                `json:"widget_id"`
+	WidgetId        *string                `json:"-"`
 	Metadata        map[string]interface{} `json:"metadata"`
 }
 

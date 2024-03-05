@@ -8,8 +8,18 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
+type CreateTopicRequest struct {
+	Name         string                 `json:"name" binding:"required"`
+	Priority     float32                `json:"priority"`
+	IsSearchable *bool                  `json:"is_searchable"`
+	ParentId     string                 `json:"parent_id"`
+	IsEnabled    *bool                  `json:"is_enabled"`
+	Metadata     map[string]interface{} `json:"metadata"`
+}
+
 type CreateTopicsRequest struct {
-	Names []string `json:"names" binding:"required"`
+	Names  []string             `json:"names"`
+	Topics []CreateTopicRequest `json:"topics"`
 }
 
 type DeleteTopicsRequest struct {
@@ -17,9 +27,11 @@ type DeleteTopicsRequest struct {
 }
 
 type EditTopicRequest struct {
-	Name      string `json:"name"`
-	IsEnabled bool   `json:"is_enabled"`
-	UserIsCm  bool   `json:"user_is_cm"`
+	Name         string                 `json:"name"`
+	IsEnabled    *bool                  `json:"is_enabled"`
+	Priority     float32                `json:"priority"`
+	IsSearchable *bool                  `json:"is_searchable"`
+	Metadata     map[string]interface{} `json:"metadata"`
 }
 
 func parseCreateTopicsRequest(c *gin.Context) (*CreateTopicsRequest, error) {
@@ -107,12 +119,14 @@ func Topic(c *gin.Context, method int) {
 func GetTopicInternal(c *gin.Context, userId string) {
 	//Params to be sent in the /topic GET request
 	params := map[string]string{
-		ParamPage:       c.Query(ParamPage),
-		ParamPageSize:   c.Query(ParamPageSize),
-		ParamIsEnabled:  c.Query(ParamIsEnabled),
-		ParamSearchType: c.Query(ParamSearchType),
-		ParamSearch:     c.Query(ParamSearch),
-		ParamMinPosts:   c.Query(ParamMinPosts),
+		ParamPage:           c.Query(ParamPage),
+		ParamPageSize:       c.Query(ParamPageSize),
+		ParamIsEnabled:      c.Query(ParamIsEnabled),
+		ParamSearchType:     c.Query(ParamSearchType),
+		ParamSearch:         c.Query(ParamSearch),
+		ParamMinPosts:       c.Query(ParamMinPosts),
+		ParamParentTopicIds: c.Query(ParamParentTopicIds),
+		ParamTopicsOrderBy:  c.Query(ParamTopicsOrderBy),
 	}
 
 	//Fetch member access to view topics
