@@ -49,6 +49,8 @@ const ParamIsEnabled = "is_enabled"
 const ParamSearchType = "search_type"
 const ParamSearch = "search"
 const ParamMinPosts = "min_posts"
+const ParamParentTopicIds = "parent_topic_ids"
+const ParamTopicsOrderBy = "order_by"
 const ParamUserId = "user_id"
 const FeedRepostCommunitySettingType = "feed_repost"
 
