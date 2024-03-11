@@ -110,7 +110,7 @@ func parseUserCommentsResponse(respBytes []byte, ucar *UserCommentsAPIResponse) 
 	return nil
 }
 
-func populateUserData(c *gin.Context, userId string, listData []map[string]interface{}, mapData map[string]map[string]interface{}, userIds []string) (map[string]user.MemberMeta, error) {
+func populateUserData(c *gin.Context, userId string, listData []map[string]interface{}, mapData map[string]map[string]interface{}, userIds []string) (map[string]utils.MemberMeta, error) {
 	userIdsMap := map[string]interface{}{}
 
 	if userIds == nil {
@@ -141,7 +141,7 @@ func populateUserData(c *gin.Context, userId string, listData []map[string]inter
 		}
 	}
 
-	user_data, err := user.FetchMemberMetaMapFromCache(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), userIds)
+	user_data, err := utils.FetchMemberMetaMapFromCache(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), userIds)
 	if err != nil {
 		return nil, err
 	}

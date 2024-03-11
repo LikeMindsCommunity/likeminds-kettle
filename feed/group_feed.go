@@ -53,7 +53,7 @@ func FetchGroupFeed(c *gin.Context) {
 	if value, ok := dataResponse["posts"]; ok {
 		posts := value.([]interface{})
 
-		user_data, err := user.GetUsersMetaFromFeedData(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), posts, dataResponse)
+		user_data, err := utils.GetUsersMetaFromFeedData(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), posts, dataResponse)
 
 		if err != nil {
 			utils.GenerateResponse(c, nil, false)

@@ -47,13 +47,13 @@ func populateCommentDataResponse(c *gin.Context, dataResponse map[string]interfa
 		userId := user.GetRequestingUserId(c)
 
 		//Fetch user data for given user_unique_ids
-		user_data, err := user.FetchMemberMetaMapFromCache(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), user_ids)
+		user_data, err := utils.FetchMemberMetaMapFromCache(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), user_ids)
 		if err != nil {
 			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 			return nil
 		}
 
-		var comment_user user.MemberMeta
+		var comment_user utils.MemberMeta
 
 		//Validation of comment based on community member
 		comment_user_unique_id, ok := comment_data["uuid"]

@@ -95,8 +95,10 @@ const (
 // Params
 const ParamConfigurationTypes = "configuration_types"
 const ParamWidgetIds = "widget_ids"
+const ParamMemberIds = "member_ids"
 
 // Endpoints
 const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
 const WidgetEndPoint = "/widget"
 const FetchCommunitySettingsEndpoint = "/api/community/fetch_community_settings"
+const FetchMembersMetaEndPoint = "/api/community/fetch_members_meta"

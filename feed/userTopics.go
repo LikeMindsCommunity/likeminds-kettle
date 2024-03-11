@@ -76,7 +76,8 @@ func fetchUsersTopicsInternal(c *gin.Context, userId string) {
 
 	// Fetch user_unique_ids from uuids
 	userIds, err := utility.FetchUserUniqueIdsFromAnyUserIds(headers, uuids)
-	if err != nil {
+	if err != nil || len(userIds) == 0 {
+		utils.GeneralBadRequestError(c, "Invalid UUIDs sent")
 		return
 	}
 
@@ -96,7 +97,7 @@ func fetchUsersTopicsInternal(c *gin.Context, userId string) {
 	dataResponse := apiCR.Response
 
 	// fetch user meta for userIds
-	userMetaMap, err := user.FetchMemberMetaMapFromCache(utils.GetRedisClientFromContext(c), headers, userIds)
+	userMetaMap, err := utils.FetchMemberMetaMapFromCache(utils.GetRedisClientFromContext(c), headers, userIds)
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
 		return

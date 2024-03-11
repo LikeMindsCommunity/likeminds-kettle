@@ -282,7 +282,7 @@ func updateReportsInternal(c *gin.Context, userId string) {
 
 // Internal method to fetch posts and comments data for the reports
 func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}) (map[string]interface{}, map[string]interface{},
-	map[string]interface{}, map[string]interface{}, map[string]user.MemberMeta, map[string]interface{}) {
+	map[string]interface{}, map[string]interface{}, map[string]utils.MemberMeta, map[string]interface{}) {
 
 	var post_ids []string
 	var pending_post_ids []string
@@ -291,7 +291,7 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 
 	var posts map[string]interface{}
 	var comments map[string]interface{}
-	var users map[string]user.MemberMeta
+	var users map[string]utils.MemberMeta
 	var topics map[string]interface{}
 	var widgets map[string]interface{}
 	var repostedPosts map[string]interface{}
@@ -404,7 +404,7 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 		var err error
 
 		// Call Internal method to fetch users data
-		users, err = user.FetchMemberMetaMapFromCache(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), user_ids)
+		users, err = utils.FetchMemberMetaMapFromCache(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), user_ids)
 		if err != nil {
 			log.Error(fmt.Sprintf("Error while fetching users data for reports: %s", err))
 		}
