@@ -270,8 +270,8 @@ func main() {
 	router.PUT("/feed/topic/:topic_id", middleware.LTMValidationMiddleware(redisClient), feed.EditTopic)
 	router.GET("/feed/connection", middleware.LTMValidationMiddleware(redisClient), feed.GetConnectionFeed)
 	router.POST("feed/post/pending", middleware.LTMValidationMiddleware(redisClient), feed.CreatePendingPost)
-	router.GET("feed/user/topics", middleware.LTMValidationMiddleware(redisClient), feed.FetchUsersTopics)
-	router.PATCH("feed/user/:user_id/topics", middleware.LTMValidationMiddleware(redisClient), feed.UpdateUserTopics)
+	router.GET("/feed/user/topics", middleware.LTMValidationMiddleware(redisClient), feed.FetchUsersTopics)
+	router.PATCH("/feed/user/:uuid/topics", middleware.LTMValidationMiddleware(redisClient), feed.UpdateUserTopics)
 
 	// Utility Apis
 	router.GET("/helper/url", middleware.LTMValidationMiddleware(redisClient), utility.DecodeUrl)

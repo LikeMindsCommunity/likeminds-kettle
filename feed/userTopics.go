@@ -10,7 +10,7 @@ import (
 )
 
 type UpdateUserTopicsRequest struct {
-	TopicsIds map[string]bool `json:"topics_ids"`
+	TopicsIds map[string]bool `json:"topic_ids"`
 	UserIsCm  bool            `json:"user_is_cm"`
 }
 
@@ -66,41 +66,58 @@ func userTopics(c *gin.Context, method int) {
 // Internal method to fetch users topics
 func fetchUsersTopicsInternal(c *gin.Context, userId string) {
 
-	uuids := utils.ParseStringArrayFromParam(c.Query(ParamUUIDs))
-	if len(uuids) <= 0 {
-		utils.GeneralBadRequestError(c, "Please send a valid UUID in params")
+	headers := utils.CreateHeaders(c, userId)
+
+	uuids := c.Query(ParamUUIDs)
+	if uuids == "" {
+		utils.GeneralBadRequestError(c, "Please send UUIDs in param")
+		return
 	}
 
-	interfaceUUIDs := make([]interface{}, len(uuids))
-	for i, v := range uuids {
-		interfaceUUIDs[i] = v
-	}
-
-	// Fetch user_ids from uuids
-	userIds, err := utility.GetUsersInfoInternally(utils.CreateHeaders(c, userId), interfaceUUIDs, true)
+	// Fetch user_unique_ids from uuids
+	userIds, err := utility.FetchUserUniqueIdsFromAnyUserIds(headers, uuids)
 	if err != nil {
 		return
 	}
 
 	params := map[string]string{
-		ParamUUIDs: utils.ParseArrayToString(userIds.([]interface{})),
+		ParamUUIDs: utils.ParseStringArrayToString(userIds),
 	}
 
 	// send request to fetch user topics
-	utils.SendRequest(c, utils.SwarmService, FetchUserTopicsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchUserTopicsEndPoint, utils.GETRequest, headers, params, nil)
+
+	// Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	dataResponse := apiCR.Response
+
+	// fetch user meta for userIds
+	userMetaMap, err := user.FetchMemberMeta(headers, userIds)
+	if err != nil {
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	dataResponse["users"] = userMetaMap
+
+	utils.GenerateResponse(c, dataResponse, true)
 }
 
 // Internal method to update user topics
 func updateUserTopicsInternal(c *gin.Context, userId string, isCm bool) {
 
-	paramUUID := c.Param("user_id")
-	paramUserId, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), paramUUID)
-	if err != nil || paramUserId == "" {
+	paramUUID := c.Param("uuid")
+	paramUserUniqueId, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), paramUUID)
+	if err != nil || paramUserUniqueId == "" {
 		utils.GeneralBadRequestError(c, "Please send a valid UUID")
 		return
 	}
 
-	if !isCm && (paramUserId != userId) {
+	if !isCm && (paramUserUniqueId != userId) {
 		utils.MemberAccessFailError(c)
 		return
 	}
@@ -114,8 +131,8 @@ func updateUserTopicsInternal(c *gin.Context, userId string, isCm bool) {
 
 	updateUserTopicsRequest.UserIsCm = isCm
 
-	endpoint := fmt.Sprintf(UpdateUserTopicsEndPoint, paramUserId)
+	endpoint := fmt.Sprintf(UpdateUserTopicsEndPoint, paramUserUniqueId)
 
 	// Send request to update user topics
-	utils.SendRequest(c, utils.SwarmService, endpoint, utils.PatchMethod, utils.CreateHeaders(c, userId), nil, updateUserTopicsRequest)
+	utils.SendRequest(c, utils.SwarmService, endpoint, utils.PATCHRequest, utils.CreateHeaders(c, userId), nil, updateUserTopicsRequest)
 }

@@ -14,10 +14,10 @@ import (
 )
 
 type RemoveMemberRequest struct {
-	MemberIds interface{} `json:"member_ids,omitempty"`
-	UUIDs     interface{} `json:"uuids,omitempty"`
-	TagID     int32       `json:"tag_id"`
-	Reason    string      `json:"reason"`
+	MemberIds []string `json:"member_ids,omitempty"`
+	UUIDs     []string `json:"uuids,omitempty"`
+	TagID     int32    `json:"tag_id"`
+	Reason    string   `json:"reason"`
 }
 
 // RemoveMember is used to remove a member from community
@@ -42,28 +42,22 @@ func RemoveMember(c *gin.Context) {
 		return
 	}
 
-	var user_unique_ids []interface{}
-
 	if removeMemberRequest.MemberIds != nil {
-		user_unique_ids_info, err := utility.GetUsersInfoInternally(utils.CreateHeaders(c, userId), removeMemberRequest.MemberIds.([]interface{}), true)
-
+		user_unique_ids, err := utility.FetchUserUniqueIdsFromAnyUserIds(utils.CreateHeaders(c, userId), removeMemberRequest.MemberIds)
 		if err != nil {
+			utils.GeneralAPIError(c, fmt.Sprintf("Error while fetching user info: %s", err.Error()))
 			return
 		}
 
-		if user_unique_ids_info != nil {
-			user_unique_ids = user_unique_ids_info.([]interface{})
+		if len(user_unique_ids) == 0 {
+			utils.GeneralAPIError(c, fmt.Sprintf("No user found with the given member/uuids ids"))
+			return
 		}
 
+		removeMemberRequest.MemberIds = user_unique_ids
 	}
 
-	request_member_ids := utils.ParseArrayToString(user_unique_ids)
-
-	if request_member_ids != "null" {
-		removeMemberRequest.MemberIds = utils.ParseArrayToString(user_unique_ids)
-	}
-
-	// Send Request to Main service to remove member
+	// Send Request to caravan service to remove member
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, RemoveMemberEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeMemberRequest)
 
 	// Validate response and if false then return
@@ -72,19 +66,13 @@ func RemoveMember(c *gin.Context) {
 		return
 	}
 
-	// If response is successfull
-	var user_ids []interface{}
-
 	// If request is for self removal, then add user id to the list
-	if len(user_unique_ids) == 0 {
-		user_ids = append(user_unique_ids, userId)
-	} else {
-		user_ids = user_unique_ids
+	if len(removeMemberRequest.MemberIds) == 0 {
+		removeMemberRequest.MemberIds = []string{userId}
 	}
-
 	// create body for user data
 	postBody := map[string]interface{}{
-		"user_ids":   user_ids,
+		"user_ids":   removeMemberRequest.MemberIds,
 		"user_is_cm": true,
 	}
 

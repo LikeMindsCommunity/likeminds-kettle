@@ -32,6 +32,10 @@ func DeleteCache(c *gin.Context) {
 
 	// get redis client from context
 	redisClient := utils.GetRedisClientFromContext(c)
+	if redisClient == nil {
+		utils.GeneralAPIError(c, "Redis client not found")
+		return
+	}
 
 	// Delete all keys matching the pattern
 	for _, keyPattern := range dcr.KeyPatterns {
