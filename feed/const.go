@@ -35,6 +35,8 @@ const FetchCommentsEndpoint = "/comment"
 const TopicEndPoint = "/topic"
 const SingleTopicEndPoint = "/topic/%s"
 const ConnectionFeedEndPoint = "/feed/connection"
+const FetchUserTopicsEndPoint = "/user/topics"
+const UpdateUserTopicsEndPoint = "/user/%s/topics"
 
 const ParamPage = "page"
 const ParamPageSize = "page_size"
@@ -53,6 +55,7 @@ const ParamParentIds = "parent_ids"
 const ParamTopicsOrderBy = "order_by"
 const ParamUserId = "user_id"
 const FeedRepostCommunitySettingType = "feed_repost"
+const ParamUUIDs = "uuids"
 
 const (
 	CREATE_POST_ACTION     = "create_post"
