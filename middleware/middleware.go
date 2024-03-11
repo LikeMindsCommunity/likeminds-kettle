@@ -73,7 +73,7 @@ func VTMValidationMiddleware(isMandatory bool) gin.HandlerFunc {
 	}
 }
 
-func LTMValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
+func LTMValidationMiddleware(redisClient *redis.Client, isGuestAccess bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		bearerToken := c.Request.Header.Get(token.HeaderAuthorization)
 		//Extract LTM from token, internally it checks if token is valid or not
@@ -86,7 +86,7 @@ func LTMValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 			})
 			return
 		} else {
-			//Check if LTM is black listed or not
+			// Check if LTM is black listed or not
 			if cache.IsLTMBlacklisted(redisClient, ltm) {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 					Success:      false,
@@ -94,7 +94,24 @@ func LTMValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 				})
 				return
 			}
-			//If valid and not blacklisted, set "ltm" in context, to be used in later APIs
+
+			// Check if guest access is given
+			if ltm.IsGuest && !isGuestAccess {
+				c.AbortWithStatusJSON(http.StatusForbidden, utils.Response{
+					Success:      false,
+					ErrorMessage: utils.ErrorGuestAccessNotAllowed,
+				})
+				return
+			} else if ltm.IsGuest {
+				// Add additional headers
+				headers := map[string]string{
+					utils.HeaderMemberRole: utils.GuestRole,
+				}
+
+				utils.AddHeaders(c, headers)
+			}
+
+			// If valid and not blacklisted, set "ltm" in context, to be used in later APIs
 			c.Set(token.ParamLTM, ltm)
 
 			// Set API key in request header

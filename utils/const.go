@@ -9,6 +9,7 @@ const HeadersDeviceId = "x-device-id"
 const HeadersApiKey = "x-api-key"
 const HeadersAcceptVersion = "x-accept-version"
 const HeadersApiVersion = "x-api-version"
+const HeaderMemberRole = "x-member-role"
 
 const GETMethod = 0
 const POSTMethod = 1
@@ -100,3 +101,8 @@ const ParamWidgetIds = "widget_ids"
 const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
 const WidgetEndPoint = "/widget"
 const FetchCommunitySettingsEndpoint = "/api/community/fetch_community_settings"
+
+// Member Roles
+const (
+	GuestRole string = "GUEST"
+)

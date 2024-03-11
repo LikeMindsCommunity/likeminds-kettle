@@ -34,7 +34,19 @@ func CreateHeaders(c *gin.Context, userUniqueID string) map[string]interface{} {
 	headers[HeadersApiKey] = c.GetHeader(HeadersApiKey)
 	headers[HeadersAcceptVersion] = c.GetHeader(HeadersAcceptVersion)
 	headers[HeadersApiVersion] = c.GetHeader(HeadersApiVersion)
+	headers[HeaderMemberRole] = c.GetHeader(HeaderMemberRole)
 	return headers
+}
+
+// Add more headers to already existing headers
+func AddHeaders(c *gin.Context, headerValMap map[string]string) {
+
+	if headerValMap != nil {
+
+		for header, val := range headerValMap {
+			c.Request.Header.Add(header, val)
+		}
+	}
 }
 
 // Generate Response to be sent on request success

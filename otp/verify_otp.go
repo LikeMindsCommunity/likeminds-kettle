@@ -3,6 +3,7 @@ package otp
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/token"
+	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -40,8 +41,11 @@ func VerifyOTP(c *gin.Context) {
 	//If user exists in our DB, we need to return LTM and RTM
 	if profileExists {
 		//Create login and refresh token
-		userUniqueID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
-		ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, "", token.BETA_AUTH_TOKEN_EXPIRY)
+		userObject := apiCR.Response[ResponseUser].(map[string]interface{})
+		userUniqueID := userObject[ResponseUserUniqueId].(string)
+		userIsGuest := userObject[user.ResponseUserIsGuest].(bool)
+
+		ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, "", token.BETA_AUTH_TOKEN_EXPIRY, userIsGuest)
 		if err != nil {
 			//If token creation fails
 			utils.GeneralAPIError(c, err.Error())

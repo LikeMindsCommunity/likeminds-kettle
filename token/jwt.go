@@ -37,6 +37,7 @@ type LoginTokenMeta struct {
 	AccessTokenExpires int64
 	UserUniqueID       string
 	ApiKey             string
+	IsGuest            bool
 }
 
 type RefreshTokenMeta struct {
@@ -45,6 +46,7 @@ type RefreshTokenMeta struct {
 	RefreshTokenExpires int64
 	UserUniqueID        string
 	ApiKey              string
+	IsGuest             bool
 }
 
 type VerifyTokenMeta struct {
@@ -109,7 +111,7 @@ func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode strin
 }
 
 // CreateLTMAndRTM is used to create login and refresh token meta
-func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int64) (*LoginTokenMeta, *RefreshTokenMeta, error) {
+func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int64, isGuestUser bool) (*LoginTokenMeta, *RefreshTokenMeta, error) {
 
 	isBeta := environment.GoDotEnvVariable("BETA_ENVIRONMENT")
 
@@ -144,6 +146,7 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 	ltmClaims["user_unique_id"] = userUniqueID
 	ltmClaims["exp"] = ltm.AccessTokenExpires
 	ltmClaims["api_key"] = api_key
+	ltmClaims["is_guest"] = isGuestUser
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, ltmClaims)
 	ltm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
 	if err != nil {
@@ -155,6 +158,7 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 	rtmClaims["user_unique_id"] = userUniqueID
 	rtmClaims["exp"] = rtm.RefreshTokenExpires
 	rtmClaims["api_key"] = api_key
+	rtmClaims["is_guest"] = isGuestUser
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtmClaims)
 	rtm.RefreshToken, err = rt.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
 	if err != nil {
@@ -275,12 +279,17 @@ func ExtractLTM(bearerToken string) (*LoginTokenMeta, error) {
 		if !ok {
 			return nil, errors.New("user_unique_id is empty")
 		}
+		isGuest, ok := claims["is_guest"].(bool)
+		if !ok {
+			return nil, errors.New("user_unique_id is empty")
+		}
 		apiKey, _ := claims["api_key"].(string)
 		return &LoginTokenMeta{
 			AccessUuid:         accessUuid,
 			UserUniqueID:       userUniqueID,
 			AccessTokenExpires: atExpires,
 			ApiKey:             apiKey,
+			IsGuest:            isGuest,
 		}, nil
 	}
 	return nil, err
@@ -306,12 +315,17 @@ func ExtractRTM(bearerToken string) (*RefreshTokenMeta, error) {
 		if !ok {
 			return nil, errors.New("user_unique_id is empty")
 		}
+		isGuest, ok := claims["is_guest"].(bool)
+		if !ok {
+			return nil, errors.New("user_unique_id is empty")
+		}
 		apiKey, _ := claims["api_key"].(string)
 		return &RefreshTokenMeta{
 			RefreshUuid:         refreshUuid,
 			UserUniqueID:        userUniqueID,
 			RefreshTokenExpires: rtExpires,
 			ApiKey:              apiKey,
+			IsGuest:             isGuest,
 		}, nil
 	}
 	return nil, err
