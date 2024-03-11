@@ -404,7 +404,7 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 		var err error
 
 		// Call Internal method to fetch users data
-		users, err = user.FetchMemberMeta(utils.CreateHeaders(c, userId), user_ids)
+		users, err = user.FetchMemberMetaMapFromCache(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), user_ids)
 		if err != nil {
 			log.Error(fmt.Sprintf("Error while fetching users data for reports: %s", err))
 		}

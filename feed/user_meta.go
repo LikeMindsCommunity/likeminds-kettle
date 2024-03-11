@@ -48,7 +48,7 @@ func GetUserFeedMeta(c *gin.Context) {
 	//Fetch user data for given user_unique_ids
 	userIds := []string{userUUID}
 
-	user_data, err := user.FetchMemberMeta(utils.CreateHeaders(c, userId), userIds)
+	user_data, err := user.FetchMemberMetaMapFromCache(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), userIds)
 	if err != nil {
 		utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 		return

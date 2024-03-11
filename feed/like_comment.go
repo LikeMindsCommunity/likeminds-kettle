@@ -85,7 +85,7 @@ func getCommentLikesInternal(c *gin.Context, userId string, endPoint string) {
 		}
 
 		//Fetch user data for given user_unique_ids
-		user_data, err := user.FetchMemberMeta(utils.CreateHeaders(c, userId), user_ids)
+		user_data, err := user.FetchMemberMetaMapFromCache(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), user_ids)
 		if err != nil {
 			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 			return

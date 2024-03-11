@@ -62,6 +62,24 @@ func Delete(client *redis.Client, key string) error {
 	return nil
 }
 
+// MGet | get multiple keys from cache storage
+func MGet(client *redis.Client, keys ...string) ([]interface{}, error) {
+	val, err := client.MGet(keys...).Result()
+	if err != nil {
+		return nil, err
+	}
+	return val, nil
+}
+
+// MSet | set multiple keys with object value into cache storage
+func MSet(client *redis.Client, values ...interface{}) error {
+	err := client.MSet(values...).Err()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // IsLTMBlacklisted checks if token is blacklisted or not => user is logged out or not
 func IsLTMBlacklisted(client *redis.Client, ltm *token.LoginTokenMeta) bool {
 	userUniqueID, _ := client.Get(ltm.AccessUuid).Result()

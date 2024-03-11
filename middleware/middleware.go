@@ -250,7 +250,7 @@ func InternalServiceValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Check if the request is from internal service
 		platformType := c.Request.Header.Get("x-platform-type") // TODO: Move it to constants
-		if utils.CheckIfStringExistsInArray([]string{"swarm-service", "caravan-service", "kettle-service"}, platformType) {
+		if !utils.CheckIfStringExistsInArray([]string{"swarm-service", "caravan-service", "kettle-service"}, platformType) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
 				ErrorMessage: "Unauthorized access",

@@ -1,8 +1,11 @@
 package internalServices
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/cache"
+	"github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -47,6 +50,11 @@ func DeleteCache(c *gin.Context) {
 			return
 		}
 
+		if len(keys) == 0 {
+			logging.Info(fmt.Sprint("No Cache keys found for pattern: ", keyPattern))
+			continue
+		}
+
 		// Delete all keys
 		for _, key := range keys {
 			err = cache.Delete(redisClient, key)
@@ -54,6 +62,7 @@ func DeleteCache(c *gin.Context) {
 				utils.GeneralAPIError(c, err.Error())
 				return
 			}
+			logging.Info(fmt.Sprint("Successfully deleted cache for key: ", key))
 		}
 	}
 

@@ -62,7 +62,7 @@ func FetchUniversalFeed(c *gin.Context) {
 			}
 		}
 
-		user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts, dataResponse)
+		user_data, err := user.GetUsersMetaFromFeedData(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), posts, dataResponse)
 		if err != nil {
 			utils.GenerateResponse(c, nil, false)
 			return

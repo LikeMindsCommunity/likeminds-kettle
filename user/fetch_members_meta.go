@@ -3,7 +3,11 @@ package user
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
+	"github.com/go-redis/redis/v7"
+	"github.com/nateshr/likeminds-authentication/cache"
+	"github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -33,25 +37,48 @@ type MemberMetaResponse struct {
 	Members []MemberMeta `json:"members"`
 }
 
-// FetchMemberMeta without context | fetch member meta for sent ids
-func FetchMemberMeta(headers map[string]interface{}, member_ids []string) (map[string]MemberMeta, error) {
+func fetchmembersMetaFromCache(redisClient *redis.Client, member_ids []string) (map[string]MemberMeta, []string, error) {
 
 	response := map[string]MemberMeta{}
+	remainingMemberIds := []string{}
 
-	if len(member_ids) == 0 {
-		return response, nil
+	// fetch member meta from cache
+	cachKeys := []string{}
+	for _, member_id := range member_ids {
+		cachKeys = append(cachKeys, fmt.Sprintf("%s_user_meta", member_id)) // TODO: Move to constants
 	}
 
-	temp_params, _ := json.Marshal(member_ids)
+	// Fetch keys from cache
+	values, err := cache.MGet(redisClient, cachKeys...)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// unmarshall values from cache
+	for i, value := range values {
+		if value != "" {
+			var memberMeta MemberMeta
+			if err := json.Unmarshal(value.([]byte), &memberMeta); err != nil {
+				return nil, nil, err
+			}
+			response[memberMeta.UserUniqueId] = memberMeta
+		} else {
+			remainingMemberIds = append(remainingMemberIds, member_ids[i])
+		}
+	}
+
+	return response, remainingMemberIds, nil
+}
+
+func fetchMembersMetaFromAPI(headers map[string]interface{}, member_ids []string) ([]MemberMeta, error) {
 
 	//Params to be sent in the api/community_member/fetch_access request
 	params := map[string]string{
-		ParamMemberIds: fmt.Sprintf("%v", string(temp_params)),
+		ParamMemberIds: utils.ParseStringArrayToString(member_ids),
 	}
 
 	//Send Request
 	respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.CoreService, FetchMembersMetaEndPoint, utils.GETRequest, headers, params, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -62,9 +89,61 @@ func FetchMemberMeta(headers map[string]interface{}, member_ids []string) (map[s
 		return nil, err
 	}
 
-	//Generate user data for received data
-	for _, memberData := range membersMetaResponse.Members {
-		response[memberData.UserUniqueId] = memberData
+	return membersMetaResponse.Members, nil
+}
+
+// save response to cache
+func saveMembersMetaInCache(redisClient *redis.Client, membersMeta []MemberMeta) {
+
+	for _, memberMeta := range membersMeta {
+
+		parsedData, err := json.Marshal(memberMeta)
+		if err != nil {
+			logging.Error(fmt.Sprint("error marshalling member data", err))
+			continue
+		}
+
+		cacheKey := fmt.Sprintf("%s_user_meta", memberMeta.UserUniqueId) //TODO: Move to constants
+		if err := cache.Set(redisClient, cacheKey, parsedData, 7*24*time.Hour); err != nil {
+			logging.Error(fmt.Sprint("error saving member data to cache", err))
+		}
+	}
+}
+
+// FetchMemberMetaMapFromCache without context | fetch member meta for sent ids from cache if present else from api
+func FetchMemberMetaMapFromCache(redisClient *redis.Client, headers map[string]interface{}, member_ids []string,
+) (map[string]MemberMeta, error) {
+
+	response, remainingMemberIds, err := map[string]MemberMeta{}, []string{}, error(nil)
+
+	if len(member_ids) == 0 {
+		return response, nil
+	}
+
+	// fetch member meta from cache
+	if redisClient != nil {
+		response, remainingMemberIds, err = fetchmembersMetaFromCache(redisClient, member_ids)
+	} else {
+		remainingMemberIds = member_ids
+	}
+
+	// fetch remaining members meta from api
+	if len(remainingMemberIds) > 0 {
+
+		membersMeta, err := fetchMembersMetaFromAPI(headers, remainingMemberIds)
+		if err != nil {
+			return nil, err
+		}
+
+		// Add fetched members meta to response
+		for _, memberData := range membersMeta {
+			response[memberData.UserUniqueId] = memberData
+		}
+
+		// Save fetched members meta to cache in background
+		if redisClient != nil {
+			saveMembersMetaInCache(redisClient, membersMeta) // TODO: Test this and move to background
+		}
 	}
 
 	//Generate user data for remaining member_ids
@@ -80,7 +159,9 @@ func FetchMemberMeta(headers map[string]interface{}, member_ids []string) (map[s
 }
 
 // This function is used to fetch members meta from user_ids of feed entity data
-func GetUsersMetaFromFeedData(headers map[string]interface{}, feedDataArray []interface{}, dataResponse map[string]interface{}) (map[string]MemberMeta, error) {
+func GetUsersMetaFromFeedData(redisClient *redis.Client, headers map[string]interface{}, feedDataArray []interface{},
+	dataResponse map[string]interface{},
+) (map[string]MemberMeta, error) {
 
 	user_unique_ids := []string{}
 
@@ -94,7 +175,7 @@ func GetUsersMetaFromFeedData(headers map[string]interface{}, feedDataArray []in
 	user_unique_ids = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_unique_ids)
 
 	// Fetch user data for given user_unique_ids
-	user_data, err := FetchMemberMeta(headers, user_unique_ids)
+	user_data, err := FetchMemberMetaMapFromCache(redisClient, headers, user_unique_ids)
 	if err != nil {
 		return nil, err
 	}
