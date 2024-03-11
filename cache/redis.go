@@ -44,6 +44,24 @@ func Set(client *redis.Client, key string, value interface{}, expiration time.Du
 	return nil
 }
 
+// Keys | get all keys matching the pattern
+func Keys(client *redis.Client, pattern string) ([]string, error) {
+	keys, err := client.Keys(pattern).Result()
+	if err != nil {
+		return nil, err
+	}
+	return keys, nil
+}
+
+// Delete | delete the key from cache storage
+func Delete(client *redis.Client, key string) error {
+	err := client.Del(key).Err()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // IsLTMBlacklisted checks if token is blacklisted or not => user is logged out or not
 func IsLTMBlacklisted(client *redis.Client, ltm *token.LoginTokenMeta) bool {
 	userUniqueID, _ := client.Get(ltm.AccessUuid).Result()

@@ -245,6 +245,22 @@ func LogoutValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 	}
 }
 
+// Internal service validation middelware
+func InternalServiceValidationMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Check if the request is from internal service
+		platformType := c.Request.Header.Get("x-platform-type") // TODO: Move it to constants
+		if utils.CheckIfStringExistsInArray([]string{"swarm-service", "caravan-service", "kettle-service"}, platformType) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
+				Success:      false,
+				ErrorMessage: "Unauthorized access",
+			})
+			return
+		}
+		c.Next()
+	}
+}
+
 // ApiMiddleware will add the db connection to the context
 func ApiMiddleware(client *redis.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {

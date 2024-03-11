@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/nateshr/likeminds-authentication/internalServices"
 	"github.com/nateshr/likeminds-authentication/middleware"
 	"github.com/nateshr/likeminds-authentication/poll"
 	"github.com/nateshr/likeminds-authentication/utility/logger"
@@ -331,6 +332,9 @@ func main() {
 
 	// Logging Apis
 	router.POST("/logs", middleware.LTMValidationMiddleware(redisClient), logger.PushLogs)
+
+	// Internal Apis
+	router.DELETE("/cache", middleware.InternalServiceValidationMiddleware(), internalServices.DeleteCache) // TODO: Need to discuss how to secure this
 
 	log.Info(fmt.Sprintf("application version: %s", AppVersion))
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
