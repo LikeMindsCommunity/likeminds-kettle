@@ -37,7 +37,7 @@ type MemberMetaResponse struct {
 	Members      []MemberMeta `json:"members"`
 }
 
-func fetchmembersMetaFromCache(redisClient *redis.Client, userUniqueIds []string) ([]MemberMeta, []string, error) {
+func fetchmembersMetaFromCache(redisClient *redis.Client, communityId int, userUniqueIds []string) ([]MemberMeta, []string, error) {
 
 	membersMeta := []MemberMeta{}
 	remainingMemberIds := []string{}
@@ -45,7 +45,7 @@ func fetchmembersMetaFromCache(redisClient *redis.Client, userUniqueIds []string
 	// fetch member meta from cache
 	cachKeys := []string{}
 	for _, userUniqueId := range userUniqueIds {
-		cachKeys = append(cachKeys, fmt.Sprintf(cache.UserMetaCacheKey, userUniqueId))
+		cachKeys = append(cachKeys, fmt.Sprintf(cache.UserMetaCacheKey, communityId, userUniqueId))
 	}
 
 	// Fetch keys from cache
@@ -97,7 +97,7 @@ func fetchMembersMetaFromAPI(headers map[string]interface{}, userUniqueIds []str
 }
 
 // save response to cache
-func saveMembersMetaInCache(redisClient *redis.Client, membersMeta []MemberMeta) {
+func saveMembersMetaInCache(redisClient *redis.Client, communityId int, membersMeta []MemberMeta) {
 
 	for _, memberMeta := range membersMeta {
 
@@ -107,7 +107,7 @@ func saveMembersMetaInCache(redisClient *redis.Client, membersMeta []MemberMeta)
 			continue
 		}
 
-		cacheKey := fmt.Sprintf(cache.UserMetaCacheKey, memberMeta.UserUniqueId)
+		cacheKey := fmt.Sprintf(cache.UserMetaCacheKey, communityId, memberMeta.UserUniqueId)
 		if err := cache.Set(redisClient, cacheKey, parsedData, cache.UserMetaCacheTTL*time.Hour); err != nil {
 			logging.Error(fmt.Sprint("error saving member data to cache", err))
 		}
@@ -119,6 +119,12 @@ func saveMembersMetaInCache(redisClient *redis.Client, membersMeta []MemberMeta)
 func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[string]interface{}, user_unique_ids []string,
 ) (map[string]MemberMeta, error) {
 
+	// Fetch communityId from ApiKey
+	communityId, err := FetchCommunityIdFromApiKey(redisClient, headers[HeadersApiKey].(string))
+	if err != nil {
+		return nil, err
+	}
+
 	memberMetaMap := map[string]MemberMeta{}
 
 	if len(user_unique_ids) == 0 {
@@ -127,7 +133,7 @@ func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[s
 
 	// fetch member meta from cache
 	if redisClient != nil {
-		membersMeta, remainingMemberIds, err := fetchmembersMetaFromCache(redisClient, user_unique_ids)
+		membersMeta, remainingMemberIds, err := fetchmembersMetaFromCache(redisClient, communityId, user_unique_ids)
 		if err != nil {
 			return nil, err
 		}
@@ -156,7 +162,7 @@ func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[s
 
 		// Save fetched members meta to cache in background
 		if redisClient != nil {
-			go saveMembersMetaInCache(redisClient, membersMeta)
+			go saveMembersMetaInCache(redisClient, communityId, membersMeta)
 		}
 	}
 

@@ -1,9 +1,9 @@
 package utils
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/cache"
@@ -59,8 +59,9 @@ func getCommunityIdAgainstApiKeyFromCache(redisClient *redis.Client, apiKey stri
 		return communityId
 	}
 
-	if err := json.Unmarshal([]byte(value), &communityId); err != nil {
-		logging.Error(fmt.Sprintf("error unmarshalling community_id from cache for api-key: %s", apiKey))
+	communityId, err = strconv.Atoi(string(value))
+	if err != nil {
+		logging.Error(fmt.Sprintf("error parsing community_id from cache %v", err))
 	}
 
 	return communityId
@@ -71,8 +72,8 @@ func saveCommunityIdAgainstApiKeyToCache(redisClient *redis.Client, apiKey strin
 	cacheKey := fmt.Sprintf(cache.CommunityIdAgainstApiKeyCacheKey, apiKey)
 	communityIdString := strconv.Itoa(communityId)
 
-	if err := cache.Set(redisClient, cacheKey, communityIdString, cache.CommunityIdAgainstApiKeyCacheTTL); err != nil {
-		logging.Error(fmt.Sprintf("error saving community_id in cache for api-key: %s", apiKey))
+	if err := cache.Set(redisClient, cacheKey, []byte(communityIdString), cache.CommunityIdAgainstApiKeyCacheTTL*time.Hour); err != nil {
+		logging.Error(fmt.Sprintf("error saving community_id in cache for api-key: %s | err: %v", apiKey, err))
 		return err
 	}
 
@@ -93,12 +94,12 @@ func FetchCommunityIdFromApiKey(redisClient *redis.Client, apiKey string) (int, 
 		// Fetch community_id from API
 		response, err := AuthenticateAPIKeyInternally(headers, apiKey)
 		if err != nil {
-			logging.Error(fmt.Sprintf("error fetching community_id from API for api-key: %s", apiKey))
+			return communityId, err
 		}
 
 		communityId, err = strconv.Atoi(response[ParamCommunityID])
 		if err != nil {
-			logging.Error(fmt.Sprintf("error converting community_id from response for api-key: %s", apiKey))
+			return communityId, err
 		}
 
 		// Save community_id against apiKey in cache

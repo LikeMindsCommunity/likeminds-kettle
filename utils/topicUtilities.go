@@ -31,7 +31,7 @@ type FetchTopicsResponse struct {
 	Widgets      map[string]WidgetResponse `json:"widgets"`
 }
 
-func fetchTopicsFromCache(redisClient *redis.Client, topicIds []string) ([]TopicMeta, []string, error) {
+func fetchTopicsFromCache(redisClient *redis.Client, communityId int, topicIds []string) ([]TopicMeta, []string, error) {
 
 	topicsMeta := []TopicMeta{}
 	remainingTopicIds := []string{}
@@ -39,7 +39,7 @@ func fetchTopicsFromCache(redisClient *redis.Client, topicIds []string) ([]Topic
 	// cache keys for topics meta
 	cachKeys := []string{}
 	for _, topicId := range topicIds {
-		cachKeys = append(cachKeys, fmt.Sprintf(cache.TopicMetaCacheKey, topicId))
+		cachKeys = append(cachKeys, fmt.Sprintf(cache.TopicMetaCacheKey, communityId, topicId))
 	}
 
 	// Fetch keys from cache
@@ -96,7 +96,7 @@ func fetchTopicsFromSwarmService(headers map[string]interface{}, topicIds []stri
 	return tr.Topics, tr.Widgets, nil
 }
 
-func saveTopicsInCache(redisClient *redis.Client, topicsMeta []TopicMeta) {
+func saveTopicsInCache(redisClient *redis.Client, communityId int, topicsMeta []TopicMeta) {
 
 	for _, topicMeta := range topicsMeta {
 
@@ -107,7 +107,7 @@ func saveTopicsInCache(redisClient *redis.Client, topicsMeta []TopicMeta) {
 		}
 
 		// save to cache
-		cacheKey := fmt.Sprintf(cache.TopicMetaCacheKey, topicMeta.ID)
+		cacheKey := fmt.Sprintf(cache.TopicMetaCacheKey, communityId, topicMeta.ID)
 		err = cache.Set(redisClient, cacheKey, parsedData, cache.TopicMetaCacheTTL*time.Hour)
 		if err != nil {
 			logging.Error(fmt.Sprint("error saving topic meta to cache", err))
@@ -119,6 +119,12 @@ func saveTopicsInCache(redisClient *redis.Client, topicsMeta []TopicMeta) {
 // External utility method to fetch topics meta map from topic ids from cache if present else from API
 func FetchTopicsMetaFromTopicsIds(redisClient *redis.Client, headers map[string]interface{}, topicIds []string) (map[string]TopicMeta, error) {
 
+	// Fetch communityId from ApiKey
+	communityId, err := FetchCommunityIdFromApiKey(redisClient, headers[HeadersApiKey].(string))
+	if err != nil {
+		return nil, err
+	}
+
 	topicsMeta := map[string]TopicMeta{}
 
 	if len(topicIds) == 0 {
@@ -128,7 +134,7 @@ func FetchTopicsMetaFromTopicsIds(redisClient *redis.Client, headers map[string]
 	if redisClient != nil {
 
 		// Fetch topics meta from cache
-		cachedTopicsMeta, remainingTopicIds, err := fetchTopicsFromCache(redisClient, topicIds)
+		cachedTopicsMeta, remainingTopicIds, err := fetchTopicsFromCache(redisClient, communityId, topicIds)
 		if err != nil {
 			return nil, err
 		}
@@ -151,7 +157,7 @@ func FetchTopicsMetaFromTopicsIds(redisClient *redis.Client, headers map[string]
 
 		if redisClient != nil {
 			// save fetched topics meta to cache
-			go saveTopicsInCache(redisClient, fetchedTopicsMeta)
+			go saveTopicsInCache(redisClient, communityId, fetchedTopicsMeta)
 
 			// save fetched widgets meta to cache
 			go func() {
@@ -160,7 +166,7 @@ func FetchTopicsMetaFromTopicsIds(redisClient *redis.Client, headers map[string]
 					widgetsResponse = append(widgetsResponse, widgetResponse)
 				}
 
-				saveWidgetsToCache(redisClient, widgetsResponse)
+				saveWidgetsToCache(redisClient, communityId, widgetsResponse)
 			}()
 		}
 

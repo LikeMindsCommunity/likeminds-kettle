@@ -20,7 +20,7 @@ type UserTopicsResponse struct {
 	Widgets      map[string]WidgetResponse `json:"widgets"`
 }
 
-func fetchUserTopicsFromCache(redisClient *redis.Client, userUniqueIds []string) (UserTopics, []string, error) {
+func fetchUserTopicsFromCache(redisClient *redis.Client, communityId int, userUniqueIds []string) (UserTopics, []string, error) {
 
 	userTopics := UserTopics{}
 	remainingUserUniqueIds := []string{}
@@ -28,7 +28,7 @@ func fetchUserTopicsFromCache(redisClient *redis.Client, userUniqueIds []string)
 	// cache keys for user topics
 	userTopicsCacheKeys := []string{}
 	for _, userUniqueId := range userUniqueIds {
-		userTopicsCacheKeys = append(userTopicsCacheKeys, fmt.Sprintf(cache.UserTopicsCacheKey, userUniqueId))
+		userTopicsCacheKeys = append(userTopicsCacheKeys, fmt.Sprintf(cache.UserTopicsCacheKey, communityId, userUniqueId))
 	}
 
 	// Fetch keys from cache
@@ -82,7 +82,7 @@ func fetchUserTopicsFromSwarmService(headers map[string]interface{}, userUniqueI
 	return utr.UserTopics, utr.Topics, utr.Widgets, nil
 }
 
-func saveUserTopicsToCache(redisClient *redis.Client, userTopics UserTopics) error {
+func saveUserTopicsToCache(redisClient *redis.Client, communityId int, userTopics UserTopics) error {
 
 	for userUniqueId, topics := range userTopics {
 		parsedTopics, err := json.Marshal(topics)
@@ -91,7 +91,7 @@ func saveUserTopicsToCache(redisClient *redis.Client, userTopics UserTopics) err
 			continue
 		}
 
-		cacheKey := fmt.Sprintf(cache.UserTopicsCacheKey, userUniqueId)
+		cacheKey := fmt.Sprintf(cache.UserTopicsCacheKey, communityId, userUniqueId)
 		err = cache.Set(redisClient, cacheKey, parsedTopics, cache.UserTopicsCacheTTL*time.Hour)
 		if err != nil {
 			logging.Error(fmt.Sprintf("Error saving user topics to cache: %s", err))
@@ -106,6 +106,12 @@ func saveUserTopicsToCache(redisClient *redis.Client, userTopics UserTopics) err
 func FetchUserTopicsForUserUniqueIds(redisClient *redis.Client, headers map[string]interface{}, userUniqueIds []string,
 ) (UserTopics, error) {
 
+	// Fetch communityId from ApiKey
+	communityId, err := FetchCommunityIdFromApiKey(redisClient, headers[HeadersApiKey].(string))
+	if err != nil {
+		return nil, err
+	}
+
 	userTopicsMap := UserTopics{}
 
 	if len(userUniqueIds) == 0 {
@@ -113,7 +119,7 @@ func FetchUserTopicsForUserUniqueIds(redisClient *redis.Client, headers map[stri
 	}
 
 	if redisClient != nil {
-		userTopics, remainingUserUniqueIds, err := fetchUserTopicsFromCache(redisClient, userUniqueIds)
+		userTopics, remainingUserUniqueIds, err := fetchUserTopicsFromCache(redisClient, communityId, userUniqueIds)
 		if err != nil {
 			return userTopics, err
 		}
@@ -135,7 +141,7 @@ func FetchUserTopicsForUserUniqueIds(redisClient *redis.Client, headers map[stri
 		if redisClient != nil {
 
 			// save user topics to cache
-			go saveUserTopicsToCache(redisClient, userTopicsFromAPI)
+			go saveUserTopicsToCache(redisClient, communityId, userTopicsFromAPI)
 
 			// save topics meta to cache
 			go func() {
@@ -145,7 +151,7 @@ func FetchUserTopicsForUserUniqueIds(redisClient *redis.Client, headers map[stri
 				}
 
 				// save topics to cache
-				saveTopicsInCache(redisClient, topicsData)
+				saveTopicsInCache(redisClient, communityId, topicsData)
 			}()
 
 			// save widgets meta to cache
@@ -156,7 +162,7 @@ func FetchUserTopicsForUserUniqueIds(redisClient *redis.Client, headers map[stri
 				}
 
 				// save widgets to cache
-				saveWidgetsToCache(redisClient, widgetsData)
+				saveWidgetsToCache(redisClient, communityId, widgetsData)
 			}()
 
 		}

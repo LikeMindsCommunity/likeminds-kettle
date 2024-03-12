@@ -28,7 +28,7 @@ type WidgetsResponse struct {
 	Widgets      []WidgetResponse `json:"widgets"`
 }
 
-func fetchWidgetsFromCache(redisClient *redis.Client, widgetIds []string) ([]WidgetResponse, []string, error) {
+func fetchWidgetsFromCache(redisClient *redis.Client, communityId int, widgetIds []string) ([]WidgetResponse, []string, error) {
 
 	widgets := []WidgetResponse{}
 	remainingWidgetIds := []string{}
@@ -36,7 +36,7 @@ func fetchWidgetsFromCache(redisClient *redis.Client, widgetIds []string) ([]Wid
 	// cache keys for widgets meta
 	cachKeys := []string{}
 	for _, widgetId := range widgetIds {
-		cachKeys = append(cachKeys, fmt.Sprintf(cache.WidgetMetaCacheKey, widgetId))
+		cachKeys = append(cachKeys, fmt.Sprintf(cache.WidgetMetaCacheKey, communityId, widgetId))
 	}
 
 	// Fetch keys from cache
@@ -89,7 +89,7 @@ func fetchWidgetsFromSwarmService(headers map[string]interface{}, widgetIds []st
 	return wr.Widgets, nil
 }
 
-func saveWidgetsToCache(redisClient *redis.Client, widgets []WidgetResponse) error {
+func saveWidgetsToCache(redisClient *redis.Client, communityId int, widgets []WidgetResponse) error {
 
 	for _, widget := range widgets {
 
@@ -100,7 +100,7 @@ func saveWidgetsToCache(redisClient *redis.Client, widgets []WidgetResponse) err
 		}
 
 		// set widget meta to cache
-		cacheKey := fmt.Sprintf(cache.WidgetMetaCacheKey, widget.ID)
+		cacheKey := fmt.Sprintf(cache.WidgetMetaCacheKey, communityId, widget.ID)
 		err = cache.Set(redisClient, cacheKey, parsedWidget, cache.WidgetMetaCacheTTL*time.Hour)
 		if err != nil {
 			logging.Error(fmt.Sprintf("error setting widget meta to cache: %s", widget.ID))
@@ -116,6 +116,12 @@ func saveWidgetsToCache(redisClient *redis.Client, widgets []WidgetResponse) err
 func fetchWidgetMetaMapFromWidgetIds(redisClient *redis.Client, headers map[string]interface{}, widgetIds []string,
 ) (map[string]WidgetResponse, error) {
 
+	// Fetch communityId from ApiKey
+	communityId, err := FetchCommunityIdFromApiKey(redisClient, headers[HeadersApiKey].(string))
+	if err != nil {
+		return nil, err
+	}
+
 	widgetsResponse := map[string]WidgetResponse{}
 
 	if len(widgetIds) == 0 {
@@ -124,7 +130,7 @@ func fetchWidgetMetaMapFromWidgetIds(redisClient *redis.Client, headers map[stri
 
 	if redisClient != nil {
 		// fetch widgets from cache
-		widgets, remainingWidgetIds, err := fetchWidgetsFromCache(redisClient, widgetIds)
+		widgets, remainingWidgetIds, err := fetchWidgetsFromCache(redisClient, communityId, widgetIds)
 		if err != nil {
 			return nil, err
 		}
@@ -152,7 +158,7 @@ func fetchWidgetMetaMapFromWidgetIds(redisClient *redis.Client, headers map[stri
 
 		// set widgets to cache
 		if redisClient != nil {
-			go saveWidgetsToCache(redisClient, widgets)
+			go saveWidgetsToCache(redisClient, communityId, widgets)
 		}
 	}
 

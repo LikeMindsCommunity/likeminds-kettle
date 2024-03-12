@@ -9,11 +9,11 @@ const (
 const (
 	CommunityConfigurationsCacheKey   = "%s_community_configurations"
 	ProfileMetaConfigurationsCacheKey = "%s_profile_meta_configurations"
-	CommunityIdAgainstApiKeyCacheKey  = "%s_community_id" // apiKey
-	UserMetaCacheKey                  = "%d_%s_user_meta" // communityId userUniqueId
-	TopicMetaCacheKey                 = "%s_topic_meta"   // topicId
-	UserTopicsCacheKey                = "%s_user_topics"  // userUniqueId
-	WidgetMetaCacheKey                = "%s_widget_meta"  // widgetId
+	CommunityIdAgainstApiKeyCacheKey  = "%s_community_id"   // apiKey
+	UserMetaCacheKey                  = "%d_%s_user_meta"   // communityId userUniqueId
+	TopicMetaCacheKey                 = "%d_%s_topic_meta"  // communityId topicId
+	UserTopicsCacheKey                = "%d_%s_user_topics" // communityId userUniqueId
+	WidgetMetaCacheKey                = "%d_%s_widget_meta" // communityId widgetId
 )
 
 // Cache TTLs in hours

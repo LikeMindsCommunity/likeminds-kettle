@@ -192,7 +192,7 @@ func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{
 		//Fetch user data for given user_unique_ids
 		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), user_ids)
 		if err != nil {
-			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
+			utils.GeneralAPIError(c, utils.ErrorFetchingUserData)
 			return nil
 		}
 
