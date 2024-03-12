@@ -92,7 +92,7 @@ func saveUserTopicsToCache(redisClient *redis.Client, userTopics UserTopics) err
 		}
 
 		cacheKey := fmt.Sprintf(cache.UserTopicsCacheKey, userUniqueId)
-		err = cache.Set(redisClient, cacheKey, parsedTopics, cache.UserTopicsCacheTTL*time.Hour) // TODO: Move to constants
+		err = cache.Set(redisClient, cacheKey, parsedTopics, cache.UserTopicsCacheTTL*time.Hour)
 		if err != nil {
 			logging.Error(fmt.Sprintf("Error saving user topics to cache: %s", err))
 			return err
@@ -168,4 +168,63 @@ func FetchUserTopicsForUserUniqueIds(redisClient *redis.Client, headers map[stri
 	}
 
 	return userTopicsMap, nil
+}
+
+// External method to fetch user topics and its related data for userUniqueIds and update in dataResponse
+func FetchAndUpdateUserTopicsDataForResponse(redisClient *redis.Client, headers map[string]interface{}, dataResponse map[string]interface{}, userUniqueIds []string,
+) map[string]interface{} {
+
+	// fetch user topics data for user_unique_ids
+	userTopics, err := FetchUserTopicsForUserUniqueIds(redisClient, headers, userUniqueIds)
+	if err != nil {
+		logging.Error(fmt.Sprint("error fetching user topics for user_unique_ids", err))
+	}
+
+	// Fetch topics meta for user topics
+	topicsIds := []string{}
+	for _, userTopics := range userTopics {
+		topicsIds = append(topicsIds, userTopics...)
+	}
+	topicsMeta, err := FetchTopicsMetaFromTopicsIds(redisClient, headers, topicsIds)
+	if err != nil {
+		logging.Error(fmt.Sprint("error fetching topics meta for topics ids", err))
+	}
+
+	// Fetch widget meta for user topics
+	widgetIds := []string{}
+	for _, userTopic := range topicsMeta {
+		if userTopic.WidgetId != "" {
+			widgetIds = append(widgetIds, userTopic.WidgetId)
+		}
+	}
+	widgetsMeta, err := fetchWidgetMetaMapFromWidgetIds(redisClient, headers, widgetIds)
+	if err != nil {
+		logging.Error(fmt.Sprint("error fetching widget meta for widget ids", err))
+	}
+
+	// update userTopics in dataResponse
+	if dataResponse["user_topics"] == nil {
+		dataResponse["user_topics"] = map[string]interface{}{}
+	}
+	for key, value := range userTopics {
+		dataResponse["user_topics"].(map[string]interface{})[key] = value
+	}
+
+	// Update topic meta in dataResponse
+	if dataResponse["topics"] == nil {
+		dataResponse["topics"] = map[string]interface{}{}
+	}
+	for key, value := range topicsMeta {
+		dataResponse["topics"].(map[string]interface{})[key] = value
+	}
+
+	// Update widget meta in dataResponse
+	if dataResponse["widgets"] == nil {
+		dataResponse["widgets"] = map[string]interface{}{}
+	}
+	for key, value := range widgetsMeta {
+		dataResponse["widgets"].(map[string]interface{})[key] = value
+	}
+
+	return dataResponse
 }

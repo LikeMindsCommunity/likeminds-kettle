@@ -102,6 +102,7 @@ const ParamMemberIds = "member_ids"
 const ParamParentIds = "parent_ids"
 const ParamUUIDs = "uuids"
 const ParamPageSize = "page_size"
+const ParamCommunityID = "community_id"
 
 // Endpoints
 const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
@@ -110,3 +111,4 @@ const FetchCommunitySettingsEndpoint = "/api/community/fetch_community_settings"
 const FetchMembersMetaEndPoint = "/api/community/fetch_members_meta"
 const FetchTopicsEndpoint = "/topic"
 const FetchUserTopicsEndpoint = "/user/topics"
+const SDKAuthenticateEndPoint = "/api/sdk/authenticate"

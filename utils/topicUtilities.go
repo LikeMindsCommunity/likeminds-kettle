@@ -108,7 +108,7 @@ func saveTopicsInCache(redisClient *redis.Client, topicsMeta []TopicMeta) {
 
 		// save to cache
 		cacheKey := fmt.Sprintf(cache.TopicMetaCacheKey, topicMeta.ID)
-		err = cache.Set(redisClient, cacheKey, parsedData, cache.TopicMetaCacheTTL*time.Hour) // TODO: Move to constants
+		err = cache.Set(redisClient, cacheKey, parsedData, cache.TopicMetaCacheTTL*time.Hour)
 		if err != nil {
 			logging.Error(fmt.Sprint("error saving topic meta to cache", err))
 		}
