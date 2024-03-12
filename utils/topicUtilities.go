@@ -66,7 +66,8 @@ func fetchTopicsFromCache(redisClient *redis.Client, topicIds []string) ([]Topic
 	return topicsMeta, remainingTopicIds, nil
 }
 
-func fetchTopicsFromSwarmService(headers map[string]interface{}, topicIds []string) ([]TopicMeta, error) {
+func fetchTopicsFromSwarmService(headers map[string]interface{}, topicIds []string,
+) ([]TopicMeta, map[string]WidgetResponse, error) {
 
 	// Fetch topics meta from swarm service
 	params := map[string]string{
@@ -77,21 +78,21 @@ func fetchTopicsFromSwarmService(headers map[string]interface{}, topicIds []stri
 	// Send Request
 	respBytes, _, err := GetRequestResponseWithoutContext(SwarmService, FetchTopicsEndpoint, GETRequest, headers, params, nil)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// Parse response
 	var tr FetchTopicsResponse
 	err = json.Unmarshal(respBytes, &tr)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if !tr.Success {
-		return nil, fmt.Errorf("error fetching topics meta: %s", tr.ErrorMessage)
+		return nil, nil, fmt.Errorf("error fetching topics meta: %s", tr.ErrorMessage)
 	}
 
-	return tr.Topics, nil
+	return tr.Topics, tr.Widgets, nil
 }
 
 func saveTopicsInCache(redisClient *redis.Client, topicsMeta []TopicMeta) {
@@ -141,7 +142,7 @@ func FetchTopicsMetaFromTopicsIds(redisClient *redis.Client, headers map[string]
 	// Fetch topics meta from swarm service
 	if len(topicIds) > 0 {
 
-		fetchedTopicsMeta, err := fetchTopicsFromSwarmService(headers, topicIds)
+		fetchedTopicsMeta, fetchedWidgetsMeta, err := fetchTopicsFromSwarmService(headers, topicIds)
 		if err != nil {
 			return nil, err
 		}
@@ -149,6 +150,16 @@ func FetchTopicsMetaFromTopicsIds(redisClient *redis.Client, headers map[string]
 		if redisClient != nil {
 			// save fetched topics meta to cache
 			go saveTopicsInCache(redisClient, fetchedTopicsMeta)
+
+			// save fetched widgets meta to cache
+			go func() {
+				widgetsResponse := []WidgetResponse{}
+				for _, widgetResponse := range fetchedWidgetsMeta {
+					widgetsResponse = append(widgetsResponse, widgetResponse)
+				}
+
+				saveWidgetsToCache(redisClient, widgetsResponse)
+			}()
 		}
 
 		// convert topics meta to map

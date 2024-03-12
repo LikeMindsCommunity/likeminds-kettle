@@ -21,6 +21,8 @@ func UserCreatedPostSearch(c *gin.Context) {
 		return
 	}
 
+	headers := utils.CreateHeaders(c, userId)
+
 	//Fetch member access to view post
 	success, response := user.FetchMemberAccess(c, feed.VIEW_POST_ACTION, userId)
 	if !success {
@@ -34,7 +36,7 @@ func UserCreatedPostSearch(c *gin.Context) {
 	}
 
 	//Get user_unique_id from user_id internally
-	user_id, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), user_id)
+	user_id, err := utility.GetUUIDInternally(headers, user_id)
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
 		return
@@ -53,7 +55,7 @@ func UserCreatedPostSearch(c *gin.Context) {
 	}
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, CreatedPostSearchEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, CreatedPostSearchEndpoint, utils.GETRequest, headers, params, nil)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
@@ -66,7 +68,9 @@ func UserCreatedPostSearch(c *gin.Context) {
 	if value, ok := dataResponse["posts"]; ok {
 		posts := value.([]interface{})
 
-		user_data, err := utils.GetUsersMetaFromFeedData(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), posts, dataResponse)
+		redisClient := utils.GetRedisClientFromContext(c)
+
+		user_data, userUniqueIds, err := utils.GetUsersMetaFromFeedData(redisClient, headers, posts, dataResponse)
 
 		if err != nil {
 			utils.GenerateResponse(c, nil, false)
@@ -75,6 +79,9 @@ func UserCreatedPostSearch(c *gin.Context) {
 
 		//Update user data in dataResponse
 		dataResponse["users"] = user_data
+
+		// Update userTopics and related data in dataResponse
+		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
 	}
 
 	//Send response

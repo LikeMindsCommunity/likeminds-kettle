@@ -119,6 +119,10 @@ func fetchWidgetMetaMapFromWidgetIds(redisClient *redis.Client, headers map[stri
 
 	widgetsResponse := map[string]WidgetResponse{}
 
+	if len(widgetIds) == 0 {
+		return widgetsResponse, nil
+	}
+
 	if redisClient != nil {
 		// fetch widgets from cache
 		widgets, remainingWidgetIds, err := fetchWidgetsFromCache(redisClient, widgetIds)
@@ -149,12 +153,8 @@ func fetchWidgetMetaMapFromWidgetIds(redisClient *redis.Client, headers map[stri
 
 		// set widgets to cache
 		if redisClient != nil {
-			err = saveWidgetsToCache(redisClient, widgets)
-			if err != nil {
-				return nil, err
-			}
+			go saveWidgetsToCache(redisClient, widgets)
 		}
-
 	}
 
 	return widgetsResponse, nil
