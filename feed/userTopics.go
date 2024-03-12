@@ -97,7 +97,7 @@ func fetchUsersTopicsInternal(c *gin.Context, userId string) {
 	dataResponse := apiCR.Response
 
 	// fetch user meta for userIds
-	userMetaMap, err := utils.FetchMemberMetaMapFromCache(utils.GetRedisClientFromContext(c), headers, userIds)
+	userMetaMap, err := utils.FetchMemberMetaMapForUserUniqueIds(utils.GetRedisClientFromContext(c), headers, userIds)
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
 		return

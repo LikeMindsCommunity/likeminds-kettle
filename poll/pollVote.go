@@ -108,7 +108,7 @@ func getPollVotesInternal(c *gin.Context, userId string, endPoint string) {
 		}
 
 		//Fetch user data for given user_unique_ids
-		userData, err := utils.FetchMemberMetaMapFromCache(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), userIds)
+		userData, err := utils.FetchMemberMetaMapForUserUniqueIds(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), userIds)
 		if err != nil {
 			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 			return

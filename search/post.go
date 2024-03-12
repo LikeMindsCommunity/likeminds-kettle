@@ -89,7 +89,7 @@ func PostSearch(c *gin.Context) {
 		user_ids = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_ids)
 
 		//Fetch user data for given user_unique_ids
-		user_data, err := utils.FetchMemberMetaMapFromCache(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), user_ids)
+		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), user_ids)
 		if err != nil {
 			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 			return

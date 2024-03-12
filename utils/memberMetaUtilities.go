@@ -116,7 +116,7 @@ func saveMembersMetaInCache(redisClient *redis.Client, membersMeta []MemberMeta)
 }
 
 // Exposed method to fetch members meta map for user_unique_ids from cache if present else from api
-func FetchMemberMetaMapFromCache(redisClient *redis.Client, headers map[string]interface{}, user_unique_ids []string,
+func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[string]interface{}, user_unique_ids []string,
 ) (map[string]MemberMeta, error) {
 
 	memberMetaMap := map[string]MemberMeta{}
@@ -189,7 +189,7 @@ func GetUsersMetaFromFeedData(redisClient *redis.Client, headers map[string]inte
 	user_unique_ids = AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_unique_ids)
 
 	// Fetch user data for given user_unique_ids
-	user_data, err := FetchMemberMetaMapFromCache(redisClient, headers, user_unique_ids)
+	user_data, err := FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_unique_ids)
 	if err != nil {
 		return nil, err
 	}
