@@ -39,7 +39,7 @@ func fetchTopicsFromCache(redisClient *redis.Client, topicIds []string) ([]Topic
 	// cache keys for topics meta
 	cachKeys := []string{}
 	for _, topicId := range topicIds {
-		cachKeys = append(cachKeys, fmt.Sprintf("%s_topic_meta", topicId)) // TODO: Move to constants
+		cachKeys = append(cachKeys, fmt.Sprintf(cache.TopicMetaCacheKey, topicId))
 	}
 
 	// Fetch keys from cache
@@ -73,7 +73,7 @@ func fetchTopicsFromSwarmService(headers map[string]interface{}, topicIds []stri
 	// Fetch topics meta from swarm service
 	params := map[string]string{
 		ParamParentIds: ParseStringArrayToString(topicIds),
-		ParamPageSize:  "0",
+		ParamPageSize:  "1",
 	}
 
 	// Send Request
@@ -107,8 +107,8 @@ func saveTopicsInCache(redisClient *redis.Client, topicsMeta []TopicMeta) {
 		}
 
 		// save to cache
-		cacheKey := fmt.Sprintf("%s_topic_meta", topicMeta.ID)             // TODO: Move to constants
-		err = cache.Set(redisClient, cacheKey, parsedData, 7*24*time.Hour) // TODO: Move to constants
+		cacheKey := fmt.Sprintf(cache.TopicMetaCacheKey, topicMeta.ID)
+		err = cache.Set(redisClient, cacheKey, parsedData, cache.TopicMetaCacheTTL*time.Hour) // TODO: Move to constants
 		if err != nil {
 			logging.Error(fmt.Sprint("error saving topic meta to cache", err))
 		}

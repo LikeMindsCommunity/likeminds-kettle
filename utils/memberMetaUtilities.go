@@ -37,15 +37,15 @@ type MemberMetaResponse struct {
 	Members      []MemberMeta `json:"members"`
 }
 
-func fetchmembersMetaFromCache(redisClient *redis.Client, member_ids []string) ([]MemberMeta, []string, error) {
+func fetchmembersMetaFromCache(redisClient *redis.Client, userUniqueIds []string) ([]MemberMeta, []string, error) {
 
 	membersMeta := []MemberMeta{}
 	remainingMemberIds := []string{}
 
 	// fetch member meta from cache
 	cachKeys := []string{}
-	for _, member_id := range member_ids {
-		cachKeys = append(cachKeys, fmt.Sprintf("%s_user_meta", member_id)) // TODO: Move to constants
+	for _, userUniqueId := range userUniqueIds {
+		cachKeys = append(cachKeys, fmt.Sprintf(cache.UserMetaCacheKey, userUniqueId))
 	}
 
 	// Fetch keys from cache
@@ -63,18 +63,18 @@ func fetchmembersMetaFromCache(redisClient *redis.Client, member_ids []string) (
 			}
 			membersMeta = append(membersMeta, memberMeta)
 		} else {
-			remainingMemberIds = append(remainingMemberIds, member_ids[i])
+			remainingMemberIds = append(remainingMemberIds, userUniqueIds[i])
 		}
 	}
 
 	return membersMeta, remainingMemberIds, nil
 }
 
-func fetchMembersMetaFromAPI(headers map[string]interface{}, member_ids []string) ([]MemberMeta, error) {
+func fetchMembersMetaFromAPI(headers map[string]interface{}, userUniqueIds []string) ([]MemberMeta, error) {
 
 	//Params to be sent in the api/community_member/fetch_access request
 	params := map[string]string{
-		ParamMemberIds: ParseStringArrayToString(member_ids),
+		ParamMemberIds: ParseStringArrayToString(userUniqueIds),
 	}
 
 	//Send Request
@@ -107,8 +107,8 @@ func saveMembersMetaInCache(redisClient *redis.Client, membersMeta []MemberMeta)
 			continue
 		}
 
-		cacheKey := fmt.Sprintf("%s_user_meta", memberMeta.UserUniqueId) //TODO: Move to constants
-		if err := cache.Set(redisClient, cacheKey, parsedData, 7*24*time.Hour); err != nil {
+		cacheKey := fmt.Sprintf(cache.UserMetaCacheKey, memberMeta.UserUniqueId)
+		if err := cache.Set(redisClient, cacheKey, parsedData, cache.UserMetaCacheTTL*time.Hour); err != nil { //TODO: Move to constants
 			logging.Error(fmt.Sprint("error saving member data to cache", err))
 		}
 		logging.Info(fmt.Sprintf("Saved member data to cache with key: %s", cacheKey))
@@ -156,7 +156,7 @@ func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[s
 
 		// Save fetched members meta to cache in background
 		if redisClient != nil {
-			go saveMembersMetaInCache(redisClient, membersMeta) // TODO: Test this and move to background
+			go saveMembersMetaInCache(redisClient, membersMeta)
 		}
 	}
 

@@ -28,7 +28,7 @@ func fetchUserTopicsFromCache(redisClient *redis.Client, userUniqueIds []string)
 	// cache keys for user topics
 	userTopicsCacheKeys := []string{}
 	for _, userUniqueId := range userUniqueIds {
-		userTopicsCacheKeys = append(userTopicsCacheKeys, fmt.Sprintf("%s_user_topics", userUniqueId)) // TODO: Move to constants
+		userTopicsCacheKeys = append(userTopicsCacheKeys, fmt.Sprintf(cache.UserTopicsCacheKey, userUniqueId))
 	}
 
 	// Fetch keys from cache
@@ -91,8 +91,8 @@ func saveUserTopicsToCache(redisClient *redis.Client, userTopics UserTopics) err
 			continue
 		}
 
-		cacheKey := fmt.Sprintf("%s_user_topics", userUniqueId)              // TODO: Move to constants
-		err = cache.Set(redisClient, cacheKey, parsedTopics, 7*24*time.Hour) // TODO: Move to constants
+		cacheKey := fmt.Sprintf(cache.UserTopicsCacheKey, userUniqueId)
+		err = cache.Set(redisClient, cacheKey, parsedTopics, cache.UserTopicsCacheTTL*time.Hour) // TODO: Move to constants
 		if err != nil {
 			logging.Error(fmt.Sprintf("Error saving user topics to cache: %s", err))
 			return err

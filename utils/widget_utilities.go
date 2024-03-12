@@ -36,7 +36,7 @@ func fetchWidgetsFromCache(redisClient *redis.Client, widgetIds []string) ([]Wid
 	// cache keys for widgets meta
 	cachKeys := []string{}
 	for _, widgetId := range widgetIds {
-		cachKeys = append(cachKeys, fmt.Sprintf("%s_widget_meta", widgetId)) // TODO: Move to constants
+		cachKeys = append(cachKeys, fmt.Sprintf(cache.WidgetMetaCacheKey, widgetId))
 	}
 
 	// Fetch keys from cache
@@ -100,8 +100,8 @@ func saveWidgetsToCache(redisClient *redis.Client, widgets []WidgetResponse) err
 		}
 
 		// set widget meta to cache
-		cacheKey := fmt.Sprintf("%s_widget_meta", widget.ID)                 // TODO: Move to constants
-		err = cache.Set(redisClient, cacheKey, parsedWidget, 7*24*time.Hour) // TODO: Move to constants
+		cacheKey := fmt.Sprintf(cache.WidgetMetaCacheKey, widget.ID)
+		err = cache.Set(redisClient, cacheKey, parsedWidget, cache.WidgetMetaCacheTTL*time.Hour)
 		if err != nil {
 			logging.Error(fmt.Sprintf("error setting widget meta to cache: %s", widget.ID))
 			return err

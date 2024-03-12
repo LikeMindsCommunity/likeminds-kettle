@@ -249,11 +249,11 @@ func LogoutValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 func InternalServiceValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Check if the request is from internal service
-		platformType := c.Request.Header.Get("x-platform-type") // TODO: Move it to constants
-		if !utils.CheckIfStringExistsInArray([]string{"swarm-service", "caravan-service", "kettle-service"}, platformType) {
+		platformType := c.Request.Header.Get(utils.HeadersPlatformType)
+		if !utils.CheckIfStringExistsInArray([]string{string(utils.PlatformSwarmService), string(utils.PlatformCaravanService)}, platformType) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
-				ErrorMessage: "Unauthorized access",
+				ErrorMessage: utils.ErrorMemeberAccessFail,
 			})
 			return
 		}

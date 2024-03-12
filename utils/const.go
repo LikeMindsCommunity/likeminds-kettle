@@ -38,7 +38,10 @@ const (
 type PlatformType string
 
 const (
-	PlatformDashboard PlatformType = "dashboard"
+	PlatformDashboard      PlatformType = "dashboard"
+	PlatformCaravanService PlatformType = "caravan-service"
+	PlatformSwarmService   PlatformType = "swarm-service"
+	PlatformKettleService  PlatformType = "kettle-service"
 )
 
 const (

@@ -334,7 +334,7 @@ func main() {
 	router.POST("/logs", middleware.LTMValidationMiddleware(redisClient), logger.PushLogs)
 
 	// Internal Apis
-	router.DELETE("/cache", middleware.InternalServiceValidationMiddleware(), internalServices.DeleteCache) // TODO: Need to discuss how to secure this
+	router.DELETE("/cache", middleware.InternalServiceValidationMiddleware(), internalServices.DeleteCache)
 
 	log.Info(fmt.Sprintf("application version: %s", AppVersion))
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
