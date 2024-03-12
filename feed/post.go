@@ -188,9 +188,11 @@ func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{
 
 		// Get userId
 		userId := user.GetRequestingUserId(c)
+		redisClient := utils.GetRedisClientFromContext(c)
+		headers := utils.CreateHeaders(c, userId)
 
 		//Fetch user data for given user_unique_ids
-		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), user_ids)
+		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_ids)
 		if err != nil {
 			utils.GeneralAPIError(c, utils.ErrorFetchingUserData)
 			return nil
@@ -208,6 +210,11 @@ func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{
 
 		//Update user data in dataResponse
 		dataResponse["users"] = user_data
+
+		// if user Topics connection is enabled, fetch and update related data
+		if utils.UserTopicsConnectionEnabled(redisClient, headers) {
+			dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
+		}
 	}
 
 	return dataResponse
@@ -338,11 +345,7 @@ func createPostInternal(c *gin.Context, userId string) {
 	createPostRequest.UserIsCm = response.IsCm
 
 	if createPostRequest.IsRepost {
-		communitySettings, err := utils.GetCommunitySettingsInternal(headers)
-		if err != nil {
-		}
-
-		if !utils.CheckCommunitySettingEnabled(communitySettings, FeedRepostCommunitySettingType) {
+		if !utils.FeedRepostSettingsEnabled(utils.GetRedisClientFromContext(c), headers) {
 			utils.GeneralBadRequestError(c, utils.ErrorRepostSettingNotEnabled)
 			return
 		}

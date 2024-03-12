@@ -168,6 +168,8 @@ func Report(c *gin.Context, method int) {
 
 func getReportsInternal(c *gin.Context, userId string) {
 
+	headers := utils.CreateHeaders(c, userId)
+
 	//Params to be sent with pagination and filter support in API
 	params := map[string]string{
 		ParamPage:       c.Query(ParamPage),
@@ -177,7 +179,7 @@ func getReportsInternal(c *gin.Context, userId string) {
 	}
 
 	// Send Request to caravan service to fetch reports
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchReportsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchReportsEndPoint, utils.GETRequest, headers, params, nil)
 	if respBytes == nil {
 		return
 	}
@@ -214,6 +216,17 @@ func getReportsInternal(c *gin.Context, userId string) {
 		}
 		if repostedPosts != nil {
 			dataResponse["reposted_posts"] = repostedPosts
+		}
+
+		redisClient := utils.GetRedisClientFromContext(c)
+
+		// if user Topics connection is enabled, fetch and update related data
+		if utils.UserTopicsConnectionEnabled(redisClient, headers) {
+			userUniqueIds := []string{}
+			for _, user := range users {
+				userUniqueIds = append(userUniqueIds, user.UserUniqueId)
+			}
+			dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
 		}
 
 	}

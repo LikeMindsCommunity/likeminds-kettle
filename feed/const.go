@@ -54,8 +54,9 @@ const ParamMinPosts = "min_posts"
 const ParamParentIds = "parent_ids"
 const ParamTopicsOrderBy = "order_by"
 const ParamUserId = "user_id"
-const FeedRepostCommunitySettingType = "feed_repost"
 const ParamUUIDs = "uuids"
+
+const FeedRepostCommunitySettingType = "feed_repost"
 
 const (
 	CREATE_POST_ACTION     = "create_post"

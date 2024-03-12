@@ -116,7 +116,7 @@ func saveMembersMetaInCache(redisClient *redis.Client, communityId int, membersM
 }
 
 // Exposed method to fetch members meta map for user_unique_ids from cache if present else from api
-func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[string]interface{}, user_unique_ids []string,
+func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[string]interface{}, userUniqueIds []string,
 ) (map[string]MemberMeta, error) {
 
 	// Fetch communityId from ApiKey
@@ -127,13 +127,13 @@ func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[s
 
 	memberMetaMap := map[string]MemberMeta{}
 
-	if len(user_unique_ids) == 0 {
+	if len(userUniqueIds) == 0 {
 		return memberMetaMap, nil
 	}
 
 	// fetch member meta from cache
 	if redisClient != nil {
-		membersMeta, remainingMemberIds, err := fetchmembersMetaFromCache(redisClient, communityId, user_unique_ids)
+		membersMeta, remainingMemberIds, err := fetchmembersMetaFromCache(redisClient, communityId, userUniqueIds)
 		if err != nil {
 			return nil, err
 		}
@@ -143,14 +143,14 @@ func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[s
 			memberMetaMap[memberData.UserUniqueId] = memberData
 		}
 
-		// update user_unique_ids with remaining user_unique_ids
-		user_unique_ids = remainingMemberIds
+		// update userUniqueIds with remaining userUniqueIds
+		userUniqueIds = remainingMemberIds
 	}
 
 	// fetch remaining members meta from api
-	if len(user_unique_ids) > 0 {
+	if len(userUniqueIds) > 0 {
 
-		membersMeta, err := fetchMembersMetaFromAPI(headers, user_unique_ids)
+		membersMeta, err := fetchMembersMetaFromAPI(headers, userUniqueIds)
 		if err != nil {
 			return nil, err
 		}
@@ -166,8 +166,8 @@ func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[s
 		}
 	}
 
-	//Generate user data for remaining user_unique_ids
-	for _, memberId := range user_unique_ids {
+	//Generate user data for remaining userUniqueIds
+	for _, memberId := range userUniqueIds {
 		if _, ok := memberMetaMap[memberId]; !ok {
 			memberMetaMap[memberId] = MemberMeta{
 				IsDeleted: true,

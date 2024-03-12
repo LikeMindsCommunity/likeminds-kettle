@@ -45,9 +45,11 @@ func populateCommentDataResponse(c *gin.Context, dataResponse map[string]interfa
 
 		// Get UserId
 		userId := user.GetRequestingUserId(c)
+		headers := utils.CreateHeaders(c, userId)
+		redisClient := utils.GetRedisClientFromContext(c)
 
 		//Fetch user data for given user_unique_ids
-		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), user_ids)
+		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_ids)
 		if err != nil {
 			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 			return nil
@@ -68,6 +70,11 @@ func populateCommentDataResponse(c *gin.Context, dataResponse map[string]interfa
 
 		//Update users data in dataResponse
 		dataResponse["users"] = user_data
+
+		// if user Topics connection is enabled, fetch and update related data
+		if utils.UserTopicsConnectionEnabled(redisClient, headers) {
+			dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
+		}
 	}
 
 	return dataResponse

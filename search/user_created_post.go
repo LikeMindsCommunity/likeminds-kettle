@@ -80,8 +80,10 @@ func UserCreatedPostSearch(c *gin.Context) {
 		//Update user data in dataResponse
 		dataResponse["users"] = user_data
 
-		// Update userTopics and related data in dataResponse
-		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
+		// if user Topics connection is enabled, fetch and update related data
+		if utils.UserTopicsConnectionEnabled(redisClient, headers) {
+			dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
+		}
 	}
 
 	//Send response

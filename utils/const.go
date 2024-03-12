@@ -112,3 +112,9 @@ const FetchMembersMetaEndPoint = "/api/community/fetch_members_meta"
 const FetchTopicsEndpoint = "/topic"
 const FetchUserTopicsEndpoint = "/user/topics"
 const SDKAuthenticateEndPoint = "/api/sdk/authenticate"
+
+// Community settings type
+const (
+	FeedRepostCommunitySettingType  = "feed_repost"
+	UserTopicsConnectionSettingType = "user_topics_connection"
+)

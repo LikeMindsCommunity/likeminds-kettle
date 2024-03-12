@@ -48,9 +48,10 @@ func GetUserFeedMeta(c *gin.Context) {
 	dataResponse := apiCR.Response
 
 	//Fetch user data for given user_unique_ids
-	userIds := []string{userUUID}
+	userUniqueIds := []string{userUUID}
+	redisClient := utils.GetRedisClientFromContext(c)
 
-	user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(utils.GetRedisClientFromContext(c), headers, userIds)
+	user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, userUniqueIds)
 	if err != nil {
 		utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 		return
@@ -58,8 +59,10 @@ func GetUserFeedMeta(c *gin.Context) {
 
 	dataResponse["users"] = user_data
 
-	// Fetch And update user topics data
-	dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(utils.GetRedisClientFromContext(c), headers, dataResponse, userIds)
+	// if user Topics connection is enabled, fetch and update related data
+	if utils.UserTopicsConnectionEnabled(redisClient, headers) {
+		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
+	}
 
 	//Send response
 	utils.GenerateResponse(c, dataResponse, true)

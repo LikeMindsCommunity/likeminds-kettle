@@ -20,6 +20,8 @@ func PostSearch(c *gin.Context) {
 		return
 	}
 
+	headers := utils.CreateHeaders(c, userId)
+
 	//Fetch member access to view post
 	success, response := user.FetchMemberAccess(c, feed.VIEW_POST_ACTION, userId)
 	if !success {
@@ -33,7 +35,7 @@ func PostSearch(c *gin.Context) {
 	}
 
 	//Send Request to get excluded chatrooms list on Caravan Service
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, community.CommunityExcludedChatroomsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, community.CommunityExcludedChatroomsEndPoint, utils.GETRequest, headers, nil, nil)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
@@ -65,7 +67,7 @@ func PostSearch(c *gin.Context) {
 	}
 
 	//Send Request
-	respBytes, statusCode = utils.GetRequestResponse(c, utils.SwarmService, PostSearchEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, statusCode = utils.GetRequestResponse(c, utils.SwarmService, PostSearchEndPoint, utils.GETRequest, headers, params, nil)
 
 	//Validate response
 	apiCR = utils.ValidateClientResponse(c, respBytes, statusCode)
@@ -88,8 +90,10 @@ func PostSearch(c *gin.Context) {
 
 		user_ids = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_ids)
 
+		redisClient := utils.GetRedisClientFromContext(c)
+
 		//Fetch user data for given user_unique_ids
-		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), user_ids)
+		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_ids)
 		if err != nil {
 			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 			return
@@ -97,6 +101,11 @@ func PostSearch(c *gin.Context) {
 
 		//Update user data in dataResponse
 		dataResponse["users"] = user_data
+
+		// if user Topics connection is enabled, fetch and update related data
+		if utils.UserTopicsConnectionEnabled(redisClient, headers) {
+			dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
+		}
 	}
 
 	//Send response
