@@ -188,8 +188,6 @@ func setProfileMetaConfigInCache(redisClient *redis.Client, apiKey string, profi
 		logging.Error(fmt.Sprintf("Error while Saving profile_meta configurations in cache for api-key: %s", apiKey))
 		return err
 	}
-
 	logging.Info(fmt.Sprintf("Saved profile_meta configurations in cache for api-key: %s", apiKey))
-
 	return nil
 }

@@ -12,15 +12,16 @@ import (
 
 // TopicMeta | schema for topic meta
 type TopicMeta struct {
-	ID           string  `json:"_id"`
-	Name         string  `json:"name"`
-	IsEnabled    bool    `json:"is_enabled"`
-	Priority     float32 `json:"priority"`
-	IsSearchable bool    `json:"is_searchable"`
-	ParentId     string  `json:"parent_id"`
-	ParentName   string  `json:"parent_name"`
-	Level        int     `json:"level"`
-	WidgetId     string  `json:"widget_id"`
+	ID           string   `json:"_id"`
+	Name         string   `json:"name"`
+	IsEnabled    bool     `json:"is_enabled"`
+	Priority     float32  `json:"priority"`
+	IsSearchable bool     `json:"is_searchable"`
+	ParentId     string   `json:"parent_id"`
+	ParentName   string   `json:"parent_name"`
+	AllParentIds []string `json:"all_parent_ids"`
+	Level        int      `json:"level"`
+	WidgetId     string   `json:"widget_id"`
 }
 
 type FetchTopicsResponse struct {
@@ -111,6 +112,7 @@ func saveTopicsInCache(redisClient *redis.Client, topicsMeta []TopicMeta) {
 		if err != nil {
 			logging.Error(fmt.Sprint("error saving topic meta to cache", err))
 		}
+		logging.Info(fmt.Sprintf("Topic meta saved to cache with key: %s", cacheKey))
 	}
 }
 

@@ -111,7 +111,7 @@ func saveMembersMetaInCache(redisClient *redis.Client, membersMeta []MemberMeta)
 		if err := cache.Set(redisClient, cacheKey, parsedData, 7*24*time.Hour); err != nil {
 			logging.Error(fmt.Sprint("error saving member data to cache", err))
 		}
-		logging.Info(fmt.Sprintf("Saved member data to cache for user_unique_id: %s", memberMeta.UserUniqueId))
+		logging.Info(fmt.Sprintf("Saved member data to cache with key: %s", cacheKey))
 	}
 }
 
@@ -197,7 +197,7 @@ func GetUsersMetaFromFeedData(redisClient *redis.Client, headers map[string]inte
 	return user_data, user_unique_ids, nil
 }
 
-// External method to fetch user topics and its related data for user_unique_ids and update in dataResponse
+// External method to fetch user topics and its related data for userUniqueIds and update in dataResponse
 func FetchAndUpdateUserTopicsDataForResponse(redisClient *redis.Client, headers map[string]interface{}, dataResponse map[string]interface{}, userUniqueIds []string,
 ) map[string]interface{} {
 

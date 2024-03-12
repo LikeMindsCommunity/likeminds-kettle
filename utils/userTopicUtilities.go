@@ -97,7 +97,7 @@ func saveUserTopicsToCache(redisClient *redis.Client, userTopics UserTopics) err
 			logging.Error(fmt.Sprintf("Error saving user topics to cache: %s", err))
 			return err
 		}
-		logging.Info(fmt.Sprintf("User topics saved to cache for user: %s", userUniqueId))
+		logging.Info(fmt.Sprintf("User topics saved to cache with key: %s", cacheKey))
 	}
 	return nil
 }

@@ -106,8 +106,7 @@ func saveWidgetsToCache(redisClient *redis.Client, widgets []WidgetResponse) err
 			logging.Error(fmt.Sprintf("error setting widget meta to cache: %s", widget.ID))
 			return err
 		}
-
-		logging.Info(fmt.Sprintf("Widget Meta set to cache: %s", widget.ID))
+		logging.Info(fmt.Sprintf("Widget Meta saved to cache for key: %s", cacheKey))
 	}
 
 	return nil
