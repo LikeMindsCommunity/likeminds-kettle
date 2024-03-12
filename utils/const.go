@@ -96,9 +96,14 @@ const (
 const ParamConfigurationTypes = "configuration_types"
 const ParamWidgetIds = "widget_ids"
 const ParamMemberIds = "member_ids"
+const ParamParentIds = "parent_ids"
+const ParamUUIDs = "uuids"
+const ParamPageSize = "page_size"
 
 // Endpoints
 const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
 const WidgetEndPoint = "/widget"
 const FetchCommunitySettingsEndpoint = "/api/community/fetch_community_settings"
 const FetchMembersMetaEndPoint = "/api/community/fetch_members_meta"
+const FetchTopicsEndpoint = "/topic"
+const FetchUserTopicsEndpoint = "/user/topics"

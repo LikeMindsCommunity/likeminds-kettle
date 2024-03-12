@@ -89,7 +89,7 @@ func fetchWidgetsFromSwarmService(headers map[string]interface{}, widgetIds []st
 	return wr.Widgets, nil
 }
 
-func setWidgetsToCache(redisClient *redis.Client, widgets []WidgetResponse) error {
+func saveWidgetsToCache(redisClient *redis.Client, widgets []WidgetResponse) error {
 
 	for _, widget := range widgets {
 
@@ -149,7 +149,7 @@ func fetchWidgetMetaMapFromWidgetIds(redisClient *redis.Client, headers map[stri
 
 		// set widgets to cache
 		if redisClient != nil {
-			err = setWidgetsToCache(redisClient, widgets)
+			err = saveWidgetsToCache(redisClient, widgets)
 			if err != nil {
 				return nil, err
 			}
