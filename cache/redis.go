@@ -1,10 +1,12 @@
 package cache
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/environment"
+	"github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/token"
 )
 
@@ -28,10 +30,12 @@ func InitRedis() *redis.Client {
 func Get(client *redis.Client, key string) (string, bool, error) {
 	val, err := client.Get(key).Result()
 	if err == redis.Nil {
+		logging.Debug(fmt.Sprint("cache miss for key: ", key))
 		return "", false, nil
 	} else if err != nil {
 		return "", false, err
 	}
+	logging.Debug(fmt.Sprint("cache hit for key: ", key))
 	return val, true, err
 }
 
@@ -41,6 +45,8 @@ func Set(client *redis.Client, key string, value interface{}, expiration time.Du
 	if err != nil {
 		return err
 	}
+
+	logging.Debug(fmt.Sprintf("cache set for key: %s with expiry: %v", key, expiration.String()))
 	return nil
 }
 
@@ -59,6 +65,8 @@ func Delete(client *redis.Client, key string) error {
 	if err != nil {
 		return err
 	}
+
+	logging.Debug(fmt.Sprint("cache deleted for key: ", key))
 	return nil
 }
 
@@ -67,6 +75,13 @@ func GetFromMultipleKeys(client *redis.Client, keys ...string) ([]interface{}, e
 	val, err := client.MGet(keys...).Result()
 	if err != nil {
 		return nil, err
+	}
+	for i, v := range val {
+		if v == nil {
+			logging.Debug(fmt.Sprint("cache miss for key: ", keys[i]))
+		} else {
+			logging.Debug(fmt.Sprint("cache hit for key: ", keys[i]))
+		}
 	}
 	return val, nil
 }
@@ -77,6 +92,8 @@ func SetMultipleValues(client *redis.Client, values ...interface{}) error {
 	if err != nil {
 		return err
 	}
+
+	logging.Debug(fmt.Sprint("cache set for keys: ", values))
 	return nil
 }
 
