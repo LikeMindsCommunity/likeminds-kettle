@@ -19,7 +19,7 @@ type UsersInfo struct {
 	Users        []UserInfo `json:"users"`
 }
 
-func GetUsersInfoInternal(headers map[string]interface{}, params map[string]string) ([]UserInfo, error) {
+func getUsersInfoInternal(headers map[string]interface{}, params map[string]string) ([]UserInfo, error) {
 
 	// Internally call /api/community/users
 	respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.CoreService, UserMetaInfoInternalEndpoint, utils.GETRequest, headers, params, nil)
@@ -66,7 +66,7 @@ func FetchUserUniqueIdsFromAnyUserIds(headers map[string]interface{}, userIds in
 		params[ParamMemberIDs] = userIds
 	}
 
-	usersInfo, err := GetUsersInfoInternal(headers, params)
+	usersInfo, err := getUsersInfoInternal(headers, params)
 	if err != nil {
 		return nil, err
 	}

@@ -544,7 +544,7 @@ func deletePostInternal(c *gin.Context, userId string) {
 }
 
 func getTaggedUsersFromText(headers map[string]interface{}, text string) []string {
-	var taggedUsers []string
+	taggedUsers, userUniqueIds := []string{}, []string{}
 
 	// Get user unique id from member route using regex
 	pattern, _ := regexp.Compile("route://[member member_profile]+/([a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12})")
@@ -564,14 +564,8 @@ func getTaggedUsersFromText(headers map[string]interface{}, text string) []strin
 
 	// Get valid user unique ids by calling internal users meta api
 	if len(taggedUsers) > 0 {
-
-		user_unique_ids, err := utility.FetchUserUniqueIdsFromAnyUserIds(headers, taggedUsers)
-		if err != nil {
-			return user_unique_ids
-		}
-
-		return user_unique_ids
+		userUniqueIds, _ = utility.FetchUserUniqueIdsFromAnyUserIds(headers, taggedUsers)
 	}
 
-	return []string{}
+	return userUniqueIds
 }

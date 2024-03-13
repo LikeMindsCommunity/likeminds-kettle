@@ -14,10 +14,10 @@ import (
 )
 
 type RemoveMemberRequest struct {
-	MemberIds []string `json:"member_ids,omitempty"`
-	UUIDs     []string `json:"uuids,omitempty"`
-	TagID     int32    `json:"tag_id"`
-	Reason    string   `json:"reason"`
+	MemberIds interface{} `json:"member_ids,omitempty"`
+	UUIDs     interface{} `json:"uuids,omitempty"`
+	TagID     int32       `json:"tag_id"`
+	Reason    string      `json:"reason"`
 }
 
 // RemoveMember is used to remove a member from community
@@ -50,7 +50,7 @@ func RemoveMember(c *gin.Context) {
 		}
 
 		if len(user_unique_ids) == 0 {
-			utils.GeneralAPIError(c, fmt.Sprintf("No user found with the given member/uuids ids"))
+			utils.GeneralAPIError(c, utils.ErrorNoUserFoundWithGivenIds)
 			return
 		}
 
@@ -67,7 +67,7 @@ func RemoveMember(c *gin.Context) {
 	}
 
 	// If request is for self removal, then add user id to the list
-	if len(removeMemberRequest.MemberIds) == 0 {
+	if removeMemberRequest.MemberIds == nil {
 		removeMemberRequest.MemberIds = []string{userId}
 	}
 	// create body for user data

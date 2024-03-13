@@ -44,7 +44,7 @@ func DeleteCache(c *gin.Context) {
 	for _, keyPattern := range dcr.KeyPatterns {
 
 		// Get all keys matching the pattern
-		keys, err := cache.Keys(redisClient, keyPattern)
+		keys, err := cache.GetKeys(redisClient, keyPattern)
 		if err != nil {
 			utils.GeneralAPIError(c, err.Error())
 			return

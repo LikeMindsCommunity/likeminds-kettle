@@ -49,7 +49,7 @@ func fetchmembersMetaFromCache(redisClient *redis.Client, communityId int, userU
 	}
 
 	// Fetch keys from cache
-	values, err := cache.MGet(redisClient, cachKeys...)
+	values, err := cache.GetFromMultipleKeys(redisClient, cachKeys...)
 	if err != nil {
 		return nil, nil, err
 	}

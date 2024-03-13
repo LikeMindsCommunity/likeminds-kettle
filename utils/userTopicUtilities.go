@@ -32,7 +32,7 @@ func fetchUserTopicsFromCache(redisClient *redis.Client, communityId int, userUn
 	}
 
 	// Fetch keys from cache
-	values, err := cache.MGet(redisClient, userTopicsCacheKeys...)
+	values, err := cache.GetFromMultipleKeys(redisClient, userTopicsCacheKeys...)
 	if err != nil {
 		return nil, nil, err
 	}
