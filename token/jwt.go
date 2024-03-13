@@ -281,7 +281,7 @@ func ExtractLTM(bearerToken string) (*LoginTokenMeta, error) {
 		}
 		isGuest, ok := claims["is_guest"].(bool)
 		if !ok {
-			return nil, errors.New("user_unique_id is empty")
+			return nil, errors.New("is_guest is empty")
 		}
 		apiKey, _ := claims["api_key"].(string)
 		return &LoginTokenMeta{
@@ -317,7 +317,7 @@ func ExtractRTM(bearerToken string) (*RefreshTokenMeta, error) {
 		}
 		isGuest, ok := claims["is_guest"].(bool)
 		if !ok {
-			return nil, errors.New("user_unique_id is empty")
+			return nil, errors.New("is_guest is empty")
 		}
 		apiKey, _ := claims["api_key"].(string)
 		return &RefreshTokenMeta{
