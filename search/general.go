@@ -22,6 +22,8 @@ func GeneralSearch(c *gin.Context) {
 		return
 	}
 
+	headers := utils.CreateHeaders(c, userId)
+
 	//Fetch member access to view post
 	success, response := user.FetchMemberAccess(c, feed.VIEW_POST_ACTION, userId)
 	if !success {
@@ -47,7 +49,7 @@ func GeneralSearch(c *gin.Context) {
 
 	params[ParamSearchType] = "title"
 	//Send Request to fetch the chatroom search results
-	respBytes, _, _ := utils.GetRequestResponseWithoutContext(utils.CoreService, chatroom.ChatroomSearchEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, _, _ := utils.GetRequestResponseWithoutContext(utils.CoreService, chatroom.ChatroomSearchEndPoint, utils.GETRequest, headers, params, nil)
 
 	var apiCR1 api_client.APIClientResponse
 	err := api_client.UnmarshalAPIClientResponse(respBytes, &apiCR1)
@@ -56,7 +58,7 @@ func GeneralSearch(c *gin.Context) {
 	}
 
 	//Send Request to fetch the message search results
-	respBytes, _, _ = utils.GetRequestResponseWithoutContext(utils.CoreService, conversation.ConversationSearchEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, _, _ = utils.GetRequestResponseWithoutContext(utils.CoreService, conversation.ConversationSearchEndPoint, utils.GETRequest, headers, params, nil)
 
 	var apiCR2 api_client.APIClientResponse
 	err = api_client.UnmarshalAPIClientResponse(respBytes, &apiCR2)
@@ -67,7 +69,7 @@ func GeneralSearch(c *gin.Context) {
 	//Send Request to fetch the post search results
 
 	//Send Request to get excluded chatrooms list on Caravan Service
-	respBytes, _, _ = utils.GetRequestResponseWithoutContext(utils.CoreService, community.CommunityExcludedChatroomsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+	respBytes, _, _ = utils.GetRequestResponseWithoutContext(utils.CoreService, community.CommunityExcludedChatroomsEndPoint, utils.GETRequest, headers, nil, nil)
 
 	var apiCR3 api_client.APIClientResponse
 	excludedChatroomIds := []int{}
@@ -87,7 +89,7 @@ func GeneralSearch(c *gin.Context) {
 		params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
 		//Send Request
-		respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, PostSearchEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, PostSearchEndPoint, utils.GETRequest, headers, params, nil)
 
 		//Validate response
 		apiCR := utils.ValidateClientResponseWithoutContext(respBytes, statusCode, err)
@@ -103,7 +105,9 @@ func GeneralSearch(c *gin.Context) {
 
 				posts := value.([]interface{})
 
-				user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts, dataResponse)
+				redisClient := utils.GetRedisClientFromContext(c)
+
+				user_data, userUniqueIds, err := utils.GetUsersMetaFromFeedData(redisClient, headers, posts, dataResponse)
 
 				if err != nil {
 					utils.GenerateResponse(c, nil, false)
@@ -112,9 +116,13 @@ func GeneralSearch(c *gin.Context) {
 
 				//Update user data in dataResponse
 				dataResponse["users"] = user_data
+
+				// if user Topics connection is enabled, fetch and update related data
+				if utils.UserTopicsConnectionEnabled(redisClient, headers) {
+					dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
+				}
 			}
 		}
-
 	}
 
 	//Generate Response

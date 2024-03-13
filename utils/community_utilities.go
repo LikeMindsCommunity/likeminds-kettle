@@ -119,38 +119,6 @@ func getCommunityConfigurationInternal(headers map[string]interface{}, configura
 	return &communityConfiguration, nil
 }
 
-// GetCommunitySettingsInternal | fetch community setting for application internal use
-func GetCommunitySettingsInternal(headers map[string]interface{}) ([]CommunitySetting, error) {
-
-	// Send request to internal service
-	respBytes, statusCode, err := GetRequestResponseWithoutContext(CoreService, FetchCommunitySettingsEndpoint, GETRequest, headers, nil, nil)
-	if err != nil || statusCode != http.StatusOK {
-		return nil, err
-	}
-
-	// Parse response
-	var csr CommunitySettingsResponse
-	if err = json.Unmarshal(respBytes, &csr); err != nil {
-		return nil, err
-	}
-
-	if len(csr.CommunitySettings) == 0 {
-		return nil, errors.New(ErrorCommunitySettingsNotFound)
-	}
-
-	return csr.CommunitySettings, nil
-}
-
-// CheckCommunitySettingEnabled | check is setting type is enabled in the community
-func CheckCommunitySettingEnabled(communitySettings []CommunitySetting, settingType string) bool {
-	for _, setting := range communitySettings {
-		if setting.SettingType == settingType {
-			return setting.IsEnabled
-		}
-	}
-	return false
-}
-
 // utility method to fetch profile_meta configurations from Cache
 func fetchProfileMetaConfigfromCache(redisClient *redis.Client, apiKey string) (*CommunityConfiguration, bool, error) {
 
@@ -188,8 +156,123 @@ func setProfileMetaConfigInCache(redisClient *redis.Client, apiKey string, profi
 		logging.Error(fmt.Sprintf("Error while Saving profile_meta configurations in cache for api-key: %s", apiKey))
 		return err
 	}
-
 	logging.Info(fmt.Sprintf("Saved profile_meta configurations in cache for api-key: %s", apiKey))
-
 	return nil
+}
+
+func fetchCommunitySettingsFromCache(redisClient *redis.Client, communityId int) []CommunitySetting {
+
+	cacheKey := fmt.Sprintf(cache.CommunitySettingsCacheKey, communityId)
+	value, exists, _ := cache.Get(redisClient, cacheKey)
+	if !exists {
+		logging.Error(fmt.Sprintf("Community settings not found in cache for communityId: %d", communityId))
+		return nil
+	}
+
+	var communitySettings []CommunitySetting
+	err := json.Unmarshal([]byte(value), &communitySettings)
+	if err != nil {
+		return nil
+	}
+
+	return communitySettings
+}
+
+func saveCommunitySettingsInCache(redisClient *redis.Client, communityId int, communitySettings []CommunitySetting) error {
+
+	cacheKey := fmt.Sprintf(cache.CommunitySettingsCacheKey, communityId)
+	parsedCommunitySettings, err := json.Marshal(communitySettings)
+	if err != nil {
+		return err
+	}
+
+	err = cache.Set(redisClient, cacheKey, parsedCommunitySettings, cache.CommunitySettingsCacheTTL*time.Hour)
+	if err != nil {
+		logging.Error(fmt.Sprintf("Error while Saving community settings in cache for communityId: %d, err: %v", communityId, err))
+		return err
+	}
+	logging.Info(fmt.Sprintf("Saved community settings in cache for communityId: %d", communityId))
+	return nil
+}
+
+// fetch community setting for application internal use
+func getCommunitySettingsFromApi(headers map[string]interface{}) ([]CommunitySetting, error) {
+
+	// Send request to internal service
+	respBytes, statusCode, err := GetRequestResponseWithoutContext(CoreService, FetchCommunitySettingsEndpoint, GETRequest, headers, nil, nil)
+	if err != nil || statusCode != http.StatusOK {
+		return nil, err
+	}
+
+	// Parse response
+	var csr CommunitySettingsResponse
+	if err = json.Unmarshal(respBytes, &csr); err != nil {
+		return nil, err
+	}
+
+	if len(csr.CommunitySettings) == 0 {
+		return nil, errors.New(ErrorCommunitySettingsNotFound)
+	}
+
+	return csr.CommunitySettings, nil
+}
+
+// method to fecth CommunitySettings
+func fetchCommunitySettings(redisClient *redis.Client, headers map[string]interface{}) ([]CommunitySetting, error) {
+
+	// Fetch communityId from ApiKey
+	communityId, err := FetchCommunityIdFromApiKey(redisClient, headers[HeadersApiKey].(string))
+	if err != nil {
+		return nil, err
+	}
+
+	// fetch communitySettings from cache
+	communitySettings := fetchCommunitySettingsFromCache(redisClient, communityId)
+	if communitySettings != nil {
+
+		// fetch from api if not found in cache
+		communitySettings, err := getCommunitySettingsFromApi(headers)
+		if err != nil {
+			return nil, err
+		}
+
+		// save in cache
+		go saveCommunitySettingsInCache(redisClient, communityId, communitySettings)
+	}
+
+	return communitySettings, nil
+}
+
+// check is setting type is enabled in the community
+func checkCommunitySettingEnabled(communitySettings []CommunitySetting, settingType string) bool {
+	for _, setting := range communitySettings {
+		if setting.SettingType == settingType {
+			return setting.IsEnabled
+		}
+	}
+	return false
+}
+
+// Exposed method to check if feed repost is enabled for a community
+func FeedRepostSettingsEnabled(redisClient *redis.Client, headers map[string]interface{}) bool {
+
+	communitySettings, err := fetchCommunitySettings(redisClient, headers)
+	if err != nil {
+		logging.Error(fmt.Sprintf("Error while fetching community settings, err: %v", err))
+		return false
+	}
+
+	return checkCommunitySettingEnabled(communitySettings, FeedRepostCommunitySettingType)
+}
+
+// Exposed method to check if user topics connection is enabled for a community
+func UserTopicsConnectionEnabled(redisClient *redis.Client, headers map[string]interface{}) bool {
+
+	communitySettings, err := fetchCommunitySettings(redisClient, headers)
+	if err != nil {
+		logging.Error(fmt.Sprintf("Error while fetching community settings, err: %v", err))
+		return false
+	}
+
+	return checkCommunitySettingEnabled(communitySettings, UserTopicsConnectionSettingType)
 }

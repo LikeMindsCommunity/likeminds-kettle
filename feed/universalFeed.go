@@ -16,6 +16,8 @@ func FetchUniversalFeed(c *gin.Context) {
 		return
 	}
 
+	headers := utils.CreateHeaders(c, userId)
+
 	//Params to be sent in the /feed/universal request
 	params := map[string]string{
 		ParamPage:      c.Query(ParamPage),
@@ -40,7 +42,7 @@ func FetchUniversalFeed(c *gin.Context) {
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchUniversalFeedEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchUniversalFeedEndPoint, utils.GETRequest, headers, params, nil)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
@@ -62,7 +64,9 @@ func FetchUniversalFeed(c *gin.Context) {
 			}
 		}
 
-		user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts, dataResponse)
+		redisClient := utils.GetRedisClientFromContext(c)
+
+		user_data, userUniqueIds, err := utils.GetUsersMetaFromFeedData(redisClient, headers, posts, dataResponse)
 		if err != nil {
 			utils.GenerateResponse(c, nil, false)
 			return
@@ -70,6 +74,11 @@ func FetchUniversalFeed(c *gin.Context) {
 
 		//Update user data in dataResponse
 		dataResponse["users"] = user_data
+
+		// if user Topics connection is enabled, fetch and update related data
+		if utils.UserTopicsConnectionEnabled(redisClient, headers) {
+			dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
+		}
 	}
 
 	//Send response

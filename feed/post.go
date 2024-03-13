@@ -188,11 +188,13 @@ func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{
 
 		// Get userId
 		userId := user.GetRequestingUserId(c)
+		redisClient := utils.GetRedisClientFromContext(c)
+		headers := utils.CreateHeaders(c, userId)
 
 		//Fetch user data for given user_unique_ids
-		user_data, err := user.FetchMemberMeta(utils.CreateHeaders(c, userId), user_ids)
+		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_ids)
 		if err != nil {
-			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
+			utils.GeneralAPIError(c, utils.ErrorFetchingUserData)
 			return nil
 		}
 
@@ -208,6 +210,11 @@ func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{
 
 		//Update user data in dataResponse
 		dataResponse["users"] = user_data
+
+		// if user Topics connection is enabled, fetch and update related data
+		if utils.UserTopicsConnectionEnabled(redisClient, headers) {
+			dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
+		}
 	}
 
 	return dataResponse
@@ -338,11 +345,7 @@ func createPostInternal(c *gin.Context, userId string) {
 	createPostRequest.UserIsCm = response.IsCm
 
 	if createPostRequest.IsRepost {
-		communitySettings, err := utils.GetCommunitySettingsInternal(headers)
-		if err != nil {
-		}
-
-		if !utils.CheckCommunitySettingEnabled(communitySettings, FeedRepostCommunitySettingType) {
+		if !utils.FeedRepostSettingsEnabled(utils.GetRedisClientFromContext(c), headers) {
 			utils.GeneralBadRequestError(c, utils.ErrorRepostSettingNotEnabled)
 			return
 		}
@@ -541,7 +544,7 @@ func deletePostInternal(c *gin.Context, userId string) {
 }
 
 func getTaggedUsersFromText(headers map[string]interface{}, text string) []string {
-	var taggedUsers []interface{}
+	taggedUsers, userUniqueIds := []string{}, []string{}
 
 	// Get user unique id from member route using regex
 	pattern, _ := regexp.Compile("route://[member member_profile]+/([a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12})")
@@ -559,22 +562,10 @@ func getTaggedUsersFromText(headers map[string]interface{}, text string) []strin
 		taggedUsers = append(taggedUsers, occurance[1])
 	}
 
-	var user_unique_ids []string
-
 	// Get valid user unique ids by calling internal users meta api
 	if len(taggedUsers) > 0 {
-
-		user_unique_ids_info, err := utility.GetUsersInfoInternally(headers, taggedUsers, true)
-
-		if err != nil {
-			return user_unique_ids
-		}
-
-		// Type cast inteface{} to string array
-		for _, uuid := range user_unique_ids_info.([]interface{}) {
-			user_unique_ids = append(user_unique_ids, uuid.(string))
-		}
+		userUniqueIds, _ = utility.FetchUserUniqueIdsFromAnyUserIds(headers, taggedUsers)
 	}
 
-	return user_unique_ids
+	return userUniqueIds
 }

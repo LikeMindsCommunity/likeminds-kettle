@@ -60,6 +60,9 @@ func PollVote(c *gin.Context, method int) {
 }
 
 func getPollVotesInternal(c *gin.Context, userId string, endPoint string) {
+
+	headers := utils.CreateHeaders(c, userId)
+
 	//Params to be sent in the /poll/<poll_id>/vote request
 	params := map[string]string{
 		ParamVotes: c.Query(ParamVotes),
@@ -78,7 +81,7 @@ func getPollVotesInternal(c *gin.Context, userId string, endPoint string) {
 	}
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endPoint, utils.GETRequest, headers, params, nil)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
@@ -107,8 +110,10 @@ func getPollVotesInternal(c *gin.Context, userId string, endPoint string) {
 			}
 		}
 
+		redisClient := utils.GetRedisClientFromContext(c)
+
 		//Fetch user data for given user_unique_ids
-		userData, err := user.FetchMemberMeta(utils.CreateHeaders(c, userId), userIds)
+		userData, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, userIds)
 		if err != nil {
 			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 			return
@@ -116,6 +121,11 @@ func getPollVotesInternal(c *gin.Context, userId string, endPoint string) {
 
 		//Update user data in dataResponse
 		dataResponse["users"] = userData
+
+		// if user Topics connection is enabled, fetch and update related data
+		if utils.UserTopicsConnectionEnabled(redisClient, headers) {
+			dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userIds)
+		}
 	}
 
 	//Send response
