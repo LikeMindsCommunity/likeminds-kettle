@@ -228,10 +228,10 @@ func fetchCommunitySettings(redisClient *redis.Client, headers map[string]interf
 
 	// fetch communitySettings from cache
 	communitySettings := fetchCommunitySettingsFromCache(redisClient, communityId)
-	if communitySettings != nil {
+	if communitySettings == nil {
 
 		// fetch from api if not found in cache
-		communitySettings, err := getCommunitySettingsFromApi(headers)
+		communitySettings, err = getCommunitySettingsFromApi(headers)
 		if err != nil {
 			return nil, err
 		}
