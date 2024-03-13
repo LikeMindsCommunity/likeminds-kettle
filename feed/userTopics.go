@@ -43,6 +43,12 @@ func userTopics(c *gin.Context, method int) {
 		return
 	}
 
+	// Check if user topics are enabled
+	if !utils.UserTopicsConnectionEnabled(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId)) {
+		utils.GeneralBadRequestError(c, utils.ErrorUserTopicsSettingsNotEnabled)
+		return
+	}
+
 	//Fetch member access if user is a member
 	success, response := user.FetchMemberAccess(c, IS_MEMBER, userId)
 	if !success {
