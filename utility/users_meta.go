@@ -1,6 +1,7 @@
 package utility
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -13,77 +14,85 @@ type UserInfo struct {
 }
 
 type UsersInfo struct {
-	Users []UserInfo `json:"users"`
+	Success      bool       `json:"success"`
+	ErrorMessage string     `json:"error_message"`
+	Users        []UserInfo `json:"users"`
 }
 
-func GetUsersInfoInternally(headers map[string]interface{}, member_ids []interface{}, only_user_unique_ids bool) (interface{}, error) {
-
-	var response []interface{}
-
-	if len(member_ids) == 0 {
-		return response, nil
-	}
-
-	// Create request param to member_profile
-	params := map[string]string{
-		ParamMemberIDs: utils.ParseArrayToString(member_ids),
-	}
+func getUsersInfoInternal(headers map[string]interface{}, params map[string]string) ([]UserInfo, error) {
 
 	// Internally call /api/community/users
-	respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, UserMetaInfoInternalEndpoint, utils.GETRequest, headers, params, nil)
-
+	respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.CoreService, UserMetaInfoInternalEndpoint, utils.GETRequest, headers, params, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	dataResponse := utils.ValidateClientResponseWithoutContext(respBytes, statusCode, err)
-
-	// Parse response
-	if dataResponse != nil {
-		user_data, ok := dataResponse["users"]
-
-		if !ok {
-			return response, nil
-		}
-
-		if only_user_unique_ids {
-
-			for _, v := range user_data.([]interface{}) {
-				user_unique_id, ok := v.(map[string]interface{})["user_unique_id"]
-
-				if ok {
-					response = append(response, user_unique_id.(string))
-				}
-			}
-
-		} else {
-			response = user_data.([]interface{})
-		}
+	// unmarshal response
+	var usersInfo UsersInfo
+	if err := json.Unmarshal(respBytes, &usersInfo); err != nil {
+		return nil, err
 	}
 
-	return response, nil
+	// check if response is successful
+	if !usersInfo.Success {
+		return nil, fmt.Errorf(usersInfo.ErrorMessage)
+	}
 
+	// return users info
+	return usersInfo.Users, nil
 }
 
+// External method to fetch user_unique_ids from user_ids, uuids or client_uuids
+func FetchUserUniqueIdsFromAnyUserIds(headers map[string]interface{}, userIds interface{}) ([]string, error) {
+
+	params := map[string]string{}
+
+	// type assert userIds and set params
+	switch userIds := userIds.(type) {
+	case []string:
+		if len(userIds) == 0 {
+			return nil, fmt.Errorf("userIds cannot be empty")
+		}
+		params[ParamMemberIDs] = utils.ParseStringArrayToString(userIds)
+	case []interface{}:
+		if len(userIds) == 0 {
+			return nil, fmt.Errorf("userIds cannot be empty")
+		}
+		params[ParamMemberIDs] = utils.ParseArrayToString(userIds)
+	case string:
+		if userIds == "" {
+			return nil, fmt.Errorf("userIds cannot be empty")
+		}
+		params[ParamMemberIDs] = userIds
+	}
+
+	usersInfo, err := getUsersInfoInternal(headers, params)
+	if err != nil {
+		return nil, err
+	}
+
+	user_unique_ids := []string{}
+	for _, userInfo := range usersInfo {
+		user_unique_ids = append(user_unique_ids, userInfo.UserUniqueID)
+	}
+
+	return user_unique_ids, nil
+}
+
+// GetUUIDInternally is used to get user_unique_id from user_id
 func GetUUIDInternally(headers map[string]interface{}, user_id string) (string, error) {
 
-	member_ids := []interface{}{user_id}
-	user_unique_id := ""
+	member_ids := []string{user_id}
 
 	//Get user_unique_id by calling internal core service
-	user_unique_ids_info, err := GetUsersInfoInternally(headers, member_ids, true)
+	user_unique_ids, err := FetchUserUniqueIdsFromAnyUserIds(headers, member_ids)
 	if err != nil {
 		return "", err
 	}
 
-	uuids := user_unique_ids_info.([]interface{})
-
-	//If user_unique_id not found return error
-	if len(uuids) > 0 {
-		user_unique_id = uuids[0].(string)
-	} else {
+	if len(user_unique_ids) == 0 {
 		return "", fmt.Errorf(utils.ErrorInvalidUserId)
 	}
 
-	return user_unique_id, nil
+	return user_unique_ids[0], nil
 }

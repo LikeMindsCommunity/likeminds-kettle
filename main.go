@@ -3,13 +3,14 @@ package main
 import (
 	"fmt"
 
+	"github.com/nateshr/likeminds-authentication/internalServices"
+	"github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/middleware"
 	"github.com/nateshr/likeminds-authentication/poll"
 	"github.com/nateshr/likeminds-authentication/utility/logger"
 	"github.com/nateshr/likeminds-authentication/utility/monitoring"
 	"github.com/nateshr/likeminds-authentication/webhook"
 
-	log "github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/widget"
 
 	"github.com/gin-contrib/cors"
@@ -39,7 +40,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.22.0"
+	var AppVersion string = "2.23.0"
 
 	initGin()
 	redisClient = cache.InitRedis()
@@ -254,6 +255,7 @@ func main() {
 	router.GET("/feed/post/:post_id/comment/:comment_id/like", middleware.LTMValidationMiddleware(redisClient), feed.GetCommentLikes)
 	router.GET("/feed/user/:user_id/save", middleware.LTMValidationMiddleware(redisClient), feed.GetSavedPosts)
 	router.GET("/feed/user/:user_id/post", middleware.LTMValidationMiddleware(redisClient), feed.FetchUserCreatedPosts)
+	router.GET("/feed/user/:user_id/comment", middleware.LTMValidationMiddleware(redisClient), feed.GetUserComments)
 	router.GET("/feed/user/activity", middleware.LTMValidationMiddleware(redisClient), feed.GetUserActivity)
 	router.GET("/feed/user/:user_id/activity", middleware.LTMValidationMiddleware(redisClient), feed.FetchUserProfileActivity)
 	router.POST("/feed/user/:user_id/activity", middleware.LTMValidationMiddleware(redisClient), feed.CreateUserActivity)
@@ -268,6 +270,8 @@ func main() {
 	router.PUT("/feed/topic/:topic_id", middleware.LTMValidationMiddleware(redisClient), feed.EditTopic)
 	router.GET("/feed/connection", middleware.LTMValidationMiddleware(redisClient), feed.GetConnectionFeed)
 	router.POST("feed/post/pending", middleware.LTMValidationMiddleware(redisClient), feed.CreatePendingPost)
+	router.GET("/feed/user/topics", middleware.LTMValidationMiddleware(redisClient), feed.FetchUsersTopics)
+	router.PATCH("/feed/user/:uuid/topics", middleware.LTMValidationMiddleware(redisClient), feed.UpdateUserTopics)
 
 	// Utility Apis
 	router.GET("/helper/url", middleware.LTMValidationMiddleware(redisClient), utility.DecodeUrl)
@@ -329,9 +333,12 @@ func main() {
 	// Logging Apis
 	router.POST("/logs", middleware.LTMValidationMiddleware(redisClient), logger.PushLogs)
 
-	log.Info(fmt.Sprintf("application version: %s", AppVersion))
+	// Internal Apis
+	router.DELETE("/cache", middleware.InternalServiceValidationMiddleware(), internalServices.DeleteCache)
+
+	logging.Info(fmt.Sprintf("application version: %s", AppVersion))
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
-	log.Fatal(router.Run(":8080"))
+	logging.Fatal(router.Run(":8080"))
 }
 
 func initGin() {
@@ -362,7 +369,7 @@ func enableCors() cors.Config {
 func getPrometheusMetricService() *monitoring.PrometheusService {
 	prometheusService, err := monitoring.NewPrometheusService()
 	if err != nil {
-		log.Fatal(err.Error())
+		logging.Fatal(err.Error())
 		return nil
 	}
 	return prometheusService
