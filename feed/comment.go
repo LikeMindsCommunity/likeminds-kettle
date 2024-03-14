@@ -29,12 +29,12 @@ func populateCommentDataResponse(c *gin.Context, dataResponse map[string]interfa
 		comment_data := value.(map[string]interface{})
 		user_ids := []string{}
 
-		//Fetch comment user id
+		// Fetch comment user id
 		if comment_user_unique_id, ok := comment_data["uuid"]; ok {
 			user_ids = append(user_ids, comment_user_unique_id.(string))
 		}
 
-		//Fetch replies user id
+		// Fetch replies user id
 		if replies, ok := comment_data["replies"]; ok {
 			for _, reply_data := range replies.([]interface{}) {
 				if user_unique_id, ok := reply_data.(map[string]interface{})["uuid"]; ok {
@@ -48,7 +48,7 @@ func populateCommentDataResponse(c *gin.Context, dataResponse map[string]interfa
 		headers := utils.CreateHeaders(c, userId)
 		redisClient := utils.GetRedisClientFromContext(c)
 
-		//Fetch user data for given user_unique_ids
+		// Fetch user data for given user_unique_ids
 		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_ids)
 		if err != nil {
 			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
@@ -57,7 +57,7 @@ func populateCommentDataResponse(c *gin.Context, dataResponse map[string]interfa
 
 		var comment_user utils.MemberMeta
 
-		//Validation of comment based on community member
+		// Validation of comment based on community member
 		comment_user_unique_id, ok := comment_data["uuid"]
 		if ok {
 			comment_user, ok = user_data[comment_user_unique_id.(string)]
@@ -68,13 +68,11 @@ func populateCommentDataResponse(c *gin.Context, dataResponse map[string]interfa
 			return nil
 		}
 
-		//Update users data in dataResponse
+		// Update users data in dataResponse
 		dataResponse["users"] = user_data
 
-		// if user Topics connection is enabled, fetch and update related data
-		if utils.UserTopicsConnectionEnabled(redisClient, headers) {
-			dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
-		}
+		// Update user topics data in dataResponse
+		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
 	}
 
 	return dataResponse

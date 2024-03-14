@@ -196,7 +196,7 @@ func getReportsInternal(c *gin.Context, userId string) {
 	if reports, ok := dataResponse["reports"]; ok {
 
 		// Get Posts & comments data for the reports
-		posts, comments, topics, widgets, users, repostedPosts := fetchReportsEntityData(c, userId, reports.([]interface{}))
+		userUniqueIds, posts, comments, topics, widgets, users, repostedPosts := fetchReportsEntityData(c, userId, reports.([]interface{}))
 
 		// Add data to response if not empty
 		if posts != nil {
@@ -220,15 +220,8 @@ func getReportsInternal(c *gin.Context, userId string) {
 
 		redisClient := utils.GetRedisClientFromContext(c)
 
-		// if user Topics connection is enabled, fetch and update related data
-		if utils.UserTopicsConnectionEnabled(redisClient, headers) {
-			userUniqueIds := []string{}
-			for _, user := range users {
-				userUniqueIds = append(userUniqueIds, user.UserUniqueId)
-			}
-			dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
-		}
-
+		// Update user topics data in dataResponse
+		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
 	}
 
 	//Generate response
@@ -294,8 +287,8 @@ func updateReportsInternal(c *gin.Context, userId string) {
 }
 
 // Internal method to fetch posts and comments data for the reports
-func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}) (map[string]interface{}, map[string]interface{},
-	map[string]interface{}, map[string]interface{}, map[string]utils.MemberMeta, map[string]interface{}) {
+func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}) ([]string, map[string]interface{},
+	map[string]interface{}, map[string]interface{}, map[string]interface{}, map[string]utils.MemberMeta, map[string]interface{}) {
 
 	var post_ids []string
 	var pending_post_ids []string
@@ -423,6 +416,6 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 		}
 	}
 
-	return posts, comments, topics, widgets, users, repostedPosts
+	return user_ids, posts, comments, topics, widgets, users, repostedPosts
 
 }

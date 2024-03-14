@@ -87,8 +87,10 @@ func getCommentLikesInternal(c *gin.Context, userId string, endPoint string) {
 			}
 		}
 
+		redisClient := utils.GetRedisClientFromContext(c)
+
 		//Fetch user data for given user_unique_ids
-		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(utils.GetRedisClientFromContext(c), headers, user_ids)
+		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_ids)
 		if err != nil {
 			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 			return
@@ -97,11 +99,8 @@ func getCommentLikesInternal(c *gin.Context, userId string, endPoint string) {
 		//Update user data in dataResponse
 		dataResponse["users"] = user_data
 
-		redisClient := utils.GetRedisClientFromContext(c)
-		// if user Topics connection is enabled, fetch and update related data
-		if utils.UserTopicsConnectionEnabled(redisClient, headers) {
-			dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
-		}
+		// Update user topics data in dataResponse
+		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
 	}
 
 	//Send response
