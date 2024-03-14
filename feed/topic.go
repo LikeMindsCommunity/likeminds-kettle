@@ -29,7 +29,7 @@ type DeleteTopicsRequest struct {
 type EditTopicRequest struct {
 	Name         string                 `json:"name"`
 	IsEnabled    *bool                  `json:"is_enabled"`
-	Priority     float32                `json:"priority"`
+	Priority     *float32               `json:"priority"`
 	IsSearchable *bool                  `json:"is_searchable"`
 	Metadata     map[string]interface{} `json:"metadata"`
 }
