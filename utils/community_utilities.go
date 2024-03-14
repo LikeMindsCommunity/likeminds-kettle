@@ -42,17 +42,17 @@ func IsProfileWidgetsEnabled(c *gin.Context, userId string) (bool, error) {
 
 	headers := CreateHeaders(c, userId)
 
-	apiKey := headers[HeadersApiKey].(string)
-	if apiKey == "" {
-		return false, errors.New(ErrorApiKeyNotFound)
-	}
-
 	redisClient := GetRedisClientFromContext(c)
 	if redisClient == nil {
-		return false, errors.New(ErrorRedisClientFailed)
+		return false, fmt.Errorf(ErrorRedisClientFailed)
 	}
 
-	profileMetaConfigurations, err := getProfileMetaConfig(redisClient, headers, apiKey)
+	communityId, err := FetchCommunityIdFromApiKey(redisClient, headers[HeadersApiKey].(string))
+	if err != nil {
+		return false, err
+	}
+
+	profileMetaConfigurations, err := getProfileMetaConfig(redisClient, headers, communityId)
 	if err != nil || profileMetaConfigurations == nil {
 		return false, err
 	}
@@ -67,9 +67,9 @@ func IsProfileWidgetsEnabled(c *gin.Context, userId string) (bool, error) {
 }
 
 // utility method to fetch community configurations from Cache and if not, fetch from Core Service and updates cache
-func getProfileMetaConfig(redisClient *redis.Client, headers map[string]interface{}, apiKey string) (*CommunityConfiguration, error) {
+func getProfileMetaConfig(redisClient *redis.Client, headers map[string]interface{}, communityId int) (*CommunityConfiguration, error) {
 
-	profileMetaConfig, exists, err := fetchProfileMetaConfigfromCache(redisClient, apiKey)
+	profileMetaConfig, exists, err := fetchProfileMetaConfigfromCache(redisClient, communityId)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func getProfileMetaConfig(redisClient *redis.Client, headers map[string]interfac
 		}
 
 		// Save data to cache
-		setProfileMetaConfigInCache(redisClient, apiKey, profileMetaConfig)
+		setProfileMetaConfigInCache(redisClient, communityId, profileMetaConfig)
 
 	}
 
@@ -120,14 +120,14 @@ func getCommunityConfigurationInternal(headers map[string]interface{}, configura
 }
 
 // utility method to fetch profile_meta configurations from Cache
-func fetchProfileMetaConfigfromCache(redisClient *redis.Client, apiKey string) (*CommunityConfiguration, bool, error) {
+func fetchProfileMetaConfigfromCache(redisClient *redis.Client, communityId int) (*CommunityConfiguration, bool, error) {
 
-	cacheKey := fmt.Sprintf(cache.ProfileMetaConfigurationsCacheKey, apiKey)
+	cacheKey := fmt.Sprintf(cache.ProfileMetaConfigurationsCacheKey, communityId)
 
 	//Fetch profile_meta configurations from cache
 	profileMetaValue, exists, err := cache.Get(redisClient, cacheKey)
 	if !exists {
-		logging.Error(fmt.Sprintf("profile_meta configurations not found in cache for api-key: %s", apiKey))
+		logging.Error(fmt.Sprintf("profile_meta configurations not found in cache for community_id: %d", communityId))
 		return nil, exists, err
 	}
 
@@ -141,9 +141,9 @@ func fetchProfileMetaConfigfromCache(redisClient *redis.Client, apiKey string) (
 }
 
 // utility method to save profile_meta configurations in Cache
-func setProfileMetaConfigInCache(redisClient *redis.Client, apiKey string, profileMetaConfigurations *CommunityConfiguration) error {
+func setProfileMetaConfigInCache(redisClient *redis.Client, communityId int, profileMetaConfigurations *CommunityConfiguration) error {
 
-	cacheKey := fmt.Sprintf(cache.ProfileMetaConfigurationsCacheKey, apiKey)
+	cacheKey := fmt.Sprintf(cache.ProfileMetaConfigurationsCacheKey, communityId)
 
 	//Save profile_meta configurations in cache
 	parsedProfileMeta, err := json.Marshal(profileMetaConfigurations)
@@ -153,10 +153,10 @@ func setProfileMetaConfigInCache(redisClient *redis.Client, apiKey string, profi
 
 	err = cache.Set(redisClient, cacheKey, parsedProfileMeta, cache.ProfileMetaConfigurationsCacheTTL*time.Hour)
 	if err != nil {
-		logging.Error(fmt.Sprintf("Error while Saving profile_meta configurations in cache for api-key: %s", apiKey))
+		logging.Error(fmt.Sprintf("Error while Saving profile_meta configurations in cache for communityId: %d", communityId))
 		return err
 	}
-	logging.Info(fmt.Sprintf("Saved profile_meta configurations in cache for api-key: %s", apiKey))
+	logging.Info(fmt.Sprintf("Saved profile_meta configurations in cache for community_id: %d", communityId))
 	return nil
 }
 

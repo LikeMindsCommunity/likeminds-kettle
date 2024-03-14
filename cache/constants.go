@@ -8,18 +8,18 @@ const (
 // Cache Keys
 const (
 	CommunityConfigurationsCacheKey   = "%s_community_configurations"
-	ProfileMetaConfigurationsCacheKey = "%s_profile_meta_configurations"
-	CommunityIdAgainstApiKeyCacheKey  = "%s_community_id"       // apiKey
-	CommunitySettingsCacheKey         = "%d_community_settings" // communityId
-	UserMetaCacheKey                  = "%d_%s_user_meta"       // communityId userUniqueId
-	TopicMetaCacheKey                 = "%d_%s_topic_meta"      // communityId topicId
-	UserTopicsCacheKey                = "%d_%s_user_topics"     // communityId userUniqueId
-	WidgetMetaCacheKey                = "%d_%s_widget_meta"     // communityId widgetId
+	ProfileMetaConfigurationsCacheKey = "%d_profile_meta_configurations" // communityId
+	CommunityIdAgainstApiKeyCacheKey  = "%s_community_id"                // apiKey
+	CommunitySettingsCacheKey         = "%d_community_settings"          // communityId
+	UserMetaCacheKey                  = "%d_%s_user_meta"                // communityId userUniqueId
+	TopicMetaCacheKey                 = "%d_%s_topic_meta"               // communityId topicId
+	UserTopicsCacheKey                = "%d_%s_user_topics"              // communityId userUniqueId
+	WidgetMetaCacheKey                = "%d_%s_widget_meta"              // communityId widgetId
 )
 
 // Cache TTLs in hours
 const (
-	ProfileMetaConfigurationsCacheTTL = 6 // TODO: change it to 7 days
+	ProfileMetaConfigurationsCacheTTL = 7 * 24
 	CommunityIdAgainstApiKeyCacheTTL  = 30 * 24
 	CommunitySettingsCacheTTL         = 30 * 24
 	UserMetaCacheTTL                  = 7 * 24
