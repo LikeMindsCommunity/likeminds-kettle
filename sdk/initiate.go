@@ -77,11 +77,16 @@ func InitiateSDK(c *gin.Context) {
 	// Send response with login, refresh token and api/sdk/initiate response
 	dataResponse := apiCR.Response
 
+	// If flow succeeds, fetch User object
+	userObject := apiCR.Response[user.ResponseUser].(map[string]interface{})
+
 	// If flow succeeds
-	userUniqueID := apiCR.Response[user.ResponseUser].(map[string]interface{})[user.ResponseUserUniqueId].(string)
+	userUniqueID := userObject[user.ResponseUserUniqueId].(string)
+	userIsGuest := userObject[user.ResponseUserIsGuest].(bool)
 
 	// Create login and refresh token
-	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, c.GetHeader(utils.HeadersApiKey), initiateSDKRequest.TokenExpiryBeta)
+	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, c.GetHeader(utils.HeadersApiKey),
+		initiateSDKRequest.TokenExpiryBeta, userIsGuest)
 
 	if err != nil {
 		// If token creation fails

@@ -9,6 +9,7 @@ const HeadersDeviceId = "x-device-id"
 const HeadersApiKey = "x-api-key"
 const HeadersAcceptVersion = "x-accept-version"
 const HeadersApiVersion = "x-api-version"
+const HeaderMemberRole = "x-member-role"
 
 const GETMethod = 0
 const POSTMethod = 1
@@ -108,6 +109,7 @@ const ParamCommunityID = "community_id"
 const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
 const WidgetEndPoint = "/widget"
 const FetchCommunitySettingsEndpoint = "/api/community/fetch_community_settings"
+
 const FetchMembersMetaEndPoint = "/api/community/fetch_members_meta"
 const FetchTopicsEndpoint = "/topic"
 const FetchUserTopicsEndpoint = "/user/topics"
@@ -118,3 +120,9 @@ const (
 	FeedRepostCommunitySettingType  = "feed_repost"
 	UserTopicsConnectionSettingType = "user_topics_connection"
 )
+
+// Member Roles
+const (
+	GuestRole string = "GUEST"
+)
+

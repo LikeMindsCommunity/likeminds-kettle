@@ -80,9 +80,12 @@ func GetBotResponse(c *gin.Context, method int) *utils.Response {
 	//If flow succeeds
 	dataResponse := apiCR.Response
 	if createToken {
-		userID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
+		userObject := apiCR.Response[ResponseUser].(map[string]interface{})
+		userID := userObject[ResponseUserUniqueId].(string)
+		userIsGuest := userObject[ResponseUserIsGuest].(bool)
+
 		//Create login and refresh token
-		ltm, rtm, err := token.CreateLTMAndRTM(userID, "", token.BETA_AUTH_TOKEN_EXPIRY)
+		ltm, rtm, err := token.CreateLTMAndRTM(userID, "", token.BETA_AUTH_TOKEN_EXPIRY, userIsGuest)
 		if err != nil {
 			//If token creation fails
 			utils.GeneralAPIError(c, err.Error())
