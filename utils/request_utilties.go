@@ -2,8 +2,8 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
+
 	"github.com/gin-gonic/gin"
 )
 
