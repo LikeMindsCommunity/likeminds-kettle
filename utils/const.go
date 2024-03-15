@@ -103,6 +103,7 @@ const ParamParentIds = "parent_ids"
 const ParamUUIDs = "uuids"
 const ParamPageSize = "page_size"
 const ParamCommunityID = "community_id"
+const ParamTierType = "tier_type"
 
 // Endpoints
 const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
@@ -112,6 +113,8 @@ const FetchMembersMetaEndPoint = "/api/community/fetch_members_meta"
 const FetchTopicsEndpoint = "/topic"
 const FetchUserTopicsEndpoint = "/user/topics"
 const SDKAuthenticateEndPoint = "/api/sdk/authenticate"
+const TierEndpoint = "api/subcription/tiers"
+const BillingPlanEnpoint = "api/subcription/plan/billing"
 
 // Community settings type
 const (
