@@ -46,12 +46,11 @@ func ParseAndFetchProfileWidgets(c *gin.Context, userId string, dataResponse map
 
 		if len(widgetIds) > 0 {
 
-			// fetch widgets from widget ids from swarm service
-			widgets, _ := GetWidgetsFromWidgetIds(CreateHeaders(c, userId), widgetIds)
+			// fetch widgets meta for the widget ids
+			widgetsMap, _ := fetchWidgetMetaMapFromWidgetIds(GetRedisClientFromContext(c), CreateHeaders(c, userId), widgetIds)
 
-			for _, value := range widgets {
-				widgetId := value.ID
-				dataResponse["widgets"].(map[string]interface{})[widgetId] = value
+			for widgetId, widgetMeta := range widgetsMap {
+				dataResponse["widgets"].(map[string]interface{})[widgetId] = widgetMeta
 			}
 		}
 

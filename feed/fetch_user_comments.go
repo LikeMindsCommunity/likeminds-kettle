@@ -25,6 +25,8 @@ func GetUserComments(c *gin.Context) {
 		return
 	}
 
+	headers := utils.CreateHeaders(c, userId)
+
 	// Fetch member access to view post
 	success, response := user.FetchMemberAccess(c, VIEW_COMMENT_ACTION, userId)
 	if !success {
@@ -51,7 +53,7 @@ func GetUserComments(c *gin.Context) {
 	}
 
 	//Get user_unique_id from user_id internally
-	userUUID, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), userID)
+	userUUID, err := utility.GetUUIDInternally(headers, userID)
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
 		return
@@ -60,7 +62,7 @@ func GetUserComments(c *gin.Context) {
 	endpoint := fmt.Sprintf(UserCommentsEndPoint, userUUID)
 
 	// Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endpoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endpoint, utils.GETRequest, headers, params, nil)
 
 	var userCommentsAPIResponse UserCommentsAPIResponse
 	var dataResponse map[string]interface{}
@@ -83,13 +85,18 @@ func GetUserComments(c *gin.Context) {
 	// Fetch user data for given user_unique_ids
 	userIds := []string{userUUID}
 
-	user_data, err := populateUserData(c, userId, userCommentsAPIResponse.Comments, userCommentsAPIResponse.Posts, userIds)
+	user_data, userIds, err := populateUserData(c, userId, userCommentsAPIResponse.Comments, userCommentsAPIResponse.Posts, userIds)
 	if err != nil {
 		utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 		return
 	}
 
 	dataResponse["users"] = user_data
+
+	redisClient := utils.GetRedisClientFromContext(c)
+
+	// Update user topics data in dataResponse
+	dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userIds)
 
 	//Send response
 	utils.GenerateResponse(c, dataResponse, true)
@@ -110,7 +117,8 @@ func parseUserCommentsResponse(respBytes []byte, ucar *UserCommentsAPIResponse) 
 	return nil
 }
 
-func populateUserData(c *gin.Context, userId string, listData []map[string]interface{}, mapData map[string]map[string]interface{}, userIds []string) (map[string]user.MemberMeta, error) {
+func populateUserData(c *gin.Context, userId string, listData []map[string]interface{}, mapData map[string]map[string]interface{}, userIds []string,
+) (map[string]utils.MemberMeta, []string, error) {
 	userIdsMap := map[string]interface{}{}
 
 	if userIds == nil {
@@ -141,10 +149,10 @@ func populateUserData(c *gin.Context, userId string, listData []map[string]inter
 		}
 	}
 
-	user_data, err := user.FetchMemberMeta(utils.CreateHeaders(c, userId), userIds)
+	user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), userIds)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return user_data, nil
+	return user_data, userIds, nil
 }

@@ -29,6 +29,8 @@ const ErrorInvalidNotificationType = "Invalid notification type sent"
 const ErrorInvalidNotificationSettings = "Invalid notification settings sent"
 const ErrorRepostSettingNotEnabled = "cannot create repost in this community. Request community manager to enable the setting"
 const ErrorGuestAccessNotAllowed = "Guest access is not allowed!"
+const ErrorUserTopicsSettingsNotEnabled = "User topics connection settings is not enabled. Request community manager to enable the setting"
+const ErrorNoUserFoundWithGivenIds = "No user found with the given member/uuids ids"
 
 func GeneralAPIError(c *gin.Context, errorMessage string) {
 	c.JSON(http.StatusInternalServerError, Response{

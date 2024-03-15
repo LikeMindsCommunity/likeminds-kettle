@@ -16,6 +16,8 @@ func FetchGroupFeed(c *gin.Context) {
 		return
 	}
 
+	headers := utils.CreateHeaders(c, userId)
+
 	//Params to be sent in the /feed/group request
 	params := map[string]string{
 		ParamPage:       c.Query(ParamPage),
@@ -40,7 +42,7 @@ func FetchGroupFeed(c *gin.Context) {
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchGroupFeedEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchGroupFeedEndPoint, utils.GETRequest, headers, params, nil)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
@@ -53,15 +55,19 @@ func FetchGroupFeed(c *gin.Context) {
 	if value, ok := dataResponse["posts"]; ok {
 		posts := value.([]interface{})
 
-		user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts, dataResponse)
+		redisClient := utils.GetRedisClientFromContext(c)
 
+		user_data, userUniqueIds, err := utils.GetUsersMetaFromFeedData(redisClient, headers, posts, dataResponse)
 		if err != nil {
 			utils.GenerateResponse(c, nil, false)
 			return
 		}
 
-		//Update user data in dataResponse
+		// Update user data in dataResponse
 		dataResponse["users"] = user_data
+
+		// Update user topics data in dataResponse
+		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
 	}
 
 	//Send response

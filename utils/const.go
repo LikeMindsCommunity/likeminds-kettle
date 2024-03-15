@@ -39,7 +39,10 @@ const (
 type PlatformType string
 
 const (
-	PlatformDashboard PlatformType = "dashboard"
+	PlatformDashboard      PlatformType = "dashboard"
+	PlatformCaravanService PlatformType = "caravan-service"
+	PlatformSwarmService   PlatformType = "swarm-service"
+	PlatformKettleService  PlatformType = "kettle-service"
 )
 
 const (
@@ -96,13 +99,30 @@ const (
 // Params
 const ParamConfigurationTypes = "configuration_types"
 const ParamWidgetIds = "widget_ids"
+const ParamMemberIds = "member_ids"
+const ParamParentIds = "parent_ids"
+const ParamUUIDs = "uuids"
+const ParamPageSize = "page_size"
+const ParamCommunityID = "community_id"
 
 // Endpoints
 const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
 const WidgetEndPoint = "/widget"
 const FetchCommunitySettingsEndpoint = "/api/community/fetch_community_settings"
 
+const FetchMembersMetaEndPoint = "/api/community/fetch_members_meta"
+const FetchTopicsEndpoint = "/topic"
+const FetchUserTopicsEndpoint = "/user/topics"
+const SDKAuthenticateEndPoint = "/api/sdk/authenticate"
+
+// Community settings type
+const (
+	FeedRepostCommunitySettingType  = "feed_repost"
+	UserTopicsConnectionSettingType = "user_topics_connection"
+)
+
 // Member Roles
 const (
 	GuestRole string = "GUEST"
 )
+

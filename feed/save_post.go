@@ -42,6 +42,8 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 	//Access query params and url generation
 	user_id := c.Param("user_id")
 
+	headers := utils.CreateHeaders(c, userId)
+
 	//Params to be sent in the /user/<user_id>/save request
 	params := map[string]string{
 		ParamPage:     c.Query(ParamPage),
@@ -64,7 +66,7 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
 	//Get user_unique_id from user_id internally
-	user_id, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), user_id)
+	user_id, err := utility.GetUUIDInternally(headers, user_id)
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
 		return
@@ -74,7 +76,7 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 	FetchSavePostEndPoint := fmt.Sprintf(FetchUserSavedPostsEndPoint, user_id)
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchSavePostEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchSavePostEndPoint, utils.GETRequest, headers, params, nil)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
@@ -88,7 +90,9 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 
 		posts := value.([]interface{})
 
-		user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts, dataResponse)
+		redisClient := utils.GetRedisClientFromContext(c)
+
+		user_data, userUniqueIds, err := utils.GetUsersMetaFromFeedData(redisClient, headers, posts, dataResponse)
 		if err != nil {
 			utils.GenerateResponse(c, nil, false)
 			return
@@ -96,6 +100,9 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 
 		//Update user data in dataResponse
 		dataResponse["users"] = user_data
+
+		// Update user topics data in dataResponse
+		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
 	}
 
 	//Send response

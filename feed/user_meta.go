@@ -16,6 +16,8 @@ func GetUserFeedMeta(c *gin.Context) {
 		return
 	}
 
+	headers := utils.CreateHeaders(c, userId)
+
 	// Access query params and url generation
 	userID := c.Param("user_id")
 
@@ -24,7 +26,7 @@ func GetUserFeedMeta(c *gin.Context) {
 	}
 
 	//Get user_unique_id from user_id internally
-	userUUID, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), userID)
+	userUUID, err := utility.GetUUIDInternally(headers, userID)
 
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
@@ -34,7 +36,7 @@ func GetUserFeedMeta(c *gin.Context) {
 	endpoint := fmt.Sprintf(FetchUserFeedMetaEndPoint, userUUID)
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endpoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endpoint, utils.GETRequest, headers, nil, nil)
 
 	// Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
@@ -46,15 +48,19 @@ func GetUserFeedMeta(c *gin.Context) {
 	dataResponse := apiCR.Response
 
 	//Fetch user data for given user_unique_ids
-	userIds := []string{userUUID}
+	userUniqueIds := []string{userUUID}
+	redisClient := utils.GetRedisClientFromContext(c)
 
-	user_data, err := user.FetchMemberMeta(utils.CreateHeaders(c, userId), userIds)
+	user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, userUniqueIds)
 	if err != nil {
 		utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 		return
 	}
 
 	dataResponse["users"] = user_data
+
+	// Update user topics data in dataResponse
+	dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
 
 	//Send response
 	utils.GenerateResponse(c, dataResponse, true)
