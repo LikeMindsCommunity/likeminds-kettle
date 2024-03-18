@@ -19,7 +19,7 @@ func Refresh(c *gin.Context) {
 	}
 
 	//Create login and refresh token meta from ltm
-	ltm, rtm, err := token.CreateLTMAndRTM(currentRTM.UserUniqueID, currentRTM.ApiKey,
+	ltm, _, err := token.CreateLTMAndRTM(currentRTM.UserUniqueID, currentRTM.ApiKey,
 		token.BETA_AUTH_TOKEN_EXPIRY, currentRTM.IsGuest)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, utils.Response{
@@ -32,7 +32,7 @@ func Refresh(c *gin.Context) {
 	//Generate Token Object
 	token := map[string]interface{}{
 		token.ParamAccessToken:  ltm.AccessToken,
-		token.ParamRefreshToken: rtm.RefreshToken,
+		token.ParamRefreshToken: currentRTM.RefreshToken,
 	}
 
 	//Generate Response

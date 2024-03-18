@@ -1,6 +1,7 @@
 package token
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -9,6 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/myesui/uuid"
 	"github.com/nateshr/likeminds-authentication/environment"
+	"github.com/nateshr/likeminds-authentication/utils/cryptoUtils"
 )
 
 const HeaderAuthorization = "Authorization"
@@ -147,11 +149,23 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 	ltmClaims["exp"] = ltm.AccessTokenExpires
 	ltmClaims["api_key"] = api_key
 	ltmClaims["is_guest"] = isGuestUser
+
+	bytesData, err := json.Marshal(ltmClaims)
+
+	if err == nil {
+		encryptedData := cryptoUtils.Encrypt(bytesData)
+
+		if encryptedData != "" {
+			ltmClaims = jwt.MapClaims{"data": encryptedData}
+		}
+	}
+
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, ltmClaims)
 	ltm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
 	if err != nil {
 		return nil, nil, err
 	}
+
 	//Creating refresh token meta
 	rtmClaims := jwt.MapClaims{}
 	rtmClaims["refresh_uuid"] = rtm.RefreshUuid
@@ -159,6 +173,17 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 	rtmClaims["exp"] = rtm.RefreshTokenExpires
 	rtmClaims["api_key"] = api_key
 	rtmClaims["is_guest"] = isGuestUser
+
+	bytesData, err = json.Marshal(rtmClaims)
+
+	if err == nil {
+		encryptedData := cryptoUtils.Encrypt(bytesData)
+
+		if encryptedData != "" {
+			ltmClaims = jwt.MapClaims{"data": encryptedData}
+		}
+	}
+
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtmClaims)
 	rtm.RefreshToken, err = rt.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
 	if err != nil {
@@ -261,12 +286,23 @@ func ExtractVTM(bearerToken string) (*VerifyTokenMeta, error) {
 
 // ExtractLTM is used to return LTM and check if bearer token is valid or not
 func ExtractLTM(bearerToken string) (*LoginTokenMeta, error) {
+	var claims jwt.MapClaims
+
 	token, err := VerifyToken(bearerToken)
 	if err != nil {
 		return nil, err
 	}
-	claims, ok := token.Claims.(jwt.MapClaims)
+	jwt_claims, ok := token.Claims.(jwt.MapClaims)
+
 	if ok && token.Valid {
+		encryptedData, ok := jwt_claims["data"].(string)
+		if ok {
+			claimsBytes := cryptoUtils.Decrypt(encryptedData)
+			json.Unmarshal(claimsBytes, &claims)
+		} else {
+			claims = jwt_claims
+		}
+
 		accessUuid, ok := claims["access_uuid"].(string)
 		if !ok {
 			return nil, errors.New("access_uuid is empty")
@@ -297,12 +333,22 @@ func ExtractLTM(bearerToken string) (*LoginTokenMeta, error) {
 
 // ExtractRTM is used to return RTM and check if bearer token is valid or not
 func ExtractRTM(bearerToken string) (*RefreshTokenMeta, error) {
+	var claims jwt.MapClaims
+
 	token, err := VerifyToken(bearerToken)
 	if err != nil {
 		return nil, err
 	}
-	claims, ok := token.Claims.(jwt.MapClaims)
+	jwt_claims, ok := token.Claims.(jwt.MapClaims)
 	if ok && token.Valid {
+		encryptedData, ok := jwt_claims["data"].(string)
+		if ok {
+			claimsBytes := cryptoUtils.Decrypt(encryptedData)
+			json.Unmarshal(claimsBytes, &claims)
+		} else {
+			claims = jwt_claims
+		}
+
 		refreshUuid, ok := claims["refresh_uuid"].(string)
 		if !ok {
 			return nil, errors.New("access_uuid is empty")
@@ -326,6 +372,7 @@ func ExtractRTM(bearerToken string) (*RefreshTokenMeta, error) {
 			RefreshTokenExpires: rtExpires,
 			ApiKey:              apiKey,
 			IsGuest:             isGuest,
+			RefreshToken:        ExtractToken(bearerToken),
 		}, nil
 	}
 	return nil, err
