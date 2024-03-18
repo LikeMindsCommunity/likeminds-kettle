@@ -105,6 +105,24 @@ func InitiateSDK(c *gin.Context) {
 	utils.GenerateResponse(c, dataResponse, true)
 }
 
+// FetchUserInitiatedInfo is used to Fetch user initiated info
+func FetchUserInitiatedInfo(c *gin.Context) {
+	// Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
+		return
+	}
+
+	// Params to be sent in sdk/initiate api internally
+	params := map[string]string{
+		utils.ParamUUID: userId,
+	}
+
+	// Send Request
+	utils.SendRequest(c, utils.CoreService, InitiateSDKEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
+}
+
 func parseInitiateSDKRequest(c *gin.Context) (*InitiateSDKRequest, error) {
 	//POST body params
 	var isr InitiateSDKRequest

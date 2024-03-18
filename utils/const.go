@@ -102,6 +102,7 @@ const ParamWidgetIds = "widget_ids"
 const ParamMemberIds = "member_ids"
 const ParamParentIds = "parent_ids"
 const ParamUUIDs = "uuids"
+const ParamUUID = "uuid"
 const ParamPageSize = "page_size"
 const ParamCommunityID = "community_id"
 
@@ -125,4 +126,3 @@ const (
 const (
 	GuestRole string = "GUEST"
 )
-
