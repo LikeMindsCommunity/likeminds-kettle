@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -72,7 +73,7 @@ func UserOTP(c *gin.Context, method int) {
 			return
 		}
 
-		dataResponse[token.ParamAccessToken] = vtm.AccessToken
+		dataResponse[constants.ParamAccessToken] = vtm.AccessToken
 
 		// Generate response
 		utils.GenerateResponse(c, dataResponse, false)

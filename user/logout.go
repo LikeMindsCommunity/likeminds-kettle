@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/cache"
-	"github.com/nateshr/likeminds-authentication/token"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -16,7 +16,7 @@ type LogoutRequest struct {
 func Logout(c *gin.Context) {
 
 	//Check if request has LTM token or not
-	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
+	ltm, ok := c.MustGet(constants.ParamLTM).(*constants.LoginTokenMeta)
 	if !ok {
 		//If token is not available
 		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
@@ -24,7 +24,7 @@ func Logout(c *gin.Context) {
 	}
 
 	//Check if request has refresh login token or not
-	rtm, ok := c.MustGet(token.ParamRTM).(*token.RefreshTokenMeta)
+	rtm, ok := c.MustGet(constants.ParamRTM).(*constants.RefreshTokenMeta)
 	if !ok {
 		//If token is not available
 		utils.GeneralAPIError(c, utils.ErrorInvalidRTM)
