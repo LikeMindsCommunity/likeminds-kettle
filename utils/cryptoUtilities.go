@@ -56,8 +56,6 @@ func Decode(s string) []byte {
 
 // Encrypt method is to encrypt or hide any classified text
 func Encrypt(value []byte) string {
-	keyPhrase := mdHashing(environment.GoDotEnvVariable("SECRET_KEY"))
-
 	aesBlock := createAESBlock([]byte(keyPhrase))
 	gcm := createGCM(aesBlock)
 	nonce := make([]byte, gcm.NonceSize())
