@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -59,12 +60,12 @@ func Login(c *gin.Context) {
 
 	// Set ltm and user_unique_id in context
 	ltm.UserUniqueID = userUniqueID
-	c.Set(token.ParamLTM, ltm)
+	c.Set(constants.ParamLTM, ltm)
 
 	//Send response with login, refresh token and api/user/login response
 	dataResponse := apiCR.Response
-	dataResponse[token.ParamAccessToken] = ltm.AccessToken
-	dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
+	dataResponse[constants.ParamAccessToken] = ltm.AccessToken
+	dataResponse[constants.ParamRefreshToken] = rtm.RefreshToken
 
 	//Generate response
 	utils.GenerateResponse(c, dataResponse, true)

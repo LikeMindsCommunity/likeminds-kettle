@@ -9,60 +9,13 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/myesui/uuid"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/environment"
-	"github.com/nateshr/likeminds-authentication/utils/cryptoUtils"
+	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-const HeaderAuthorization = "Authorization"
-const ParamAccessToken = "access_token"
-const ParamRefreshToken = "refresh_token"
-const ParamVTM = "vtm"
-const ParamOTM = "otm"
-const ParamLTM = "ltm"
-const ParamRTM = "rtm"
-const ErrorInvalidVTM = "Invalid VTM!"
-const ErrorInvalidOTM = "Invalid OTM!"
-const ErrorInvalidLTM = "Invalid LTM!"
-const ErrorInvalidRTM = "Invalid RTM!"
-const ErrorInvalidLTMorVTM = "Invalid LTM or VTM!"
-
-type OnboardingTokenMeta struct {
-	AccessUuid         string
-	AccessTokenExpires int64
-	AccessToken        string
-	ApiKey             string
-}
-
-type LoginTokenMeta struct {
-	AccessUuid         string
-	AccessToken        string
-	AccessTokenExpires int64
-	UserUniqueID       string
-	ApiKey             string
-	IsGuest            bool
-}
-
-type RefreshTokenMeta struct {
-	RefreshUuid         string
-	RefreshToken        string
-	RefreshTokenExpires int64
-	UserUniqueID        string
-	ApiKey              string
-	IsGuest             bool
-}
-
-type VerifyTokenMeta struct {
-	AccessUuid         string
-	AccessTokenExpires int64
-	AccessToken        string
-	ApiKey             string
-	EmailID            string
-	MobileNo           string
-	CountryCode        string
-}
-
-func CreateOTM(api_key string) (*OnboardingTokenMeta, error) {
-	otm := &OnboardingTokenMeta{
+func CreateOTM(api_key string) (*constants.OnboardingTokenMeta, error) {
+	otm := &constants.OnboardingTokenMeta{
 		AccessUuid:         uuid.NewV4().String(),
 		AccessTokenExpires: time.Now().Add(time.Minute * 15).Unix(),
 	}
@@ -81,8 +34,8 @@ func CreateOTM(api_key string) (*OnboardingTokenMeta, error) {
 	return otm, nil
 }
 
-func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode string) (*VerifyTokenMeta, error) {
-	vtm := &VerifyTokenMeta{
+func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode string) (*constants.VerifyTokenMeta, error) {
+	vtm := &constants.VerifyTokenMeta{
 		AccessUuid:         uuid.NewV4().String(),
 		AccessTokenExpires: time.Now().Add(time.Hour * 24 * 30).Unix(),
 	}
@@ -113,7 +66,7 @@ func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode strin
 }
 
 // CreateLTMAndRTM is used to create login and refresh token meta
-func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int64, isGuestUser bool) (*LoginTokenMeta, *RefreshTokenMeta, error) {
+func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int64, isGuestUser bool) (*constants.LoginTokenMeta, *constants.RefreshTokenMeta, error) {
 
 	isBeta := environment.GoDotEnvVariable("BETA_ENVIRONMENT")
 
@@ -130,12 +83,12 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 		LTMTokenExpiryTime = time.Duration(token_expiry_beta)
 	}
 
-	ltm := &LoginTokenMeta{
+	ltm := &constants.LoginTokenMeta{
 		AccessUuid:         uuid.NewV4().String(),
 		AccessTokenExpires: time.Now().Add(time.Minute * LTMTokenExpiryTime).Unix(),
 	}
 
-	rtm := &RefreshTokenMeta{
+	rtm := &constants.RefreshTokenMeta{
 		RefreshUuid:         uuid.NewV4().String(),
 		RefreshTokenExpires: time.Now().Add(time.Hour * 24 * 31).Unix(),
 	}
@@ -153,7 +106,7 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 	bytesData, err := json.Marshal(ltmClaims)
 
 	if err == nil {
-		encryptedData := cryptoUtils.Encrypt(bytesData)
+		encryptedData := utils.Encrypt(bytesData)
 
 		if encryptedData != "" {
 			ltmClaims = jwt.MapClaims{"data": encryptedData}
@@ -177,10 +130,10 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 	bytesData, err = json.Marshal(rtmClaims)
 
 	if err == nil {
-		encryptedData := cryptoUtils.Encrypt(bytesData)
+		encryptedData := utils.Encrypt(bytesData)
 
 		if encryptedData != "" {
-			ltmClaims = jwt.MapClaims{"data": encryptedData}
+			rtmClaims = jwt.MapClaims{"data": encryptedData}
 		}
 	}
 
@@ -221,7 +174,7 @@ func VerifyToken(bearerToken string) (*jwt.Token, error) {
 }
 
 // ExtractOTM is used to return OTM and check if bearer token is valid or not
-func ExtractOTM(bearerToken string) (*OnboardingTokenMeta, error) {
+func ExtractOTM(bearerToken string) (*constants.OnboardingTokenMeta, error) {
 	token, err := VerifyToken(bearerToken)
 
 	if err != nil {
@@ -239,7 +192,7 @@ func ExtractOTM(bearerToken string) (*OnboardingTokenMeta, error) {
 
 		apiKey, _ := claims["api_key"].(string)
 
-		return &OnboardingTokenMeta{
+		return &constants.OnboardingTokenMeta{
 			AccessUuid: accessUuid,
 			ApiKey:     apiKey,
 		}, nil
@@ -250,7 +203,7 @@ func ExtractOTM(bearerToken string) (*OnboardingTokenMeta, error) {
 }
 
 // ExtractVTM is used to return VTM and check if bearer token is valid or not
-func ExtractVTM(bearerToken string) (*VerifyTokenMeta, error) {
+func ExtractVTM(bearerToken string) (*constants.VerifyTokenMeta, error) {
 	token, err := VerifyToken(bearerToken)
 
 	if err != nil {
@@ -271,7 +224,7 @@ func ExtractVTM(bearerToken string) (*VerifyTokenMeta, error) {
 		mobileNo, _ := claims["mobile_no"].(string)
 		countryCode, _ := claims["country_code"].(string)
 
-		return &VerifyTokenMeta{
+		return &constants.VerifyTokenMeta{
 			AccessUuid:  accessUuid,
 			ApiKey:      apiKey,
 			EmailID:     emailId,
@@ -285,7 +238,7 @@ func ExtractVTM(bearerToken string) (*VerifyTokenMeta, error) {
 }
 
 // ExtractLTM is used to return LTM and check if bearer token is valid or not
-func ExtractLTM(bearerToken string) (*LoginTokenMeta, error) {
+func ExtractLTM(bearerToken string) (*constants.LoginTokenMeta, error) {
 	var claims jwt.MapClaims
 
 	token, err := VerifyToken(bearerToken)
@@ -297,7 +250,7 @@ func ExtractLTM(bearerToken string) (*LoginTokenMeta, error) {
 	if ok && token.Valid {
 		encryptedData, ok := jwt_claims["data"].(string)
 		if ok {
-			claimsBytes := cryptoUtils.Decrypt(encryptedData)
+			claimsBytes := utils.Decrypt(encryptedData)
 			json.Unmarshal(claimsBytes, &claims)
 		} else {
 			claims = jwt_claims
@@ -320,7 +273,7 @@ func ExtractLTM(bearerToken string) (*LoginTokenMeta, error) {
 			return nil, errors.New("is_guest is empty")
 		}
 		apiKey, _ := claims["api_key"].(string)
-		return &LoginTokenMeta{
+		return &constants.LoginTokenMeta{
 			AccessUuid:         accessUuid,
 			UserUniqueID:       userUniqueID,
 			AccessTokenExpires: atExpires,
@@ -332,7 +285,7 @@ func ExtractLTM(bearerToken string) (*LoginTokenMeta, error) {
 }
 
 // ExtractRTM is used to return RTM and check if bearer token is valid or not
-func ExtractRTM(bearerToken string) (*RefreshTokenMeta, error) {
+func ExtractRTM(bearerToken string) (*constants.RefreshTokenMeta, error) {
 	var claims jwt.MapClaims
 
 	token, err := VerifyToken(bearerToken)
@@ -343,7 +296,7 @@ func ExtractRTM(bearerToken string) (*RefreshTokenMeta, error) {
 	if ok && token.Valid {
 		encryptedData, ok := jwt_claims["data"].(string)
 		if ok {
-			claimsBytes := cryptoUtils.Decrypt(encryptedData)
+			claimsBytes := utils.Decrypt(encryptedData)
 			json.Unmarshal(claimsBytes, &claims)
 		} else {
 			claims = jwt_claims
@@ -366,7 +319,7 @@ func ExtractRTM(bearerToken string) (*RefreshTokenMeta, error) {
 			return nil, errors.New("is_guest is empty")
 		}
 		apiKey, _ := claims["api_key"].(string)
-		return &RefreshTokenMeta{
+		return &constants.RefreshTokenMeta{
 			RefreshUuid:         refreshUuid,
 			UserUniqueID:        userUniqueID,
 			RefreshTokenExpires: rtExpires,

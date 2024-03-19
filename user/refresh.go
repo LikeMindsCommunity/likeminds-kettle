@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -12,7 +13,7 @@ import (
 func Refresh(c *gin.Context) {
 
 	//Check if request has RTM token or not
-	currentRTM, ok := c.MustGet(token.ParamRTM).(*token.RefreshTokenMeta)
+	currentRTM, ok := c.MustGet(constants.ParamRTM).(*constants.RefreshTokenMeta)
 	if !ok {
 		utils.GeneralAPIError(c, utils.ErrorInvalidRTM)
 		return
@@ -31,8 +32,8 @@ func Refresh(c *gin.Context) {
 
 	//Generate Token Object
 	token := map[string]interface{}{
-		token.ParamAccessToken:  ltm.AccessToken,
-		token.ParamRefreshToken: currentRTM.RefreshToken,
+		constants.ParamAccessToken:  ltm.AccessToken,
+		constants.ParamRefreshToken: currentRTM.RefreshToken,
 	}
 
 	//Generate Response
