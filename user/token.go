@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -13,14 +14,14 @@ func CreateToken(c *gin.Context) {
 	tokenType := c.Query(ParamTokenType)
 
 	if tokenType != "" && tokenType == VTM {
-		vtmToken := c.Request.Header.Get(token.HeaderAuthorization)
+		vtmToken := c.Request.Header.Get(constants.HeaderAuthorization)
 
 		if vtmToken == "" {
-			utils.TokenAuthError(c, token.ErrorInvalidVTM)
+			utils.TokenAuthError(c, constants.ErrorInvalidVTM)
 			return
 		}
 
-		vtmData, err := token.ExtractVTM(c.Request.Header.Get(token.HeaderAuthorization))
+		vtmData, err := token.ExtractVTM(c.Request.Header.Get(constants.HeaderAuthorization))
 
 		// If token extraction fails
 		if err != nil {
@@ -54,7 +55,7 @@ func CreateToken(c *gin.Context) {
 
 	// Send response with verify token
 	dataResponse := map[string]interface{}{
-		token.ParamAccessToken: accessToken,
+		constants.ParamAccessToken: accessToken,
 	}
 
 	// Generate Response

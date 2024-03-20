@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -80,17 +81,20 @@ func GetBotResponse(c *gin.Context, method int) *utils.Response {
 	//If flow succeeds
 	dataResponse := apiCR.Response
 	if createToken {
-		userID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
+		userObject := apiCR.Response[ResponseUser].(map[string]interface{})
+		userID := userObject[ResponseUserUniqueId].(string)
+		userIsGuest := userObject[ResponseUserIsGuest].(bool)
+
 		//Create login and refresh token
-		ltm, rtm, err := token.CreateLTMAndRTM(userID, "", token.BETA_AUTH_TOKEN_EXPIRY)
+		ltm, rtm, err := token.CreateLTMAndRTM(userID, "", token.BETA_AUTH_TOKEN_EXPIRY, userIsGuest)
 		if err != nil {
 			//If token creation fails
 			utils.GeneralAPIError(c, err.Error())
 			return nil
 		}
 		//Send response with login, refresh token and api/user/login response
-		dataResponse[token.ParamAccessToken] = ltm.AccessToken
-		dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
+		dataResponse[constants.ParamAccessToken] = ltm.AccessToken
+		dataResponse[constants.ParamRefreshToken] = rtm.RefreshToken
 	}
 
 	return &utils.Response{

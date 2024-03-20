@@ -2,7 +2,9 @@ package otp
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/token"
+	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -40,8 +42,11 @@ func VerifyOTP(c *gin.Context) {
 	//If user exists in our DB, we need to return LTM and RTM
 	if profileExists {
 		//Create login and refresh token
-		userUniqueID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
-		ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, "", token.BETA_AUTH_TOKEN_EXPIRY)
+		userObject := apiCR.Response[ResponseUser].(map[string]interface{})
+		userUniqueID := userObject[ResponseUserUniqueId].(string)
+		userIsGuest := userObject[user.ResponseUserIsGuest].(bool)
+
+		ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, "", token.BETA_AUTH_TOKEN_EXPIRY, userIsGuest)
 		if err != nil {
 			//If token creation fails
 			utils.GeneralAPIError(c, err.Error())
@@ -50,12 +55,12 @@ func VerifyOTP(c *gin.Context) {
 
 		// Set ltm and user_unique_id in context
 		ltm.UserUniqueID = userUniqueID
-		c.Set(token.ParamLTM, ltm)
+		c.Set(constants.ParamLTM, ltm)
 
 		//Send response with login, refresh token and verify otp api response
 		dataResponse := apiCR.Response
-		dataResponse[token.ParamAccessToken] = ltm.AccessToken
-		dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
+		dataResponse[constants.ParamAccessToken] = ltm.AccessToken
+		dataResponse[constants.ParamRefreshToken] = rtm.RefreshToken
 
 		//Generate Response
 		utils.GenerateResponse(c, dataResponse, true)
@@ -71,7 +76,7 @@ func VerifyOTP(c *gin.Context) {
 
 		// Send response with verify token
 		dataResponse := apiCR.Response
-		dataResponse[token.ParamAccessToken] = otm.AccessToken
+		dataResponse[constants.ParamAccessToken] = otm.AccessToken
 
 		// Generate Response
 		utils.GenerateResponse(c, dataResponse, false)

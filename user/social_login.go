@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -40,7 +41,7 @@ func UserSocialLogin(c *gin.Context) {
 		return
 	}
 
-	dataResponse[token.ParamAccessToken] = vtm.AccessToken
+	dataResponse[constants.ParamAccessToken] = vtm.AccessToken
 	dataResponse[ResponseUser] = map[string]interface{}{
 		UserName:     userSocialInfo[UserName],
 		UserImageUrl: userSocialInfo[UserImageUrl],

@@ -2,7 +2,7 @@ package community
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/token"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -46,7 +46,7 @@ func GetQuestions(c *gin.Context) {
 func Questions(c *gin.Context, method int) {
 	var userId string
 
-	ltm, _ := c.Get(token.ParamLTM)
+	ltm, _ := c.Get(constants.ParamLTM)
 
 	if ltm != nil {
 		// Authorize User
