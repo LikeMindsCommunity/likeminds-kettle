@@ -7,8 +7,8 @@ import (
 	log "github.com/nateshr/likeminds-authentication/logging"
 )
 
-// This function is used to parse array to string using json marshal
-func ParseArrayToString(array []interface{}) string {
+// This function is used to parse interface list to string list
+func ParseInterfaceListToStringList(array []interface{}) string {
 
 	temp_params, err := json.Marshal(array)
 	if err != nil {
