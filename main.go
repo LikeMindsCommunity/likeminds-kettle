@@ -80,7 +80,7 @@ func main() {
 
 	// SDK Apis
 	router.POST("/sdk/initiate", middleware.VTMValidationMiddleware(false), sdk.InitiateSDK)
-	router.GET("/sdk/initiate", middleware.LTMValidationMiddleware(redisClient, true), sdk.FetchUserInitiatedInfo)
+	router.GET("/sdk/initiate", middleware.LTMValidationMiddleware(redisClient, true), sdk.FetchSdkUserInfo)
 	router.POST("/sdk/project", middleware.LTMValidationMiddleware(redisClient, true), sdk.CreateProject)
 	router.GET("/sdk/project", middleware.LTMValidationMiddleware(redisClient, true), sdk.GetProject)
 	router.PUT("/sdk/project", middleware.LTMValidationMiddleware(redisClient, true), sdk.EditProject)

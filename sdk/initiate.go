@@ -106,8 +106,8 @@ func InitiateSDK(c *gin.Context) {
 	utils.GenerateResponse(c, dataResponse, true)
 }
 
-// FetchUserInitiatedInfo is used to Fetch user initiated info
-func FetchUserInitiatedInfo(c *gin.Context) {
+// FetchSdkUserInfo is used to Fetch user initiated info
+func FetchSdkUserInfo(c *gin.Context) {
 	// Authorize User
 	userId := user.GetRequestingUserId(c)
 	if userId == "" {
