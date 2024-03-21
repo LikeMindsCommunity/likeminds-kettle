@@ -113,8 +113,8 @@ const FetchMembersMetaEndPoint = "/api/community/fetch_members_meta"
 const FetchTopicsEndpoint = "/topic"
 const FetchUserTopicsEndpoint = "/user/topics"
 const SDKAuthenticateEndPoint = "/api/sdk/authenticate"
-const TierEndpoint = "api/subcription/tiers"
-const BillingPlanEnpoint = "api/subcription/plan/billing"
+const TierEndpoint = "api/subscription/plan/tiers"
+const BillingPlanEnpoint = "api/subscription/plan/billing"
 
 // Community settings type
 const (
