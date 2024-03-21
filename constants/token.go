@@ -11,11 +11,11 @@ const (
 	ParamVTM             = "vtm"
 	ParamOTM             = "otm"
 	ParamRTM             = "rtm"
-	ErrorInvalidVTM      = "Invalid VTM."
-	ErrorInvalidOTM      = "Invalid OTM."
-	ErrorInvalidLTM      = "Invalid LTM."
-	ErrorInvalidRTM      = "Invalid RTM."
-	ErrorInvalidLTMorVTM = "Invalid LTM or VTM."
+	ErrorInvalidVTM      = "Invalid VTM!"
+	ErrorInvalidOTM      = "Invalid OTM!"
+	ErrorInvalidLTM      = "Invalid LTM!"
+	ErrorInvalidRTM      = "Invalid RTM!"
+	ErrorInvalidLTMorVTM = "Invalid LTM or VTM!"
 )
 
 type OnboardingTokenMeta struct {
