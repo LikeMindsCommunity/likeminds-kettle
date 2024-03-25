@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
-	"github.com/nateshr/likeminds-authentication/token"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -21,11 +21,11 @@ const ParamPage = "page"
 const ResponseMyCommunities = "home_communities"
 const ResponseSubscriptions = "subscriptions"
 
-//FetchCommunities is used to blacklist LTM and RTM tokens
+// FetchCommunities is used to blacklist LTM and RTM tokens
 func FetchCommunities(c *gin.Context) {
 
 	//Check if request has LTM token or not
-	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
+	ltm, ok := c.MustGet(constants.ParamLTM).(*constants.LoginTokenMeta)
 	if !ok {
 		//If token is not available
 		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)

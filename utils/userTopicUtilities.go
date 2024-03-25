@@ -176,36 +176,44 @@ func FetchUserTopicsForUserUniqueIds(redisClient *redis.Client, headers map[stri
 	return userTopicsMap, nil
 }
 
-// External method to fetch user topics and its related data for userUniqueIds and update in dataResponse
+// External method to fetch user topics (If enabled) and its related data for userUniqueIds and update in dataResponse
 func FetchAndUpdateUserTopicsDataForResponse(redisClient *redis.Client, headers map[string]interface{}, dataResponse map[string]interface{}, userUniqueIds []string,
 ) map[string]interface{} {
 
-	// fetch user topics data for user_unique_ids
-	userTopics, err := FetchUserTopicsForUserUniqueIds(redisClient, headers, userUniqueIds)
-	if err != nil {
-		logging.Error(fmt.Sprint("error fetching user topics for user_unique_ids", err))
-	}
+	userTopics, topicsMeta, widgetsMeta := UserTopics{}, map[string]TopicMeta{}, map[string]WidgetResponse{}
 
-	// Fetch topics meta for user topics
-	topicsIds := []string{}
-	for _, userTopics := range userTopics {
-		topicsIds = append(topicsIds, userTopics...)
-	}
-	topicsMeta, err := FetchTopicsMetaFromTopicsIds(redisClient, headers, topicsIds)
-	if err != nil {
-		logging.Error(fmt.Sprint("error fetching topics meta for topics ids", err))
-	}
+	// if user Topics connection is enabled, fetch related data
+	if UserTopicsConnectionEnabled(redisClient, headers) {
 
-	// Fetch widget meta for user topics
-	widgetIds := []string{}
-	for _, userTopic := range topicsMeta {
-		if userTopic.WidgetId != "" {
-			widgetIds = append(widgetIds, userTopic.WidgetId)
+		err := error(nil)
+
+		// fetch user topics data for user_unique_ids
+		userTopics, err = FetchUserTopicsForUserUniqueIds(redisClient, headers, userUniqueIds)
+		if err != nil {
+			logging.Error(fmt.Sprint("error fetching user topics for user_unique_ids", err))
 		}
-	}
-	widgetsMeta, err := fetchWidgetMetaMapFromWidgetIds(redisClient, headers, widgetIds)
-	if err != nil {
-		logging.Error(fmt.Sprint("error fetching widget meta for widget ids", err))
+
+		// Fetch topics meta for user topics
+		topicsIds := []string{}
+		for _, userTopics := range userTopics {
+			topicsIds = append(topicsIds, userTopics...)
+		}
+		topicsMeta, err = FetchTopicsMetaFromTopicsIds(redisClient, headers, topicsIds)
+		if err != nil {
+			logging.Error(fmt.Sprint("error fetching topics meta for topics ids", err))
+		}
+
+		// Fetch widget meta for user topics
+		widgetIds := []string{}
+		for _, userTopic := range topicsMeta {
+			if userTopic.WidgetId != "" {
+				widgetIds = append(widgetIds, userTopic.WidgetId)
+			}
+		}
+		widgetsMeta, err = fetchWidgetMetaMapFromWidgetIds(redisClient, headers, widgetIds)
+		if err != nil {
+			logging.Error(fmt.Sprint("error fetching widget meta for widget ids", err))
+		}
 	}
 
 	// update userTopics in dataResponse

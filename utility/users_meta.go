@@ -58,7 +58,7 @@ func FetchUserUniqueIdsFromAnyUserIds(headers map[string]interface{}, userIds in
 		if len(userIds) == 0 {
 			return nil, fmt.Errorf("userIds cannot be empty")
 		}
-		params[ParamMemberIDs] = utils.ParseArrayToString(userIds)
+		params[ParamMemberIDs] = utils.ParseInterfaceListToStringList(userIds)
 	case string:
 		if userIds == "" {
 			return nil, fmt.Errorf("userIds cannot be empty")

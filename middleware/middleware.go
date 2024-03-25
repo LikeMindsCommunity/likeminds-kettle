@@ -13,6 +13,7 @@ import (
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/cache"
+	"github.com/nateshr/likeminds-authentication/constants"
 	log "github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
@@ -22,19 +23,19 @@ import (
 func OTMValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Extract OTM from token, internally it checks if token is valid or not
-		otm, err := token.ExtractOTM(c.Request.Header.Get(token.HeaderAuthorization))
+		otm, err := token.ExtractOTM(c.Request.Header.Get(constants.HeaderAuthorization))
 
 		if otm == nil {
 			log.Error(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
-				ErrorMessage: token.ErrorInvalidOTM,
+				ErrorMessage: constants.ErrorInvalidOTM,
 			})
 			return
 
 		} else {
 			// If valid, set "otm" in context, to be used in later APIs
-			c.Set(token.ParamOTM, otm)
+			c.Set(constants.ParamOTM, otm)
 
 			// Set API key in request header
 			if otm.ApiKey != "" {
@@ -48,13 +49,13 @@ func OTMValidationMiddleware() gin.HandlerFunc {
 func VTMValidationMiddleware(isMandatory bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Extract VTM from token, internally it checks if token is valid or not
-		vtm, err := token.ExtractVTM(c.Request.Header.Get(token.HeaderAuthorization))
+		vtm, err := token.ExtractVTM(c.Request.Header.Get(constants.HeaderAuthorization))
 
 		if vtm == nil && isMandatory {
 			log.Error(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
-				ErrorMessage: token.ErrorInvalidVTM,
+				ErrorMessage: constants.ErrorInvalidVTM,
 			})
 			return
 
@@ -64,7 +65,7 @@ func VTMValidationMiddleware(isMandatory bool) gin.HandlerFunc {
 
 		} else {
 			// If valid, set "vtm" in context, to be used in later APIs
-			c.Set(token.ParamVTM, vtm)
+			c.Set(constants.ParamVTM, vtm)
 
 			// // Set API key in request header
 			if vtm.ApiKey != "" {
@@ -75,20 +76,20 @@ func VTMValidationMiddleware(isMandatory bool) gin.HandlerFunc {
 	}
 }
 
-func LTMValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
+func LTMValidationMiddleware(redisClient *redis.Client, isGuestAccess bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		bearerToken := c.Request.Header.Get(token.HeaderAuthorization)
+		bearerToken := c.Request.Header.Get(constants.HeaderAuthorization)
 		//Extract LTM from token, internally it checks if token is valid or not
 		ltm, err := token.ExtractLTM(bearerToken)
 		if ltm == nil {
 			log.Error(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
-				ErrorMessage: token.ErrorInvalidLTM,
+				ErrorMessage: constants.ErrorInvalidLTM,
 			})
 			return
 		} else {
-			//Check if LTM is black listed or not
+			// Check if LTM is black listed or not
 			if cache.IsLTMBlacklisted(redisClient, ltm) {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 					Success:      false,
@@ -96,8 +97,25 @@ func LTMValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 				})
 				return
 			}
-			//If valid and not blacklisted, set "ltm" in context, to be used in later APIs
-			c.Set(token.ParamLTM, ltm)
+
+			// Check if guest access is given
+			if ltm.IsGuest && !isGuestAccess {
+				c.AbortWithStatusJSON(http.StatusForbidden, utils.Response{
+					Success:      false,
+					ErrorMessage: utils.ErrorGuestAccessNotAllowed,
+				})
+				return
+			} else if ltm.IsGuest {
+				// Add additional headers
+				headers := map[string]string{
+					utils.HeaderMemberRole: utils.GuestRole,
+				}
+
+				utils.AddHeaders(c, headers)
+			}
+
+			// If valid and not blacklisted, set "ltm" in context, to be used in later APIs
+			c.Set(constants.ParamLTM, ltm)
 
 			// Set API key in request header
 			if ltm.ApiKey != "" {
@@ -111,12 +129,12 @@ func LTMValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 func RTMValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//Extract RTM from token, internally it checks if token is valid or not
-		rtm, err := token.ExtractRTM(c.Request.Header.Get(token.HeaderAuthorization))
+		rtm, err := token.ExtractRTM(c.Request.Header.Get(constants.HeaderAuthorization))
 		if rtm == nil {
 			log.Error(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
-				ErrorMessage: token.ErrorInvalidRTM,
+				ErrorMessage: constants.ErrorInvalidRTM,
 			})
 			return
 		} else {
@@ -129,7 +147,7 @@ func RTMValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 				return
 			}
 			//If valid and not blacklisted, set "rtm" in context, to be used in later APIs
-			c.Set(token.ParamRTM, rtm)
+			c.Set(constants.ParamRTM, rtm)
 		}
 		// Set API key in request header
 		if rtm.ApiKey != "" {
@@ -142,12 +160,12 @@ func RTMValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 func LTMorVTMValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Extract token from headers
-		bearerToken := c.Request.Header.Get(token.HeaderAuthorization)
+		bearerToken := c.Request.Header.Get(constants.HeaderAuthorization)
 
 		if bearerToken == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
-				ErrorMessage: token.ErrorInvalidLTMorVTM,
+				ErrorMessage: constants.ErrorInvalidLTMorVTM,
 			})
 			return
 		}
@@ -156,7 +174,7 @@ func LTMorVTMValidationMiddleware() gin.HandlerFunc {
 		ltm, ltmErr := token.ExtractLTM(bearerToken)
 
 		if ltmErr == nil {
-			c.Set(token.ParamLTM, ltm)
+			c.Set(constants.ParamLTM, ltm)
 
 			// Set API key in request header
 			if ltm.ApiKey != "" {
@@ -170,7 +188,7 @@ func LTMorVTMValidationMiddleware() gin.HandlerFunc {
 		vtm, vtmErr := token.ExtractVTM(bearerToken)
 
 		if vtmErr == nil {
-			c.Set(token.ParamVTM, vtm)
+			c.Set(constants.ParamVTM, vtm)
 
 			// Set API key in request header
 			if vtm.ApiKey != "" {
@@ -184,7 +202,7 @@ func LTMorVTMValidationMiddleware() gin.HandlerFunc {
 			log.Error(vtmErr)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
-				ErrorMessage: token.ErrorInvalidLTMorVTM,
+				ErrorMessage: constants.ErrorInvalidLTMorVTM,
 			})
 			return
 		}
@@ -194,12 +212,12 @@ func LTMorVTMValidationMiddleware() gin.HandlerFunc {
 func LogoutValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//Extract LTM from token, internally it checks if token is valid or not
-		ltm, err := token.ExtractLTM(c.Request.Header.Get(token.HeaderAuthorization))
+		ltm, err := token.ExtractLTM(c.Request.Header.Get(constants.HeaderAuthorization))
 		if ltm == nil {
 			log.Error(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
-				ErrorMessage: token.ErrorInvalidLTM,
+				ErrorMessage: constants.ErrorInvalidLTM,
 			})
 			return
 		} else {
@@ -226,7 +244,7 @@ func LogoutValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 				log.Error(err)
 				c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 					Success:      false,
-					ErrorMessage: token.ErrorInvalidRTM,
+					ErrorMessage: constants.ErrorInvalidRTM,
 				})
 				return
 			} else {
@@ -239,8 +257,8 @@ func LogoutValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 					return
 				}
 				//If valid and not blacklisted, set "ltm" and "rtm" in context, to be used in later APIs
-				c.Set(token.ParamLTM, ltm)
-				c.Set(token.ParamRTM, rtm)
+				c.Set(constants.ParamLTM, ltm)
+				c.Set(constants.ParamRTM, rtm)
 			}
 		}
 		c.Next()

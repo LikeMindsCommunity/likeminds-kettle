@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -45,10 +46,12 @@ func Login(c *gin.Context) {
 	}
 
 	//If flow succeeds
-	userUniqueID := apiCR.Response[ResponseUser].(map[string]interface{})[ResponseUserUniqueId].(string)
-	//Create login and refresh token
+	userObject := apiCR.Response[ResponseUser].(map[string]interface{})
+	userUniqueID := userObject[ResponseUserUniqueId].(string)
+	userIsGuest := userObject[ResponseUserIsGuest].(bool)
 
-	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, "", token.BETA_AUTH_TOKEN_EXPIRY)
+	//Create login and refresh token
+	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, "", token.BETA_AUTH_TOKEN_EXPIRY, userIsGuest)
 	if err != nil {
 		//If token creation fails
 		utils.GeneralAPIError(c, err.Error())
@@ -57,12 +60,12 @@ func Login(c *gin.Context) {
 
 	// Set ltm and user_unique_id in context
 	ltm.UserUniqueID = userUniqueID
-	c.Set(token.ParamLTM, ltm)
+	c.Set(constants.ParamLTM, ltm)
 
 	//Send response with login, refresh token and api/user/login response
 	dataResponse := apiCR.Response
-	dataResponse[token.ParamAccessToken] = ltm.AccessToken
-	dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
+	dataResponse[constants.ParamAccessToken] = ltm.AccessToken
+	dataResponse[constants.ParamRefreshToken] = rtm.RefreshToken
 
 	//Generate response
 	utils.GenerateResponse(c, dataResponse, true)

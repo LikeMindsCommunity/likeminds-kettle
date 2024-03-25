@@ -28,3 +28,9 @@ likeminds-authentication
 
 # Ignore build files
 _build/
+
+# Ignore debug files
+__debug_bin
+
+# Ignore IDE files
+.vscode

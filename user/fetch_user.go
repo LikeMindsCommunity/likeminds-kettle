@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/token"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
@@ -12,7 +12,7 @@ func GetRequestingUserId(c *gin.Context) string {
 	var userUniqueId string = ""
 
 	//Check if request has LTM token or not
-	ltm, ok := c.MustGet(token.ParamLTM).(*token.LoginTokenMeta)
+	ltm, ok := c.MustGet(constants.ParamLTM).(*constants.LoginTokenMeta)
 	if !ok {
 		//If token is not available
 		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)

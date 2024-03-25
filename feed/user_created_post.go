@@ -68,6 +68,15 @@ func FetchUserCreatedPosts(c *gin.Context) {
 		posts := value.([]interface{})
 		user_ids := []string{}
 
+		if value, ok := dataResponse["filtered_comments"]; ok {
+			if commentData, ok := value.(map[string]interface{}); ok {
+
+				for _, val := range commentData {
+					posts = append(posts, val)
+				}
+			}
+		}
+
 		//Fetch posts user id
 		for _, post_data := range posts {
 			if user_unique_id, ok := post_data.(map[string]interface{})["uuid"]; ok {
@@ -89,10 +98,8 @@ func FetchUserCreatedPosts(c *gin.Context) {
 		//Update user data in dataResponse
 		dataResponse["users"] = user_data
 
-		// if user Topics connection is enabled, fetch and update related data
-		if utils.UserTopicsConnectionEnabled(redisClient, headers) {
-			dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
-		}
+		// Update user topics data in dataResponse
+		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
 	}
 
 	//Send response
