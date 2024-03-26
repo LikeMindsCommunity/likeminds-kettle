@@ -14,6 +14,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/cache"
 	"github.com/nateshr/likeminds-authentication/constants"
+	"github.com/nateshr/likeminds-authentication/environment"
 	log "github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
@@ -467,163 +468,75 @@ type TierTypeApiResponse struct {
 }
 
 func RateLimitingMiddleware(redisClient *redis.Client) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		startTime := time.Now()
+	if environment.GoDotEnvVariable("IS_RATE_LIMITING_ENABLED") == "true" {
+		return func(c *gin.Context) {
+			startTime := time.Now()
 
-		// Get headers
-		headers := utils.CreateHeaders(c, "")
-		apiKey := headers[utils.HeadersApiKey].(string)
+			headers := utils.CreateHeaders(c, "")
+			apiKey := headers[utils.HeadersApiKey].(string)
 
-		// Get community Billing data  function ========
-		// FetchCommunityBillingData(redisClient, apiKey, c)
-		// Get CommunityId from apiKey
-		communityId, err := utils.FetchCommunityIdFromApiKey(redisClient, apiKey)
-		if err == nil {
-			//TODO: c.Next() or c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response
-			log.Error(err)
-			return
-		}
-
-		cacheKey := fmt.Sprintf(cache.CommunityBillingDataKey, communityId)
-
-		// Get Community Billing data from cache
-		value, valueExists, err := cache.Get(redisClient, cacheKey)
-		//If error continue to next middleware
-		if err != nil {
-			log.Error(err)
-			return
-		}
-
-		communityBillingMeta := CommunityBillingMeta{}
-
-		// communityBillingDataApi
-		if !valueExists {
-			// Get Value from API
-			respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, fmt.Sprintf("/%s/%d", utils.BillingPlanEnpoint, communityId), utils.GETRequest, headers, nil, nil)
+			// Get community Billing data  function
+			// Get CommunityId from apiKey
+			communityId, err := utils.FetchCommunityIdFromApiKey(redisClient, apiKey)
+			if err != nil {
+				log.Error(err)
+				return
+			}
+			cacheKey := fmt.Sprintf(cache.CommunityBillingDataKey, communityId)
+			// Get Community Billing data from cache
+			communityBillingData, err := FetchCommunityBillingData(redisClient, communityId, cacheKey, headers)
 			if err != nil {
 				log.Error(err)
 				return
 			}
 
-			err = json.Unmarshal(respBytes, &communityBillingMeta)
+			//Get TierData Function
+			tierType := communityBillingData.TierType
+			tierData, err := FetchTierData(redisClient, communityId, headers, tierType)
 			if err != nil {
 				log.Error(err)
 				return
 			}
 
-			communityBillingMetaForCache, err := json.Marshal(communityBillingMeta)
+			for _, limitFactor := range tierData {
+				rateLimitCurrentValueKey := limitFactor.RateLimitKeyName + fmt.Sprintf("_%d", communityId)
+				rateLimitValue := limitFactor.MaxRequestLimitValue
+				rateLimitErrorMessage := limitFactor.ErrorMessage
+				rateLimitTTL := limitFactor.TTL
+				rateLimitTierValueType := limitFactor.TierValueType
 
-			if err != nil {
-				log.Error(err)
-				return
-			}
-			// Update value in Cache
-			err = cache.Set(redisClient, cache.CommunityBillingDataKey, communityBillingMetaForCache, time.Hour*cache.CommunityBillingDataTTL)
-			if err != nil {
-				log.Error(err)
-				return
-			}
-
-		} else {
-			// Unmarshal value from cache
-			err := json.Unmarshal([]byte(value), &communityBillingMeta)
-			if err != nil {
-				log.Error(err)
-				return
-			}
-		}
-		//returns communityBillingMeta func Community Billing Data =========
-
-		//Get TierData Function =========
-		tierType := communityBillingMeta.TierType
-		cacheKey = fmt.Sprintf("tier_data_%d", tierType)
-		value, exists, err := cache.Get(redisClient, cacheKey)
-		if err != nil {
-			log.Error(err)
-			return
-		}
-
-		tierData := []ApitierDataType{}
-
-		if !exists {
-			// Fetch from Api
-			// prepare params for api call
-			params := map[string]string{
-				utils.ParamTierType: strconv.Itoa(tierType),
-			}
-			// Get data from skulk service
-			respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, utils.TierEndpoint, utils.GETRequest, headers, params, nil)
-			if err != nil {
-				log.Error(err)
-				return
-			}
-			//fmt.Println(string(respBytes))
-			apiResponse := TierTypeApiResponse{}
-			err = json.Unmarshal(respBytes, &apiResponse)
-			fmt.Println(apiResponse)
-			if err != nil {
-				log.Error(err)
-				return
-			}
-
-			cacheDataVal, err := json.Marshal(apiResponse.Data)
-			if err != nil {
-				log.Error(err)
-				return
-			}
-
-			// Save in cache
-			err = cache.Set(redisClient, cacheKey, cacheDataVal, time.Hour*cache.TierDataTTL)
-			if err != nil {
-				log.Error(err)
-				return
-			}
-			tierData = apiResponse.Data
-		} else {
-			err := json.Unmarshal([]byte(value), &tierData)
-			if err != nil {
-				log.Error(err)
-				return
-			}
-		}
-		// Returns &tierData,MAU,RPM func TierData =========
-
-		// cachkey := "%d_rate_limit_rpm" := 55
-		for _, limitFactor := range tierData {
-			rateLimitCurrentValueKey := limitFactor.RateLimitKeyName + fmt.Sprintf("_%d", communityId)
-			rateLimitValue := limitFactor.MaxRequestLimitValue
-			rateLimitErrorMessage := limitFactor.ErrorMessage
-			rateLimitTTL := limitFactor.TTL
-			rateLimitTierValueType := limitFactor.TierValueType
-
-			// Get rate limit current value from cache
-			currentValue, exists, err := cache.Get(redisClient, rateLimitCurrentValueKey)
-			if err != nil {
-				log.Error(err)
-				return
-			}
-			if !exists {
-				redisClient.Incr(rateLimitCurrentValueKey)
-				redisClient.ExpireAt(rateLimitCurrentValueKey, time.Now().Add(time.Second*time.Duration(rateLimitTTL)))
-				currentValue = "1"
-			}
-
-			isAllowed, errMessage, err := calculateRateLimitLogic(rateLimitTierValueType, currentValue, rateLimitValue, rateLimitErrorMessage, rateLimitCurrentValueKey, redisClient)
-			if err != nil {
-				log.Error(err)
-				return
-			}
-			if !isAllowed {
-				response := utils.Response{
-					Success:      false,
-					ErrorMessage: errMessage,
+				// Get rate limit current value from cache
+				currentValue, exists, err := cache.Get(redisClient, rateLimitCurrentValueKey)
+				if err != nil {
+					log.Error(err)
+					return
 				}
-				c.AbortWithStatusJSON(http.StatusTooManyRequests, response)
-				return
-			}
-		}
+				if !exists {
+					redisClient.Incr(rateLimitCurrentValueKey)
+					redisClient.ExpireAt(rateLimitCurrentValueKey, time.Now().Add(time.Second*time.Duration(rateLimitTTL)))
+					currentValue = "1"
+				}
 
-		fmt.Println("Time taken to execute RateLimitingMiddleware: ", time.Since(startTime))
+				isAllowed, errMessage, err := calculateRateLimitLogic(rateLimitTierValueType, currentValue, rateLimitValue, rateLimitErrorMessage, rateLimitCurrentValueKey, redisClient)
+				if err != nil {
+					log.Error(err)
+					return
+				}
+				if !isAllowed {
+					response := utils.Response{
+						Success:      false,
+						ErrorMessage: errMessage,
+					}
+					c.AbortWithStatusJSON(http.StatusTooManyRequests, response)
+					return
+				}
+			}
+
+			fmt.Println("Time taken to execute RateLimitingMiddleware: ", time.Since(startTime))
+			c.Next()
+		}
+	}
+	return func(c *gin.Context) {
 		c.Next()
 	}
 }
@@ -644,4 +557,96 @@ func calculateRateLimitLogic(rateLimitTierValueType int, currentValue string, ra
 		redisClient.Incr(rateLimitCurrentValueKey)
 	}
 	return true, "", nil
+}
+
+func FetchCommunityBillingData(redisClient *redis.Client, communityId int, cacheKey string, headers map[string]interface{}) (CommunityBillingMeta, error) {
+	// Get Community Billing data from cache
+	value, valueExists, err := cache.Get(redisClient, cacheKey)
+	//If error continue to next middleware
+	if err != nil {
+		return CommunityBillingMeta{}, err
+	}
+
+	communityBillingMeta := CommunityBillingMeta{}
+
+	// communityBillingDataApi
+	if !valueExists {
+		// Get Value from API
+		respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, fmt.Sprintf("/%s/%d", utils.BillingPlanEnpoint, communityId), utils.GETRequest, headers, nil, nil)
+		if err != nil {
+			return communityBillingMeta, err
+		}
+
+		err = json.Unmarshal(respBytes, &communityBillingMeta)
+		if err != nil {
+			return communityBillingMeta, err
+		}
+
+		communityBillingMetaForCache, err := json.Marshal(communityBillingMeta)
+
+		if err != nil {
+			return communityBillingMeta, err
+		}
+		// Update value in Cache
+		err = cache.Set(redisClient, cacheKey, communityBillingMetaForCache, time.Hour*cache.CommunityBillingDataTTL)
+		if err != nil {
+			return communityBillingMeta, err
+		}
+
+	} else {
+		// Unmarshal value from cache
+		err := json.Unmarshal([]byte(value), &communityBillingMeta)
+		if err != nil {
+			return communityBillingMeta, err
+		}
+	}
+	return communityBillingMeta, nil
+}
+
+func FetchTierData(redisClient *redis.Client, communityId int, headers map[string]interface{}, tierType int) ([]ApitierDataType, error) {
+
+	cacheKey := fmt.Sprintf("tier_data_%d", tierType)
+	value, exists, err := cache.Get(redisClient, cacheKey)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	tierData := []ApitierDataType{}
+
+	if !exists {
+		params := map[string]string{
+			utils.ParamTierType: strconv.Itoa(tierType),
+		}
+		// Get data from skulk service
+		respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, utils.TierEndpoint, utils.GETRequest, headers, params, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		apiResponse := TierTypeApiResponse{}
+		err = json.Unmarshal(respBytes, &apiResponse)
+		fmt.Println(apiResponse)
+		if err != nil {
+			return nil, err
+		}
+
+		cacheDataVal, err := json.Marshal(apiResponse.Data)
+		if err != nil {
+			return nil, err
+		}
+
+		// Save in cache
+		err = cache.Set(redisClient, cacheKey, cacheDataVal, time.Hour*cache.TierDataTTL)
+		if err != nil {
+			return nil, err
+		}
+		tierData = apiResponse.Data
+	} else {
+		err := json.Unmarshal([]byte(value), &tierData)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return tierData, nil
 }
