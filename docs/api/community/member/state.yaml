@@ -1,0 +1,18 @@
+get:
+  summary: Get Community Member State
+  operationId: getCommunityMemberState
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../components/parameters/headers/sdkSource.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/community_member_state.yaml"

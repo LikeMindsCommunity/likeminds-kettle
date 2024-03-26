@@ -1,0 +1,21 @@
+get:
+  summary: Get Unseen Count for Chatroom Event
+
+  operationId: getChatroomEventUnseenCount
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+    
+  description: |
+    This API fetches the unseen count for a chatroom event.
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/chatroom_unseen_count.yaml"

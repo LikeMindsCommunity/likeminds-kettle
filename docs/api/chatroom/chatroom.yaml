@@ -1,0 +1,126 @@
+get:
+  summary: Fetch Chatrooms of a Community
+
+  operationId: getChatrooms
+
+  tags:
+    - Chatroom
+
+  description: |
+    This API fetches chatrooms of a community.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/partials/chatroom.yaml"
+
+
+post:
+  summary: Create Chatroom
+
+  operationId: createChatroom
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/chatroom_create.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+
+
+put:
+  summary: Update Chatroom
+
+  operationId: updateChatroom
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/chatroom_update.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+
+
+delete:
+  summary: Delete Chatroom
+
+  operationId: deleteChatroom
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
+    
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/chatroom_delete.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+    "404":
+      description: Not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string

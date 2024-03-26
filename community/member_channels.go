@@ -42,7 +42,7 @@ func GetMemberChannels(c *gin.Context) {
 	}
 
 	// Parse Array to String to send in request
-	temp_chatroom_types := utils.ParseArrayToString(chatroom_types)
+	temp_chatroom_types := utils.ParseInterfaceListToStringList(chatroom_types)
 
 	requestParams := map[string]string{
 		ParamUserId:                 c.Query(ParamUserId),

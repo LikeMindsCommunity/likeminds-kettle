@@ -1,0 +1,31 @@
+get:
+  summary: Get Community Feed Notification Settings
+  operationId: getCommunityFeedNotificationSettings
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../../components/parameters/headers/apiKey.yaml"
+  responses:
+    "200":
+      description: OK
+
+
+put:
+  summary: Update Community Feed Notification Settings
+  operationId: updateCommunityFeedNotificationSettings
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../../components/parameters/headers/apiKey.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../components/schemas/requests/community_feed_notifications.yaml"
+  responses:
+    "200":
+      description: OK

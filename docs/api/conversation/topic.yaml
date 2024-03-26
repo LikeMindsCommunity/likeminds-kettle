@@ -1,0 +1,24 @@
+put:
+  summary: Set Conversation Topic
+  operationId: setConversationTopic
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
+    - $ref: "../../components/parameters/query/conversationId.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/conversation_topic.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/conversation_topic.yaml"

@@ -1,0 +1,10 @@
+type: object
+properties:
+  otp_mode:
+    type: string
+  mobile_no:
+    type: integer
+  country_code:
+    type: integer
+  is_retry:
+    type: boolean

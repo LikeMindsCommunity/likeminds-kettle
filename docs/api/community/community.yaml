@@ -1,0 +1,22 @@
+get:
+  summary: Get Community Details
+
+  operationId: getCommunityDetails
+
+  tags:
+    - Community
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/community.yaml"

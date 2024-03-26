@@ -1,0 +1,17 @@
+get:
+    operationId: getUserToken
+    description: 
+      This API retrieves the user token.
+
+    tags:
+      - Login
+    security:
+    - bearerAuth: []
+
+    responses:
+      '200':
+        description: User token retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../../components/schemas/responses/user_token.yaml"

@@ -44,6 +44,9 @@ func CommentLike(c *gin.Context, method int) {
 }
 
 func getCommentLikesInternal(c *gin.Context, userId string, endPoint string) {
+
+	headers := utils.CreateHeaders(c, userId)
+
 	//Params to be sent in the /post/<post_id>/commnet/<comment_id>like request
 	params := map[string]string{
 		ParamPage:     c.Query(ParamPage),
@@ -63,7 +66,7 @@ func getCommentLikesInternal(c *gin.Context, userId string, endPoint string) {
 	}
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endPoint, utils.GETRequest, headers, params, nil)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
@@ -84,8 +87,10 @@ func getCommentLikesInternal(c *gin.Context, userId string, endPoint string) {
 			}
 		}
 
+		redisClient := utils.GetRedisClientFromContext(c)
+
 		//Fetch user data for given user_unique_ids
-		user_data, err := user.FetchMemberMeta(utils.CreateHeaders(c, userId), user_ids)
+		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_ids)
 		if err != nil {
 			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 			return
@@ -93,6 +98,9 @@ func getCommentLikesInternal(c *gin.Context, userId string, endPoint string) {
 
 		//Update user data in dataResponse
 		dataResponse["users"] = user_data
+
+		// Update user topics data in dataResponse
+		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
 	}
 
 	//Send response

@@ -1,0 +1,27 @@
+post:
+  summary: Add Highlights to Chatroom Event
+
+  operationId: addChatroomEventHighlights
+
+  description: |
+    This API adds highlights to a chatroom event.
+
+  tags:
+    - Chatroom
+    
+  security:
+    - bearerAuth: []
+    
+  requestBody:
+    content:
+      application/json:
+        schema: {}
+
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/chatroom_highlights.yaml"

@@ -1,0 +1,91 @@
+get:
+  summary: Fetch Post Details
+
+  operationId: fetchPostDetails
+
+  tags:
+    - Feed - V1
+
+  description: This API fetches Post Details.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../../components/parameters/path/post_id.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../components/schemas/responses/feed_post_get.yaml"
+
+
+put:
+  summary: Edit a User Post
+
+  operationId: editUserPost
+
+  tags:
+    - Feed - V1
+
+  description: This API edits a user Post.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../../components/parameters/path/post_id.yaml"
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../components/schemas/requests/feed_post_edit.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../components/schemas/responses/feed_post_edit.yaml"
+
+
+delete:
+  summary: Delete a Post
+
+  operationId: deletePost
+
+  tags:
+    - Feed - V1
+
+  description: This API deletes a Post.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/path/post_id.yaml"
+      
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../components/schemas/requests/feed_post_delete.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../components/schemas/responses/feed_post_delete.yaml"

@@ -1,0 +1,95 @@
+get:
+  summary: Get Conversations
+  operationId: getConversations
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/conversation_get.yaml"
+
+
+
+post:
+  summary: Create Conversation
+  operationId: createConversation
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - name: x-member-id
+      in: header
+      description: Member ID
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/conversation_create.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/conversation_create.yaml"
+
+
+
+delete:
+  summary: Delete Conversation
+  operationId: deleteConversation
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/conversation_delete.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/conversation_delete.yaml"
+
+
+
+put:
+  summary: Edit Conversation
+  operationId: editConversation
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/conversation_update.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/conversation_update.yaml"

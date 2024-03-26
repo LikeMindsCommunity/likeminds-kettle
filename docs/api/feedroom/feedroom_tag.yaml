@@ -1,0 +1,23 @@
+get:
+  summary: Get Feedroom Tags
+  
+  tags:
+    - Feedroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - name: feedroom_id
+      in: path
+      required: true
+      schema:
+        type: integer
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/feedroom_tag.yaml"

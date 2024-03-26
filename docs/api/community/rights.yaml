@@ -1,0 +1,43 @@
+get:
+  summary: Get Community Rights
+  operationId: getCommunityRights
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/sdkSource.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/community_rights_get.yaml"
+
+
+
+patch:
+  summary: Update Community Rights
+  operationId: updateCommunityRights
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/community_rights.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/community_rights_update.yaml"

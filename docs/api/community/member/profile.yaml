@@ -1,0 +1,40 @@
+get:
+  summary: Get Community Member Profile
+  operationId: getMemberProfile
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/community_member_profile_get.yaml"
+
+
+
+put:
+  summary: Update Community Member Profile
+  operationId: updateMemberProfile
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/community_member_profile.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/community_member_profile_update.yaml"

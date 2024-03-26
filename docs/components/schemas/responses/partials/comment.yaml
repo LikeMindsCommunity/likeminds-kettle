@@ -1,0 +1,65 @@
+type: object
+properties:
+  _id:
+    type: string
+  comments_count:
+    type: integer
+  community_id:
+    type: integer
+  created_at:
+    type: integer
+  is_edited:
+    type: boolean
+  is_liked:
+    type: boolean
+  level:
+    type: integer
+  likes_count:
+    type: integer
+  menu_items:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+  post_id:
+    type: string
+  replies:
+    type: array
+    items:
+      type: object
+      properties:
+        _id:
+          type: string
+        text:
+          type: string
+        level:
+          type: integer
+        likes_count:
+          type: integer
+        comments_count:
+          type: integer
+        menu_items:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+        user_id:
+          type: string
+        post_id:
+          type: string
+        created_at:
+          type: integer
+        updated_at:
+          type: integer
+  text:
+    type: string
+  updated_at:
+    type: integer
+  user_id:
+    type: string

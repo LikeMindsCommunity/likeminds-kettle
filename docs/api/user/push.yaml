@@ -1,0 +1,26 @@
+post:
+  summary: User Device Push
+
+  operationId: userDevicePush
+
+  tags:
+    - User
+
+  security:
+    - bearerAuth: []
+    
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/device.yaml"
+    
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/user_device_push.yaml"
+
+  responses:
+    "200":
+      description: OK

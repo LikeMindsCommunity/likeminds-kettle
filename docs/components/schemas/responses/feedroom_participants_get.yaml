@@ -1,0 +1,14 @@
+type: object
+properties:
+  success:
+    type: boolean
+  error_message:
+    type: string
+    nullable: true
+  data:
+    type: object
+    properties:
+      can_edit_participant:
+        type: boolean
+      participants:
+        $ref: "./partials/participants.yaml"

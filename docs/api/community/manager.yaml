@@ -1,0 +1,27 @@
+delete:
+  summary: Remove Community Manager
+  operationId: removeCommunityManager
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            user_id:
+              type: string
+              format: uuid
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/community_manager.yaml"

@@ -1,0 +1,23 @@
+get:
+  summary: Fetch User Created Posts
+
+  operationId: fetchUserCreatedPosts
+
+  tags:
+    - Feed - V1
+
+  description: This API fetches User Created Posts.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/path/user_id.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../components/schemas/responses/feed_posts_get.yaml"

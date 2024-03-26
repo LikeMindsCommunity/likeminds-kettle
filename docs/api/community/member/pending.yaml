@@ -1,0 +1,19 @@
+get:
+  summary: Fetch Pending Community Members
+  operationId: fetchPendingMembers
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../components/parameters/headers/sdkSource.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object

@@ -1,0 +1,21 @@
+post:
+  summary: Submit Poll in Conversation
+  operationId: submitPollInConversation
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/conversation_poll_submit.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/conversation_poll_submit.yaml"

@@ -1,0 +1,20 @@
+post:
+  summary: Logs
+  operationId: postLogs
+  tags:
+    - Helpers
+  security:
+    - bearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/logs.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/logs.yaml"

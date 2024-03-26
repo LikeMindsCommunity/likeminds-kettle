@@ -1,0 +1,16 @@
+type: object
+properties:
+  content_download_settings:
+    type: array
+    items:
+      type: object
+      properties:
+        community_id:
+          type: integer
+        download_setting_type:
+          type: string
+        download_setting_title:
+          type: string
+        enabled:
+          type: boolean
+      # ... (repeat for other settings)

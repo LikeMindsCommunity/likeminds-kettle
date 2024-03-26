@@ -1,0 +1,103 @@
+get:
+      operationId: getCommunityMembers
+      tags:
+        - Community
+      summary: Fetch Community Members
+      description: |-
+        This API fetches members of a community
+      parameters:
+        - $ref: "../../../components/parameters/headers/platformCode.yaml"
+        - $ref: "../../../components/parameters/headers/versionCode.yaml"
+        - $ref: "../../../components/parameters/headers/platformType.yaml"
+        - $ref: "../../../components/parameters/headers/apiKey.yaml"
+        - $ref: "../../../components/parameters/query/page.yaml"
+        - $ref: "../../../components/parameters/query/questionAnswerVersions.yaml"
+        - name: member_state
+          in: query
+          description: Member state filter
+          required: false
+          schema:
+            type: integer
+        
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "../../../components/schemas/responses/community_member_get.yaml"
+
+post:
+    operationId: createCommunityMember
+    tags:
+        - Community
+    summary: Create Community Members
+    description: |-
+      This API create members of a community
+    parameters:
+      - $ref: "../../../components/parameters/headers/platformCode.yaml"
+      - $ref: "../../../components/parameters/headers/versionCode.yaml"
+      - $ref: "../../../components/parameters/headers/platformType.yaml"
+      - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "../../../components/schemas/requests/communitymember.yaml"
+    responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "../../../components/schemas/responses/community_member_create.yaml"
+
+put:
+  operationId: updateCommunityMember
+  tags:
+        - Community
+  summary: Update Community Members
+  description: |-
+    This API updates members of a community
+  parameters:
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+  requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/requests/communitymember.yaml"
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/community_member_update.yaml"
+
+
+delete:
+  summary: Remove Members from Community
+  operationId: removeMembers
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/platformType.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/community_member_delete.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/community_member_delete.yaml"

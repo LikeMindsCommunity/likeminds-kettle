@@ -1,0 +1,23 @@
+get:
+  summary: Get Unread Conversations
+  operationId: getUnreadConversations
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../../components/parameters/query/chatroomId.yaml"
+    - name: paginate_by
+      in: query
+      description: Items per page for pagination
+      schema:
+        type: integer
+    - $ref: "../../../components/parameters/query/page.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/conversation_unread.yaml"

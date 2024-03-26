@@ -1,0 +1,19 @@
+get:
+  operationId: getBots
+  description:
+    APIs for Fetching Bot details for a SDK Project
+  tags: 
+    - Bot
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+
+  summary: Fetch all bot details
+  responses:
+    '200':
+      description: Bot details retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/user_bot.yaml"

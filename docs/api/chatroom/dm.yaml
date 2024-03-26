@@ -1,0 +1,16 @@
+get:
+  summary: Get Direct Message Chatrooms
+  operationId: getDirectMessageChatrooms
+  tags:
+    - Chatroom
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/chatroom_dm.yaml"

@@ -1,0 +1,7 @@
+name: search_type
+in: query
+description: Search type
+required: true
+schema:
+  type: string
+  enum: ['title', 'header', 'chatroom_id']

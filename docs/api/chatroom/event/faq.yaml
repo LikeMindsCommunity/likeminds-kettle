@@ -1,0 +1,27 @@
+post:
+  summary: Add FAQ to Chatroom Event
+
+  operationId: addChatroomEventFAQ
+
+  tags:
+    - Chatroom
+
+  description: |
+    This API adds frequently asked questions (FAQ) to a chatroom event.
+
+  security:
+    - bearerAuth: []
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/chatroom_faq.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/chatroom_faq.yaml"

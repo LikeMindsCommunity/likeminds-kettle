@@ -1,0 +1,8 @@
+type: object
+properties:
+  value:
+    type: boolean
+  notify:
+    type: boolean
+required:
+  - value

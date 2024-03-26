@@ -1,0 +1,27 @@
+get:
+  summary: Get Chatroom Event Metadata
+
+  operationId: getChatroomEventMeta
+
+  tags:
+    - Chatroom
+
+  description: |
+    This API fetches metadata for chatroom events of a community.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../components/parameters/query/pastEvents.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/chatroom_meta.yaml"

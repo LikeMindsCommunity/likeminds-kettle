@@ -1,0 +1,6 @@
+name: country_code
+in: query
+description: User Country Code
+required: true
+schema:
+  type: string

@@ -1,0 +1,84 @@
+get:
+  operationId: getWebhooks
+  description:
+    This API fetches all the Webhooks present in the community.
+  tags: 
+    - Webhooks
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+  summary: Fetch all webhooks
+  responses:
+    '200':
+      description: Webhooks retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/webhooks_get.yaml"
+          example:
+            success: true
+            data:
+              type: Array 
+              webhooks:
+                - community: 50494
+                  created_at: 1694895829823
+                  id: 2
+                  is_active: true
+                  updated_at: 1694895829823
+                  url: "https://eoja4x1itbjwnwc.m.pipedream.net"
+                  webhook_type: "chatroom.joined"
+                - community: 50494
+                  created_at: 1694895836792
+                  id: 3
+                  is_active: true
+                  updated_at: 1694895836792
+                  url: "https://eoja4x1itbjwnwc.m.pipedream.net"
+                  webhook_type: "chatroom.left"
+                - community: 50494
+                  created_at: 1694895853981
+                  id: 4
+                  is_active: true
+                  updated_at: 1694895853981
+                  url: "https://eoja4x1itbjwnwc.m.pipedream.net"
+                  webhook_type: "profile.created"
+
+post:
+  operationId: enableWebhook
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+  description: This API is used to register a new webhook against an event (webhook_type)
+  tags:
+  - Webhooks
+  summary: Register a new webhook
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/webhook_enable.yaml"
+          required:
+            - webhook_type
+            - url
+            - is_active
+  responses:
+    '200':
+      description: Webhook created successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/webhook_enable.yaml"
+          example:
+            success: true
+            data:
+              webhook:
+                community: 50494
+                created_at: 1701715871365
+                id: 1
+                is_active: true
+                updated_at: 1701715871365
+                url: "url"
+                webhook_type: "chatroom.joined"

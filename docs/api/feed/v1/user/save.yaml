@@ -1,0 +1,25 @@
+get:
+  summary: Fetch User Saved Posts
+
+  operationId: fetchUserSavedPosts
+
+  tags:
+    - Feed - V1
+
+  description: This API fetches User Saved Posts.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/path/user_id.yaml"
+    - $ref: "../../../../components/parameters/query/page.yaml"
+    - $ref: "../../../../components/parameters/query/pageSize.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../components/schemas/responses/feed_posts_save.yaml"

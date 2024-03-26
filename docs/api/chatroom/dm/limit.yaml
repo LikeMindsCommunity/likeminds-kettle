@@ -1,0 +1,17 @@
+get:
+  summary: Get DM Limit of a User
+  operationId: getDMLimit
+  tags:
+    - Chatroom
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/query/uuid.yaml"
+    - $ref: "../../../components/parameters/query/memberId.yaml"
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/chatroom_dm_limit.yaml"

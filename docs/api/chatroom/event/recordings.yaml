@@ -1,0 +1,57 @@
+post:
+  summary: Create Chatroom Event Recording
+
+  operationId: createChatroomEventRecording
+
+  tags:
+    - Chatroom
+
+  description: |
+    This API creates a recording for a chatroom event in a community.
+
+  security:
+    - bearerAuth: []
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/chatroom_recording_create.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/chatroom_recordings.yaml"
+
+
+
+delete:
+  summary: Delete Chatroom Event Recording
+
+  operationId: deleteChatroomEventRecording
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  description: |
+    This API deletes a recording from a chatroom event.
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/chatroom_recording_delete.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/chatroom_recordings.yaml"

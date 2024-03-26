@@ -1,0 +1,34 @@
+post:
+  summary: Create Comment on Post
+
+  operationId: createComment
+
+  tags:
+    - Feed - V1
+
+  description: |
+    This API creates a new comment on a Post.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../../../components/parameters/path/post_id.yaml"
+
+  requestBody:
+    description: The text of the comment
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../../components/schemas/requests/feed_comment.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../../components/schemas/responses/feed_comment_create.yaml"

@@ -1,0 +1,21 @@
+type: object
+properties:
+  webhook_type:
+    type: string
+    enum:
+      - chatroom.joined
+      - chatroom.left
+      - chatroom.user.tagged 
+      - chatroom.conversation.replied 
+      - profile.created
+      - post.created 
+      - post.liked 
+      - post.pinned 
+      - post.tagged 
+      - comment.added 
+      - comment.tagged 
+      - comment.react 
+  url:
+    type: string
+  is_active:
+    type: boolean

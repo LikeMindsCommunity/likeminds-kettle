@@ -1,0 +1,22 @@
+get:
+  summary: Get Feedroom Tags
+
+  operationId: getFeedroomTags
+
+  tags:
+    - Feedroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/feedroomId.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/feedroom_tag.yaml"

@@ -1,0 +1,52 @@
+put:
+  summary: Vote on a poll
+
+  operationId: voteOnPoll
+
+  tags:
+    - Poll
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/path/poll_id.yaml"
+
+  requestBody:
+    description: Votes on poll options
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/poll_vote.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/poll_vote_put.yaml"
+
+
+get:
+  summary: Get votes for a poll
+
+  operationId: getPollVotes
+
+  tags:
+    - Poll
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/path/poll_id.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/poll_vote_get.yaml"

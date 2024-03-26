@@ -1,0 +1,42 @@
+type: object
+properties:
+  id:
+    type: string
+  created:
+    type: string
+  whatsappMessageId:
+    type: string
+  conversationId:
+    type: string
+  ticketId:
+    type: string
+  text:
+    type: string
+  type:
+    type: string
+  data:
+    type: object
+  timestamp:
+    type: string
+  owner:
+    type: boolean
+  eventType:
+    type: string
+  statusString:
+    type: string
+  avatarUrl:
+    type: string
+  assignedId:
+    type: integer
+  operatorName:
+    type: string
+  operatorEmail:
+    type: string
+  waId:
+    type: string
+  messageContact:
+    type: string
+  senderName:
+    type: string
+  listReply:
+    type: string

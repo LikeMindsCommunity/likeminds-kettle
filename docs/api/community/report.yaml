@@ -1,0 +1,92 @@
+get:
+  operationId: getCommunityReports
+  tags:
+    - Community
+  summary: Fetch Reports in Community
+  description: |-
+    This API fetches reports of a community
+  parameters:
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/community_report_get.yaml"
+    
+            
+post:
+    operationId: createCommunityReport
+    tags:
+        - Community
+    summary: Report a Community Member(Moderation)
+    description: |-
+      This API creates report against a Community Member
+    parameters:
+      - $ref: "../../components/parameters/headers/platformCode.yaml"
+      - $ref: "../../components/parameters/headers/versionCode.yaml"
+      - $ref: "../../components/parameters/headers/platformType.yaml"
+      - $ref: "../../components/parameters/headers/apiKey.yaml"
+    requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "../../components/schemas/requests/community_report_create.yaml"
+    responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "../../components/schemas/responses/community_report_create.yaml"
+              example:
+                success: true
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error_message:
+                    type: string
+              example:
+                success: false
+                error_message: "Invalid accused_uuid for post reporting!!"
+
+delete:
+  operationId: deleteCommunityReport
+  tags:
+        - Community
+  summary: Delete a Report 
+  description: |-
+    This API deletes community report 
+  parameters:
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+  requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "../../components/schemas/requests/community_report_delete.yaml"
+  responses:
+      '200':
+        description: Successful response
+        content:
+          application/json:
+            schema:
+              $ref: "../../components/schemas/responses/community_report_delete.yaml"
+            example:
+              success: true
+  
+#TOD0: /community/report/tag

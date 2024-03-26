@@ -1,0 +1,9 @@
+type: object
+properties:
+  channel_id:
+    type: string
+  invite_status:
+    type: integer
+required:
+  - channel_id
+  - invite_status

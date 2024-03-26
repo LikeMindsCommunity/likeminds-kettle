@@ -39,7 +39,7 @@ func CommunityMemberChannels(c *gin.Context) {
 	requestParams := map[string]string{
 		ParamState:      c.Query(ParamState),
 		ParamPage:       c.Query(ParamPage),
-		ParamFilterType: utils.ParseArrayToString(filterType),
+		ParamFilterType: utils.ParseInterfaceListToStringList(filterType),
 	}
 
 	// If user_id is digit then send it as user_id else send it as uuid

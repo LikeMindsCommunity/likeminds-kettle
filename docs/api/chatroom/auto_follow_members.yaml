@@ -1,0 +1,39 @@
+put:
+  summary: Enable Auto Follow Members in a Chatroom
+
+  operationId: enableAutoFollowMembers
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/path/chatroomId.yaml"
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/chatroom_auto_follow.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/chatroom_autofollow.yaml"
+    "404":
+      description: Not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string

@@ -1,0 +1,123 @@
+post:
+  summary: Create SDK Project
+
+  x-internal: true
+
+  operationId: createSdkProject
+
+  tags:
+    - Project
+
+  description: This API creates SDK Project for client.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/project.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/sdk_project_create.yaml"
+
+get:
+  summary: Fetch SDK Projects
+
+  x-internal: true
+   
+  operationId: getSdkProjects
+
+  tags:
+    - Project
+
+  description: This API fetches SDK Projects for client.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/sdk_project_get.yaml"
+
+put:
+  summary: Update SDK Project
+
+  x-internal: true
+
+  operationId: editSdkProjects
+
+  tags:
+    - Project
+
+  description: This API updates SDK Project for client.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/project.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/sdk_project_edit.yaml"
+
+delete:
+  summary: Deletes SDK Project
+
+  x-internal: true
+
+  operationId: deleteSdkProjects
+
+  tags:
+    - Project
+
+  description: This API deletes SDK Project for client.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/sdk_project_delete.yaml"

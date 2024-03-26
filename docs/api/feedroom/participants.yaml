@@ -1,0 +1,86 @@
+post:
+  summary: Add Participants to Chatroom
+
+  operationId: addParticipants
+
+  tags:
+    - Feedroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/feedroom_participants_add.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/feedroom_participants_add.yaml"
+
+
+get:
+  summary: Get Chatroom Participants
+
+  operationId: getParticipants
+
+  tags:
+    - Feedroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/feedroomId.yaml"
+    - $ref: "../../components/parameters/query/isSecret.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/feedroom_participants_get.yaml"
+
+
+delete:
+  summary: Remove Participant from Chatroom
+
+  operationId: removeParticipant
+
+  tags:
+    - Feedroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/feedroom_participants_remove.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/feedroom_participants_remove.yaml"

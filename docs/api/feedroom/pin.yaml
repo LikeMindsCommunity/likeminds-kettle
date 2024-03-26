@@ -1,0 +1,27 @@
+put:
+  summary: Pin Chatroom in Community
+
+  tags:
+    - Feedroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/feedroom_pin.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/feedroom_pin.yaml"

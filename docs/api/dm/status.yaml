@@ -1,0 +1,32 @@
+get:
+  summary: Community DM Status
+
+  operationId: communityDMStatus
+
+  tags:
+    - DM
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - name: req_from
+      in: query
+      description: Type of page user is requested from
+      required: true
+      schema:
+        type: string
+    - $ref: "../../components/parameters/query/memberId.yaml"
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
+
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/dm_status.yaml"

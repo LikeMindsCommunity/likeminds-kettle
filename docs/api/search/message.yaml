@@ -1,0 +1,19 @@
+get:
+  summary: Search Message
+
+  operationId: searchMessage
+
+  tags:
+    - Search
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/query/search.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
+    - $ref: "../../components/parameters/query/pageSize.yaml"
+
+  responses:
+    "200":
+      description: OK

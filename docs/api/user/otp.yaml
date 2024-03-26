@@ -1,0 +1,20 @@
+post:
+  summary: User OTP
+
+  operationId: userOTP
+
+  tags:
+    - User
+
+  security:
+    - bearerAuth: []
+    
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/user_otp.yaml"
+
+  responses:
+    "200":
+      description: OK

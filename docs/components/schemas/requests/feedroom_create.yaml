@@ -1,0 +1,8 @@
+type: object
+properties:
+  is_secret:
+    type: boolean
+  title:
+    type: string
+  feedroom_image_url:
+    type: string

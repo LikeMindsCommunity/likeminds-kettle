@@ -1,0 +1,44 @@
+get:
+  summary: Get User Channel Settings
+  operationId: getUserChannelSettings
+  tags:
+    - Channel
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/path/channel_id.yaml"
+    - $ref: "../../components/parameters/path/uuid.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/channel_settings_get.yaml"
+
+
+put:
+  summary: Update User Channel Settings
+  operationId: updateUserChannelSettings
+  tags:
+    - Channel
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/path/channel_id.yaml"
+    - $ref: "../../components/parameters/path/uuid.yaml"
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/channel_settings.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/channel_settings_update.yaml"

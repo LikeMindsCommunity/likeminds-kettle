@@ -1,0 +1,28 @@
+type: object
+properties:
+  success:
+    type: boolean
+  error_message:
+    type: string
+  data:
+    type: object
+    properties:
+      admin_rights:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            is_selected:
+              type: boolean
+            title:
+              type: string
+      created_at:
+        type: integer
+      member:
+        $ref: "./partials/member.yaml"
+      member_rights:
+        $ref: "./partials/memberRights.yaml"
+      role:
+        type: string

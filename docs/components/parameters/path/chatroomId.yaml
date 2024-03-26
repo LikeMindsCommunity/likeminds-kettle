@@ -1,0 +1,6 @@
+name: chatroom_id
+in: path
+description: Chatroom ID
+required: true
+schema:
+  type: integer

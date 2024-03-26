@@ -1,0 +1,24 @@
+get:
+  summary: Get User Activity Feed
+
+  operationId: getUserActivityFeed
+
+  tags:
+    - Feed - V1
+
+  description: Get user activity feed
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/query/page.yaml"
+    - $ref: "../../../../components/parameters/query/pageSize.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../components/schemas/responses/feed_activity_get.yaml"

@@ -1,0 +1,11 @@
+type: object
+properties:
+  chatroom_id:
+    type: integer
+    description: Chtatroom id is nullable
+  reaction:
+    type: string
+    description: any string
+  conversation_id:
+    type: integer
+    description: Conversation id is nullable

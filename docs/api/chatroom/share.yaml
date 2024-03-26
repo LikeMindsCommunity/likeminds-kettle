@@ -1,0 +1,37 @@
+get:
+  summary: Share Chatroom
+  operationId: shareChatroom
+  tags:
+    - Chatroom
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/chatroom_share.yaml"
+          example:
+            community_share:
+              public_link: "https://collabmates.app.link/rVuPhAn1Veb"
+              private_link: "https://collabmates.app.link/sVuPhAn1Veb"
+              private_link_text: "Join LikeMinds Beta Testing community on LikeMinds with my exclusive link. Auto-verification is enabled for 24 hours: https://collabmates.app.link/sVuPhAn1Veb"
+              private_link_members_directory: "https://collabmates.app.link/tVuPhAn1Veb"
+              public_link_text: "I am part of LikeMinds Beta Testing community on LikeMinds. Apply to join our community. https://collabmates.app.link/rVuPhAn1Veb"
+              private_link_text_members_directory: "I have created a community directory for LikeMinds Beta Testing on LikeMinds. Signup and complete your profile to see detailed profiles of other members in the community using this exclusive link. Auto-verification is enabled for 24 hours: https://collabmates.app.link/tVuPhAn1Veb"
+            success: true
+
+    '404':
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+          example:
+            error: "Chatroom not found"

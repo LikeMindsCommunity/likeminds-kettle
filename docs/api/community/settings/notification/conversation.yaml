@@ -1,0 +1,57 @@
+get:
+  summary: Get Community Conversation Notification Settings
+  operationId: getCommunityConversationNotificationSettings
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          example: |
+            {
+              "success": true,
+              "data": {
+                "community_notification_settings": {
+                  "community": 50431,
+                  "created_at": 1671440379363,
+                  "id": "8c13fd69-2603-4a79-9a15-20389a03f2bb",
+                  "noti_state": 2,
+                  "updated_at": 1677658346213
+                }
+              }
+            }
+
+
+put:
+  summary: Update Community Conversation Notification Settings
+  operationId: updateCommunityConversationNotificationSettings
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../components/schemas/requests/community_conversation_notifications.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          example: |
+            {
+              "success": true,
+              "data": {
+                "community_notification_settings": {
+                  "community": 50431,
+                  "created_at": 1671440379363,
+                  "id": "8c13fd69-2603-4a79-9a15-20389a03f2bb",
+                  "noti_state": 2,
+                  "updated_at": 1677658346213
+                }
+              }
+            }

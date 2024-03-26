@@ -1,0 +1,23 @@
+get:
+  summary: Get DM Meta Information
+
+  operationId: getDMMetaInformation
+
+  tags:
+    - DM
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/dm_meta.yaml"

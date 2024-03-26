@@ -1,0 +1,24 @@
+put:
+  summary: Join Community
+
+  operationId: memberJoinCommunity
+
+  tags:
+    - Community
+
+  security:
+    - bearerAuth: []
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/community_join.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object

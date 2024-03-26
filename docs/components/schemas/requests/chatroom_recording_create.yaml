@@ -1,0 +1,35 @@
+type: object
+properties:
+  url:
+    type: string
+    description: URL for the recording
+  chatroom_id:
+    type: integer
+    description: Chatroom ID
+  type:
+    type: string
+    description: Type of recording (e.g., "image")
+  index:
+    type: integer
+    description: Index of the recording
+  height:
+    type: integer
+    description: Height of the recording
+  width:
+    type: integer
+    description: Width of the recording
+  is_recording:
+    type: boolean
+    description: Indicates whether it is a recording
+  about:
+    type: string
+    description: Description about the recording
+required:
+  - url
+  - chatroom_id
+  - type
+  - index
+  - height
+  - width
+  - is_recording
+  - about

@@ -1,0 +1,24 @@
+type: object
+properties:
+  conversation_id:
+    type: string
+  url:
+    type: string
+    format: uri
+  type:
+    type: string
+  files_count:
+    type: integer
+  thumnail_url:
+    type: string
+  index:
+    type: integer
+  meta:
+    type: object
+    properties:
+      size:
+        type: integer
+      number_of_page:
+        type: integer
+  name:
+    type: string

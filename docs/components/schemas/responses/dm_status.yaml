@@ -1,0 +1,13 @@
+type: object
+properties:
+  success:
+    type: boolean
+  error_message:
+    type: string
+  data:
+    type: object
+    properties:
+      cta:
+        type: string
+      show_dm:
+        type: boolean

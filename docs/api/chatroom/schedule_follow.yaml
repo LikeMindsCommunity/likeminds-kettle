@@ -1,0 +1,25 @@
+post:
+  summary: Schedule Follow for Chatroom
+
+  operationId: scheduleFollowForChatroom
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+    
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/chatroom_schedule_follow.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/chatroom_schedule_follow.yaml"

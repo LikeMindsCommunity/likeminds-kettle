@@ -1,0 +1,31 @@
+get:
+  summary: User OTP Verify
+
+  operationId: userOTPVerify
+
+  tags:
+    - User
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/query/mobileNumber.yaml"
+    - $ref: "../../components/parameters/query/countryCode.yaml"
+    - $ref: "../../components/parameters/query/otp.yaml"
+    - name: otp_mode
+      in: query
+      description: OTP Mode
+      required: true
+      schema:
+        type: string
+    - name: email_id
+      in: query
+      description: Email ID
+      schema:
+        type: string
+      required: false
+
+  responses:
+    "200":
+      description: OK

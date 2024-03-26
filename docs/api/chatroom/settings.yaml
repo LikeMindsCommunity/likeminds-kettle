@@ -1,0 +1,25 @@
+get:
+  summary: Get Chatroom Settings
+
+  operationId: getChatroomSettings
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/chatroom_settings.yaml"

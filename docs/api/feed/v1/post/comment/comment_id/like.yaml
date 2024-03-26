@@ -1,0 +1,52 @@
+put:
+  summary: Like a Comment on a Post
+
+  operationId: likeCommentOnPost
+
+  tags:
+    - Feed - V1
+
+  description: This API likes a Comment.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../../../components/parameters/path/post_id.yaml"
+    - $ref: "../../../../../../components/parameters/path/comment_id.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../../../components/schemas/responses/feed_comment_like_edit.yaml"
+
+
+get:
+  summary: Fetch Comment Likes
+
+  operationId: fetchCommentLikes
+
+  tags:
+    - Feed - V1
+
+  description: This API fetches Comment likes.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../../../components/parameters/path/post_id.yaml"
+    - $ref: "../../../../../../components/parameters/path/comment_id.yaml"
+    - $ref: "../../../../../../components/parameters/query/page.yaml"
+    - $ref: "../../../../../../components/parameters/query/pageSize.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../../../components/schemas/responses/feed_comment_like_get.yaml"

@@ -1,0 +1,35 @@
+put:
+  summary: Edit Comment on Post
+
+  operationId: editComment
+
+  tags:
+    - Feed - V1
+
+  description: |
+    This API edits a user comment on a Post.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../../../../components/parameters/path/post_id.yaml"
+    - $ref: "../../../../../../components/parameters/path/comment_id.yaml"
+
+  requestBody:
+    description: The updated text of the comment
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../../../components/schemas/requests/feed_comment.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../../../components/schemas/responses/feed_comment_edit.yaml"

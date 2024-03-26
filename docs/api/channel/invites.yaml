@@ -1,0 +1,26 @@
+get:
+  summary: Get Channel Invites
+
+  operationId: getChannelInvites
+
+  tags:
+    - Channel
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/query/channelType.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
+    - $ref: "../../components/parameters/query/pageSize.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/channel_invites.yaml"

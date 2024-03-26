@@ -17,6 +17,8 @@ func FetchUserCreatedPosts(c *gin.Context) {
 		return
 	}
 
+	headers := utils.CreateHeaders(c, userId)
+
 	//Params to be sent in the /user/<user_id>/post request
 	params := map[string]string{
 		ParamPage:     c.Query(ParamPage),
@@ -52,7 +54,7 @@ func FetchUserCreatedPosts(c *gin.Context) {
 	UserCreatedPostsEndPoint := fmt.Sprintf(FetchUserCreatedPostsEndPoint, user_id)
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, UserCreatedPostsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, UserCreatedPostsEndPoint, utils.GETRequest, headers, params, nil)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
@@ -66,6 +68,15 @@ func FetchUserCreatedPosts(c *gin.Context) {
 		posts := value.([]interface{})
 		user_ids := []string{}
 
+		if value, ok := dataResponse["filtered_comments"]; ok {
+			if commentData, ok := value.(map[string]interface{}); ok {
+
+				for _, val := range commentData {
+					posts = append(posts, val)
+				}
+			}
+		}
+
 		//Fetch posts user id
 		for _, post_data := range posts {
 			if user_unique_id, ok := post_data.(map[string]interface{})["uuid"]; ok {
@@ -75,15 +86,20 @@ func FetchUserCreatedPosts(c *gin.Context) {
 
 		user_ids = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_ids)
 
+		redisClient := utils.GetRedisClientFromContext(c)
+
 		//Fetch user data for given user_unique_ids
-		user_data, err := user.FetchMemberMeta(utils.CreateHeaders(c, userId), user_ids)
+		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_ids)
 		if err != nil {
-			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
+			utils.GeneralAPIError(c, utils.ErrorFetchingUserData)
 			return
 		}
 
 		//Update user data in dataResponse
 		dataResponse["users"] = user_data
+
+		// Update user topics data in dataResponse
+		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
 	}
 
 	//Send response

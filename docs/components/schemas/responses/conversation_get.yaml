@@ -1,0 +1,71 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      conversations:
+        type: array
+        items:
+          type: object
+          properties:
+            answer:
+              type: string
+            attachment_count:
+              type: integer
+            attachments_uploaded:
+              type: boolean
+            chatroom_id:
+              type: integer
+            community_id:
+              type: integer
+            created_at:
+              type: string
+            created_epoch:
+              type: integer
+            date:
+              type: string
+            has_files:
+              type: boolean
+            id:
+              type: integer
+            is_edited:
+              type: boolean
+            member:
+              type: object
+              properties:
+                custom_intro_text:
+                  type: string
+                custom_title:
+                  type: string
+                id:
+                  type: integer
+                image_url:
+                  type: string
+                is_guest:
+                  type: boolean
+                is_owner:
+                  type: boolean
+                member_since:
+                  type: string
+                member_since_epoch:
+                  type: integer
+                name:
+                  type: string
+                organisation_name:
+                  type: string
+                route:
+                  type: string
+                state:
+                  type: integer
+                updated_at:
+                  type: integer
+                user_unique_id:
+                  type: string
+            reactions:
+              type: array
+              items:
+                type: object
+            state:
+              type: integer

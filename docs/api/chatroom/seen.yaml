@@ -1,0 +1,38 @@
+put:
+  summary: Mark Chatroom as Seen
+  operationId: markChatroomSeen
+  tags:
+    - Chatroom
+  security:
+    - bearerAuth: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/chatroom_seen.yaml"
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+          example:
+            success: true
+
+    '404':
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                  type: boolean
+              error:
+                type: string
+          example:
+            error: "Chatroom not found"

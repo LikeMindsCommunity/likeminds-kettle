@@ -1,0 +1,14 @@
+delete:
+  summary: Leave Community
+  operationId: leaveCommunity
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/community_member_leave.yaml"

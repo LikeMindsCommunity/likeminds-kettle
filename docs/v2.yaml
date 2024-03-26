@@ -1,0 +1,391 @@
+openapi: 3.0.0
+info:
+  title: Kettle
+  version: 2.21.1
+  description: API Documention for LikeMinds Chat and Feed SDK
+  contact: { email: support@likeminds.community }
+servers:
+  - url: https://auth.likeminds.community
+tags:
+  - name: Project
+    description: APIs for Creating, Updating, Fetching and Deleting SDK Projects
+  - name: Bot
+    description: APIs for Fetching Bot details for a SDK Project
+  - name: Login
+    description: APIs to make User Login on SDK Dashboard, SDK Apps
+  - name: Chatroom
+    description: APIs for chatroom and related.
+  - name: Feedroom
+  - name: Poll
+  - name: Community
+  - name: Moderation
+  - name: Conversation
+  - name: Onboarding Screens
+  - name: DM
+  - name: Search
+  - name: User
+  - name: Feed
+  - name: Feed - V1
+    description: APIs related to Feed (Api Revamp v1)
+  - name: Community Feed
+  - name: Helpers
+  - name: Channel
+  - name: Widget
+  - name: Webhooks
+    description: APIs for Creating, Updating, Fetching and Deleting webhooks
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+paths:
+  /sdk/project:
+    $ref: "./api/sdk/project.yaml"
+
+  /user/bot:
+    $ref: "./api/user/bot.yaml"
+
+  /user/login:
+    $ref: "./api/user/login.yaml"
+  /sdk/initiate:
+    $ref: "./api/login/initiate.yaml" 
+  /otp/generate:
+    $ref: "./api/otp/generate.yaml"
+  /otp/verify:
+    $ref: "./api/otp/verify.yaml"
+  /user/refresh:
+    $ref: "./api/user/refresh.yaml"
+  /user/logout:
+    $ref: "./api/user/logout.yaml"
+  /user/token:
+    $ref: "./api/user/token.yaml"
+  
+  /chatroom:
+    $ref: "./api/chatroom/chatroom.yaml"
+  /chatroom/schedule_follow:
+    $ref: "./api/chatroom/schedule_follow.yaml"
+  /chatroom/participants:
+    $ref: "./api/chatroom/participants.yaml"
+  /chatroom/settings:
+    $ref: "./api/chatroom/settings.yaml"
+  /chatroom/{chatroom_id}/type:
+    $ref: "./api/chatroom/type.yaml"
+  /chatroom/{chatroom_id}/enable_member_message:
+    $ref: "./api/chatroom/enable_member_message.yaml"
+  /chatroom/{chatroom_id}/pin:
+    $ref: "./api/chatroom/pin.yaml"
+  /chatroom/{chatroom_id}/auto_follow_members:
+    $ref: "./api/chatroom/auto_follow_members.yaml"
+  /chatroom/tag:
+    $ref: "./api/chatroom/tag.yaml"
+  /chatroom/{chatroom_id}/tag:
+    $ref: "./api/chatroom/chatroom_id/tag.yaml"
+  /chatroom/files:
+    $ref: "./api/chatroom/files.yaml"
+  /chatroom/mine:
+    $ref: "./api/chatroom/mine.yaml"
+  /chatroom/seen:
+    $ref: "./api/chatroom/seen.yaml"
+  /chatroom/follow:
+    $ref: "./api/chatroom/follow.yaml"
+  /chatroom/mute:
+    $ref: "./api/chatroom/mute.yaml"
+  /chatroom/rename:
+    $ref: "./api/chatroom/rename.yaml"
+  /chatroom/share:
+    $ref: "./api/chatroom/share.yaml"
+  /chatroom/pending:
+    $ref: "./api/chatroom/pending.yaml"
+  /chatroom/sync:
+    $ref: "./api/chatroom/sync.yaml"
+  /chatroom/block:
+    $ref: "./api/chatroom/block.yaml"
+  /chatroom/search:
+    $ref: "./api/chatroom/search.yaml"
+  /chatroom/dm:
+    $ref: "./api/chatroom/dm.yaml"
+  /chatroom/dm/block:
+    $ref: "./api/chatroom/dm/block.yaml"
+  /chatroom/dm/limit:
+    $ref: "./api/chatroom/dm/limit.yaml"
+  /chatroom/dm/request:
+    $ref: "./api/chatroom/dm/request.yaml"
+  /chatroom/dm/create:
+    $ref: "./api/chatroom/dm/create.yaml"
+  /chatroom/cohort:
+    $ref: "./api/chatroom/cohort.yaml"
+  /chatroom/home:
+    $ref: "./api/chatroom/home.yaml"
+  /chatroom/mark_read:
+    $ref: "./api/chatroom/mark_read.yaml"  
+  /chatroom/event:
+    $ref: "./api/chatroom/event.yaml"
+  /chatroom/event/meta:
+    $ref: "./api/chatroom/event/meta.yaml"
+  /chatroom/event/link:
+    $ref: "./api/chatroom/event/link.yaml"
+  /chatroom/event/recordings:
+    $ref: "./api/chatroom/event/recordings.yaml"
+  /chatroom/event/instructors:
+    $ref: "./api/chatroom/event/instructors.yaml"
+  /chatroom/event/highlights:
+    $ref: "./api/chatroom/event/highlights.yaml"
+  /chatroom/event/testimonials:
+    $ref: "./api/chatroom/event/testimonials.yaml"
+  /chatroom/event/faq:
+    $ref: "./api/chatroom/event/faq.yaml"
+  /chatroom/event/recordings/meta:
+    $ref: "./api/chatroom/event/recordings/meta.yaml"
+  /chatroom/event/unseen_count:
+    $ref: "./api/chatroom/event/unseen_count.yaml"
+
+  /community:
+    $ref: "./api/community/community.yaml"
+  /community/removal_reports:
+    $ref: "./api/community/removal.yaml"
+  /community/member:
+    $ref: "./api/community/member/member.yaml"
+  /community/member/leave:
+    $ref: "./api/community/member/leave.yaml"
+  /community/member/state:
+    $ref: "./api/community/member/state.yaml"
+  /community/member/role:
+    $ref: "./api/community/member/role.yaml"
+  /community/member/remove:
+    $ref: "./api/community/member/remove.yaml"
+  /community/member/pending:
+    $ref: "./api/community/member/pending.yaml"
+  /community/member/profile:
+    $ref: "./api/community/member/profile.yaml"
+  /community/member/chatroom:
+    $ref: "./api/community/member/chatroom.yaml"
+  /community/member/channel/status:
+    $ref: "./api/community/member/status.yaml"
+  /community/member/{user_id}/channel:
+    $ref: "./api/community/member/channel.yaml"
+  /community/member/home/meta:
+    $ref: "./api/community/member/meta.yaml"
+  /community/member/join:
+    $ref: "./api/community/member/join.yaml"
+  /community/questions:
+    $ref: "./api/community/questions.yaml"
+  /community/report:
+     $ref: "./api/community/report.yaml"
+  /community/report/tag:
+     $ref: "./api/community/tag.yaml"
+  /community/manager/remove:
+     $ref: "./api/community/manager.yaml"
+  /community/admin:
+     $ref: "./api/community/admin.yaml"
+  /community/management/tool:
+     $ref: "./api/community/tool.yaml"
+  /community/rights:
+     $ref: "./api/community/rights.yaml"
+  /community/cohort:
+     $ref: "./api/community/cohort/cohort.yaml"
+  /community/cohort/member:
+     $ref: "./api/community/cohort/member.yaml"
+  /community/cohort/access:
+     $ref: "./api/community/cohort/access.yaml"
+  /community/join:
+     $ref: "./api/community/join.yaml"
+  /community/settings:
+     $ref: "./api/community/settings/settings.yaml"
+  /community/settings/notification:
+     $ref: "./api/community/settings/notification/notification.yaml"
+  /community/settings/notification/feed:
+     $ref: "./api/community/settings/notification/feed.yaml"
+  /community/settings/notification/conversation:
+     $ref: "./api/community/settings/notification/conversation.yaml"
+  /community/settings/content_download:
+     $ref: "./api/community/settings/content_download.yaml"
+  /community/settings/dm:
+     $ref: "./api/community/settings/dm.yaml"
+  /community/tag:
+     $ref: "./api/community/tag.yaml"
+  /community/branding:
+     $ref: "./api/community/branding.yaml"
+  /home/fetch_communities:
+     $ref: "./api/community/home.yaml"
+  /community/question/filters:
+     $ref: "./api/community/filters.yaml"
+  /community/intro_examples:
+     $ref: "./api/community/intro.yaml"
+  /community/invite:
+     $ref: "./api/community/invite.yaml"
+  /community/configurations:
+     $ref: "./api/community/configuration.yaml"
+
+  /moderation/rights:
+    $ref: "./api/moderation/rights.yaml"
+
+  /conversation:
+    $ref: "./api/conversation/conversation.yaml"
+  /conversation/reaction:
+    $ref: "./api/conversation/reaction.yaml"
+  /conversation/poll:
+    $ref: "./api/conversation/poll/poll.yaml"
+  /conversation/poll/submit:
+    $ref: "./api/conversation/poll/submit.yaml"
+  /conversation/poll/users:
+    $ref: "./api/conversation/poll/users.yaml"
+  /conversation/topic:
+    $ref: "./api/conversation/topic.yaml"
+  /conversation/event:
+    $ref: "./api/conversation/event/event.yaml"
+  /conversation/event/attend:
+    $ref: "./api/conversation/event/attend.yaml"
+  /conversation/event/attended:
+    $ref: "./api/conversation/event/attended.yaml"
+  /conversation/event/unseen:
+    $ref: "./api/conversation/event/unseen.yaml"
+  /conversation/event/last_seen:
+    $ref: "./api/conversation/event/last_seen.yaml"
+  /conversation/event/link:
+    $ref: "./api/conversation/event/link.yaml"
+  /conversation/preview/unread:
+    $ref: "./api/conversation/preview/unread.yaml"
+  /conversation/preview/unread_count:
+    $ref: "./api/conversation/preview/unread_count.yaml"
+  /conversation/notification/unread:
+    $ref: "./api/conversation/notification.yaml"
+  /conversation/sync:
+    $ref: "./api/conversation/sync.yaml"
+  /conversation/search:
+    $ref: "./api/conversation/search.yaml"
+
+  /sdk/onboarding:
+    $ref: "./api/sdk/onboarding.yaml"
+
+  /feed/post:
+    $ref: "./api/feed/v1/post/post.yaml"
+  /feed/post/{post_id}:
+    $ref: "./api/feed/v1/post/post_id.yaml"
+  /feed/post/{post_id}/pin:
+    $ref: "./api/feed/v1/post/pin.yaml"
+  /feed/post/{post_id}/like:
+    $ref: "./api/feed/v1/post/like.yaml"
+  /feed/post/{post_id}/comment:
+    $ref: "./api/feed/v1/post/comment/comment.yaml"
+  /feed/post/{post_id}/comment/{comment_id}:
+    $ref: "./api/feed/v1/post/comment/comment_id.yaml"
+  /feed/post/{post_id}/save:
+    $ref: "./api/feed/v1/post/save.yaml"
+  /feed/post/{post_id}/comment/{comment_id}/comment:
+    $ref: "./api/feed/v1/post/comment/comment_id/comment.yaml"
+  /feed/post/{post_id}/comment/{comment_id}/like:
+    $ref: "./api/feed/v1/post/comment/comment_id/like.yaml"
+  /feed/user/{user_id}/save:
+    $ref: "./api/feed/v1/user/save.yaml"
+  /feed/user/{user_id}/post:
+    $ref: "./api/feed/v1/user/post.yaml"
+  /feed/user/{user_id}/activity:
+    $ref: "./api/feed/v1/user/activity/activity.yaml"
+  /feed/user/activity:
+    $ref: "./api/feed/v1/user/activity.yaml"
+  /feed/user/activity/{activity_id}/mark_read:
+    $ref: "./api/feed/v1/user/activity/mark_read.yaml"
+  /feed/user/activity/unread_count:
+    $ref: "./api/feed/v1/user/activity/unread_count.yaml"
+  /feed/universal:
+    $ref: "./api/feed/v1/universal.yaml"
+  /feed/group:
+    $ref: "./api/feed/v1/group.yaml"
+  /feed/topic:
+    $ref: "./api/feed/v1/topic/topic.yaml"
+  /feed/topic/{topic_id}:
+    $ref: "./api/feed/v1/topic/topic_id.yaml"
+
+  /poll/{poll_id}:
+    $ref: "./api/poll/poll.yaml"
+  /poll/{poll_id}/vote:
+    $ref: "./api/poll/vote.yaml"
+
+  /feedroom:
+    $ref: "./api/feedroom/feedroom.yaml"
+  /feedroom/action:
+    $ref: "./api/feedroom/action.yaml"
+  /feedroom/settings:
+    $ref: "./api/feedroom/settings.yaml"
+  /feedroom/type:
+    $ref: "./api/feedroom/type.yaml"
+  /feedroom/enable_member_post:
+    $ref: "./api/feedroom/enable_member_post.yaml"
+  /feedroom/pin:
+    $ref: "./api/feedroom/pin.yaml"
+  /feedroom/auto_join_members:
+    $ref: "./api/feedroom/auto_join_members.yaml"
+  /feedroom/participants:
+    $ref: "./api/feedroom/participants.yaml"
+  /feedroom/cohort/access:
+    $ref: "./api/feedroom/access.yaml"
+  /feedroom/mine:
+    $ref: "./api/feedroom/mine.yaml"
+  /feedroom/follow:
+    $ref: "./api/feedroom/follow.yaml"
+  /feedroom/tag:
+    $ref: "./api/feedroom/tag.yaml"
+  /feedroom/{feedroom_id}/tag:
+    $ref: "./api/feedroom/feedroom_tag.yaml"
+
+  /home/dm/meta:
+    $ref: "./api/dm/meta.yaml"
+  /community/feed/dm:
+    $ref: "./api/dm/dms.yaml"
+  /community/dm/status:
+    $ref: "./api/dm/status.yaml"
+
+  /community/member/search:
+    $ref: "./api/search/member_search.yaml"
+  /search:
+    $ref: "./api/search/search.yaml"
+  /search/post:
+    $ref: "./api/search/post.yaml"
+  /search/post/user/{user_id}:
+    $ref: "./api/search/user.yaml"
+  /search/channel:
+    $ref: "./api/search/channel.yaml"
+  /search/message:
+    $ref: "./api/search/message.yaml"
+
+  /user/subscription/whatsapp:
+    $ref: "./api/user/whatsapp.yaml"
+  /user/device/push:
+    $ref: "./api/user/push.yaml"
+  /user/meta:
+    $ref: "./api/user/meta.yaml"
+  /user/config:
+    $ref: "./api/user/config.yaml"
+  /user/otp:
+    $ref: "./api/user/otp.yaml"
+  /user/otp/verify:
+    $ref: "./api/user/verify.yaml"
+
+  /community/feed:
+    $ref: "./api/community_feed.yaml"
+
+  /helper/url:
+    $ref: "./api/helper/url.yaml"
+  /helper/media/upload:
+    $ref: "./api/helper/media_upload.yaml"
+  /logs:
+    $ref: "./api/helper/logs.yaml"
+
+  /channel:
+    $ref: "./api/channel/channel.yaml"
+  /channel/invites:
+    $ref: "./api/channel/invites.yaml"
+  /channel/invite:
+    $ref: "./api/channel/invite.yaml"
+  /channel/{channel_id}/settings/member/{uuid}:
+    $ref: "./api/channel/settings.yaml"
+
+  /widget:
+    $ref: "./api/widget/widget.yaml"
+  /widget/{widget_id}:
+    $ref: "./api/widget/widget_id.yaml"
+
+  /webhook:
+    $ref: "./api/webhook/webhook.yaml"
+  /webhook/{webhook_id}:
+    $ref: "./api/webhook/webhookID.yaml"

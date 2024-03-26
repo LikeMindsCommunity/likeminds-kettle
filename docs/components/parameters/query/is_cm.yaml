@@ -1,0 +1,6 @@
+name: is_cm
+in: query
+description: Community Manager Status
+schema:
+  type: boolean
+  

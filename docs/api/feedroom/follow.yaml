@@ -1,0 +1,27 @@
+put:
+  summary: Follow Feedroom
+
+  operationId: followFeedroom
+
+  tags:
+    - Feedroom
+
+  security:
+    - apiKey: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/feedroomId.yaml"
+    - name: value
+      in: query
+      required: true
+      schema:
+        type: boolean
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/feedroom_follow.yaml"

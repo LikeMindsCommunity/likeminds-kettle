@@ -1,0 +1,27 @@
+post:
+  summary: Add Instructors to Chatroom Event
+
+  operationId: addChatroomEventInstructors
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+    
+  description: |
+    This API adds instructors to a chatroom event.
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/chatroom_instructors.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/chatroom_instructors.yaml"

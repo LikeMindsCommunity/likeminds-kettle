@@ -1,0 +1,90 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      conversations:
+        type: array
+        items:
+          type: object
+          properties:
+            allow_add_option:
+              type: boolean
+            answer:
+              type: string
+            attachment_count:
+              type: integer
+            attachments:
+              type: array
+              items:
+                type: object
+                properties:
+                  index:
+                    type: integer
+                  type:
+                    type: string
+                  url:
+                    type: string
+            attachments_uploaded:
+              type: boolean
+            audios:
+              type: array
+              items:
+                type: object
+            chatroom_id:
+              type: integer
+            community_id:
+              type: integer
+            created_at:
+              type: string
+            created_epoch:
+              type: integer
+            date:
+              type: string
+            deleted_by:
+              type: integer
+            end_time:
+              type: integer
+            has_event_recording:
+              type: boolean
+            has_files:
+              type: boolean
+            id:
+              type: integer
+            images:
+              type: array
+              items:
+                type: object
+                properties:
+                  image_url:
+                    type: string
+                  index:
+                    type: integer
+                  type:
+                    type: string
+            is_anonymous:
+              type: boolean
+            is_edited:
+              type: boolean
+            member_id:
+              type: integer
+            pdf:
+              type: array
+              items:
+                type: object
+            poll_answer_text:
+              type: string
+            reactions:
+              type: array
+              items:
+                type: object
+            start_time:
+              type: integer
+            state:
+              type: integer
+            videos:
+              type: array
+              items:
+                type: object

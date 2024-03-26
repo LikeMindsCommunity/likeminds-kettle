@@ -1,0 +1,47 @@
+get:
+  summary: Get Community Content Download Settings
+  operationId: getCommunityContentDownloadSettings
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          example: |
+            {
+              "success": true,
+              "data": {}
+            }
+
+
+
+put:
+  summary: Update Community Content Download Settings
+  operationId: updateCommunityContentDownloadSettings
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/community_content_download.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          example: |
+            {
+              "success": true,
+              "data": {}
+            }

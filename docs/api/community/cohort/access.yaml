@@ -1,0 +1,43 @@
+get:
+  summary: Get Chatroom Cohort Access
+  operationId: getChatroomCohortAccess
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../../components/parameters/query/chatroomId.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/community_cohort_access_get.yaml"
+
+
+put:
+  summary: Update Chatroom Cohort Access
+  operationId: updateChatroomCohortAccess
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/cohort_access.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/community_cohort_access_update.yaml"

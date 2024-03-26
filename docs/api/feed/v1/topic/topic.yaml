@@ -1,0 +1,57 @@
+post:
+  summary: Create a new topic
+
+  operationId: createTopic
+
+  tags:
+    - Feed - V1
+
+  security:
+    - bearerAuth: []
+
+  requestBody:
+    description: New topic details
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../components/schemas/requests/feed_topic_create.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../components/schemas/responses/feed_topic_create.yaml"
+
+
+get:
+  summary: Get topics based on filters
+
+  operationId: getTopics
+
+  tags:
+    - Feed - V1
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - name: is_enabled
+      in: query
+      description: Filter by enabled status
+      schema:
+        type: boolean
+    - $ref: "../../../../components/parameters/query/search.yaml"
+    - $ref: "../../../../components/parameters/query/searchType.yaml"
+    - $ref: "../../../../components/parameters/query/page.yaml"
+    - $ref: "../../../../components/parameters/query/pageSize.yaml"
+    
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../components/schemas/responses/feed_topic_get.yaml"

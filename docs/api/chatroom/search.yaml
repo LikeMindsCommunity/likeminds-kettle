@@ -1,0 +1,24 @@
+get:
+  summary: Search Chatrooms
+  operationId: searchChatrooms
+  tags:
+    - Chatroom
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/search.yaml"
+    - $ref: "../../components/parameters/query/searchType.yaml"
+    - $ref: "../../components/parameters/query/followStatus.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
+    - $ref: "../../components/parameters/query/pageSize.yaml"
+  description: 
+    This API searches chatrooms in a community based on search term.
+
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/chatroom_search.yaml"

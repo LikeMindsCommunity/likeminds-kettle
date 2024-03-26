@@ -1,0 +1,17 @@
+get:
+  summary: Get Unread Conversation Notifications
+  operationId: getUnreadConversationNotifications
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/conversation_notifications.yaml"

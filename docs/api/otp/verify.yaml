@@ -1,0 +1,19 @@
+get:
+    operationId: verifyOTP
+    description: This API verifies generated OTP
+    x-internal: true
+    tags:
+      - Login
+    security:
+      - bearer_token: []
+    parameters:
+      - $ref: "../../components/parameters/query/countryCode.yaml"
+      - $ref: "../../components/parameters/query/mobileNumber.yaml"
+      - $ref: "../../components/parameters/query/otp.yaml"
+    responses:
+      '200':
+        description: OTP verified successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../../components/schemas/responses/otp_verify.yaml"

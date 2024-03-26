@@ -2,6 +2,7 @@ package sdk
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/token"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -40,10 +41,10 @@ func InitiateSDK(c *gin.Context) {
 		return
 	}
 
-	verifyTokenMeta, ok := c.Get(token.ParamVTM)
+	verifyTokenMeta, ok := c.Get(constants.ParamVTM)
 
 	if ok {
-		vtm := verifyTokenMeta.(*token.VerifyTokenMeta)
+		vtm := verifyTokenMeta.(*constants.VerifyTokenMeta)
 
 		if initiateSDKRequest.User.Name == "" && initiateSDKRequest.UserName != "" {
 			initiateSDKRequest.User.Name = initiateSDKRequest.UserName
@@ -77,11 +78,16 @@ func InitiateSDK(c *gin.Context) {
 	// Send response with login, refresh token and api/sdk/initiate response
 	dataResponse := apiCR.Response
 
+	// If flow succeeds, fetch User object
+	userObject := apiCR.Response[user.ResponseUser].(map[string]interface{})
+
 	// If flow succeeds
-	userUniqueID := apiCR.Response[user.ResponseUser].(map[string]interface{})[user.ResponseUserUniqueId].(string)
+	userUniqueID := userObject[user.ResponseUserUniqueId].(string)
+	userIsGuest := userObject[user.ResponseUserIsGuest].(bool)
 
 	// Create login and refresh token
-	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, c.GetHeader(utils.HeadersApiKey), initiateSDKRequest.TokenExpiryBeta)
+	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, c.GetHeader(utils.HeadersApiKey),
+		initiateSDKRequest.TokenExpiryBeta, userIsGuest)
 
 	if err != nil {
 		// If token creation fails
@@ -91,13 +97,31 @@ func InitiateSDK(c *gin.Context) {
 
 	// Set ltm and user_unique_id in context
 	ltm.UserUniqueID = userUniqueID
-	c.Set(token.ParamLTM, ltm)
+	c.Set(constants.ParamLTM, ltm)
 
-	dataResponse[token.ParamAccessToken] = ltm.AccessToken
-	dataResponse[token.ParamRefreshToken] = rtm.RefreshToken
+	dataResponse[constants.ParamAccessToken] = ltm.AccessToken
+	dataResponse[constants.ParamRefreshToken] = rtm.RefreshToken
 
 	// Generate response
 	utils.GenerateResponse(c, dataResponse, true)
+}
+
+// FetchSdkUserInfo is used to Fetch user initiated info
+func FetchSdkUserInfo(c *gin.Context) {
+	// Authorize User
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
+		return
+	}
+
+	// Params to be sent in sdk/initiate api internally
+	params := map[string]string{
+		utils.ParamUUID: userId,
+	}
+
+	// Send Request
+	utils.SendRequest(c, utils.CoreService, InitiateSDKEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+
 }
 
 func parseInitiateSDKRequest(c *gin.Context) (*InitiateSDKRequest, error) {

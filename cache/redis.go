@@ -1,11 +1,13 @@
 package cache
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/go-redis/redis/v7"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/environment"
-	"github.com/nateshr/likeminds-authentication/token"
+	"github.com/nateshr/likeminds-authentication/logging"
 )
 
 func InitRedis() *redis.Client {
@@ -28,10 +30,12 @@ func InitRedis() *redis.Client {
 func Get(client *redis.Client, key string) (string, bool, error) {
 	val, err := client.Get(key).Result()
 	if err == redis.Nil {
+		logging.Info(fmt.Sprint("cache miss for key: ", key))
 		return "", false, nil
 	} else if err != nil {
 		return "", false, err
 	}
+	logging.Info(fmt.Sprint("cache hit for key: ", key))
 	return val, true, err
 }
 
@@ -41,23 +45,72 @@ func Set(client *redis.Client, key string, value interface{}, expiration time.Du
 	if err != nil {
 		return err
 	}
+
+	logging.Info(fmt.Sprintf("cache set for key: %s with expiry: %v", key, expiration.String()))
+	return nil
+}
+
+// GetKeys | get all keys matching the pattern
+func GetKeys(client *redis.Client, pattern string) ([]string, error) {
+	keys, err := client.Keys(pattern).Result()
+	if err != nil {
+		return nil, err
+	}
+	return keys, nil
+}
+
+// Delete | delete the key from cache storage
+func Delete(client *redis.Client, key string) error {
+	err := client.Del(key).Err()
+	if err != nil {
+		return err
+	}
+
+	logging.Info(fmt.Sprint("cache deleted for key: ", key))
+	return nil
+}
+
+// GetFromMultipleKeys | get multiple keys from cache storage
+func GetFromMultipleKeys(client *redis.Client, keys ...string) ([]interface{}, error) {
+	val, err := client.MGet(keys...).Result()
+	if err != nil {
+		return nil, err
+	}
+	for i, v := range val {
+		if v == nil {
+			logging.Info(fmt.Sprint("cache miss for key: ", keys[i]))
+		} else {
+			logging.Info(fmt.Sprint("cache hit for key: ", keys[i]))
+		}
+	}
+	return val, nil
+}
+
+// SetMultipleValues | set multiple keys with object value into cache storage
+func SetMultipleValues(client *redis.Client, values ...interface{}) error {
+	err := client.MSet(values...).Err()
+	if err != nil {
+		return err
+	}
+
+	logging.Info(fmt.Sprint("cache set for keys: ", values))
 	return nil
 }
 
 // IsLTMBlacklisted checks if token is blacklisted or not => user is logged out or not
-func IsLTMBlacklisted(client *redis.Client, ltm *token.LoginTokenMeta) bool {
+func IsLTMBlacklisted(client *redis.Client, ltm *constants.LoginTokenMeta) bool {
 	userUniqueID, _ := client.Get(ltm.AccessUuid).Result()
 	return userUniqueID != ""
 }
 
 // IsRTMBlacklisted checks if token is blacklisted or not => user is logged out or not
-func IsRTMBlacklisted(client *redis.Client, rtm *token.RefreshTokenMeta) bool {
+func IsRTMBlacklisted(client *redis.Client, rtm *constants.RefreshTokenMeta) bool {
 	userUniqueID, _ := client.Get(rtm.RefreshUuid).Result()
 	return userUniqueID != ""
 }
 
 // BlacklistToken Updates user id against uuid in cache when user logs out
-func BlacklistToken(client *redis.Client, ltm *token.LoginTokenMeta, rtm *token.RefreshTokenMeta) error {
+func BlacklistToken(client *redis.Client, ltm *constants.LoginTokenMeta, rtm *constants.RefreshTokenMeta) error {
 	atExpires := time.Unix(ltm.AccessTokenExpires, 0)
 	rtExpires := time.Unix(rtm.RefreshTokenExpires, 0)
 	now := time.Now()

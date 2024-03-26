@@ -1,0 +1,21 @@
+type: object
+properties:
+  type:
+    type: string
+  user:
+    type: object
+    properties:
+      mobile_no:
+        type: string
+      country_code:
+        type: string
+      name:
+        type: string
+      email:
+        type: string
+      organisation_name:
+        type: string
+      image_url:
+        type: string
+      user_unique_id:
+        type: string

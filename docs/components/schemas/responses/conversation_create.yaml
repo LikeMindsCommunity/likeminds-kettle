@@ -1,0 +1,60 @@
+type: object
+properties:
+  success:
+    type: boolean
+  id:
+    type: integer
+  conversation:
+    type: object
+    properties:
+      id:
+        type: integer
+      answer:
+        type: string
+      state:
+        type: integer
+      attachments_count:
+        type: integer
+      attachments_uploaded:
+        type: boolean
+      is_edited:
+        type: boolean
+      created_at:
+        type: string
+      has_files:
+        type: boolean
+      chatroom_id:
+        type: integer
+      community_id:
+        type: integer
+      member_id:
+        type: integer
+      date:
+        type: string
+      is_anonymous:
+        type: boolean
+      allow_add_option:
+        type: boolean
+      poll_type:
+        type: integer
+      expiry_time:
+        type: integer
+      polls:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            text:
+              type: string
+            is_selected:
+              type: boolean
+            no_votes:
+              type: integer
+            percentage:
+              type: integer
+      reactions:
+        type: array
+        items: 
+          type: object

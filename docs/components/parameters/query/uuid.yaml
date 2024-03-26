@@ -1,0 +1,6 @@
+name: uuid
+in: query
+description: User Unique ID
+schema:
+  type: string
+  

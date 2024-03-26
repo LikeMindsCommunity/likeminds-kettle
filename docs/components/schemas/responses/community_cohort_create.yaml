@@ -1,0 +1,39 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      cohort_data:
+        type: object
+        properties:
+          cohort_id:
+            type: integer
+          community_id:
+            type: integer
+          member_ids:
+            type: array
+            items:
+              type: integer
+          name:
+            type: string
+          rights:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                is_locked:
+                  type: boolean
+                is_selected:
+                  type: boolean
+                state:
+                  type: integer
+                title:
+                  type: string
+                sub_title:
+                  type: string
+          type:
+            type: integer

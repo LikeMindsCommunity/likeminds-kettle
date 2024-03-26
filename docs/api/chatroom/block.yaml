@@ -1,0 +1,24 @@
+post:
+  summary: Block Chatroom
+
+  operationId: blockChatroom
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/chatroom_block.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/chatroom_block.yaml"

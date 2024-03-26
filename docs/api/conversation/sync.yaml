@@ -1,0 +1,29 @@
+get:
+  summary: Synchronize Conversations
+  operationId: synchronizeConversations
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
+    - $ref: "../../components/parameters/query/pageSize.yaml"
+    - $ref: "../../components/parameters/query/minTimestamp.yaml"
+    - $ref: "../../components/parameters/query/maxTimestamp.yaml"
+    - name: excluded_conversation_states
+      in: query
+      description: Excluded conversation states
+      schema:
+        type: array
+        items:
+          type: integer
+      required: false
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/conversation_sync.yaml"

@@ -1,0 +1,58 @@
+post:
+  summary: Create Chatroom Event
+
+  operationId: createChatroomEvent
+
+  tags:
+    - Chatroom
+
+  description: This API creates a chatroom event for a community.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/chatroom_event.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json: {}
+
+
+
+get:
+  summary: Get Chatroom Events
+
+  operationId: getChatroomEvents
+
+  tags:
+    - Chatroom
+
+  description: This API fetches chatroom events of a community.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/chatroom_event.yaml"

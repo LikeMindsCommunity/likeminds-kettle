@@ -1,0 +1,8 @@
+type: object
+properties:
+  chatroom_id:
+    type: integer
+  chat_request_state:
+    type: integer
+  text:
+    type: string

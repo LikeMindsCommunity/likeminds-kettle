@@ -1,0 +1,8 @@
+type: object
+properties:
+  status:
+    type: boolean
+  member:
+    type: array
+    items:
+      $ref: "./partials/member.yaml"

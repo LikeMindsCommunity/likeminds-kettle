@@ -1,0 +1,21 @@
+post:
+  summary: Block Direct Message Chatroom
+  operationId: blockDirectMessageChatroom
+  tags:
+    - Chatroom
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../components/schemas/requests/dm_block.yaml"
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/chatroom_dm_block.yaml"

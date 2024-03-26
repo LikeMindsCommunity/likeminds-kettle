@@ -1,0 +1,30 @@
+post:
+  summary: Create User Activity
+
+  operationId: createUserActivity
+
+  tags:
+    - Feed - V1
+
+  description: This API creates User Activity.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../../components/parameters/path/user_id.yaml"
+    - $ref: "../../../../../components/parameters/query/page.yaml"
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../../components/schemas/requests/feed_user_activity.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../../components/schemas/responses/feed_activity_create.yaml"

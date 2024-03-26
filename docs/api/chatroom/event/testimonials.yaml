@@ -1,0 +1,26 @@
+post:
+  summary: Add Testimonials to Chatroom Event
+
+  operationId: addChatroomEventTestimonials
+
+  tags:
+    - Chatroom
+
+  security:
+    - bearerAuth: []
+    
+  description: |
+    This API adds testimonials to a chatroom event.
+
+  requestBody:
+    content:
+      application/json:
+        schema: {}
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/chatroom_testimonials.yaml"

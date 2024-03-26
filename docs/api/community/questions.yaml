@@ -1,0 +1,46 @@
+get:
+      operationId: getCommunityQuestions
+      tags:
+        - Community
+      summary: Fetch Community Questions
+      description: |-
+        This API fetches Community Questions
+      parameters:
+        - $ref: "../../components/parameters/headers/platformCode.yaml"
+        - $ref: "../../components/parameters/headers/versionCode.yaml"
+        - $ref: "../../components/parameters/headers/platformType.yaml"
+        - $ref: "../../components/parameters/headers/apiKey.yaml"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "../../components/schemas/responses/community_questions.yaml"
+             
+post:
+    operationId: createCommunityQuestions
+    tags:
+        - Community
+    summary: Create Community Question
+    description: |-
+      This API creates members of a community
+    parameters:
+      - $ref: "../../components/parameters/headers/platformCode.yaml"
+      - $ref: "../../components/parameters/headers/versionCode.yaml"
+      - $ref: "../../components/parameters/headers/platformType.yaml"
+      - $ref: "../../components/parameters/headers/apiKey.yaml"
+    requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "../../components/schemas/requests/community_questions.yaml"
+    responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                success: true
+#TOD0: /community/question/filters

@@ -1,0 +1,7 @@
+name: chatroom_types
+in: query
+description: Types of chatrooms (disabled in the request)
+schema:
+  type: array
+  items:
+    type: integer

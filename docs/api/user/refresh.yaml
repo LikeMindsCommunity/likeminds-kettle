@@ -1,0 +1,22 @@
+post:
+    operationId: refreshUserToken
+    description: This API refreshes and sends a new Authorization Token
+    tags:
+      - Login
+    security:
+    - bearerAuth: []
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/requests/user_refresh_token.yaml"
+            required:
+              - refresh_token
+
+    responses:
+      '200':
+        description: Token refreshed successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../../components/schemas/responses/user_refresh_token.yaml"

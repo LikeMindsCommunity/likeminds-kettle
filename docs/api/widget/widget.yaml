@@ -1,0 +1,79 @@
+get:
+  description: 
+    This API fetches widgets based on Search criteria. Search query param is required field
+  tags: 
+    - Widget
+  operationId: getWidgets
+  summary: Get widgets based on search criteria
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: search_key
+      in: query
+      required: true
+      schema:
+        type: string
+      example: "metadata.tags"
+    - name: search_value
+      in: query
+      required: true
+      schema:
+        type: string
+      example: "elastic"
+  responses:
+    '200':
+      description: Widgets retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/widget_get.yaml"
+          example:
+            success: true
+            data:
+              widgets:
+                - _id: "656e1689a80d7eb08f2456fa"
+                  _lm_meta: "null"
+                  created_at: 1701713545377
+                  metadata:
+                    tags:
+                      - "elastic"
+                      - ["search 2"]
+                  parent_entity_id: "test_id"
+                  parent_entity_type: "test_type"
+                  updated_at: 1701713545377
+
+post:
+  operationId: createWidget
+  description: This API creates a new custom widget 
+  tags: 
+    - Widget
+  summary: Create a new widget
+  security:
+    - bearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/widget_create.yaml"
+  responses:
+    '200':
+      description: Widget created successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/widget_create.yaml"
+          example:
+            success: true
+            data:
+              widget:
+                _id: "656e1689a80d7eb08f2456fa"
+                _lm_meta: ""
+                created_at: 1701713545377
+                metadata:
+                  tags:
+                    - "elastic"
+                    - ["search 2"]
+                parent_entity_id: "test_id"
+                parent_entity_type: "test_type"
+                updated_at: 1701713545377

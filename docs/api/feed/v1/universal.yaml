@@ -1,0 +1,23 @@
+get:
+  summary: Fetch Universal Feed
+
+  operationId: fetchUniversalFeed
+
+  tags:
+    - Feed - V1
+
+  description: This API fetches Universal Feed.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../components/parameters/query/page.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/feed_universal.yaml"

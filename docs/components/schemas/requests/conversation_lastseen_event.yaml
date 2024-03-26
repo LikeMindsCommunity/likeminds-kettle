@@ -1,0 +1,4 @@
+type: object
+properties:
+  conversation_id:
+    type: integer

@@ -1,0 +1,15 @@
+get:
+  summary: Get Community Question Filters
+
+  operationId: getCommunityQuestionFilters
+
+  tags:
+    - Community
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object

@@ -1,0 +1,30 @@
+put:
+  summary: Edit a comment on a post
+
+  operationId: editCommentOnPost
+
+  tags:
+    - Feed - V1
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../../components/parameters/path/post_id.yaml"
+    - $ref: "../../../../../components/parameters/path/comment_id.yaml"
+
+  requestBody:
+    description: Updated comment details
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../../components/schemas/requests/feed_comment.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../../components/schemas/responses/feed_comment_edit.yaml"

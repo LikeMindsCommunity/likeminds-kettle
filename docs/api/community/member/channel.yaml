@@ -1,0 +1,19 @@
+get:
+  summary: Get Community Member Channels
+  operationId: getCommunityMemberChannels
+  tags:
+    - Community
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/path/user_id.yaml"
+    - $ref: "../../../components/parameters/query/state.yaml"
+    - $ref: "../../../components/parameters/query/page.yaml"
+    - $ref: "../../../components/parameters/query/channelType.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/community_member_channel.yaml"

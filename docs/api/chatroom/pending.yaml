@@ -1,0 +1,51 @@
+get:
+  summary: Get Pending Chatrooms
+  operationId: getPendingChatrooms
+  tags:
+    - Chatroom
+  security:
+    - bearerAuth: []
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/chatroom_pending.yaml"
+
+
+put:
+  summary: Update Pending Chatroom
+  operationId: updatePendingChatroom
+  tags:
+    - Chatroom
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/chatroom_pending.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+    "404":
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string

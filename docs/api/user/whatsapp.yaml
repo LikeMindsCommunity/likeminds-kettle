@@ -1,0 +1,20 @@
+post:
+  summary: User Subscription WhatsApp
+
+  operationId: userSubscriptionWhatsApp
+
+  tags:
+    - User
+
+  security:
+    - bearerAuth: []
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/user_whatsapp.yaml"
+
+  responses:
+    "200":
+      description: OK

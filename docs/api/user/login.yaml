@@ -1,0 +1,28 @@
+post:
+  operationId: loginUser
+  tags: 
+    - Login
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/device.yaml"
+    - $ref: "../../components/parameters/headers/contentType.yaml"
+    - $ref: "../../components/parameters/headers/cookie.yaml"
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/user_login.yaml"
+          
+  summary: Login user
+  responses:
+    '200':
+      description: User logged in successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/user_login.yaml"

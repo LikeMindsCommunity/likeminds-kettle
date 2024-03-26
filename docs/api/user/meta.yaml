@@ -1,0 +1,21 @@
+get:
+  summary: User Meta
+
+  operationId: userMeta
+
+  tags:
+    - User
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/contentType.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/user_meta.yaml"

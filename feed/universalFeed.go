@@ -16,6 +16,8 @@ func FetchUniversalFeed(c *gin.Context) {
 		return
 	}
 
+	headers := utils.CreateHeaders(c, userId)
+
 	//Params to be sent in the /feed/universal request
 	params := map[string]string{
 		ParamPage:      c.Query(ParamPage),
@@ -40,7 +42,7 @@ func FetchUniversalFeed(c *gin.Context) {
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchUniversalFeedEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchUniversalFeedEndPoint, utils.GETRequest, headers, params, nil)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
@@ -53,7 +55,18 @@ func FetchUniversalFeed(c *gin.Context) {
 	if value, ok := dataResponse["posts"]; ok {
 		posts := value.([]interface{})
 
-		user_data, err := user.GetUsersMetaFromFeedData(utils.CreateHeaders(c, userId), posts, dataResponse)
+		if value, ok := dataResponse["filtered_comments"]; ok {
+			if commentData, ok := value.(map[string]interface{}); ok {
+
+				for _, val := range commentData {
+					posts = append(posts, val)
+				}
+			}
+		}
+
+		redisClient := utils.GetRedisClientFromContext(c)
+
+		user_data, userUniqueIds, err := utils.GetUsersMetaFromFeedData(redisClient, headers, posts, dataResponse)
 		if err != nil {
 			utils.GenerateResponse(c, nil, false)
 			return
@@ -61,6 +74,9 @@ func FetchUniversalFeed(c *gin.Context) {
 
 		//Update user data in dataResponse
 		dataResponse["users"] = user_data
+
+		// Update user topics data in dataResponse
+		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
 	}
 
 	//Send response

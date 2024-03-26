@@ -1,0 +1,55 @@
+get:
+  summary: Get Cohort Access Data
+
+  operationId: getCohortAccessData
+
+  tags:
+    - Feedroom
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/feedroomId.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/feedroom_cohort_access_get.yaml"
+
+
+
+put:
+  summary: Update Cohort Access
+
+  operationId: updateCohortAccess
+
+  tags:
+    - Feedroom
+
+  security:
+    - apiKey: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/feedroom_cohort_access.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/feedroom_cohort_access_update.yaml"

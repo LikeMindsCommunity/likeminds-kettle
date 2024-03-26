@@ -1,0 +1,37 @@
+post:
+  operationId: sdkInitate
+  tags:
+    - Login
+  summary: sdk/initiate
+  description: This API creates or login the user based on details provided from sdk client
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/headers/sdkSource.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/sdk_initiate.yaml"
+
+  responses:
+    "200":
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/sdk_initiate.yaml"
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+                nullable: true

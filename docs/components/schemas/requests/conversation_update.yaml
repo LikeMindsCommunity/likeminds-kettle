@@ -1,0 +1,8 @@
+type: object
+properties:
+  conversation_id:
+    type: integer
+  text:
+    type: string
+  share_link:
+    type: string

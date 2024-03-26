@@ -1,0 +1,18 @@
+get:
+  summary: Get Users who Voted in a Poll
+  operationId: getPollUsers
+  tags:
+    - Conversation
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../../components/parameters/query/conversationId.yaml"
+    - $ref: "../../../components/parameters/query/poll_id.yaml"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/conversation_poll_users.yaml"
