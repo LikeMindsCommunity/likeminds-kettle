@@ -144,13 +144,13 @@ func Project(c *gin.Context, method int) {
 
 		//Send Request to create billing plan for community
 		communityBillingRequest := map[string]interface{}{}
-		respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, fmt.Sprintf("/%s/%d", utils.BillingPlanEnpoint, communityId), utils.POSTRequestRawBody, headers, nil, communityBillingRequest)
+		skulkRespBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, fmt.Sprintf("/%s/%d", utils.BillingPlanEnpoint, communityId), utils.POSTRequestRawBody, headers, nil, communityBillingRequest)
 		if err != nil {
 			logging.Error(err.Error())
 			return
 		}
 		skulkResponse := make(map[string]interface{})
-		err = json.Unmarshal(respBytes, &skulkResponse)
+		err = json.Unmarshal(skulkRespBytes, &skulkResponse)
 		if err != nil {
 			logging.Error(err.Error())
 			return

@@ -445,10 +445,6 @@ type CommunityBillingMeta struct {
 	TierType int `json:"tier_type"`
 }
 
-//	type tierDataMAURPM struct {
-//		MAU tierDataType `json:"mau"`
-//		RPM tierDataType `json:"rpm"`
-//	}
 type TierDataType struct {
 	MaxRequestLimitValue int    `json:"max_request_limit_value"`
 	TTL                  int    `json:"ttl"`
@@ -456,7 +452,7 @@ type TierDataType struct {
 	ErrorMessage         string `json:"error_message"`
 }
 
-type ApitierDataType struct {
+type APItierDataType struct {
 	*TierDataType
 	TierType      int `json:"tier_type"`
 	TierValueType int `json:"tier_value_type"`
@@ -464,7 +460,7 @@ type ApitierDataType struct {
 
 type TierTypeApiResponse struct {
 	Success bool              `json:"success"`
-	Data    []ApitierDataType `json:"data"`
+	Data    []APItierDataType `json:"data"`
 }
 
 func RateLimitingMiddleware(redisClient *redis.Client) gin.HandlerFunc {
@@ -508,7 +504,7 @@ func RateLimitingMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 				// Get rate limit current value from cache
 				currentValue, exists, err := cache.Get(redisClient, rateLimitCurrentValueKey)
 				if err != nil {
-					log.Error(err)
+					log.Error(err.Error())
 					return
 				}
 				if !exists {
@@ -517,9 +513,9 @@ func RateLimitingMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 					currentValue = "1"
 				}
 
-				isAllowed, errMessage, err := calculateRateLimitLogic(rateLimitTierValueType, currentValue, rateLimitValue, rateLimitErrorMessage, rateLimitCurrentValueKey, redisClient)
+				isAllowed, errMessage, err := calculateRateLimit(rateLimitTierValueType, currentValue, rateLimitValue, rateLimitErrorMessage, rateLimitCurrentValueKey, redisClient)
 				if err != nil {
-					log.Error(err)
+					log.Error(err.Error())
 					return
 				}
 				if !isAllowed {
@@ -541,7 +537,7 @@ func RateLimitingMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 	}
 }
 
-func calculateRateLimitLogic(rateLimitTierValueType int, currentValue string, rateLimitValue int, rateLimitErrorMessage string, rateLimitCurrentValueKey string, redisClient *redis.Client) (bool, string, error) {
+func calculateRateLimit(rateLimitTierValueType int, currentValue string, rateLimitValue int, rateLimitErrorMessage string, rateLimitCurrentValueKey string, redisClient *redis.Client) (bool, string, error) {
 	currentValueInt, err := strconv.Atoi(currentValue)
 	if err != nil {
 		return false, "", err
@@ -603,7 +599,7 @@ func FetchCommunityBillingData(redisClient *redis.Client, communityId int, cache
 	return communityBillingMeta, nil
 }
 
-func FetchTierData(redisClient *redis.Client, communityId int, headers map[string]interface{}, tierType int) ([]ApitierDataType, error) {
+func FetchTierData(redisClient *redis.Client, communityId int, headers map[string]interface{}, tierType int) ([]APItierDataType, error) {
 
 	cacheKey := fmt.Sprintf("tier_data_%d", tierType)
 	value, exists, err := cache.Get(redisClient, cacheKey)
@@ -612,7 +608,7 @@ func FetchTierData(redisClient *redis.Client, communityId int, headers map[strin
 		return nil, err
 	}
 
-	tierData := []ApitierDataType{}
+	tierData := []APItierDataType{}
 
 	if !exists {
 		params := map[string]string{
