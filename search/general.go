@@ -110,7 +110,7 @@ func GeneralSearch(c *gin.Context) {
 				user_data, userUniqueIds, err := utils.GetUsersMetaFromFeedData(redisClient, headers, posts, dataResponse)
 
 				if err != nil {
-					utils.GenerateResponse(c, nil, false)
+					utils.GenerateResponse(c, nil)
 					return
 				}
 
@@ -124,5 +124,5 @@ func GeneralSearch(c *gin.Context) {
 	}
 
 	//Generate Response
-	utils.GenerateResponse(c, dataResponse, false)
+	utils.GenerateResponse(c, dataResponse)
 }

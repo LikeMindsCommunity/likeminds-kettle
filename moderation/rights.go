@@ -109,7 +109,7 @@ func getRightsInternal(c *gin.Context, userId string) {
 		}
 
 		//Parse and generate response
-		utils.ParseResponse(c, respBytes, statusCode, true)
+		utils.ParseResponse(c, respBytes, statusCode)
 
 	} else {
 		//else, call fetch cm rights api internally
@@ -121,7 +121,7 @@ func getRightsInternal(c *gin.Context, userId string) {
 		}
 
 		//Parse and generate response
-		utils.ParseResponse(c, respBytes, statusCode, true)
+		utils.ParseResponse(c, respBytes, statusCode)
 
 	}
 }
@@ -168,7 +168,7 @@ func editRightsInternal(c *gin.Context, userId string) {
 		}
 
 		//Generate response
-		utils.GenerateResponse(c, apiCR.Response, false)
+		utils.GenerateResponse(c, apiCR.Response)
 
 	} else {
 		//else, call update cm rights api internally
@@ -216,7 +216,7 @@ func updateRightsInternal(c *gin.Context, userId string) {
 		}
 
 		//Generate response
-		utils.GenerateResponse(c, apiCR.Response, false)
+		utils.GenerateResponse(c, apiCR.Response)
 
 	} else {
 

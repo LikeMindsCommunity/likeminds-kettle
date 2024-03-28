@@ -52,7 +52,7 @@ func PushLogs(c *gin.Context) {
 	if err != nil {
 		// we'll be sending 200 until we have implemented another library
 		logging.Error(err.Error())
-		utils.GenerateResponse(c, map[string]interface{}{}, false)
+		utils.GenerateResponse(c, map[string]interface{}{})
 		return
 	}
 
@@ -66,7 +66,7 @@ func PushLogs(c *gin.Context) {
 	logging.PushLogEntries(entries, logger)
 
 	// Send response
-	utils.GenerateResponse(c, map[string]interface{}{}, false)
+	utils.GenerateResponse(c, map[string]interface{}{})
 }
 
 // Get valid timestamp for logging

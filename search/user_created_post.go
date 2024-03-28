@@ -73,7 +73,7 @@ func UserCreatedPostSearch(c *gin.Context) {
 		user_data, userUniqueIds, err := utils.GetUsersMetaFromFeedData(redisClient, headers, posts, dataResponse)
 
 		if err != nil {
-			utils.GenerateResponse(c, nil, false)
+			utils.GenerateResponse(c, nil)
 			return
 		}
 
@@ -85,5 +85,5 @@ func UserCreatedPostSearch(c *gin.Context) {
 	}
 
 	//Send response
-	utils.GenerateResponse(c, dataResponse, false)
+	utils.GenerateResponse(c, dataResponse)
 }

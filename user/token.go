@@ -59,5 +59,5 @@ func CreateToken(c *gin.Context) {
 	}
 
 	// Generate Response
-	utils.GenerateResponse(c, dataResponse, false)
+	utils.GenerateResponse(c, dataResponse)
 }

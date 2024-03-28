@@ -37,5 +37,5 @@ func Refresh(c *gin.Context) {
 	}
 
 	//Generate Response
-	utils.GenerateResponse(c, token, false)
+	utils.GenerateResponse(c, token)
 }

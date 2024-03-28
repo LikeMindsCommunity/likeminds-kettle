@@ -1,6 +1,8 @@
 package conversation
 
 import (
+	"encoding/json"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/community"
 	"github.com/nateshr/likeminds-authentication/user"
@@ -56,12 +58,14 @@ type CreateConversationRequest struct {
 	OGTags                interface{}              `json:"og_tags,omitempty"`
 	ShareLink             string                   `json:"share_link,omitempty"`
 	Attachments           []ConversationAttachment `json:"attachments,omitempty"`
+	Metadata              interface{}              `json:"meta_data,omitempty"`
 }
 
 type EditConversationRequest struct {
 	ConversationID interface{} `json:"conversation_id" binding:"required"`
 	Text           string      `json:"text" binding:"required"`
 	ShareLink      string      `json:"share_link,omitempty"`
+	Metadata       interface{} `json:"meta_data,omitempty"`
 }
 
 type DeleteConversationRequest struct {
@@ -146,6 +150,14 @@ func parseEditConversationRequest(c *gin.Context) (*EditConversationRequest, err
 		return nil, err
 	}
 
+	if ecr.Metadata != nil {
+		metadataString, _ := json.Marshal(ecr.Metadata)
+
+		if metadataString != nil {
+			ecr.Metadata = string(metadataString)
+		}
+	}
+
 	ecr.ConversationID = utils.ParseInterfaceToString(ecr.ConversationID)
 
 	return &ecr, nil
@@ -190,7 +202,7 @@ func getConversationInternal(c *gin.Context, userId string) {
 		}
 
 		//Parse and generate response
-		utils.ParseResponse(c, respBytes, statusCode, true)
+		utils.ParseResponse(c, respBytes, statusCode)
 
 	} else {
 		//else, call api/conversation_meta api internally
@@ -220,7 +232,7 @@ func createConversationInternal(c *gin.Context, userId string) {
 	}
 
 	//Parse and generate response
-	utils.ParseResponse(c, respBytes, statusCode, true)
+	utils.ParseResponse(c, respBytes, statusCode)
 }
 
 func editConversationInternal(c *gin.Context, userId string) {
@@ -240,7 +252,7 @@ func editConversationInternal(c *gin.Context, userId string) {
 	}
 
 	//Parse and generate response
-	utils.ParseResponse(c, respBytes, statusCode, true)
+	utils.ParseResponse(c, respBytes, statusCode)
 }
 
 func deleteConversationInternal(c *gin.Context, userId string) {

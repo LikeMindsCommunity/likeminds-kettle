@@ -63,5 +63,5 @@ func GetUserFeedMeta(c *gin.Context) {
 	dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
 
 	//Send response
-	utils.GenerateResponse(c, dataResponse, true)
+	utils.GenerateResponse(c, dataResponse)
 }

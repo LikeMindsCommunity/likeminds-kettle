@@ -103,7 +103,7 @@ func InitiateSDK(c *gin.Context) {
 	dataResponse[constants.ParamRefreshToken] = rtm.RefreshToken
 
 	// Generate response
-	utils.GenerateResponse(c, dataResponse, true)
+	utils.GenerateResponse(c, dataResponse)
 }
 
 // FetchSdkUserInfo is used to Fetch user initiated info

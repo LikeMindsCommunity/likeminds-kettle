@@ -104,7 +104,7 @@ func getCommentLikesInternal(c *gin.Context, userId string, endPoint string) {
 	}
 
 	//Send response
-	utils.GenerateResponse(c, dataResponse, false)
+	utils.GenerateResponse(c, dataResponse)
 }
 
 func createCommentLikeInternal(c *gin.Context, userId string, endPoint string) {

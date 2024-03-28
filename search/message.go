@@ -31,6 +31,6 @@ func MessageSearch(c *gin.Context) {
 	}
 
 	//Parse and generate response
-	utils.ParseResponse(c, respBytes, statusCode, true)
+	utils.ParseResponse(c, respBytes, statusCode)
 
 }
