@@ -66,5 +66,5 @@ func DeleteCache(c *gin.Context) {
 		}
 	}
 
-	utils.GenerateResponse(c, nil, false)
+	utils.GenerateResponse(c, nil)
 }

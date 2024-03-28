@@ -65,5 +65,5 @@ func Logout(c *gin.Context) {
 	}
 
 	//Generate Response
-	utils.GenerateResponse(c, nil, false)
+	utils.GenerateResponse(c, nil)
 }

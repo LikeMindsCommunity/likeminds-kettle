@@ -202,7 +202,7 @@ func getConversationInternal(c *gin.Context, userId string) {
 		}
 
 		//Parse and generate response
-		utils.ParseResponse(c, respBytes, statusCode, true)
+		utils.ParseResponse(c, respBytes, statusCode)
 
 	} else {
 		//else, call api/conversation_meta api internally
@@ -232,7 +232,7 @@ func createConversationInternal(c *gin.Context, userId string) {
 	}
 
 	//Parse and generate response
-	utils.ParseResponse(c, respBytes, statusCode, true)
+	utils.ParseResponse(c, respBytes, statusCode)
 }
 
 func editConversationInternal(c *gin.Context, userId string) {
@@ -252,7 +252,7 @@ func editConversationInternal(c *gin.Context, userId string) {
 	}
 
 	//Parse and generate response
-	utils.ParseResponse(c, respBytes, statusCode, true)
+	utils.ParseResponse(c, respBytes, statusCode)
 }
 
 func deleteConversationInternal(c *gin.Context, userId string) {

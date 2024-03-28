@@ -89,7 +89,7 @@ func CommentPost(c *gin.Context) {
 	dataResponse = populateCommentDataResponse(c, dataResponse)
 
 	//Generate Response
-	utils.GenerateResponse(c, dataResponse, true)
+	utils.GenerateResponse(c, dataResponse)
 }
 
 // EditPostComment is used to edit a comment on a post
@@ -165,5 +165,5 @@ func EditCommentPost(c *gin.Context) {
 	dataResponse = populateCommentDataResponse(c, dataResponse)
 
 	//Generate Response
-	utils.GenerateResponse(c, dataResponse, true)
+	utils.GenerateResponse(c, dataResponse)
 }

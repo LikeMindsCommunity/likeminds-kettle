@@ -103,7 +103,7 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 
 		user_data, userUniqueIds, err := utils.GetUsersMetaFromFeedData(redisClient, headers, posts, dataResponse)
 		if err != nil {
-			utils.GenerateResponse(c, nil, false)
+			utils.GenerateResponse(c, nil)
 			return
 		}
 
@@ -115,7 +115,7 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 	}
 
 	//Send response
-	utils.GenerateResponse(c, dataResponse, true)
+	utils.GenerateResponse(c, dataResponse)
 }
 
 func createSavePostInternal(c *gin.Context, userId string) {

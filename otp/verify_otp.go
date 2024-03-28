@@ -63,7 +63,7 @@ func VerifyOTP(c *gin.Context) {
 		dataResponse[constants.ParamRefreshToken] = rtm.RefreshToken
 
 		//Generate Response
-		utils.GenerateResponse(c, dataResponse, true)
+		utils.GenerateResponse(c, dataResponse)
 	} else {
 		// Create onboarding token
 		otm, err := token.CreateOTM(c.GetHeader(utils.HeadersApiKey))
@@ -79,6 +79,6 @@ func VerifyOTP(c *gin.Context) {
 		dataResponse[constants.ParamAccessToken] = otm.AccessToken
 
 		// Generate Response
-		utils.GenerateResponse(c, dataResponse, false)
+		utils.GenerateResponse(c, dataResponse)
 	}
 }

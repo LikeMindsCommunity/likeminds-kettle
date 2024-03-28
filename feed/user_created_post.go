@@ -103,5 +103,5 @@ func FetchUserCreatedPosts(c *gin.Context) {
 	}
 
 	//Send response
-	utils.GenerateResponse(c, dataResponse, true)
+	utils.GenerateResponse(c, dataResponse)
 }

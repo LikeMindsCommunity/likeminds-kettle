@@ -68,7 +68,7 @@ func FetchUniversalFeed(c *gin.Context) {
 
 		user_data, userUniqueIds, err := utils.GetUsersMetaFromFeedData(redisClient, headers, posts, dataResponse)
 		if err != nil {
-			utils.GenerateResponse(c, nil, false)
+			utils.GenerateResponse(c, nil)
 			return
 		}
 
@@ -80,5 +80,5 @@ func FetchUniversalFeed(c *gin.Context) {
 	}
 
 	//Send response
-	utils.GenerateResponse(c, dataResponse, true)
+	utils.GenerateResponse(c, dataResponse)
 }

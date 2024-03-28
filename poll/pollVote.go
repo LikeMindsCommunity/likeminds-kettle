@@ -127,7 +127,7 @@ func getPollVotesInternal(c *gin.Context, userId string, endPoint string) {
 	}
 
 	//Send response
-	utils.GenerateResponse(c, dataResponse, true)
+	utils.GenerateResponse(c, dataResponse)
 }
 
 func createPollVotesInternal(c *gin.Context, userId string, endPoint string) {

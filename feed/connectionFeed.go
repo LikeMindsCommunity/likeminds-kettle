@@ -50,5 +50,5 @@ func GetConnectionFeed(c *gin.Context) {
 	dataResponse = populatePostDataResponse(c, dataResponse)
 
 	//Send response
-	utils.GenerateResponse(c, dataResponse, true)
+	utils.GenerateResponse(c, dataResponse)
 }
