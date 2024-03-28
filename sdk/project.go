@@ -118,8 +118,6 @@ func Project(c *gin.Context, method int) {
 			return
 		}
 
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, botId), nil, projectRequest)
 		//Send Create Project request and recieve API key
 		respBytes, _ := utils.GetRequestResponse(c, utils.CoreService, ProjectEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, botId), nil, projectRequest)
 		if respBytes == nil {
