@@ -200,3 +200,11 @@ func SendRequest(c *gin.Context, serviceType ServiceType, url string, requestTyp
 	ParseResponse(c, respBytes, statusCode, false)
 
 }
+
+func RateLimitError(c *gin.Context, errMessage string) {
+	response := Response{
+		Success:      false,
+		ErrorMessage: errMessage,
+	}
+	c.AbortWithStatusJSON(http.StatusTooManyRequests, response)
+}

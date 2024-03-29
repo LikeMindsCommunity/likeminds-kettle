@@ -60,6 +60,11 @@ type UpdateProjectRequest struct {
 	IsJoinFormEnabled bool                     `json:"is_join_form_enabled"`
 }
 
+type SkulkBillingPlanResponse struct {
+	Success      bool   `json:"success"`
+	ErrorMessage string `json:"error_message"`
+}
+
 // CreateProject is used to create a new sdk project
 func CreateProject(c *gin.Context) {
 	Project(c, utils.POSTMethod)
@@ -88,6 +93,7 @@ func Project(c *gin.Context, method int) {
 	if userId == "" {
 		return
 	}
+	headers := utils.CreateHeaders(c, userId)
 
 	switch method {
 	case utils.GETMethod:
@@ -98,7 +104,7 @@ func Project(c *gin.Context, method int) {
 		}
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.GETRequest, headers, params, nil)
 
 	case utils.POSTMethod:
 
@@ -138,7 +144,6 @@ func Project(c *gin.Context, method int) {
 			utils.GeneralAPIError(c, err.Error())
 			return
 		}
-		headers := utils.CreateHeaders(c, "")
 
 		//Send Request to create billing plan for community
 		communityBillingRequest := map[string]interface{}{}
@@ -147,16 +152,16 @@ func Project(c *gin.Context, method int) {
 			logging.Error(err.Error())
 			return
 		}
-		skulkResponse := make(map[string]interface{})
+		skulkResponse := SkulkBillingPlanResponse{}
 		err = json.Unmarshal(skulkRespBytes, &skulkResponse)
 		if err != nil {
 			logging.Error(err.Error())
 			return
 		}
-		if statusCode == http.StatusInternalServerError || statusCode == http.StatusBadRequest {
+		if statusCode != http.StatusOK {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, utils.Response{
 				Success:      false,
-				ErrorMessage: skulkResponse["error_message"].(string),
+				ErrorMessage: skulkResponse.ErrorMessage,
 			})
 			return
 		}
@@ -179,7 +184,7 @@ func Project(c *gin.Context, method int) {
 		}
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, projectRequest)
+		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.PUTRequest, headers, nil, projectRequest)
 
 	case utils.DELETEMethod:
 
@@ -189,7 +194,7 @@ func Project(c *gin.Context, method int) {
 		}
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, nil)
+		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.DELETERequest, headers, nil, nil)
 
 	}
 }

@@ -116,6 +116,8 @@ const FetchMembersMetaEndPoint = "/api/community/fetch_members_meta"
 const FetchTopicsEndpoint = "/topic"
 const FetchUserTopicsEndpoint = "/user/topics"
 const SDKAuthenticateEndPoint = "/api/sdk/authenticate"
+
+// Skulk Endpoints
 const TierEndpoint = "api/subscription/plan/tiers"
 const BillingPlanEnpoint = "api/subscription/plan/billing"
 

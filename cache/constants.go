@@ -16,9 +16,7 @@ const (
 	UserTopicsCacheKey                = "%d_%s_user_topics"              // communityId userUniqueId
 	WidgetMetaCacheKey                = "%d_%s_widget_meta"              // communityId widgetId
 	CommunityBillingDataKey           = "%d_community_billing_data"      // communityId
-	BillingDataKey                    = "billing_data"                   //Rate Limiting Billing Data key
-	TierTypeKey                       = "tier_type"                      //Rate Limiting Tier Type
-	TierDataKey                       = "tier_data"                      //Rate Limiting Tier Data
+	TierDataKey                       = "%d_tier_data"                   // tierType
 )
 
 // Cache TTLs in hours
