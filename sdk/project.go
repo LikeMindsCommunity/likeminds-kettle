@@ -147,7 +147,7 @@ func Project(c *gin.Context, method int) {
 
 		//Send Request to create billing plan for community
 		communityBillingRequest := map[string]interface{}{}
-		skulkRespBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, fmt.Sprintf("/%s/%d", utils.BillingPlanEnpoint, communityId), utils.POSTRequestRawBody, headers, nil, communityBillingRequest)
+		skulkRespBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, fmt.Sprintf("/%s/%d", utils.BillingPlanEnpoint, communityId), utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, communityBillingRequest)
 		if err != nil {
 			logging.Error(err.Error())
 			return
@@ -166,7 +166,7 @@ func Project(c *gin.Context, method int) {
 			return
 		}
 		//Send Response
-		utils.ParseResponse(c, respBytes, statusCode, true)
+		utils.ParseResponse(c, respBytes, statusCode)
 
 	case utils.PUTMethod:
 
@@ -184,7 +184,7 @@ func Project(c *gin.Context, method int) {
 		}
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.PUTRequest, headers, nil, projectRequest)
+		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, projectRequest)
 
 	case utils.DELETEMethod:
 
@@ -194,7 +194,7 @@ func Project(c *gin.Context, method int) {
 		}
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.DELETERequest, headers, nil, nil)
+		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, nil)
 
 	}
 }
