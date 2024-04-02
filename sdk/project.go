@@ -59,11 +59,6 @@ type UpdateProjectRequest struct {
 	IsJoinFormEnabled bool                     `json:"is_join_form_enabled"`
 }
 
-type SkulkBillingPlanResponse struct {
-	Success      bool   `json:"success"`
-	ErrorMessage string `json:"error_message"`
-}
-
 // CreateProject is used to create a new sdk project
 func CreateProject(c *gin.Context) {
 	Project(c, utils.POSTMethod)
@@ -163,7 +158,9 @@ func Project(c *gin.Context, method int) {
 			logging.Error(fmt.Sprintf("Error creating billing plan, response: %s err: %s ", string(skulkRespBytes), err.Error()))
 
 			// Delete the created community
-			resp, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, ProjectEndpoint, utils.DELETEMethod, utils.CreateHeaders(c, botId), nil, nil)
+			headers := utils.CreateHeaders(c, botId)
+			headers[utils.HeadersApiKey] = caravanResp["api_key"].(string)
+			resp, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, ProjectEndpoint, utils.DELETERequest, headers, nil, nil)
 			if err != nil || statusCode != http.StatusOK {
 				if err == nil {
 					err = fmt.Errorf("error deleting community")

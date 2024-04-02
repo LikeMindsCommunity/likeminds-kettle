@@ -35,14 +35,13 @@ type TierTypeApiResponse struct {
 func RateLimitingMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
-		logging.Info("RateLimitingMiddleware Started")
-		logging.Info(fmt.Sprintf("IS_RATE_LIMITING_ENABLED: %s ", environment.GoDotEnvVariable("IS_RATE_LIMITING_ENABLED")))
-		if environment.GoDotEnvVariable("IS_RATE_LIMITING_ENABLED") != "true" {
-			logging.Info("RateLimitingMiddleware Disabled")
+		// Check if rate limiting is enabled
+		isRateLimitingEnabled := environment.GoDotEnvVariable("IS_RATE_LIMITING_ENABLED")
+		if isRateLimitingEnabled != "true" {
 			c.Next()
 			return
 		}
-		logging.Info("RateLimitingMiddleware Enabled")
+
 		headers := utils.CreateHeaders(c, "")
 		apiKey := headers[utils.HeadersApiKey].(string)
 
