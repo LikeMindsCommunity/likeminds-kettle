@@ -99,7 +99,7 @@ func GetUserComments(c *gin.Context) {
 	dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userIds)
 
 	//Send response
-	utils.GenerateResponse(c, dataResponse)
+	utils.GenerateResponse(c, dataResponse, true)
 }
 
 func parseUserCommentsResponse(respBytes []byte, ucar *UserCommentsAPIResponse) error {

@@ -129,7 +129,7 @@ func getMemberInternal(c *gin.Context, userId string) {
 		}
 
 		//Parse and generate response
-		utils.ParseResponse(c, respBytes, statusCode)
+		utils.ParseResponse(c, respBytes, statusCode, true)
 
 	} else {
 		//else, call api/v1/all_members api internally
@@ -150,7 +150,7 @@ func getMemberInternal(c *gin.Context, userId string) {
 		}
 
 		//Parse and generate response
-		utils.ParseResponse(c, respBytes, statusCode)
+		utils.ParseResponse(c, respBytes, statusCode, true)
 	}
 }
 
@@ -171,7 +171,7 @@ func addMemberInternal(c *gin.Context, userId string) {
 	}
 
 	//Parse and generate response
-	utils.ParseResponse(c, respBytes, statusCode)
+	utils.ParseResponse(c, respBytes, statusCode, true)
 
 }
 

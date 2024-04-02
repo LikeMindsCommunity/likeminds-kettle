@@ -26,5 +26,5 @@ func Config(c *gin.Context) {
 	}
 
 	//Parse and generate response
-	utils.ParseResponse(c, respBytes, statusCode)
+	utils.ParseResponse(c, respBytes, statusCode, true)
 }

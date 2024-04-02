@@ -173,7 +173,7 @@ func getChatroomInternal(c *gin.Context, userId string) {
 		}
 
 		//Parse and generate response
-		utils.ParseResponse(c, respBytes, statusCode)
+		utils.ParseResponse(c, respBytes, statusCode, true)
 
 	} else {
 		//else, call api/chatroom/fetch api internally
@@ -197,7 +197,7 @@ func getChatroomInternal(c *gin.Context, userId string) {
 			}
 
 			//Parse and generate response
-			utils.ParseResponse(c, respBytes, statusCode)
+			utils.ParseResponse(c, respBytes, statusCode, true)
 		} else {
 			// Params to be sent in the api/chatroom/fetch request
 			params := map[string]string{
@@ -212,7 +212,7 @@ func getChatroomInternal(c *gin.Context, userId string) {
 			}
 
 			//Parse and generate response
-			utils.ParseResponse(c, respBytes, statusCode)
+			utils.ParseResponse(c, respBytes, statusCode, true)
 		}
 
 	}
@@ -235,7 +235,7 @@ func createChatroomInternal(c *gin.Context, userId string) {
 	}
 
 	//Parse and generate response
-	utils.ParseResponse(c, respBytes, statusCode)
+	utils.ParseResponse(c, respBytes, statusCode, true)
 
 }
 

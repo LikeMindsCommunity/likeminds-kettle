@@ -58,14 +58,14 @@ type CreateConversationRequest struct {
 	OGTags                interface{}              `json:"og_tags,omitempty"`
 	ShareLink             string                   `json:"share_link,omitempty"`
 	Attachments           []ConversationAttachment `json:"attachments,omitempty"`
-	Metadata              interface{}              `json:"meta_data,omitempty"`
+	Metadata              interface{}              `json:"metadata,omitempty"`
 }
 
 type EditConversationRequest struct {
 	ConversationID interface{} `json:"conversation_id" binding:"required"`
 	Text           string      `json:"text" binding:"required"`
 	ShareLink      string      `json:"share_link,omitempty"`
-	Metadata       interface{} `json:"meta_data,omitempty"`
+	Metadata       interface{} `json:"metadata,omitempty"`
 }
 
 type DeleteConversationRequest struct {
@@ -202,7 +202,7 @@ func getConversationInternal(c *gin.Context, userId string) {
 		}
 
 		//Parse and generate response
-		utils.ParseResponse(c, respBytes, statusCode)
+		utils.ParseResponse(c, respBytes, statusCode, true)
 
 	} else {
 		//else, call api/conversation_meta api internally
@@ -232,7 +232,7 @@ func createConversationInternal(c *gin.Context, userId string) {
 	}
 
 	//Parse and generate response
-	utils.ParseResponse(c, respBytes, statusCode)
+	utils.ParseResponse(c, respBytes, statusCode, true)
 }
 
 func editConversationInternal(c *gin.Context, userId string) {
@@ -252,7 +252,7 @@ func editConversationInternal(c *gin.Context, userId string) {
 	}
 
 	//Parse and generate response
-	utils.ParseResponse(c, respBytes, statusCode)
+	utils.ParseResponse(c, respBytes, statusCode, true)
 }
 
 func deleteConversationInternal(c *gin.Context, userId string) {

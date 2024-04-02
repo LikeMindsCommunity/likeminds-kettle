@@ -76,7 +76,7 @@ func UserOTP(c *gin.Context, method int) {
 		dataResponse[constants.ParamAccessToken] = vtm.AccessToken
 
 		// Generate response
-		utils.GenerateResponse(c, dataResponse)
+		utils.GenerateResponse(c, dataResponse, false)
 	}
 }
 

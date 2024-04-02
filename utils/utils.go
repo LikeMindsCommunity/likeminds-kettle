@@ -11,14 +11,16 @@ import (
 )
 
 // Generate Response to be sent on request success
-func GenerateResponse(c *gin.Context, dataResponse map[string]interface{}) {
+func GenerateResponse(c *gin.Context, dataResponse map[string]interface{}, parseProfileWidgets bool) {
 	//Generating Response Object
 	response := Response{
 		Success: true,
 	}
 
 	// Get widgets data
-	ParseAndFetchWidgets(c, GetUserIdFromContext(c), dataResponse)
+	if parseProfileWidgets {
+		ParseAndFetchWidgets(c, GetUserIdFromContext(c), dataResponse)
+	}
 
 	//Removing Blank Data Key
 	if len(dataResponse) > 0 {
@@ -77,12 +79,12 @@ func ValidateClientResponseWithoutContext(respBytes []byte, statuscode int, err 
 }
 
 // ParseResponse from request sent internally
-func ParseResponse(c *gin.Context, respBytes []byte, statusCode int) {
+func ParseResponse(c *gin.Context, respBytes []byte, statusCode int, parseProfileWidgets bool) {
 
 	apiCR := ValidateClientResponse(c, respBytes, statusCode)
 
 	if apiCR != nil {
-		GenerateResponse(c, apiCR.Response)
+		GenerateResponse(c, apiCR.Response, parseProfileWidgets)
 	}
 }
 
@@ -195,7 +197,7 @@ func SendRequest(c *gin.Context, serviceType ServiceType, url string, requestTyp
 	}
 
 	//Parse response
-	ParseResponse(c, respBytes, statusCode)
+	ParseResponse(c, respBytes, statusCode, false)
 
 }
 
