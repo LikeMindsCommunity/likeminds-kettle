@@ -118,8 +118,8 @@ const FetchUserTopicsEndpoint = "/user/topics"
 const SDKAuthenticateEndPoint = "/api/sdk/authenticate"
 
 // Skulk Endpoints
-const TierEndpoint = "api/subscription/plan/tiers"
-const BillingPlanEnpoint = "api/subscription/plan/billing"
+const TierEndpoint = "/api/subscription/plan/tiers"
+const BillingPlanEnpoint = "/api/subscription/plan/billing"
 
 // Community settings type
 const (

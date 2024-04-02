@@ -147,7 +147,7 @@ func FetchCommunityBillingData(redisClient *redis.Client, communityId int, heade
 	// communityBillingDataApi
 	if !valueExists {
 		// Get Value from API
-		respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, fmt.Sprintf("/%s/%d", utils.BillingPlanEnpoint, communityId), utils.GETRequest, headers, nil, nil)
+		respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, fmt.Sprintf("%s/%d", utils.BillingPlanEnpoint, communityId), utils.GETRequest, headers, nil, nil)
 		if err != nil {
 			return communityBillingMeta, err
 		}
