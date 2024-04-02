@@ -1,7 +1,6 @@
 package sdk
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -125,21 +124,27 @@ func Project(c *gin.Context, method int) {
 		}
 
 		//Send Create Project request and recieve API key
-		respBytes, _ := utils.GetRequestResponse(c, utils.CoreService, ProjectEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, botId), nil, projectRequest)
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, ProjectEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, botId), nil, projectRequest)
 		if respBytes == nil {
 			return
 		}
 
-		//Parse response to get api key
-		projectResponse := make(map[string]interface{})
-		err = json.Unmarshal(respBytes, &projectResponse)
-		if err != nil {
-			utils.GeneralAPIError(c, err.Error())
+		//Validate response
+		apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+		if apiCR == nil {
 			return
 		}
+
+		caravanResp := apiCR.Response
+
+		if caravanResp["api_key"] == nil {
+			utils.GeneralAPIError(c, "Community not created")
+			return
+		}
+
 		// Fetch Community ID from API Key
 		redis := utils.GetRedisClientFromContext(c)
-		communityId, err := utils.FetchCommunityIdFromApiKey(redis, projectResponse["api_key"].(string))
+		communityId, err := utils.FetchCommunityIdFromApiKey(redis, caravanResp["api_key"].(string))
 		if err != nil {
 			utils.GeneralAPIError(c, err.Error())
 			return
@@ -147,24 +152,20 @@ func Project(c *gin.Context, method int) {
 
 		//Send Request to create billing plan for community
 		communityBillingRequest := map[string]interface{}{}
-		skulkRespBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, fmt.Sprintf("/%s/%d", utils.BillingPlanEnpoint, communityId), utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, communityBillingRequest)
+		skulkEndpoint := utils.BillingPlanEnpoint + "/" + fmt.Sprint(communityId)
+		skulkRespBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, skulkEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, communityBillingRequest)
 		if err != nil {
 			logging.Error(err.Error())
 			return
 		}
-		skulkResponse := SkulkBillingPlanResponse{}
-		err = json.Unmarshal(skulkRespBytes, &skulkResponse)
-		if err != nil {
-			logging.Error(err.Error())
-			return
-		}
+
 		if statusCode != http.StatusOK {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, utils.Response{
-				Success:      false,
-				ErrorMessage: skulkResponse.ErrorMessage,
-			})
-			return
+			logging.Error("Error creating billing plan: " + string(skulkRespBytes))
+			utils.GeneralAPIError(c, "Error creating billing plan")
+
+			// TODO: Delete the community
 		}
+
 		//Send Response
 		utils.ParseResponse(c, respBytes, statusCode)
 
