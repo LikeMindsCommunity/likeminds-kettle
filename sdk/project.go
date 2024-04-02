@@ -130,16 +130,16 @@ func Project(c *gin.Context, method int) {
 			return
 		}
 
-		caravanResp := apiCR.Response
+		projectApiResp := apiCR.Response
 
-		if caravanResp["api_key"] == nil {
+		if projectApiResp["api_key"] == nil {
 			utils.GeneralAPIError(c, "Community not created")
 			return
 		}
 
 		// Fetch Community ID from API Key
 		redis := utils.GetRedisClientFromContext(c)
-		communityId, err := utils.FetchCommunityIdFromApiKey(redis, caravanResp["api_key"].(string))
+		communityId, err := utils.FetchCommunityIdFromApiKey(redis, projectApiResp["api_key"].(string))
 		if err != nil {
 			utils.GeneralAPIError(c, err.Error())
 			return
@@ -147,19 +147,19 @@ func Project(c *gin.Context, method int) {
 
 		//Send Request to create billing plan for community
 		communityBillingRequest := map[string]interface{}{}
-		skulkEndpoint := utils.BillingPlanEnpoint + "/" + fmt.Sprint(communityId)
-		skulkRespBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, skulkEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, communityBillingRequest)
+		billingEndpoint := utils.BillingPlanEnpoint + "/" + fmt.Sprint(communityId)
+		billingPlanRespBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, billingEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, communityBillingRequest)
 		if err != nil || statusCode != http.StatusOK {
 
 			if err == nil {
 				err = fmt.Errorf("error creating billing plan")
 			}
 
-			logging.Error(fmt.Sprintf("Error creating billing plan, response: %s err: %s ", string(skulkRespBytes), err.Error()))
+			logging.Error(fmt.Sprintf("Error creating billing plan, response: %s err: %s ", string(billingPlanRespBytes), err.Error()))
 
 			// Delete the created community
 			headers := utils.CreateHeaders(c, botId)
-			headers[utils.HeadersApiKey] = caravanResp["api_key"].(string)
+			headers[utils.HeadersApiKey] = projectApiResp["api_key"].(string)
 			resp, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, ProjectEndpoint, utils.DELETERequest, headers, nil, nil)
 			if err != nil || statusCode != http.StatusOK {
 				if err == nil {
