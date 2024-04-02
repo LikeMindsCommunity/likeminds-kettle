@@ -7,7 +7,7 @@ get:
     - Chatroom
 
   description: |
-    This API fetches chatrooms of a community.
+    This API fetches chatrooms of a community or a single chatroom. 
 
   security:
     - bearerAuth: []
