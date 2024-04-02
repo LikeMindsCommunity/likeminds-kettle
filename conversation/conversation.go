@@ -58,14 +58,14 @@ type CreateConversationRequest struct {
 	OGTags                interface{}              `json:"og_tags,omitempty"`
 	ShareLink             string                   `json:"share_link,omitempty"`
 	Attachments           []ConversationAttachment `json:"attachments,omitempty"`
-	Metadata              interface{}              `json:"meta_data,omitempty"`
+	Metadata              interface{}              `json:"metadata,omitempty"`
 }
 
 type EditConversationRequest struct {
 	ConversationID interface{} `json:"conversation_id" binding:"required"`
 	Text           string      `json:"text" binding:"required"`
 	ShareLink      string      `json:"share_link,omitempty"`
-	Metadata       interface{} `json:"meta_data,omitempty"`
+	Metadata       interface{} `json:"metadata,omitempty"`
 }
 
 type DeleteConversationRequest struct {
