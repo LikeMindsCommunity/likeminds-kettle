@@ -97,6 +97,17 @@ func SetMultipleValues(client *redis.Client, values ...interface{}) error {
 	return nil
 }
 
+// Increment | increment the key value by 1
+func Increment(client *redis.Client, key string) error {
+	err := client.Incr(key).Err()
+	if err != nil {
+		return err
+	}
+
+	logging.Info(fmt.Sprint("cache incremented for key: ", key))
+	return nil
+}
+
 // IsLTMBlacklisted checks if token is blacklisted or not => user is logged out or not
 func IsLTMBlacklisted(client *redis.Client, ltm *constants.LoginTokenMeta) bool {
 	userUniqueID, _ := client.Get(ltm.AccessUuid).Result()

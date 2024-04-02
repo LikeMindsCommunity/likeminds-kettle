@@ -28,6 +28,7 @@ func MemberSearch(c *gin.Context) {
 		ParamOrderType:              c.Query(ParamOrderType),
 		ParamMemberStates:           c.Query(ParamMemberStates),
 		ParamQuestionAnswersVersion: c.Query(ParamQuestionAnswersVersion),
+		ParamExcludeSelfMember:      c.Query(ParamExcludeSelfMember),
 	}
 
 	//Get Request response
