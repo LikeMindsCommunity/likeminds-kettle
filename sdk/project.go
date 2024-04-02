@@ -156,15 +156,20 @@ func Project(c *gin.Context, method int) {
 		skulkRespBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, skulkEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, communityBillingRequest)
 		if err != nil || statusCode != http.StatusOK {
 
+			if err == nil {
+				err = fmt.Errorf("error creating billing plan")
+			}
+
 			logging.Error(fmt.Sprintf("Error creating billing plan, response: %s err: %s ", string(skulkRespBytes), err.Error()))
 
 			// Delete the created community
-			go func() {
-				resp, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, ProjectEndpoint, utils.DELETEMethod, utils.CreateHeaders(c, botId), nil, nil)
-				if err != nil || statusCode != http.StatusOK {
-					logging.Error(fmt.Sprintf("Error deleting community, response: %s err: %s ", string(resp), err.Error()))
+			resp, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, ProjectEndpoint, utils.DELETEMethod, utils.CreateHeaders(c, botId), nil, nil)
+			if err != nil || statusCode != http.StatusOK {
+				if err == nil {
+					err = fmt.Errorf("error deleting community")
 				}
-			}()
+				logging.Error(fmt.Sprintf("Error deleting community, response: %s err: %s ", string(resp), err.Error()))
+			}
 
 			utils.GeneralAPIError(c, "Error creating billing plan")
 			return
