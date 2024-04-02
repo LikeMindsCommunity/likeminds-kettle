@@ -27,6 +27,11 @@ type TierDataType struct {
 	TierValueType        int    `json:"tier_value_type"`
 }
 
+type BillingPlanApiResponse struct {
+	Success     bool                 `json:"success"`
+	BillingData CommunityBillingMeta `json:"billing_data"`
+}
+
 type TierTypeApiResponse struct {
 	Success bool           `json:"success"`
 	Data    []TierDataType `json:"data"`
@@ -151,12 +156,14 @@ func FetchCommunityBillingData(redisClient *redis.Client, communityId int, heade
 			return communityBillingMeta, err
 		}
 
-		err = json.Unmarshal(respBytes, &communityBillingMeta)
+		billingPlanResp := BillingPlanApiResponse{}
+		err = json.Unmarshal(respBytes, &billingPlanResp)
+		communityBillingMeta = billingPlanResp.BillingData
 		if err != nil {
 			return communityBillingMeta, err
 		}
 
-		communityBillingMetaForCache, err := json.Marshal(communityBillingMeta)
+		communityBillingMetaForCache, err := json.Marshal(billingPlanResp.BillingData)
 
 		if err != nil {
 			return communityBillingMeta, err
