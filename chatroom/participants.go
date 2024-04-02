@@ -138,7 +138,7 @@ func getParticipantsInternal(c *gin.Context, userId string) {
 		}
 
 		//Parse and generate response
-		utils.ParseResponse(c, respBytes, statusCode)
+		utils.ParseResponse(c, respBytes, statusCode, true)
 
 	} else {
 		//else, call api/chatroom/fetch_participants_meta api internally
@@ -150,7 +150,7 @@ func getParticipantsInternal(c *gin.Context, userId string) {
 		}
 
 		//Parse and generate response
-		utils.ParseResponse(c, respBytes, statusCode)
+		utils.ParseResponse(c, respBytes, statusCode, true)
 
 	}
 }
@@ -176,7 +176,7 @@ func addParticipantsInternal(c *gin.Context, userId string) {
 		}
 
 		//Parse and generate response
-		utils.ParseResponse(c, respBytes, statusCode)
+		utils.ParseResponse(c, respBytes, statusCode, false)
 
 	} else {
 		//else, call add secret chatroom participant api internally
@@ -191,7 +191,7 @@ func addParticipantsInternal(c *gin.Context, userId string) {
 		}
 
 		//Parse and generate response
-		utils.ParseResponse(c, respBytes, statusCode)
+		utils.ParseResponse(c, respBytes, statusCode, false)
 	}
 }
 
@@ -216,7 +216,7 @@ func removeParticipantsInternal(c *gin.Context, userId string) {
 		}
 
 		//Parse and generate response
-		utils.ParseResponse(c, respBytes, statusCode)
+		utils.ParseResponse(c, respBytes, statusCode, false)
 
 	} else {
 
@@ -236,6 +236,6 @@ func removeParticipantsInternal(c *gin.Context, userId string) {
 		}
 
 		//Parse and generate response
-		utils.ParseResponse(c, respBytes, statusCode)
+		utils.ParseResponse(c, respBytes, statusCode, false)
 	}
 }

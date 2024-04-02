@@ -108,5 +108,5 @@ func PostSearch(c *gin.Context) {
 	}
 
 	//Send response
-	utils.GenerateResponse(c, dataResponse)
+	utils.GenerateResponse(c, dataResponse, false)
 }

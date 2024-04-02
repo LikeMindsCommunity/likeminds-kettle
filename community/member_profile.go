@@ -58,7 +58,7 @@ func Profile(c *gin.Context, method int) {
 		}
 
 		//Parse and generate response
-		utils.ParseResponse(c, respBytes, statusCode)
+		utils.ParseResponse(c, respBytes, statusCode, true)
 
 	case utils.PUTMethod:
 
@@ -125,7 +125,7 @@ func EditMemberProfileInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	utils.GenerateResponse(c, apiCr.Response)
+	utils.GenerateResponse(c, apiCr.Response, false)
 
 }
 

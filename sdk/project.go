@@ -166,7 +166,7 @@ func Project(c *gin.Context, method int) {
 			return
 		}
 		//Send Response
-		utils.ParseResponse(c, respBytes, statusCode)
+		utils.ParseResponse(c, respBytes, statusCode, false)
 
 	case utils.PUTMethod:
 

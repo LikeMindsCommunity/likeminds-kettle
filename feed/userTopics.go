@@ -111,7 +111,7 @@ func fetchUsersTopicsInternal(c *gin.Context, userId string) {
 
 	dataResponse["users"] = userMetaMap
 
-	utils.GenerateResponse(c, dataResponse)
+	utils.GenerateResponse(c, dataResponse, true)
 }
 
 // Internal method to update user topics
