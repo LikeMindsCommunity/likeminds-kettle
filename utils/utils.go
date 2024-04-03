@@ -11,15 +11,15 @@ import (
 )
 
 // Generate Response to be sent on request success
-func GenerateResponse(c *gin.Context, dataResponse map[string]interface{}, getProfileWidgets bool) {
+func GenerateResponse(c *gin.Context, dataResponse map[string]interface{}, parseProfileWidgets bool) {
 	//Generating Response Object
 	response := Response{
 		Success: true,
 	}
 
-	// Get profile widgets if required
-	if getProfileWidgets {
-		ParseAndFetchProfileWidgets(c, GetUserIdFromContext(c), dataResponse)
+	// Get widgets data
+	if parseProfileWidgets {
+		ParseAndFetchWidgets(c, GetUserIdFromContext(c), dataResponse)
 	}
 
 	//Removing Blank Data Key
@@ -79,12 +79,12 @@ func ValidateClientResponseWithoutContext(respBytes []byte, statuscode int, err 
 }
 
 // ParseResponse from request sent internally
-func ParseResponse(c *gin.Context, respBytes []byte, statusCode int, getProfileWidgets bool) {
+func ParseResponse(c *gin.Context, respBytes []byte, statusCode int, parseProfileWidgets bool) {
 
 	apiCR := ValidateClientResponse(c, respBytes, statusCode)
 
 	if apiCR != nil {
-		GenerateResponse(c, apiCR.Response, getProfileWidgets)
+		GenerateResponse(c, apiCR.Response, parseProfileWidgets)
 	}
 }
 
@@ -199,4 +199,12 @@ func SendRequest(c *gin.Context, serviceType ServiceType, url string, requestTyp
 	//Parse response
 	ParseResponse(c, respBytes, statusCode, false)
 
+}
+
+func RateLimitError(c *gin.Context, errMessage string) {
+	response := Response{
+		Success:      false,
+		ErrorMessage: errMessage,
+	}
+	c.AbortWithStatusJSON(http.StatusTooManyRequests, response)
 }

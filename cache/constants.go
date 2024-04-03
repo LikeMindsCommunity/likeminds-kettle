@@ -15,6 +15,8 @@ const (
 	TopicMetaCacheKey                 = "%d_%s_topic_meta"               // communityId topicId
 	UserTopicsCacheKey                = "%d_%s_user_topics"              // communityId userUniqueId
 	WidgetMetaCacheKey                = "%d_%s_widget_meta"              // communityId widgetId
+	CommunityBillingDataKey           = "%d_community_billing_data"      // communityId
+	TierDataKey                       = "%d_tier_data"                   // tierType
 )
 
 // Cache TTLs in hours
@@ -26,4 +28,6 @@ const (
 	TopicMetaCacheTTL                 = 7 * 24
 	UserTopicsCacheTTL                = 7 * 24
 	WidgetMetaCacheTTL                = 7 * 24
+	CommunityBillingDataTTL           = 7 * 24
+	TierDataTTL                       = 30 * 24
 )

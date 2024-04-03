@@ -43,6 +43,7 @@ const (
 	PlatformCaravanService PlatformType = "caravan-service"
 	PlatformSwarmService   PlatformType = "swarm-service"
 	PlatformKettleService  PlatformType = "kettle-service"
+	PlatformSkulkService   PlatformType = "skulk-service"
 )
 
 const (
@@ -105,6 +106,7 @@ const ParamUUIDs = "uuids"
 const ParamUUID = "uuid"
 const ParamPageSize = "page_size"
 const ParamCommunityID = "community_id"
+const ParamTierType = "tier_type"
 
 // Endpoints
 const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"
@@ -115,6 +117,10 @@ const FetchMembersMetaEndPoint = "/api/community/fetch_members_meta"
 const FetchTopicsEndpoint = "/topic"
 const FetchUserTopicsEndpoint = "/user/topics"
 const SDKAuthenticateEndPoint = "/api/sdk/authenticate"
+
+// Skulk Endpoints
+const TierEndpoint = "/api/subscription/plan/tiers"
+const BillingPlanEnpoint = "/api/subscription/plan/billing"
 
 // Community settings type
 const (

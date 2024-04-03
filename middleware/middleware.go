@@ -268,7 +268,7 @@ func InternalServiceValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Check if the request is from internal service
 		platformType := c.Request.Header.Get(utils.HeadersPlatformType)
-		if !utils.CheckIfStringExistsInArray([]string{string(utils.PlatformSwarmService), string(utils.PlatformCaravanService)}, platformType) {
+		if !utils.CheckIfStringExistsInArray([]string{string(utils.PlatformSwarmService), string(utils.PlatformCaravanService), string(utils.PlatformSkulkService)}, platformType) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
 				ErrorMessage: utils.ErrorMemeberAccessFail,
