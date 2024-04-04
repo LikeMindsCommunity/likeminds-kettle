@@ -99,7 +99,6 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 	ltmClaims := jwt.MapClaims{}
 	ltmClaims["access_uuid"] = ltm.AccessUuid
 	ltmClaims["user_unique_id"] = userUniqueID
-	ltmClaims["exp"] = ltm.AccessTokenExpires
 	ltmClaims["api_key"] = api_key
 	ltmClaims["is_guest"] = isGuestUser
 
@@ -113,6 +112,8 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 		}
 	}
 
+	ltmClaims["exp"] = ltm.AccessTokenExpires
+
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, ltmClaims)
 	ltm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
 	if err != nil {
@@ -123,7 +124,6 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 	rtmClaims := jwt.MapClaims{}
 	rtmClaims["refresh_uuid"] = rtm.RefreshUuid
 	rtmClaims["user_unique_id"] = userUniqueID
-	rtmClaims["exp"] = rtm.RefreshTokenExpires
 	rtmClaims["api_key"] = api_key
 	rtmClaims["is_guest"] = isGuestUser
 
@@ -136,6 +136,8 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 			rtmClaims = jwt.MapClaims{"data": encryptedData}
 		}
 	}
+
+	rtmClaims["exp"] = rtm.RefreshTokenExpires
 
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtmClaims)
 	rtm.RefreshToken, err = rt.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
@@ -256,13 +258,26 @@ func ExtractLTM(bearerToken string) (*constants.LoginTokenMeta, error) {
 			claims = jwt_claims
 		}
 
+		var atExpires int64
+
+		atExpiresFloat, ok := jwt_claims["exp"].(float64)
+
+		if !ok {
+			atExpiresFloat, ok = claims["exp"].(float64)
+		}
+
+		if atExpiresFloat != 0 {
+			atExpires = int64(atExpiresFloat)
+		}
+
 		accessUuid, ok := claims["access_uuid"].(string)
 		if !ok {
 			return nil, errors.New("access_uuid is empty")
 		}
-		atExpires := int64(claims["exp"].(float64))
 		if atExpires == 0 {
 			return nil, errors.New("exp is empty")
+		} else if atExpires < time.Now().Unix() {
+			return nil, errors.New("LTM expired!")
 		}
 		userUniqueID, ok := claims["user_unique_id"].(string)
 		if !ok {
@@ -302,13 +317,26 @@ func ExtractRTM(bearerToken string) (*constants.RefreshTokenMeta, error) {
 			claims = jwt_claims
 		}
 
+		var rtExpires int64
+
+		rtExpiresFloat, ok := jwt_claims["exp"].(float64)
+
+		if !ok {
+			rtExpiresFloat, ok = claims["exp"].(float64)
+		}
+
+		if rtExpiresFloat != 0 {
+			rtExpires = int64(rtExpiresFloat)
+		}
+
 		refreshUuid, ok := claims["refresh_uuid"].(string)
 		if !ok {
 			return nil, errors.New("access_uuid is empty")
 		}
-		rtExpires := int64(claims["exp"].(float64))
 		if rtExpires == 0 {
 			return nil, errors.New("exp is empty")
+		} else if rtExpires < time.Now().Unix() {
+			return nil, errors.New("RTM expired!")
 		}
 		userUniqueID, ok := claims["user_unique_id"].(string)
 		if !ok {
