@@ -25,7 +25,6 @@ post:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../components/parameters/headers/apiVersion.yaml"
@@ -51,8 +50,6 @@ delete:
     - Conversation
   security:
     - bearerAuth: []
-  parameters:
-    - $ref: "../../components/parameters/headers/apiKey.yaml"
   requestBody:
     content:
       application/json:
@@ -75,8 +72,6 @@ put:
     - Conversation
   security:
     - bearerAuth: []
-  parameters:
-    - $ref: "../../components/parameters/headers/apiKey.yaml"
   requestBody:
     content:
       application/json:

@@ -5,7 +5,7 @@ get:
     tags:
       - Login
     security:
-      - bearer_token: []
+      - bearerAuth: []
     parameters:
       - $ref: "../../components/parameters/query/countryCode.yaml"
       - $ref: "../../components/parameters/query/mobileNumber.yaml"
