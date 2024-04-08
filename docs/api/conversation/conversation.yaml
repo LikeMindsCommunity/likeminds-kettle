@@ -28,11 +28,7 @@ post:
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
-    - name: x-member-id
-      in: header
-      description: Member ID
-      schema:
-        type: string
+    - $ref: "../../components/parameters/headers/apiVersion.yaml"
   requestBody:
     content:
       application/json:

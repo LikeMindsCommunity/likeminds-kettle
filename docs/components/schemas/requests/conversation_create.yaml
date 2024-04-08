@@ -2,5 +2,53 @@ type: object
 properties:
   chatroom_id:
     type: integer
+    description: Chatroom ID in which conversation posted.
   text:
     type: string
+    description: Text of the conversation.
+  attachments_count:
+    type: integer
+    description: Number of attachments saved corresponding to the conversation
+  temporary_id:
+    type: string
+  replied_chatroom_id:
+    type: integer
+  has_files:
+    type: boolean
+    description: Whether conversation has files or not.
+  replied_conversation_id:
+    type: integer
+    description: Conversation ID on which user replied.
+  attachments:
+    type: array
+    items:
+      type: object
+      properties:
+        index:
+          type: integer
+          description: Index of the attachment i.e. serial wise number
+        name:
+          type: string
+          description: Name of the atachment
+        type:
+          type: string
+          description: Type of attachment i.e. image, video, audio etc.
+        file_url:
+          type: string
+          description: URL of the file
+        location_name:
+          type: string
+        location_lat:
+          type: number
+        location_long:
+          type: number
+        width:
+          type: integer
+        height:
+          type: integer
+        meta:
+          type: object
+  metadata:
+    type: object
+    description: Widget metadata
+
