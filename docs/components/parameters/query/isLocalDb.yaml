@@ -1,0 +1,6 @@
+name: is_local_db
+in: query
+description: Whether API os calling for local db or not.
+schema:
+  type: boolean
+example: true
