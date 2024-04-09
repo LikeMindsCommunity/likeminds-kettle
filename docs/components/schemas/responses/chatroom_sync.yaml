@@ -9,3 +9,19 @@ properties:
         type: array
         items:
           $ref: "./partials/chatroom.yaml"
+      sync_meta:
+        type: object
+        description: This will be coming in response in `x-api-version >= 1`
+        properties: 
+          key: 
+            type: string
+            description: Chatroom ID
+          value:
+            type: object
+            properties:
+              unseen_count:
+                type: integer
+                description: Unseen count of the the chatroom
+              last_conversation_id:
+                type: integer
+                description: Last conversation ID of the the chatroom

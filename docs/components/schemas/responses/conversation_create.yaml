@@ -58,3 +58,6 @@ properties:
         type: array
         items: 
           type: object
+      widget_id:
+        type: string
+        description: Widget ID

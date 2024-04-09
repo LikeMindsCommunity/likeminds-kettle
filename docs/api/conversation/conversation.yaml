@@ -20,19 +20,15 @@ get:
 post:
   summary: Create Conversation
   operationId: createConversation
+  description: This API enables you to create new conversations (message) inside a chatroom.
   tags:
     - Conversation
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../components/parameters/headers/versionCode.yaml"
-    - name: x-member-id
-      in: header
-      description: Member ID
-      schema:
-        type: string
+    - $ref: "../../components/parameters/headers/apiVersion.yaml"
   requestBody:
     content:
       application/json:
@@ -55,8 +51,6 @@ delete:
     - Conversation
   security:
     - bearerAuth: []
-  parameters:
-    - $ref: "../../components/parameters/headers/apiKey.yaml"
   requestBody:
     content:
       application/json:
@@ -79,8 +73,6 @@ put:
     - Conversation
   security:
     - bearerAuth: []
-  parameters:
-    - $ref: "../../components/parameters/headers/apiKey.yaml"
   requestBody:
     content:
       application/json:

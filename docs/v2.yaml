@@ -1,9 +1,9 @@
 openapi: 3.0.0
 info:
   title: Kettle
-  version: 2.21.1
+  version: 2.25.1
   description: API Documention for LikeMinds Chat and Feed SDK
-  contact: { email: support@likeminds.community }
+  contact: { email: hi@likeminds.community }
 servers:
   - url: https://auth.likeminds.community
 tags:

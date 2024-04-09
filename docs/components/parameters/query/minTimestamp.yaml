@@ -1,6 +1,6 @@
 name: min_timestamp
 in: query
-description: Minimum timestamp for synchronization
+description: Minimum timestamp for synchronization in epoch (milliseconds)
 required: true
 schema:
   type: integer

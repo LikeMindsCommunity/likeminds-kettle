@@ -1,0 +1,7 @@
+name: included_conversation_states
+in: query
+description: Conversation states to be included while fetching the data
+schema:
+  type: array
+  items:
+    type: integer
