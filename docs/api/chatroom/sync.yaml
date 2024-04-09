@@ -13,7 +13,6 @@ get:
     - $ref: "../../components/parameters/headers/apiVersion.yaml"
     - $ref: "../../components/parameters/query/page.yaml"
     - $ref: "../../components/parameters/query/pageSize.yaml"
-    - $ref: "../../components/parameters/query/maxTimestamp.yaml"
     - $ref: "../../components/parameters/query/chatroomTypes.yaml"
     - $ref: "../../components/parameters/query/isLocalDb.yaml"
     - $ref: "../../components/parameters/query/includedConversationStates.yaml"
