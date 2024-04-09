@@ -25,4 +25,3 @@ properties:
               last_conversation_id:
                 type: integer
                 description: Last conversation ID of the the chatroom
-          
