@@ -3,3 +3,4 @@ in: query
 description: Page number
 schema:
   type: integer
+  default: 1

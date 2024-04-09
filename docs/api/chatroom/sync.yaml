@@ -3,15 +3,31 @@ get:
   operationId: syncChatrooms
   tags:
     - Chatroom
-  description: Retrieve synchronized chatrooms.
+  description: This API synchronizes chatrooms.
   security:
     - bearerAuth: []
   parameters:
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/sdkSource.yaml"
+    - $ref: "../../components/parameters/headers/apiVersion.yaml"
     - $ref: "../../components/parameters/query/page.yaml"
     - $ref: "../../components/parameters/query/pageSize.yaml"
-    - $ref: "../../components/parameters/query/minTimestamp.yaml"
-    - $ref: "../../components/parameters/query/maxTimestamp.yaml"
     - $ref: "../../components/parameters/query/chatroomTypes.yaml"
+    - $ref: "../../components/parameters/query/isLocalDb.yaml"
+    - $ref: "../../components/parameters/query/includedConversationStates.yaml"
+    - name: min_timestamp
+      in: query
+      description: Minimum timestamp for synchronization in epoch (seconds)
+      required: true
+      schema:
+        type: integer
+    - name: max_timestamp
+      in: query
+      description: Maximum timestamp for synchronization in epoch (seconds)
+      required: true
+      schema:
+        type: integer
   responses:
     "200":
       description: OK

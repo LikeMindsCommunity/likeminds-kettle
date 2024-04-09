@@ -1,0 +1,6 @@
+name: x-api-version
+in: header
+description: API Version
+schema:
+  type: integer
+  minimum: 1

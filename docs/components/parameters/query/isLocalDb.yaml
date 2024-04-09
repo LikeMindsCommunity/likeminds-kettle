@@ -1,0 +1,6 @@
+name: is_local_db
+in: query
+description: If the client SDK contains local DB.
+schema:
+  type: boolean
+  default: true
