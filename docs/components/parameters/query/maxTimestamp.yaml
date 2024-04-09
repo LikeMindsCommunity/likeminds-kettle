@@ -1,6 +1,6 @@
 name: max_timestamp
 in: query
-description: Maximum timestamp for synchronization
+description: Maximum timestamp for synchronization in epoch (milliseconds)
 required: true
 schema:
   type: integer

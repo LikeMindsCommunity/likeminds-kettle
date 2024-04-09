@@ -5,3 +5,4 @@ schema:
   type: array
   items:
     type: integer
+    $ref: "../../../states/chatroomTypes.yaml"

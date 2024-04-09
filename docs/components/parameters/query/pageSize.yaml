@@ -3,3 +3,4 @@ in: query
 description: Page size
 schema:
   type: integer
+  default: 1

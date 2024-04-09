@@ -51,5 +51,4 @@ properties:
           type: object
   metadata:
     type: object
-    description: Widget metadata
-
+    description: Custom widget metadata object

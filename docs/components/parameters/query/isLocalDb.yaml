@@ -1,6 +1,6 @@
 name: is_local_db
 in: query
-description: Whether API os calling for local db or not.
+description: If the client SDK contains local DB.
 schema:
   type: boolean
-example: true
+  default: true
