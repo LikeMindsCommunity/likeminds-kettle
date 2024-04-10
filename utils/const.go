@@ -23,6 +23,7 @@ const (
 	CoreService ServiceType = iota
 	SubscriptionService
 	SwarmService
+	ExternalService
 )
 
 type RequestType int
