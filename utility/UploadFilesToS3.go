@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/environment"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -25,15 +26,44 @@ type FileUploadedResponse struct {
 	Error     string `json:"error"`
 }
 
-func parseUploadFilesToS3Request(c *gin.Context) (*UploadFilesToS3Request, error) {
-	// PUT body params
+func parseAndValidateUploadFilesToS3Request(c *gin.Context, headers map[string]interface{}) (string, map[string][]string, error) {
 	var ufr UploadFilesToS3Request
-
 	if err := c.ShouldBindJSON(&ufr); err != nil {
-		return nil, err
+		return "", nil, err
 	}
 
-	return &ufr, nil
+	for source, urls := range ufr.Source {
+
+		if source != "gdrive" { // valid urls are gdrive
+			return "", nil, fmt.Errorf("invalid source")
+		}
+
+		if len(urls) > 10 {
+			return "", nil, fmt.Errorf("maximum 10 files can be uploaded at a time")
+		}
+	}
+
+	// check if community is not on free plan
+	if validateIfCommunityIsOnFreeTier(headers[utils.HeadersApiKey].(string)) {
+		return "", nil, fmt.Errorf("please upgrade your tier plan to upload data to S3 directly")
+	}
+
+	var filePath string
+
+	if ufr.Category == CategoryFeed {
+		switch ufr.Entity {
+		case EntityPost:
+			filePath = fmt.Sprintf("files/post/%s", headers[utils.HeadersMemberId].(string))
+		case EntityWidget:
+			filePath = fmt.Sprintf("files/widget/%s", headers[utils.HeadersMemberId].(string))
+		default:
+			return "", nil, fmt.Errorf("invalid entity")
+		}
+	} else {
+		return "", nil, fmt.Errorf("invalid category")
+	}
+
+	return filePath, ufr.Source, nil
 }
 
 func UploadFilesToS3(c *gin.Context) {
@@ -46,58 +76,18 @@ func UploadFilesToS3(c *gin.Context) {
 
 	headers := utils.CreateHeaders(c, userId)
 
-	uploadFileRequest, err := parseUploadFilesToS3Request(c)
+	filePath, sourceUrls, err := parseAndValidateUploadFilesToS3Request(c, headers)
 	if err != nil {
-		//If POST body params are missing
 		utils.GeneralBadRequestError(c, err.Error())
-		return
-	}
-
-	// validation //TODO
-	for source, urls := range uploadFileRequest.Source {
-
-		if source != "gdrive" { // valid urls are gdrive
-			utils.GeneralBadRequestError(c, "Invalid source")
-			return
-		}
-
-		if len(urls) > 10 {
-			utils.GeneralBadRequestError(c, "Maximum 10 files can be uploaded at a time")
-			return
-		}
-	}
-
-	// check if community is not on free plan
-	if validateIfCommunityIsOnFreeTier(headers["x-api-key"].(string)) {
-		utils.GeneralBadRequestError(c, "please upgrade your tier plan to upload data to S3 directly")
-		return
-	}
-
-	// initalise file_path
-	file_path := ""
-
-	// switch case for file path
-	if uploadFileRequest.Category == "feed" {
-		switch uploadFileRequest.Entity {
-		case "post":
-			file_path = fmt.Sprintf("files/post/%s", userId)
-		case "widget":
-			file_path = fmt.Sprintf("files/widget/%s", userId)
-		default:
-			utils.GeneralBadRequestError(c, "Invalid entity")
-		}
-	} else {
-		utils.GeneralBadRequestError(c, "Invalid category")
 		return
 	}
 
 	// file upload response
 	fileUploadedUrls := []FileUploadedResponse{}
 
-	for source, urls := range uploadFileRequest.Source {
-
-		if source == "gdrive" { //constatns
-			filesUploaded := uploadFilesFromDrive(urls, file_path)
+	for source, urls := range sourceUrls {
+		if source == SourceGDrive {
+			filesUploaded := uploadFilesFromDrive(urls, filePath)
 			fileUploadedUrls = append(fileUploadedUrls, filesUploaded...)
 		}
 	}
@@ -110,7 +100,7 @@ func UploadFilesToS3(c *gin.Context) {
 }
 
 // upload files from drive to s3 in parallel
-func uploadFilesFromDrive(urls []string, file_path string) []FileUploadedResponse {
+func uploadFilesFromDrive(urls []string, filePath string) []FileUploadedResponse {
 
 	var wg sync.WaitGroup
 	fileUploadedUrls := make([]FileUploadedResponse, len(urls))
@@ -129,7 +119,7 @@ func uploadFilesFromDrive(urls []string, file_path string) []FileUploadedRespons
 				fileResponse.Error = err.Error()
 			} else {
 				// upload file to s3
-				s3Url, err := uploadDriveFileToS3(fileID, file_path)
+				s3Url, err := uploadDriveFileToS3(fileID, filePath)
 				if err != nil {
 					fileResponse.Error = err.Error()
 				} else {
@@ -147,8 +137,7 @@ func uploadFilesFromDrive(urls []string, file_path string) []FileUploadedRespons
 // extracts file_id from gdrive share or downloadin link using regex
 func extractFileIdFromDriveUrl(url string) (string, error) {
 
-	// regex pattern
-	// pattern := `\/(?:file\/d\/|open\?id=|uc\?id=)([a-zA-Z0-9_-]+)`
+	// Regex pattern
 	pattern := `\/(?:file\/d\/|open\?id=|uc\?export=download&id=)([a-zA-Z0-9_-]+)`
 	regex, err := regexp.Compile(pattern)
 	if err != nil {
@@ -166,10 +155,11 @@ func extractFileIdFromDriveUrl(url string) (string, error) {
 	return fileID, nil
 }
 
+// upload google drive file to s3 using serverless function
 func uploadDriveFileToS3(fileId string, filePath string) (string, error) {
 
-	// Call lambda function to upload file to s3
-	lambdaUrl := "https://kqmg7qu7uzgcnqkxmrjafi5n3q0rbrgb.lambda-url.ap-south-1.on.aws" //TODO: constants
+	// Call serverless function to upload file to s3
+	functionUrl := environment.GoDotEnvVariable("UPLOAD_DRIVE_TO_S3_FUNCTION_URL")
 	headers := gin.H{
 		"x-platform-type": "kettle-service",
 		"content-type":    "application/json",
@@ -179,7 +169,7 @@ func uploadDriveFileToS3(fileId string, filePath string) (string, error) {
 		"file_path": filePath,
 	}
 
-	respBytes, _, err := utils.CallExternalAPI(lambdaUrl, utils.PUTRequest, headers, nil, body)
+	respBytes, _, err := utils.CallExternalAPI(functionUrl, utils.PUTRequest, headers, nil, body)
 	if err != nil {
 		return "", fmt.Errorf("some error occured while uploading file to s3")
 	}
