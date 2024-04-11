@@ -23,3 +23,9 @@ const (
 const (
 	SourceGDrive = "gdrive"
 )
+
+// helper constants for S3 file upload
+const (
+	MaxFilesPerUpload             = 10
+	FilterFileIDFromDriveUrlRegex = `\/(?:file\/d\/|open\?id=|uc\?export=download&id=)([a-zA-Z0-9_-]+)`
+)

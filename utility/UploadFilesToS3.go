@@ -38,7 +38,7 @@ func parseAndValidateUploadFilesToS3Request(c *gin.Context, headers map[string]i
 			return "", nil, fmt.Errorf("invalid source")
 		}
 
-		if len(urls) > 10 {
+		if len(urls) > MaxFilesPerUpload {
 			return "", nil, fmt.Errorf("maximum 10 files can be uploaded at a time")
 		}
 	}
@@ -137,7 +137,7 @@ func uploadFilesFromDrive(urls []string, filePath string) []FileUploadedResponse
 func extractFileIdFromDriveUrl(url string) (string, error) {
 
 	// Regex pattern
-	pattern := `\/(?:file\/d\/|open\?id=|uc\?export=download&id=)([a-zA-Z0-9_-]+)`
+	pattern := FilterFileIDFromDriveUrlRegex
 	regex, err := regexp.Compile(pattern)
 	if err != nil {
 		return "", err
@@ -159,11 +159,20 @@ func uploadDriveFileToS3(fileId string, filePath string) (string, error) {
 
 	// Call serverless function to upload file to s3
 	functionUrl := environment.GoDotEnvVariable("UPLOAD_DRIVE_TO_S3_FUNCTION_URL")
+
 	headers := gin.H{
 		"x-platform-type": "kettle-service",
 		"content-type":    "application/json",
 	}
+
+	// check if beta environment
+	isBeta, isProd := environment.GoDotEnvVariable("BETA_ENVIRONMENT"), false
+	if isBeta == "false" {
+		isProd = false
+	}
+
 	body := gin.H{
+		"is_prod":   isProd,
 		"file_id":   fileId,
 		"file_path": filePath,
 	}
