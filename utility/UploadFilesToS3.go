@@ -166,13 +166,10 @@ func uploadDriveFileToS3(fileId string, filePath string) (string, error) {
 	}
 
 	// check if beta environment
-	isBeta, isProd := environment.GoDotEnvVariable("BETA_ENVIRONMENT"), false
-	if isBeta == "false" {
-		isProd = false
-	}
+	isBeta := utils.GetBooleanFromString(environment.GoDotEnvVariable("BETA_ENVIRONMENT"))
 
 	body := gin.H{
-		"is_prod":   isProd,
+		"is_prod":   !isBeta,
 		"file_id":   fileId,
 		"file_path": filePath,
 	}

@@ -30,3 +30,8 @@ func CheckIfStringExistsInArray(array []string, str string) bool {
 
 	return false
 }
+
+// GetBooleanFromString is used to get boolean from string | returns false by default
+func GetBooleanFromString(str string) bool {
+	return str == "true"
+}
