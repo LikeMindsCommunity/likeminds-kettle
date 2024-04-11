@@ -43,13 +43,12 @@ func parseAndValidateUploadFilesToS3Request(c *gin.Context, headers map[string]i
 		}
 	}
 
-	// check if community is not on free plan
-	if validateIfCommunityIsOnFreeTier(headers[utils.HeadersApiKey].(string)) {
+	// validate community tier
+	if utils.IsCommunityOnFreeTier(utils.GetRedisClientFromContext(c), headers) {
 		return "", nil, fmt.Errorf("please upgrade your tier plan to upload data to S3 directly")
 	}
 
 	var filePath string
-
 	if ufr.Category == CategoryFeed {
 		switch ufr.Entity {
 		case EntityPost:
@@ -186,8 +185,4 @@ func uploadDriveFileToS3(fileId string, filePath string) (string, error) {
 
 	// return s3 url
 	return fileUploadResponse.S3Url, nil
-}
-
-func validateIfCommunityIsOnFreeTier(_ string) bool {
-	return false // TODO
 }
