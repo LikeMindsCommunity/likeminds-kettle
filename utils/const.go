@@ -23,6 +23,7 @@ const (
 	CoreService ServiceType = iota
 	SubscriptionService
 	SwarmService
+	ExternalService
 )
 
 type RequestType int
@@ -131,4 +132,11 @@ const (
 // Member Roles
 const (
 	GuestRole string = "GUEST"
+)
+
+// Community Tiers
+const (
+	FreeTierType       int = 0
+	ProTierType        int = 1
+	EnterpriseTierType int = 2
 )

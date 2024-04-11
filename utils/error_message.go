@@ -81,3 +81,11 @@ func GeneralBadRequestError(c *gin.Context, errorMessage string) {
 func APIError(c *gin.Context, httpStatus int, response Response) {
 	c.JSON(httpStatus, response)
 }
+
+func RateLimitError(c *gin.Context, errMessage string) {
+	response := Response{
+		Success:      false,
+		ErrorMessage: errMessage,
+	}
+	c.AbortWithStatusJSON(http.StatusTooManyRequests, response)
+}
