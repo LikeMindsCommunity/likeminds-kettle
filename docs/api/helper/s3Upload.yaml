@@ -1,4 +1,4 @@
-put:
+post:
     operationId: uploadFilesToS3  
     summary: Upload files to S3
 
@@ -43,11 +43,11 @@ put:
               items:
                 type: object
                 properties:
-                  SourceUrl:
+                  source_url:
                     type: string
-                  S3Url:
+                  s3_url:
                     type: string
-                  Error:
+                  error:
                     type: string
       '400':
         description: User not authorized or community on free tier

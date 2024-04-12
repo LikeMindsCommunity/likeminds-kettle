@@ -24,6 +24,12 @@ const (
 	SourceGDrive = "gdrive"
 )
 
+// file paths for S3 uploads
+const (
+	FeedPostFilePath   = "files/post/%s"
+	FeedWidgetFilePath = "files/widget/%s"
+)
+
 // helper constants for S3 file upload
 const (
 	MaxFilesPerUpload             = 10

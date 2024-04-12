@@ -1,12 +1,5 @@
 package utils
 
-import (
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/api_client"
-)
-
 const ErrorDeviceLoggedOut = "Device logged out! Please login again"
 const ErrorInvalidRequest = "Invalid request!"
 const ErrorQueryParamsMissing = "Query params missing!"
@@ -31,61 +24,8 @@ const ErrorRepostSettingNotEnabled = "cannot create repost in this community. Re
 const ErrorGuestAccessNotAllowed = "Guest access is not allowed."
 const ErrorUserTopicsSettingsNotEnabled = "User topics connection settings is not enabled. Request community manager to enable the setting"
 const ErrorNoUserFoundWithGivenIds = "No user found with the given member/uuids ids"
-
-func GeneralAPIError(c *gin.Context, errorMessage string) {
-	c.JSON(http.StatusInternalServerError, Response{
-		Success:      false,
-		ErrorMessage: errorMessage,
-	})
-}
-
-func APIClientError(c *gin.Context, apiCTR api_client.APIClientResponse) {
-	c.JSON(http.StatusInternalServerError, apiCTR)
-}
-
-func GETQueryParamsMissingError(c *gin.Context) {
-	c.JSON(http.StatusBadRequest, Response{
-		Success:      false,
-		ErrorMessage: ErrorQueryParamsMissing,
-	})
-}
-
-func POSTBodyParamsMissingError(c *gin.Context) {
-	c.JSON(http.StatusBadRequest, Response{
-		Success:      false,
-		ErrorMessage: ErrorBodyParamsMissing,
-	})
-}
-
-func TokenAuthError(c *gin.Context, errorMessage string) {
-	c.JSON(http.StatusUnauthorized, Response{
-		Success:      false,
-		ErrorMessage: errorMessage,
-	})
-}
-
-func MemberAccessFailError(c *gin.Context) {
-	c.JSON(http.StatusForbidden, Response{
-		Success:      false,
-		ErrorMessage: ErrorMemeberAccessFail,
-	})
-}
-
-func GeneralBadRequestError(c *gin.Context, errorMessage string) {
-	c.JSON(http.StatusBadRequest, Response{
-		Success:      false,
-		ErrorMessage: errorMessage,
-	})
-}
-
-func APIError(c *gin.Context, httpStatus int, response Response) {
-	c.JSON(httpStatus, response)
-}
-
-func RateLimitError(c *gin.Context, errMessage string) {
-	response := Response{
-		Success:      false,
-		ErrorMessage: errMessage,
-	}
-	c.AbortWithStatusJSON(http.StatusTooManyRequests, response)
-}
+const ErrorInvalidSource = "Invalid source"
+const ErrorMaxFilesPerUpload = "maximum 10 files can be uploaded at a time"
+const ErrorUpgradeTierPlanForS3 = "please upgrade your tier plan to upload data to S3 directly"
+const ErrorInvalidEntity = "Invalid entity"
+const ErrorInvalidCategory = "Invalid category"

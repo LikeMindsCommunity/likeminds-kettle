@@ -277,7 +277,7 @@ func main() {
 	// Utility Apis
 	router.GET("/helper/url", middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), utility.DecodeUrl)
 	router.POST("/helper/media/upload", middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), utility.UploadFiles)
-	router.PUT("/helper/s3/upload", middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), utility.UploadFilesToS3)
+	router.POST("/helper/s3/upload", middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), utility.UploadFilesToS3)
 
 	// Feedroom Apis
 	router.POST("/feedroom", middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), feedroom.CreateFeedroom)

@@ -34,32 +34,33 @@ func parseAndValidateUploadFilesToS3Request(c *gin.Context, headers map[string]i
 
 	for source, urls := range ufr.Source {
 
-		if source != "gdrive" { // valid urls are gdrive
-			return "", nil, fmt.Errorf("invalid source")
+		if source != SourceGDrive {
+			return "", nil, fmt.Errorf(utils.ErrorInvalidSource)
 		}
 
 		if len(urls) > MaxFilesPerUpload {
-			return "", nil, fmt.Errorf("maximum 10 files can be uploaded at a time")
+			return "", nil, fmt.Errorf(utils.ErrorMaxFilesPerUpload)
 		}
 	}
 
 	// validate community tier
 	if utils.IsCommunityOnFreeTier(utils.GetRedisClientFromContext(c), headers) {
-		return "", nil, fmt.Errorf("please upgrade your tier plan to upload data to S3 directly")
+		return "", nil, fmt.Errorf(utils.ErrorUpgradeTierPlanForS3)
 	}
 
 	var filePath string
-	if ufr.Category == CategoryFeed {
+	switch ufr.Category {
+	case CategoryFeed:
 		switch ufr.Entity {
 		case EntityPost:
-			filePath = fmt.Sprintf("files/post/%s", headers[utils.HeadersMemberId].(string))
+			filePath = fmt.Sprintf(FeedPostFilePath, headers[utils.HeadersMemberId].(string))
 		case EntityWidget:
-			filePath = fmt.Sprintf("files/widget/%s", headers[utils.HeadersMemberId].(string))
+			filePath = fmt.Sprintf(FeedWidgetFilePath, headers[utils.HeadersMemberId].(string))
 		default:
-			return "", nil, fmt.Errorf("invalid entity")
+			return "", nil, fmt.Errorf(utils.ErrorInvalidEntity)
 		}
-	} else {
-		return "", nil, fmt.Errorf("invalid category")
+	default:
+		return "", nil, fmt.Errorf(utils.ErrorInvalidCategory)
 	}
 
 	return filePath, ufr.Source, nil
@@ -137,8 +138,7 @@ func uploadFilesFromDrive(urls []string, filePath string) []FileUploadedResponse
 func extractFileIdFromDriveUrl(url string) (string, error) {
 
 	// Regex pattern
-	pattern := FilterFileIDFromDriveUrlRegex
-	regex, err := regexp.Compile(pattern)
+	regex, err := regexp.Compile(FilterFileIDFromDriveUrlRegex)
 	if err != nil {
 		return "", err
 	}
@@ -161,8 +161,8 @@ func uploadDriveFileToS3(fileId string, filePath string) (string, error) {
 	functionUrl := environment.GoDotEnvVariable("UPLOAD_DRIVE_TO_S3_FUNCTION_URL")
 
 	headers := gin.H{
-		"x-platform-type": "kettle-service",
-		"content-type":    "application/json",
+		utils.HeadersPlatformType: string(utils.PlatformKettleService),
+		utils.HeaderContentType:   utils.ContentTypeApplicationJson,
 	}
 
 	// check if beta environment

@@ -10,6 +10,7 @@ const HeadersApiKey = "x-api-key"
 const HeadersAcceptVersion = "x-accept-version"
 const HeadersApiVersion = "x-api-version"
 const HeaderMemberRole = "x-member-role"
+const HeaderContentType = "content-type"
 
 const GETMethod = 0
 const POSTMethod = 1
@@ -45,6 +46,10 @@ const (
 	PlatformSwarmService   PlatformType = "swarm-service"
 	PlatformKettleService  PlatformType = "kettle-service"
 	PlatformSkulkService   PlatformType = "skulk-service"
+)
+
+const (
+	ContentTypeApplicationJson string = "application/json"
 )
 
 const (

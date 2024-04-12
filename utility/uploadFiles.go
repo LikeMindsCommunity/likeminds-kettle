@@ -22,6 +22,16 @@ type UploadFilesRequest struct {
 	Meta           interface{} `json:"meta,omitempty"`
 }
 
+func parseValidatee(c *gin.Context, ss interface{}) (interface{}, error) {
+
+	// unmarshal the request body
+	if err := c.ShouldBindJSON(&ss); err != nil {
+		return nil, err
+	}
+
+	return ss, nil
+}
+
 func UploadFiles(c *gin.Context) {
 
 	// Authorize User
