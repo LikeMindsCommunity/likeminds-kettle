@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	log "github.com/nateshr/likeminds-authentication/logging"
+	"github.com/nateshr/likeminds-authentication/logging"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/api_client"
@@ -55,7 +55,7 @@ func ValidateClientResponseWithoutContext(respBytes []byte, statuscode int, err 
 
 	//If API fails or any other error
 	if err != nil {
-		log.Error(fmt.Sprintf("Error Occured : %s", err.Error()))
+		logging.Error(fmt.Sprintf("Error Occured : %s", err.Error()))
 		return nil
 	}
 
@@ -65,13 +65,13 @@ func ValidateClientResponseWithoutContext(respBytes []byte, statuscode int, err 
 
 	if marshal_err != nil {
 		//Internal unmarshal error
-		log.Error(fmt.Sprintf("Error while Umarshalling: %s", marshal_err.Error()))
+		logging.Error(fmt.Sprintf("Error while Umarshalling: %s", marshal_err.Error()))
 		return nil
 	}
 
 	if !apiCR.Success {
 		//If internal api returns success as false
-		log.Error(fmt.Sprintf("Error Occured :(%d) %s", statuscode, apiCR.ErrorMessage))
+		logging.Error(fmt.Sprintf("Error Occured :(%d) %s", statuscode, apiCR.ErrorMessage))
 		return nil
 	}
 
@@ -92,27 +92,30 @@ func ParseResponse(c *gin.Context, respBytes []byte, statusCode int, parseProfil
 func GetRequestResponseWithoutContext(serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) ([]byte, int, error) {
 	//Create internal API client
 	client := api_client.NewAPIClient()
-	var baseUrl string
+	var finalUrl string
 	var respBytes []byte
 	var statusCode int
 	var err error
 
 	switch serviceType {
 	case CoreService:
-		baseUrl = client.CoreServiceBaseURL
+		finalUrl = client.CoreServiceBaseURL + url
 
 	case SubscriptionService:
-		baseUrl = client.SubscriptionServiceBaseURL
+		finalUrl = client.SubscriptionServiceBaseURL + url
 
 	case SwarmService:
-		baseUrl = client.SwarmServiceBaseUrl
+		finalUrl = client.SwarmServiceBaseUrl + url
+
+	case ExternalService:
+		finalUrl = url
 	}
 
 	switch requestType {
 	case GETRequest:
 
 		options := api_client.GetRequestOptions{
-			Url:           baseUrl + url,
+			Url:           finalUrl,
 			CustomHeaders: headers,
 			Params:        params,
 		}
@@ -122,7 +125,7 @@ func GetRequestResponseWithoutContext(serviceType ServiceType, url string, reque
 	case POSTRequestRawBody:
 
 		options := api_client.PostRequestOptions{
-			Url:           baseUrl + url,
+			Url:           finalUrl,
 			CustomHeaders: headers,
 			Params:        params,
 			Body:          body,
@@ -133,7 +136,7 @@ func GetRequestResponseWithoutContext(serviceType ServiceType, url string, reque
 	case POSTRequestFormUrlEncodedBody:
 
 		options := api_client.PostRequestOptions{
-			Url:           baseUrl + url,
+			Url:           finalUrl,
 			CustomHeaders: headers,
 			Params:        params,
 			Body:          body,
@@ -144,7 +147,7 @@ func GetRequestResponseWithoutContext(serviceType ServiceType, url string, reque
 	case PUTRequest:
 
 		options := api_client.PostRequestOptions{
-			Url:           baseUrl + url,
+			Url:           finalUrl,
 			CustomHeaders: headers,
 			Params:        params,
 			Body:          body,
@@ -155,7 +158,7 @@ func GetRequestResponseWithoutContext(serviceType ServiceType, url string, reque
 	case DELETERequest:
 
 		options := api_client.PostRequestOptions{
-			Url:           baseUrl + url,
+			Url:           finalUrl,
 			CustomHeaders: headers,
 			Params:        params,
 			Body:          body,
@@ -166,7 +169,7 @@ func GetRequestResponseWithoutContext(serviceType ServiceType, url string, reque
 	case PATCHRequest:
 
 		options := api_client.PostRequestOptions{
-			Url:           baseUrl + url,
+			Url:           finalUrl,
 			CustomHeaders: headers,
 			Params:        params,
 			Body:          body,
@@ -201,10 +204,16 @@ func SendRequest(c *gin.Context, serviceType ServiceType, url string, requestTyp
 
 }
 
-func RateLimitError(c *gin.Context, errMessage string) {
-	response := Response{
-		Success:      false,
-		ErrorMessage: errMessage,
+// Utility function to call external API
+func CallExternalAPI(url string, method RequestType, headers map[string]interface{}, params map[string]string, body interface{},
+) ([]byte, int, error) {
+
+	respBytes, statusCode, err := GetRequestResponseWithoutContext(ExternalService, url, method, headers, params, body)
+	if err != nil {
+		//If API fails or any other error
+		logging.Error(fmt.Sprintf("Error Occured while calling API: %s | status code: %d | error: %s", url, statusCode, err.Error()))
+		return nil, api_client.DefaultStatusCode, err
 	}
-	c.AbortWithStatusJSON(http.StatusTooManyRequests, response)
+
+	return respBytes, statusCode, err
 }

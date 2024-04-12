@@ -40,7 +40,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.26.0"
+	var AppVersion string = "2.27.0"
 
 	initGin()
 	redisClient = cache.InitRedis()
@@ -277,6 +277,7 @@ func main() {
 	// Utility Apis
 	router.GET("/helper/url", middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), utility.DecodeUrl)
 	router.POST("/helper/media/upload", middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), utility.UploadFiles)
+	router.POST("/helper/s3/upload", middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), utility.UploadFilesToS3)
 
 	// Feedroom Apis
 	router.POST("/feedroom", middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), feedroom.CreateFeedroom)

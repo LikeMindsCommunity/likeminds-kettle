@@ -367,7 +367,9 @@ paths:
   /helper/url:
     $ref: "./api/helper/url.yaml"
   /helper/media/upload:
-    $ref: "./api/helper/media_upload.yaml"
+    $ref: "./api/helper/mediaUpload.yaml"
+  /helper/s3/upload:
+    $ref: "./api/helper/s3Upload.yaml"
   /logs:
     $ref: "./api/helper/logs.yaml"
 
