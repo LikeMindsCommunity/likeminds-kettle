@@ -14,9 +14,9 @@ import (
 
 // PUT Request structure for uploading files to S3
 type UploadFilesToS3Request struct {
-	Category string              `json:"category"`
-	Entity   string              `json:"entity"`
-	Source   map[string][]string `json:"source"`
+	Category string              `json:"category" binding:"required"`
+	Entity   string              `json:"entity" binding:"required"`
+	Source   map[string][]string `json:"source" binding:"required"`
 }
 
 // Response structure for file upload serverless function

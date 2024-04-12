@@ -1,0 +1,53 @@
+put:
+    operationId: uploadFilesToS3  
+    summary: Upload files to S3
+
+    tags:
+    - Helpers
+
+    description: This API uploads files from Google Drive to Likemind's S3 platform and returns public S3 URLs for each file. A maximum of 10 files, each up to 100MB, can be uploaded per request.
+
+    security:
+      - bearerAuth: []
+  
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              source:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+                example:
+                  gdrive: ["drive_url 1", "drive_url 2"]
+              category:
+                type: string
+                enum: [feed]
+              entity:
+                type: string
+                enum: [post, widget]
+            required: [Source, Category, Entity]
+    
+    responses:
+      '200':
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  SourceUrl:
+                    type: string
+                  S3Url:
+                    type: string
+                  Error:
+                    type: string
+      '400':
+        description: User not authorized or community on free tier
