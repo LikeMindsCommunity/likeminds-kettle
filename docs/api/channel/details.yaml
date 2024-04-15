@@ -1,0 +1,18 @@
+get:
+  summary: Get User Channel detials
+  operationId: getUserChannelDetails
+  tags:
+    - Channel
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/path/channel_id.yaml"
+    - $ref: "../../components/parameters/query/channelActionTypes.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/channelDetails.yaml"

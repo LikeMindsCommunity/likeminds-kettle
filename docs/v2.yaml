@@ -381,6 +381,8 @@ paths:
     $ref: "./api/channel/invite.yaml"
   /channel/{channel_id}/settings/member/{uuid}:
     $ref: "./api/channel/settings.yaml"
+  /channel/{channel_id}/sync:
+    $ref: "./api/channel/details.yaml"
 
   /widget:
     $ref: "./api/widget/widget.yaml"

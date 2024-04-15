@@ -1,0 +1,40 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      channel_details_data:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            show_follow_telescope:
+              type: boolean
+            show_follow_auto_tag:
+              type: boolean
+            can_access_secret_chatroom:
+              type: boolean
+            recordings_attachments_view:
+              type: integer
+            cohort_access:
+              type: integer
+            placeholder:
+              type: string
+            participant_count:
+              type: integer
+      channel_actions:
+        type: object
+        properties:
+          "<channel_id>":
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string

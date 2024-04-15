@@ -1,0 +1,8 @@
+name: channel_action_types
+in: query
+description: Types of channel actions
+schema:
+  type: array
+  items:
+    type: string
+    $ref: "../../states/channelActionTypes.yaml"
