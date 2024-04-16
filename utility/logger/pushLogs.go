@@ -62,7 +62,7 @@ func PushLogs(c *gin.Context) {
 	utils.GenerateResponse(c, map[string]interface{}{}, false)
 }
 
-func pushToCloudwatch(platform_code string, headers map[string]interface{}, flr *logsRequest) {
+func pushToCloudwatch(platformCode string, headers map[string]interface{}, flr *logsRequest) {
 	// Create CloudWatchLogs client
 	client, err := logging.GetCloudwatchClient()
 	if err != nil {
@@ -70,17 +70,17 @@ func pushToCloudwatch(platform_code string, headers map[string]interface{}, flr 
 	}
 
 	// Define log group and stream names
-	logGroupName := "frontend-services"
-	logStreamName := utils.GeneratePlatformString(platform_code)
+	logGroupName := logging.LogGroupName
+	logStreamName := utils.GeneratePlatformString(platformCode)
 
 	// Create log group if not exists
 	if err := logging.CreateLogGroupIfNotExist(client, logGroupName); err != nil {
-		fmt.Print("Already exists: ", err)
+		logging.Error(fmt.Sprint("Already exists: ", err.Error()))
 	}
 
 	// Create log stream if not exists
 	if err := logging.CreateLogStreamIfNotExist(client, logGroupName, logStreamName); err != nil {
-		fmt.Print("Already exists: ", err)
+		logging.Error(fmt.Sprint("Already exists: ", err.Error()))
 	}
 
 	entries := createPayloadEntriesCloudwatch(headers, flr.Logs)
