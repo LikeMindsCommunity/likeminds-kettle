@@ -24,7 +24,7 @@ func GetCloudwatchClient() (*cloudwatchlogs.Client, error){
 	awsKey := environment.GoDotEnvVariable("AWS_ACCESS_KEY_ID")
 	awsSecret := environment.GoDotEnvVariable("AWS_SECRET_ACCESS_KEY")
 
-	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("ap-south-1"),
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(AwsRegion),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(awsKey, awsSecret, "")),
 	)
 	if err != nil {
@@ -44,7 +44,7 @@ func LogToCloudWatch(client *cloudwatchlogs.Client, logGroupName string, logStre
         timestamp := entry.Timestamp.UnixMilli()
 		jsonString, err := json.Marshal(entry.JsonPayload)
 		if err != nil {
-			fmt.Println("Error marshalling JSON:", err)
+			Error(fmt.Sprint("Error marshalling JSON: ", err.Error()))
 		}
 
         output, err := client.PutLogEvents(context.TODO(), &cloudwatchlogs.PutLogEventsInput{
@@ -56,9 +56,9 @@ func LogToCloudWatch(client *cloudwatchlogs.Client, logGroupName string, logStre
             }},
         })
         if err != nil {
+			Info(fmt.Sprint("PutLogEvents function output: ", output))
             return err
         }
-		fmt.Print("cloudwatch output: ",output)
     }
 	return nil
 }
@@ -71,7 +71,7 @@ func CreateLogGroupIfNotExist(client *cloudwatchlogs.Client, logGroupName string
 		return err
 	}
 
-	retentionDays := int32(30)
+	retentionDays := RetentionDays
 	_, err = client.PutRetentionPolicy(context.TODO(), &cloudwatchlogs.PutRetentionPolicyInput{
 		LogGroupName:    &logGroupName,
 		RetentionInDays: &retentionDays,
