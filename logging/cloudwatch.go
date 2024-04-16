@@ -21,11 +21,11 @@ type CloudwatchPayloadEntry struct {
 
 func GetCloudwatchClient() (*cloudwatchlogs.Client, error){
 	// Load AWS SDK config
-	awsKey := environment.GoDotEnvVariable("AWS_ACCESS_KEY_ID")
-	awsSecret := environment.GoDotEnvVariable("AWS_SECRET_ACCESS_KEY")
+	cloudwatchIAMUserKey := environment.GoDotEnvVariable(CloudwatchIAMUserKey)
+	cloudwatchIAMUserSecret := environment.GoDotEnvVariable(CloudwatchIAMUserSecret)
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(AwsRegion),
-		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(awsKey, awsSecret, "")),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(cloudwatchIAMUserKey, cloudwatchIAMUserSecret, "")),
 	)
 	if err != nil {
 		return nil, err
