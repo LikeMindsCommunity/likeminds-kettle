@@ -1,4 +1,4 @@
-package logging
+package frontendLogger
 
 import (
 	"context"
@@ -8,6 +8,8 @@ import (
 	"cloud.google.com/go/logging"
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/environment"
+	log "github.com/nateshr/likeminds-authentication/logging"
+
 )
 
 var (
@@ -32,7 +34,7 @@ func getLogger(logId string) (*logging.Logger, error) {
 		var err error
 		logClient, err = logging.NewClient(ctx, projectId)
 		if err != nil {
-			Error(fmt.Sprintf("Error creating new LogClient => %s", err.Error()))
+			log.Error(fmt.Sprintf("Error creating new LogClient => %s", err.Error()))
 			return nil, err
 		}
 	}
