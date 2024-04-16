@@ -1,4 +1,4 @@
-package logging
+package frontendLogger
 
 // loggers
 const (

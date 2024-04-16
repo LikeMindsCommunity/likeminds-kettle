@@ -1,4 +1,4 @@
-package logger
+package frontendLogger
 
 import (
 	"fmt"
@@ -47,7 +47,7 @@ func PushLogs(c *gin.Context) {
 		return
 	}
 
-	headers := logging.GetHeadersForLogging(c)
+	headers := GetHeadersForLogging(c)
 
 	logPlatform := environment.GoDotEnvVariable(utils.EnvLogPlatform)
 
@@ -55,46 +55,53 @@ func PushLogs(c *gin.Context) {
 		pushToGCP(c, headers, flr)
 	} else {
 		// default to cloudwatch
-		pushToCloudwatch(platform_code, headers, flr)
+		err = pushToCloudwatch(platform_code, headers, flr)
+		if err != nil {
+			utils.GeneralAPIError(c, fmt.Sprint("cloudwatch error: ", err))
+			return
+		}
 	}
 
 	// Send response
 	utils.GenerateResponse(c, map[string]interface{}{}, false)
 }
 
-func pushToCloudwatch(platformCode string, headers map[string]interface{}, flr *logsRequest) {
+func pushToCloudwatch(platformCode string, headers map[string]interface{}, flr *logsRequest) error {
 	// Create CloudWatchLogs client
-	client, err := logging.GetCloudwatchClient()
+	client, err := GetCloudwatchClient()
 	if err != nil {
 		logging.Error(fmt.Sprint("Error loading cloudwatch client: ", err.Error()))
+		return err
 	}
 
 	// Define log group and stream names
-	logGroupName := logging.LogGroupName
+	logGroupName := LogGroupName
 	logStreamName := utils.GeneratePlatformString(platformCode)
 
 	// Create log group if not exists
-	if err := logging.CreateLogGroupIfNotExist(client, logGroupName); err != nil {
+	if err := CreateLogGroupIfNotExist(client, logGroupName); err != nil {
 		logging.Error(fmt.Sprint("Already exists: ", err.Error()))
 	}
 
 	// Create log stream if not exists
-	if err := logging.CreateLogStreamIfNotExist(client, logGroupName, logStreamName); err != nil {
+	if err := CreateLogStreamIfNotExist(client, logGroupName, logStreamName); err != nil {
 		logging.Error(fmt.Sprint("Already exists: ", err.Error()))
 	}
 
 	entries := createPayloadEntriesCloudwatch(headers, flr.Logs)
 
 	// Log a message to CloudWatch
-	err = logging.LogToCloudWatch(client, logGroupName, logStreamName, entries)
+	err = LogToCloudWatch(client, logGroupName, logStreamName, entries)
 	if err != nil {
 		logging.Error(fmt.Sprint("Some error occured while pushing to cloudwatch: ", err.Error()))
+		return err
 	}
+	return nil
 }
 
 func pushToGCP(c *gin.Context, headers map[string]interface{}, flr *logsRequest) {
 	// Get front logger for pushing frontend logs
-	logger, err := logging.GetFrontendLogger()
+	logger, err := GetFrontendLogger()
 	if err != nil {
 		// we'll be sending 200 until we have implemented another library
 		logging.Error(err.Error())
@@ -106,7 +113,7 @@ func pushToGCP(c *gin.Context, headers map[string]interface{}, flr *logsRequest)
 	entries := createPayloadEntries(headers, flr.Logs)
 
 	// Push log entries
-	logging.PushLogEntries(entries, logger)
+	PushLogEntries(entries, logger)
 }
 
 // Get valid timestamp for logging
@@ -131,9 +138,9 @@ func getValidTimestamp(logTimestamp int64) (time.Time, error) {
 }
 
 // create payload for entries
-func createPayloadEntries(headers map[string]interface{}, logs []logRequest) []logging.PayloadEntry {
+func createPayloadEntries(headers map[string]interface{}, logs []logRequest) []PayloadEntry {
 
-	var entries []logging.PayloadEntry
+	var entries []PayloadEntry
 
 	// create payload entry for each log
 	for _, lr := range logs {
@@ -151,7 +158,7 @@ func createPayloadEntries(headers map[string]interface{}, logs []logRequest) []l
 			continue
 		}
 
-		entry := logging.PayloadEntry{
+		entry := PayloadEntry{
 			JsonPayload: payload,
 			Severity:    lr.Severity,
 			Timestamp:   timestamp,
@@ -164,9 +171,9 @@ func createPayloadEntries(headers map[string]interface{}, logs []logRequest) []l
 
 }
 
-func createPayloadEntriesCloudwatch(headers map[string]interface{}, logs []logRequest) []logging.CloudwatchPayloadEntry {
+func createPayloadEntriesCloudwatch(headers map[string]interface{}, logs []logRequest) []CloudwatchPayloadEntry {
 
-	var entries []logging.CloudwatchPayloadEntry
+	var entries []CloudwatchPayloadEntry
 
 	// create payload entry for each log
 	for _, lr := range logs {
@@ -185,7 +192,7 @@ func createPayloadEntriesCloudwatch(headers map[string]interface{}, logs []logRe
 			continue
 		}
 
-		entry := logging.CloudwatchPayloadEntry{
+		entry := CloudwatchPayloadEntry{
 			JsonPayload: payload,
 			Timestamp:   timestamp,
 		}

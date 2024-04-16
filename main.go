@@ -7,7 +7,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/middleware"
 	"github.com/nateshr/likeminds-authentication/poll"
-	"github.com/nateshr/likeminds-authentication/utility/logger"
+	"github.com/nateshr/likeminds-authentication/utility/frontendLogger"
 	"github.com/nateshr/likeminds-authentication/utility/monitoring"
 	"github.com/nateshr/likeminds-authentication/webhook"
 
@@ -333,7 +333,7 @@ func main() {
 	router.DELETE("/webhook/:webhook_id", middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), webhook.DeleteWebhook)
 
 	// Logging Apis
-	router.POST("/logs", middleware.LTMValidationMiddleware(redisClient, true), logger.PushLogs)
+	router.POST("/logs", middleware.LTMValidationMiddleware(redisClient, true), frontendLogger.PushLogs)
 
 	// Internal Apis
 	router.DELETE("/cache", middleware.InternalServiceValidationMiddleware(), internalServices.DeleteCache)
