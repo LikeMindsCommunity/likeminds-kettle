@@ -1,0 +1,94 @@
+package logging
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"time"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs/types"
+	"github.com/nateshr/likeminds-authentication/environment"
+)
+
+type CloudwatchPayloadEntry struct {
+	JsonPayload map[string]interface{} `json:"jsonPayload"`
+	Timestamp   time.Time              `json:"timestamp"`
+}
+
+func GetCloudwatchClient() (*cloudwatchlogs.Client, error){
+	// Load AWS SDK config
+	awsKey := environment.GoDotEnvVariable("AWS_ACCESS_KEY_ID")
+	awsSecret := environment.GoDotEnvVariable("AWS_SECRET_ACCESS_KEY")
+
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("ap-south-1"),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(awsKey, awsSecret, "")),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create CloudWatchLogs client
+	client := cloudwatchlogs.NewFromConfig(cfg)
+
+	return client, nil
+}
+
+func LogToCloudWatch(client *cloudwatchlogs.Client, logGroupName string, logStreamName string, entries []CloudwatchPayloadEntry) error {
+	
+	// Put log events
+	for _, entry := range entries {
+        timestamp := entry.Timestamp.UnixMilli()
+		jsonString, err := json.Marshal(entry.JsonPayload)
+		if err != nil {
+			fmt.Println("Error marshalling JSON:", err)
+		}
+
+        output, err := client.PutLogEvents(context.TODO(), &cloudwatchlogs.PutLogEventsInput{
+            LogGroupName:  &logGroupName,
+            LogStreamName: &logStreamName,
+            LogEvents: []types.InputLogEvent{{
+                Message:   aws.String(string(jsonString)),
+                Timestamp: aws.Int64(timestamp),
+            }},
+        })
+        if err != nil {
+            return err
+        }
+		fmt.Print("cloudwatch output: ",output)
+    }
+	return nil
+}
+
+func CreateLogGroupIfNotExist(client *cloudwatchlogs.Client, logGroupName string) error {
+	_, err := client.CreateLogGroup(context.TODO(), &cloudwatchlogs.CreateLogGroupInput{
+		LogGroupName: &logGroupName,
+	})
+	if err != nil {
+		return err
+	}
+
+	retentionDays := int32(30)
+	_, err = client.PutRetentionPolicy(context.TODO(), &cloudwatchlogs.PutRetentionPolicyInput{
+		LogGroupName:    &logGroupName,
+		RetentionInDays: &retentionDays,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func CreateLogStreamIfNotExist(client *cloudwatchlogs.Client, logGroupName, logStreamName string) error {
+	_, err := client.CreateLogStream(context.TODO(), &cloudwatchlogs.CreateLogStreamInput{
+		LogGroupName:  &logGroupName,
+		LogStreamName: &logStreamName,
+	})
+	return err
+}
+
+

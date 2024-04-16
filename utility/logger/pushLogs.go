@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/environment"
 	"github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -32,7 +33,6 @@ func parseLogsRequest(c *gin.Context) (*logsRequest, error) {
 }
 
 func PushLogs(c *gin.Context) {
-
 	// Parse request
 	flr, err := parseLogsRequest(c)
 	if err != nil {
@@ -47,6 +47,52 @@ func PushLogs(c *gin.Context) {
 		return
 	}
 
+	headers := logging.GetHeadersForLogging(c)
+
+	logPlatform := environment.GoDotEnvVariable("LOG_PLATFORM")
+
+	if logPlatform == "GCP" {
+		pushToGCP(c, headers, flr)
+	} else {
+		// default to cloudwatch
+		pushToCloudwatch(platform_code, headers, flr)
+	}
+
+	// Send response
+	utils.GenerateResponse(c, map[string]interface{}{}, false)
+}
+
+func pushToCloudwatch(platform_code string, headers map[string]interface{}, flr *logsRequest) {
+	// Create CloudWatchLogs client
+	client, err := logging.GetCloudwatchClient()
+	if err != nil {
+		logging.Error(fmt.Sprint("Error loading cloudwatch client: ", err.Error()))
+	}
+
+	// Define log group and stream names
+	logGroupName := "frontend-services"
+	logStreamName := utils.GeneratePlatformString(platform_code)
+
+	// Create log group if not exists
+	if err := logging.CreateLogGroupIfNotExist(client, logGroupName); err != nil {
+		fmt.Print("Already exists: ", err)
+	}
+
+	// Create log stream if not exists
+	if err := logging.CreateLogStreamIfNotExist(client, logGroupName, logStreamName); err != nil {
+		fmt.Print("Already exists: ", err)
+	}
+
+	entries := createPayloadEntriesCloudwatch(headers, flr.Logs)
+
+	// Log a message to CloudWatch
+	err = logging.LogToCloudWatch(client, logGroupName, logStreamName, entries)
+	if err != nil {
+		logging.Error(fmt.Sprint("Some error occured while pushing to cloudwatch: ", err.Error()))
+	}
+}
+
+func pushToGCP(c *gin.Context, headers map[string]interface{}, flr *logsRequest) {
 	// Get front logger for pushing frontend logs
 	logger, err := logging.GetFrontendLogger()
 	if err != nil {
@@ -56,17 +102,11 @@ func PushLogs(c *gin.Context) {
 		return
 	}
 
-	// Get headers dumps from request
-	headers := logging.GetHeadersForLogging(c)
-
 	// Create payload entries
 	entries := createPayloadEntries(headers, flr.Logs)
 
 	// Push log entries
 	logging.PushLogEntries(entries, logger)
-
-	// Send response
-	utils.GenerateResponse(c, map[string]interface{}{}, false)
 }
 
 // Get valid timestamp for logging
@@ -122,4 +162,36 @@ func createPayloadEntries(headers map[string]interface{}, logs []logRequest) []l
 
 	return entries
 
+}
+
+func createPayloadEntriesCloudwatch(headers map[string]interface{}, logs []logRequest) []logging.CloudwatchPayloadEntry {
+
+	var entries []logging.CloudwatchPayloadEntry
+
+	// create payload entry for each log
+	for _, lr := range logs {
+
+		payload := map[string]interface{}{
+			"device_details": lr.DeviceMeta,
+			"stack_trace":    lr.StackTrace,
+			"sdk_meta":       lr.SdkMeta,
+			"headers":        headers,
+			"severity":       lr.Severity,
+		}
+
+		timestamp, err := getValidTimestamp(lr.Timestamp)
+		if err != nil {
+			logging.Error(err.Error())
+			continue
+		}
+
+		entry := logging.CloudwatchPayloadEntry{
+			JsonPayload: payload,
+			Timestamp:   timestamp,
+		}
+
+		entries = append(entries, entry)
+	}
+
+	return entries
 }
