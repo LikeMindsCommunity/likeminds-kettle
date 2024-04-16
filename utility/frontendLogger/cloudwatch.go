@@ -1,4 +1,4 @@
-package logging
+package frontendLogger
 
 import (
 	"context"
@@ -12,6 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs/types"
 	"github.com/nateshr/likeminds-authentication/environment"
+	"github.com/nateshr/likeminds-authentication/utils"
+	"github.com/nateshr/likeminds-authentication/logging"
 )
 
 type CloudwatchPayloadEntry struct {
@@ -21,8 +23,8 @@ type CloudwatchPayloadEntry struct {
 
 func GetCloudwatchClient() (*cloudwatchlogs.Client, error){
 	// Load AWS SDK config
-	cloudwatchIAMUserKey := environment.GoDotEnvVariable(CloudwatchIAMUserKey)
-	cloudwatchIAMUserSecret := environment.GoDotEnvVariable(CloudwatchIAMUserSecret)
+	cloudwatchIAMUserKey := environment.GoDotEnvVariable(utils.CloudwatchIAMUserKey)
+	cloudwatchIAMUserSecret := environment.GoDotEnvVariable(utils.CloudwatchIAMUserSecret)
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(AwsRegion),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(cloudwatchIAMUserKey, cloudwatchIAMUserSecret, "")),
@@ -44,7 +46,7 @@ func LogToCloudWatch(client *cloudwatchlogs.Client, logGroupName string, logStre
         timestamp := entry.Timestamp.UnixMilli()
 		jsonString, err := json.Marshal(entry.JsonPayload)
 		if err != nil {
-			Error(fmt.Sprint("Error marshalling JSON: ", err.Error()))
+			logging.Error(fmt.Sprint("Error marshalling JSON: ", err.Error()))
 		}
 
         output, err := client.PutLogEvents(context.TODO(), &cloudwatchlogs.PutLogEventsInput{
@@ -56,7 +58,7 @@ func LogToCloudWatch(client *cloudwatchlogs.Client, logGroupName string, logStre
             }},
         })
         if err != nil {
-			Info(fmt.Sprint("PutLogEvents function output: ", output))
+			logging.Info(fmt.Sprint("PutLogEvents function output: ", output))
             return err
         }
     }
