@@ -55,18 +55,23 @@ func PushLogs(c *gin.Context) {
 		pushToGCP(c, headers, flr)
 	} else {
 		// default to cloudwatch
-		pushToCloudwatch(platform_code, headers, flr)
+		err = pushToCloudwatch(platform_code, headers, flr)
+		if err != nil {
+			utils.GeneralAPIError(c, fmt.Sprint("cloudwatch error: ", err))
+			return
+		}
 	}
 
 	// Send response
 	utils.GenerateResponse(c, map[string]interface{}{}, false)
 }
 
-func pushToCloudwatch(platformCode string, headers map[string]interface{}, flr *logsRequest) {
+func pushToCloudwatch(platformCode string, headers map[string]interface{}, flr *logsRequest) error {
 	// Create CloudWatchLogs client
 	client, err := logging.GetCloudwatchClient()
 	if err != nil {
 		logging.Error(fmt.Sprint("Error loading cloudwatch client: ", err.Error()))
+		return err
 	}
 
 	// Define log group and stream names
@@ -89,7 +94,9 @@ func pushToCloudwatch(platformCode string, headers map[string]interface{}, flr *
 	err = logging.LogToCloudWatch(client, logGroupName, logStreamName, entries)
 	if err != nil {
 		logging.Error(fmt.Sprint("Some error occured while pushing to cloudwatch: ", err.Error()))
+		return err
 	}
+	return nil
 }
 
 func pushToGCP(c *gin.Context, headers map[string]interface{}, flr *logsRequest) {
