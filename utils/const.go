@@ -140,3 +140,5 @@ const (
 	ProTierType        int = 1
 	EnterpriseTierType int = 2
 )
+
+const LogPlatformEnv string = "LOG_PLATFORM"
