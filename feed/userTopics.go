@@ -11,7 +11,7 @@ import (
 
 type UpdateUserTopicsRequest struct {
 	TopicsIds map[string]bool `json:"topic_ids"`
-	UserIsCm  bool            `json:"user_is_cm"`
+	UserIsCm  bool            `json:"user_is_cm,omitempty"`
 }
 
 func parseUpdateUserTopicsRequest(c *gin.Context) (*UpdateUserTopicsRequest, error) {
@@ -63,14 +63,14 @@ func userTopics(c *gin.Context, method int) {
 
 	switch method {
 	case utils.GETMethod:
-		fetchUsersTopicsInternal(c, userId)
+		fetchUsersTopicsInternal(c, userId, response.IsCm)
 	case utils.PatchMethod:
 		updateUserTopicsInternal(c, userId, response.IsCm)
 	}
 }
 
 // Internal method to fetch users topics
-func fetchUsersTopicsInternal(c *gin.Context, userId string) {
+func fetchUsersTopicsInternal(c *gin.Context, userId string, isCm bool) {
 
 	headers := utils.CreateHeaders(c, userId)
 
@@ -90,6 +90,9 @@ func fetchUsersTopicsInternal(c *gin.Context, userId string) {
 	params := map[string]string{
 		ParamUUIDs: utils.ParseStringArrayToString(userIds),
 	}
+
+	//add userIsCm Param
+	params[ParamUserIsCm] = fmt.Sprint(isCm)
 
 	// send request to fetch user topics
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchUserTopicsEndPoint, utils.GETRequest, headers, params, nil)
@@ -136,6 +139,7 @@ func updateUserTopicsInternal(c *gin.Context, userId string, isCm bool) {
 		return
 	}
 
+	//Update user_is_cm in request
 	updateUserTopicsRequest.UserIsCm = isCm
 
 	endpoint := fmt.Sprintf(UpdateUserTopicsEndPoint, paramUserUniqueId)

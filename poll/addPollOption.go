@@ -10,7 +10,8 @@ import (
 )
 
 type AddPollOptionRequest struct {
-	Text string `json:"text"`
+	Text     string `json:"text"`
+	UserIsCm bool   `json:"user_is_cm,omitempty"`
 }
 
 func parseAddPollOptionRequest(c *gin.Context) (*AddPollOptionRequest, error) {
@@ -55,6 +56,9 @@ func AddPollOption(c *gin.Context) {
 		utils.MemberAccessFailError(c)
 		return
 	}
+
+	//Update user_is_cm in request
+	addPollOptionRequest.UserIsCm = response.IsCm
 
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, AddPollOptionEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, addPollOptionRequest)

@@ -11,14 +11,14 @@ import (
 )
 
 // Generate Response to be sent on request success
-func GenerateResponse(c *gin.Context, dataResponse map[string]interface{}, parseProfileWidgets bool) {
+func GenerateResponse(c *gin.Context, dataResponse map[string]interface{}, parseWidgets bool) {
 	//Generating Response Object
 	response := Response{
 		Success: true,
 	}
 
 	// Get widgets data
-	if parseProfileWidgets {
+	if parseWidgets {
 		ParseAndFetchWidgets(c, GetUserIdFromContext(c), dataResponse)
 	}
 

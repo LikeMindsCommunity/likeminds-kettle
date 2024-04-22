@@ -13,10 +13,12 @@ type CreateWidgetRequest struct {
 	ParentEntityID   string                 `json:"parent_entity_id" binding:"required"`
 	ParentEntityType string                 `json:"parent_entity_type" binding:"required"`
 	MetaData         map[string]interface{} `json:"metadata"`
+	UserIsCm         bool                   `json:"user_is_cm,omitempty"`
 }
 
 type EditWidgetRequest struct {
 	MetaData map[string]interface{} `json:"metadata"`
+	UserIsCm bool                   `json:"user_is_cm,omitempty"`
 }
 
 func parseCreateWidgetRequest(c *gin.Context) (*CreateWidgetRequest, error) {
@@ -100,6 +102,9 @@ func GetWidgetInternal(c *gin.Context, userId string) {
 		return
 	}
 
+	//add userIsCm Param
+	params[feed.ParamUserIsCm] = fmt.Sprint(response.IsCm)
+
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, WidgetEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 }
@@ -124,6 +129,9 @@ func createWidgetInternal(c *gin.Context, userId string) {
 		utils.MemberAccessFailError(c)
 		return
 	}
+
+	//Update user_is_cm in request
+	createWidgetRequest.UserIsCm = response.IsCm
 
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, WidgetEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createWidgetRequest)
@@ -152,6 +160,9 @@ func editWidgetInternal(c *gin.Context, userId string) {
 		utils.MemberAccessFailError(c)
 		return
 	}
+
+	//Update user_is_cm in request
+	editWidgetRequest.UserIsCm = response.IsCm
 
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, EditWidgetEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, editWidgetRequest)

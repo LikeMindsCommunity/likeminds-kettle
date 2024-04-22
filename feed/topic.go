@@ -18,8 +18,9 @@ type CreateTopicRequest struct {
 }
 
 type CreateTopicsRequest struct {
-	Names  []string             `json:"names"`
-	Topics []CreateTopicRequest `json:"topics"`
+	Names    []string             `json:"names"`
+	Topics   []CreateTopicRequest `json:"topics"`
+	UserIsCm bool                 `json:"user_is_cm,omitempty"`
 }
 
 type DeleteTopicsRequest struct {
@@ -32,6 +33,7 @@ type EditTopicRequest struct {
 	Priority     *float32               `json:"priority"`
 	IsSearchable *bool                  `json:"is_searchable"`
 	Metadata     map[string]interface{} `json:"metadata"`
+	UserIsCm     bool                   `json:"user_is_cm,omitempty"`
 }
 
 func parseCreateTopicsRequest(c *gin.Context) (*CreateTopicsRequest, error) {
@@ -141,6 +143,9 @@ func GetTopicInternal(c *gin.Context, userId string) {
 		return
 	}
 
+	//add userIsCm Param
+	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
+
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, TopicEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 }
@@ -165,6 +170,9 @@ func createTopicsInternal(c *gin.Context, userId string) {
 		utils.MemberAccessFailError(c)
 		return
 	}
+
+	//Update user_is_cm in request
+	createTopicsRequest.UserIsCm = response.IsCm
 
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, TopicEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createTopicsRequest)
@@ -218,6 +226,9 @@ func editTopicInternal(c *gin.Context, userId string) {
 		utils.MemberAccessFailError(c)
 		return
 	}
+
+	//Update user_is_cm in request
+	editTopicRequest.UserIsCm = response.IsCm
 
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, EditTopicEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, editTopicRequest)
