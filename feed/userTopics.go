@@ -11,7 +11,6 @@ import (
 
 type UpdateUserTopicsRequest struct {
 	TopicsIds map[string]bool `json:"topic_ids"`
-	UserIsCm  bool            `json:"user_is_cm,omitempty"`
 }
 
 func parseUpdateUserTopicsRequest(c *gin.Context) (*UpdateUserTopicsRequest, error) {
@@ -91,8 +90,14 @@ func fetchUsersTopicsInternal(c *gin.Context, userId string, isCm bool) {
 		ParamUUIDs: utils.ParseStringArrayToString(userIds),
 	}
 
-	//add userIsCm Param
-	params[ParamUserIsCm] = fmt.Sprint(isCm)
+	//add Admin role in headers if user is cm
+	if isCm {
+		headers := map[string]string{
+			utils.HeaderMemberRole: utils.AdminRole,
+		}
+
+		utils.AddHeaders(c, headers)
+	}
 
 	// send request to fetch user topics
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchUserTopicsEndPoint, utils.GETRequest, headers, params, nil)
@@ -139,8 +144,14 @@ func updateUserTopicsInternal(c *gin.Context, userId string, isCm bool) {
 		return
 	}
 
-	//Update user_is_cm in request
-	updateUserTopicsRequest.UserIsCm = isCm
+	//add Admin role in headers if user is cm
+	if isCm {
+		headers := map[string]string{
+			utils.HeaderMemberRole: utils.AdminRole,
+		}
+
+		utils.AddHeaders(c, headers)
+	}
 
 	endpoint := fmt.Sprintf(UpdateUserTopicsEndPoint, paramUserUniqueId)
 

@@ -102,8 +102,14 @@ func GetWidgetInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	//add userIsCm Param
-	params[feed.ParamUserIsCm] = fmt.Sprint(response.IsCm)
+	//add Admin role in headers if user is cm
+	if response.IsCm {
+		headers := map[string]string{
+			utils.HeaderMemberRole: utils.AdminRole,
+		}
+
+		utils.AddHeaders(c, headers)
+	}
 
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, WidgetEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
@@ -130,8 +136,14 @@ func createWidgetInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	//Update user_is_cm in request
-	createWidgetRequest.UserIsCm = response.IsCm
+	//add Admin role in headers if user is cm
+	if response.IsCm {
+		headers := map[string]string{
+			utils.HeaderMemberRole: utils.AdminRole,
+		}
+
+		utils.AddHeaders(c, headers)
+	}
 
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, WidgetEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createWidgetRequest)
@@ -161,8 +173,14 @@ func editWidgetInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	//Update user_is_cm in request
-	editWidgetRequest.UserIsCm = response.IsCm
+	//add Admin role in headers if user is cm
+	if response.IsCm {
+		headers := map[string]string{
+			utils.HeaderMemberRole: utils.AdminRole,
+		}
+
+		utils.AddHeaders(c, headers)
+	}
 
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, EditWidgetEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, editWidgetRequest)
