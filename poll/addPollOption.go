@@ -56,6 +56,15 @@ func AddPollOption(c *gin.Context) {
 		return
 	}
 
+	//add CM role in headers if user is cm
+	if response.IsCm {
+		headers := map[string]string{
+			utils.HeaderMemberRole: utils.CMRole,
+		}
+
+		utils.AddHeaders(c, headers)
+	}
+
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, AddPollOptionEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, addPollOptionRequest)
 }
