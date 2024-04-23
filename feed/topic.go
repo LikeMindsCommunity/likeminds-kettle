@@ -141,6 +141,15 @@ func GetTopicInternal(c *gin.Context, userId string) {
 		return
 	}
 
+	//add Admin role in headers if user is cm
+	if response.IsCm {
+		headers := map[string]string{
+			utils.HeaderMemberRole: utils.AdminRole,
+		}
+
+		utils.AddHeaders(c, headers)
+	}
+
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, TopicEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 }
@@ -164,6 +173,15 @@ func createTopicsInternal(c *gin.Context, userId string) {
 	if !response.Access {
 		utils.MemberAccessFailError(c)
 		return
+	}
+
+	//add Admin role in headers if user is cm
+	if response.IsCm {
+		headers := map[string]string{
+			utils.HeaderMemberRole: utils.AdminRole,
+		}
+
+		utils.AddHeaders(c, headers)
 	}
 
 	//Send Request
@@ -217,6 +235,15 @@ func editTopicInternal(c *gin.Context, userId string) {
 	if !response.Access {
 		utils.MemberAccessFailError(c)
 		return
+	}
+
+	//add Admin role in headers if user is cm
+	if response.IsCm {
+		headers := map[string]string{
+			utils.HeaderMemberRole: utils.AdminRole,
+		}
+
+		utils.AddHeaders(c, headers)
 	}
 
 	//Send Request

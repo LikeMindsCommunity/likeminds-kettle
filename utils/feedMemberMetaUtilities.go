@@ -28,6 +28,7 @@ type MemberMeta struct {
 	IsGuest         bool           `json:"is_guest"`
 	IsDeleted       bool           `json:"is_deleted"`
 	CustomTitle     string         `json:"custom_title"`
+	State           int            `json:"state"`
 	QuestionAnswers []interface{}  `json:"question_answers"`
 }
 

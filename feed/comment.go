@@ -186,7 +186,7 @@ func FetchCommentByIdInternal(c *gin.Context, userId string, commentId string) m
 		return nil
 	}
 
-	//Param updatiion
+	//Param updation
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
 	//Send Request

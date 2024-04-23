@@ -11,7 +11,6 @@ import (
 
 type UpdateUserTopicsRequest struct {
 	TopicsIds map[string]bool `json:"topic_ids"`
-	UserIsCm  bool            `json:"user_is_cm"`
 }
 
 func parseUpdateUserTopicsRequest(c *gin.Context) (*UpdateUserTopicsRequest, error) {
@@ -63,14 +62,14 @@ func userTopics(c *gin.Context, method int) {
 
 	switch method {
 	case utils.GETMethod:
-		fetchUsersTopicsInternal(c, userId)
+		fetchUsersTopicsInternal(c, userId, response.IsCm)
 	case utils.PatchMethod:
 		updateUserTopicsInternal(c, userId, response.IsCm)
 	}
 }
 
 // Internal method to fetch users topics
-func fetchUsersTopicsInternal(c *gin.Context, userId string) {
+func fetchUsersTopicsInternal(c *gin.Context, userId string, isCm bool) {
 
 	headers := utils.CreateHeaders(c, userId)
 
@@ -89,6 +88,15 @@ func fetchUsersTopicsInternal(c *gin.Context, userId string) {
 
 	params := map[string]string{
 		ParamUUIDs: utils.ParseStringArrayToString(userIds),
+	}
+
+	//add Admin role in headers if user is cm
+	if isCm {
+		headers := map[string]string{
+			utils.HeaderMemberRole: utils.AdminRole,
+		}
+
+		utils.AddHeaders(c, headers)
 	}
 
 	// send request to fetch user topics
@@ -136,7 +144,14 @@ func updateUserTopicsInternal(c *gin.Context, userId string, isCm bool) {
 		return
 	}
 
-	updateUserTopicsRequest.UserIsCm = isCm
+	//add Admin role in headers if user is cm
+	if isCm {
+		headers := map[string]string{
+			utils.HeaderMemberRole: utils.AdminRole,
+		}
+
+		utils.AddHeaders(c, headers)
+	}
 
 	endpoint := fmt.Sprintf(UpdateUserTopicsEndPoint, paramUserUniqueId)
 

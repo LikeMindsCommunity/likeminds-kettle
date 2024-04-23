@@ -137,6 +137,7 @@ const (
 // Member Roles
 const (
 	GuestRole string = "GUEST"
+	AdminRole string = "ADMIN"
 )
 
 // Community Tiers
