@@ -13,12 +13,10 @@ type CreateWidgetRequest struct {
 	ParentEntityID   string                 `json:"parent_entity_id" binding:"required"`
 	ParentEntityType string                 `json:"parent_entity_type" binding:"required"`
 	MetaData         map[string]interface{} `json:"metadata"`
-	UserIsCm         bool                   `json:"user_is_cm,omitempty"`
 }
 
 type EditWidgetRequest struct {
 	MetaData map[string]interface{} `json:"metadata"`
-	UserIsCm bool                   `json:"user_is_cm,omitempty"`
 }
 
 func parseCreateWidgetRequest(c *gin.Context) (*CreateWidgetRequest, error) {

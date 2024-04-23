@@ -10,8 +10,7 @@ import (
 )
 
 type AddPollOptionRequest struct {
-	Text     string `json:"text"`
-	UserIsCm bool   `json:"user_is_cm,omitempty"`
+	Text string `json:"text"`
 }
 
 func parseAddPollOptionRequest(c *gin.Context) (*AddPollOptionRequest, error) {
