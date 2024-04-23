@@ -90,10 +90,10 @@ func fetchUsersTopicsInternal(c *gin.Context, userId string, isCm bool) {
 		ParamUUIDs: utils.ParseStringArrayToString(userIds),
 	}
 
-	//add Admin role in headers if user is cm
+	//add CM role in headers if user is cm
 	if isCm {
 		headers := map[string]string{
-			utils.HeaderMemberRole: utils.AdminRole,
+			utils.HeaderMemberRole: utils.CMRole,
 		}
 
 		utils.AddHeaders(c, headers)
@@ -144,10 +144,10 @@ func updateUserTopicsInternal(c *gin.Context, userId string, isCm bool) {
 		return
 	}
 
-	//add Admin role in headers if user is cm
+	//add CM role in headers if user is cm
 	if isCm {
 		headers := map[string]string{
-			utils.HeaderMemberRole: utils.AdminRole,
+			utils.HeaderMemberRole: utils.CMRole,
 		}
 
 		utils.AddHeaders(c, headers)
