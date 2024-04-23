@@ -144,7 +144,7 @@ func GetTopicInternal(c *gin.Context, userId string) {
 	//add Admin role in headers if user is cm
 	if response.IsCm {
 		headers := map[string]string{
-			utils.HeaderMemberRole: utils.AdminRole,
+			utils.HeaderMemberRole: utils.CMRole,
 		}
 
 		utils.AddHeaders(c, headers)
@@ -178,7 +178,7 @@ func createTopicsInternal(c *gin.Context, userId string) {
 	//add Admin role in headers if user is cm
 	if response.IsCm {
 		headers := map[string]string{
-			utils.HeaderMemberRole: utils.AdminRole,
+			utils.HeaderMemberRole: utils.CMRole,
 		}
 
 		utils.AddHeaders(c, headers)
@@ -240,7 +240,7 @@ func editTopicInternal(c *gin.Context, userId string) {
 	//add Admin role in headers if user is cm
 	if response.IsCm {
 		headers := map[string]string{
-			utils.HeaderMemberRole: utils.AdminRole,
+			utils.HeaderMemberRole: utils.CMRole,
 		}
 
 		utils.AddHeaders(c, headers)
