@@ -132,6 +132,7 @@ const BillingPlanEnpoint = "/api/subscription/plan/billing"
 const (
 	FeedRepostCommunitySettingType  = "feed_repost"
 	UserTopicsConnectionSettingType = "user_topics_connection"
+	PostApprovalNeededSettingType   = "post_approval_needed"
 )
 
 // Member Roles
