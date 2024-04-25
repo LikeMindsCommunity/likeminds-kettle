@@ -356,6 +356,7 @@ func processRequest(c *gin.Context) interface{} {
 		"host":         c.Request.Host,
 		"absolute_uri": c.Request.RequestURI,
 		"method":       c.Request.Method,
+		"origin":       c.Request.origin,
 		"headers":      c.Request.Header,
 		"body":         requestBodyData,
 	}
