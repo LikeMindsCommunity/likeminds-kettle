@@ -271,6 +271,7 @@ func main() {
 	router.PUT("/feed/topic/:topic_id", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.EditTopic)
 	router.GET("/feed/connection", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.GetConnectionFeed)
 	router.POST("feed/post/pending", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.CreatePendingPost)
+	router.PUT("feed/post/pending/:pending_post_id", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.EditPendingPost)
 	router.GET("/feed/user/topics", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.FetchUsersTopics)
 	router.PATCH("/feed/user/:uuid/topics", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.UpdateUserTopics)
 
