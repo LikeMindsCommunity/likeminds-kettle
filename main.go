@@ -263,6 +263,7 @@ func main() {
 	router.GET("/feed/user/activity/unread_count", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.GetUserActivityUnreadCount)
 	router.POST("/feed/user/activity/:activity_id/mark_read", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.UserActivityMarkRead)
 	router.GET("/feed/user/:user_id/meta", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.GetUserFeedMeta)
+	router.GET("/feed/user/:user_id/post/pending", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.FetchUserCreatedPendingPosts)
 	router.GET("/feed/universal", middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), feed.FetchUniversalFeed)
 	router.GET("/feed/group", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.FetchGroupFeed)
 	router.POST("/feed/topic", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.CreateTopics)
@@ -272,6 +273,8 @@ func main() {
 	router.GET("/feed/connection", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.GetConnectionFeed)
 	router.POST("feed/post/pending", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.CreatePendingPost)
 	router.PUT("feed/post/pending/:pending_post_id", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.EditPendingPost)
+	router.GET("feed/post/pending/:pending_post_id", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.FetchPendingPost)
+	router.DELETE("feed/post/pending/:pending_post_id", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.DeletePendingPost)
 	router.GET("/feed/user/topics", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.FetchUsersTopics)
 	router.PATCH("/feed/user/:uuid/topics", middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.UpdateUserTopics)
 

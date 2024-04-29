@@ -13,14 +13,24 @@ type EditPendingPostRequest struct {
 	UUIDs []string `json:"uuids"`
 }
 
-// CreatePendingPost is used to create a new post
+// CreatePendingPost is used to create a new pending post
 func CreatePendingPost(c *gin.Context) {
 	PendingPost(c, utils.POSTMethod)
 }
 
-// EditPendingPost is used to create a new post
+// EditPendingPost is used to edit a pending post
 func EditPendingPost(c *gin.Context) {
 	PendingPost(c, utils.PUTMethod)
+}
+
+// FetchPendingPost is used to fetch a pending post
+func FetchPendingPost(c *gin.Context) {
+	PendingPost(c, utils.GETMethod)
+}
+
+// DeletePendingPost is used to delete a pending post
+func DeletePendingPost(c *gin.Context) {
+	PendingPost(c, utils.DELETEMethod)
 }
 
 // Pending post method handles pending post objects
@@ -37,10 +47,16 @@ func PendingPost(c *gin.Context, method int) {
 
 	case utils.PUTMethod:
 		editPendingPostInternal(c, userId)
+
+	case utils.GETMethod:
+		fetchPendingPostInternal(c, userId)
+
+	case utils.DELETEMethod:
+		deletePendingPostInternal(c, userId)
 	}
 }
 
-// Exposed method to create a pending post for review
+// Internal method to create a pending post for review
 func createPendingPostInternal(c *gin.Context, userId string) {
 	// Use Create post body params to create Pending post
 	cppr, err := parseCreatePostRequest(c)
@@ -66,6 +82,7 @@ func createPendingPostInternal(c *gin.Context, userId string) {
 	utils.SendRequest(c, utils.SwarmService, CreatePendingPostEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, cppr)
 }
 
+// Internal method to edit a pending post
 func editPendingPostInternal(c *gin.Context, userId string) {
 	pendingPostId := c.Param("pending_post_id")
 
@@ -98,8 +115,104 @@ func editPendingPostInternal(c *gin.Context, userId string) {
 
 	//If flow succeeds populate post data
 	dataResponse := apiCR.Response
-	dataResponse = populatePostDataResponse(c, dataResponse)
+	dataResponse = populatePendingPostDataResponse(c, dataResponse)
 
 	//Generate Response
 	utils.GenerateResponse(c, dataResponse, true)
+}
+
+// Internal method to fetch a pending post
+func fetchPendingPostInternal(c *gin.Context, userId string) {
+	pendingPostId := c.Param("pending_post_id")
+
+	fetchPostEndPoint := fmt.Sprintf(FetchPendingPostEndPoint, pendingPostId)
+
+	// Fetch member access to view topics
+	success, response := user.FetchMemberAccess(c, IS_MEMBER, userId)
+	if !success {
+		return
+	}
+
+	//If not access
+	if !response.Access {
+		utils.MemberAccessFailError(c)
+		return
+	}
+
+	//add Admin role in headers if user is cm
+	if response.IsCm {
+		headers := map[string]string{
+			utils.HeaderMemberRole: utils.AdminRole,
+		}
+
+		utils.AddHeaders(c, headers)
+	}
+
+	//Send Request
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, fetchPostEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	//If flow succeeds populate post data
+	dataResponse := apiCR.Response
+	dataResponse = populatePendingPostDataResponse(c, dataResponse)
+
+	//Generate Response
+	utils.GenerateResponse(c, dataResponse, true)
+}
+
+// Internal method to delete pending post
+func deletePendingPostInternal(c *gin.Context, userId string) {
+	pendingPostId := c.Param("pending_post_id")
+	deletePostEndPoint := fmt.Sprintf(DeletePendingPostEndPoint, pendingPostId)
+
+	//Send Request
+	utils.SendRequest(c, utils.SwarmService, deletePostEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, nil)
+}
+
+// Internal method to populate users data
+func populatePendingPostDataResponse(c *gin.Context, dataResponse map[string]interface{}) map[string]interface{} {
+	if value, ok := dataResponse["post"]; ok {
+		post_data := value.(map[string]interface{})
+		user_ids := []string{}
+
+		// Fetch post user id
+		if post_user_unique_id, ok := post_data["uuid"]; ok {
+			user_ids = append(user_ids, post_user_unique_id.(string))
+		}
+
+		// Get userId
+		userId := user.GetRequestingUserId(c)
+		redisClient := utils.GetRedisClientFromContext(c)
+		headers := utils.CreateHeaders(c, userId)
+
+		//Fetch user data for given user_unique_ids
+		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_ids)
+		if err != nil {
+			utils.GeneralAPIError(c, utils.ErrorFetchingUserData)
+			return nil
+		}
+
+		//Validation of post based on community member
+		if post_user_unique_id, ok := post_data["uuid"]; ok {
+			if post_user, ok := user_data[post_user_unique_id.(string)]; ok {
+				if post_user.IsDeleted {
+					utils.GeneralBadRequestError(c, "Invalid post_id sent!")
+					return nil
+				}
+			}
+		}
+
+		//Update user data in dataResponse
+		dataResponse["users"] = user_data
+
+		// Update user topics data in dataResponse
+		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
+	}
+
+	return dataResponse
 }
