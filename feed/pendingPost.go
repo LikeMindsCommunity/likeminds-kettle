@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/constants"
+	"github.com/nateshr/likeminds-authentication/requests"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -52,7 +54,12 @@ func PendingPost(c *gin.Context, method int) {
 		fetchPendingPostInternal(c, userId)
 
 	case utils.DELETEMethod:
-		deletePendingPostInternal(c, userId)
+		additionalHeaders := map[string]string{
+			utils.HeadersPlatformType: string(utils.PlatformDashboard),
+		}
+		utils.AddHeaders(c, additionalHeaders)
+		botId := user.GetBotId(c)
+		deletePendingPostInternal(c, userId, botId)
 	}
 }
 
@@ -166,12 +173,35 @@ func fetchPendingPostInternal(c *gin.Context, userId string) {
 }
 
 // Internal method to delete pending post
-func deletePendingPostInternal(c *gin.Context, userId string) {
+func deletePendingPostInternal(c *gin.Context, userId string, botId string) {
 	pendingPostId := c.Param("pending_post_id")
 	deletePostEndPoint := fmt.Sprintf(DeletePendingPostEndPoint, pendingPostId)
 
 	//Send Request
-	utils.SendRequest(c, utils.SwarmService, deletePostEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, deletePostEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, nil)
+
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	//If flow succeeds populate post data
+	dataResponse := apiCR.Response
+
+	reportId := int(dataResponse["report_id"].(float64))
+	if reportId != 0 {
+		crnr := requests.CloseReportsNewRequest{ReportIds: []int{reportId}}
+
+		// Send Request to api/community/report
+		respBytes, statusCode = utils.GetRequestResponse(c, utils.CoreService, constants.CommunityReportV1EndPoint, utils.PATCHRequest, utils.CreateHeaders(c, botId), nil, crnr)
+	}
+
+	dataResponse = map[string]interface{}{
+		"success": true,
+	}
+
+	utils.GenerateResponse(c, dataResponse, false)
 }
 
 // Internal method to populate users data
