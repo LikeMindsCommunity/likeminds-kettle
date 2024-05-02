@@ -1,6 +1,7 @@
 package feed
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -9,22 +10,50 @@ import (
 )
 
 type CreatePostCommentRequest struct {
-	TempID    *string  `json:"temp_id"`
-	Text      string   `json:"text" binding:"required"`
-	UUIDs     []string `json:"uuids"`
-	CreatedAt int      `json:"created_at"`
+	TempID      *string             `json:"temp_id"`
+	Text        string              `json:"text" binding:"required"`
+	Attachments []AttachmentRequest `json:"attachments"`
+	UUIDs       []string            `json:"uuids"`
+	CreatedAt   int                 `json:"created_at"`
 }
 type EditCommentRequest struct {
-	Text     string `json:"text" binding:"required"`
-	UserIsCm bool   `json:"user_is_cm"`
+	Text        string              `json:"text" binding:"required"`
+	Attachments []AttachmentRequest `json:"attachments"`
+	UserIsCm    bool                `json:"user_is_cm"`
 }
 
 func parseCreateCommentRequest(c *gin.Context) (*CreatePostCommentRequest, error) {
 	//POST body params
 	var cpcr CreatePostCommentRequest
+	raw_data, _ := c.GetRawData()
 
-	if err := c.ShouldBindJSON(&cpcr); err != nil {
+	if err := json.Unmarshal(raw_data, &cpcr); err != nil {
 		return nil, err
+	}
+
+	// Unmarshal widgets data for attachment type custom widget
+	widgets_data := make(map[string]interface{})
+	err := json.Unmarshal(raw_data, &widgets_data)
+	if err != nil {
+		return nil, err
+	}
+
+	// Iterate over attachments and add widgets_data to widget_meta
+	if cpcr.Attachments != nil {
+		for i := 0; i < len(cpcr.Attachments); i++ {
+			if cpcr.Attachments[i].AttachmentType == CustomWidget {
+
+				if cpcr.Attachments[i].AttachmentMeta != nil {
+					widget_meta := widgets_data["attachments"].([]interface{})[i].(map[string]interface{})["attachment_meta"].(map[string]interface{})
+
+					if widget_meta != nil {
+						delete(widget_meta, "entity_id")
+						cpcr.Attachments[i].AttachmentMeta = &AttachmentMeta{EntityID: cpcr.Attachments[i].AttachmentMeta.EntityID}
+						cpcr.Attachments[i].AttachmentMeta.WidgetMeta = widget_meta
+					}
+				}
+			}
+		}
 	}
 
 	return &cpcr, nil
@@ -32,12 +61,39 @@ func parseCreateCommentRequest(c *gin.Context) (*CreatePostCommentRequest, error
 func parseEditCommentRequest(c *gin.Context) (*EditCommentRequest, error) {
 	//POST body params
 	var cpcr EditCommentRequest
+	raw_data, _ := c.GetRawData()
 
-	if err := c.ShouldBindJSON(&cpcr); err != nil {
+	if err := json.Unmarshal(raw_data, &cpcr); err != nil {
 		return nil, err
 	}
 
+	// Unmarshal widgets data for attachment type custom widget
+	widgets_data := make(map[string]interface{})
+	err := json.Unmarshal(raw_data, &widgets_data)
+	if err != nil {
+		return nil, err
+	}
+
+	// Iterate over attachments and add widgets_data to widget_meta
+	if cpcr.Attachments != nil {
+		for i := 0; i < len(cpcr.Attachments); i++ {
+			if cpcr.Attachments[i].AttachmentType == CustomWidget {
+
+				if cpcr.Attachments[i].AttachmentMeta != nil {
+					widget_meta := widgets_data["attachments"].([]interface{})[i].(map[string]interface{})["attachment_meta"].(map[string]interface{})
+
+					if widget_meta != nil {
+						delete(widget_meta, "entity_id")
+						cpcr.Attachments[i].AttachmentMeta = &AttachmentMeta{EntityID: cpcr.Attachments[i].AttachmentMeta.EntityID}
+						cpcr.Attachments[i].AttachmentMeta.WidgetMeta = widget_meta
+					}
+				}
+			}
+		}
+	}
+
 	return &cpcr, nil
+
 }
 
 // CommentPost is used to comment on a post
