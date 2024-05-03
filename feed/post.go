@@ -13,65 +13,28 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-type OGTags struct {
-	Title       string `json:"title"`
-	Image       string `json:"image"`
-	Description string `json:"description"`
-	Url         string `json:"url"`
-}
-
-type AttachmentMeta struct {
-	Name                 string                 `json:"name"`
-	Url                  string                 `json:"url"`
-	Format               string                 `json:"format"`
-	Size                 int                    `json:"size"`
-	Duration             int                    `json:"duration"`
-	PageCount            int                    `json:"page_count"`
-	ThumbnailUrl         string                 `json:"thumbnail_url"`
-	OgTags               OGTags                 `json:"og_tags"`
-	EntityID             string                 `json:"entity_id"`
-	CoverImageUrl        string                 `json:"cover_image_url"`
-	Title                string                 `json:"title"`
-	Body                 string                 `json:"body"`
-	Options              []string               `json:"options"`
-	ExpiryTime           int64                  `json:"expiry_time"`
-	PollType             string                 `json:"poll_type"`
-	MultipleSelectState  string                 `json:"multiple_select_state"`
-	MultipleSelectNumber int                    `json:"multiple_select_number"`
-	IsAnonymous          bool                   `json:"is_anonymous"`
-	AllowAddOption       bool                   `json:"allow_add_option"`
-	WidgetMeta           map[string]interface{} `json:"widget_meta"`
-}
-
-type AttachmentRequest struct {
-	AttachmentType int             `json:"attachment_type"`
-	AttachmentMeta *AttachmentMeta `json:"attachment_meta"`
-	Type           string          `json:"type"`
-	MetaData       *AttachmentMeta `json:"meta_data"`
-}
-
 type CreatePostRequest struct {
-	TempID         *string             `json:"temp_id"`
-	TopicIDs       []string            `json:"topic_ids"`
-	Text           string              `json:"text"`
-	Heading        string              `json:"heading"`
-	Attachments    []AttachmentRequest `json:"attachments"`
-	FeedroomID     int                 `json:"feedroom_id"`
-	UUIDs          []string            `json:"uuids"`
-	OnBehalfOfUUID string              `json:"on_behalf_of_uuid,omitempty"`
-	IsRepost       bool                `json:"is_repost"`
-	Visibility     string              `json:"visibility,omitempty"`
-	UserIsCm       bool                `json:"user_is_cm,omitempty"`
-	CreatedAt      int                 `json:"created_at"`
+	TempID         *string                   `json:"temp_id"`
+	TopicIDs       []string                  `json:"topic_ids"`
+	Text           string                    `json:"text"`
+	Heading        string                    `json:"heading"`
+	Attachments    []utils.AttachmentRequest `json:"attachments"`
+	FeedroomID     int                       `json:"feedroom_id"`
+	UUIDs          []string                  `json:"uuids"`
+	OnBehalfOfUUID string                    `json:"on_behalf_of_uuid,omitempty"`
+	IsRepost       bool                      `json:"is_repost"`
+	Visibility     string                    `json:"visibility,omitempty"`
+	UserIsCm       bool                      `json:"user_is_cm,omitempty"`
+	CreatedAt      int                       `json:"created_at"`
 }
 
 type EditPostRequest struct {
-	Text        string              `json:"text"`
-	TopicIDs    []string            `json:"topic_ids"`
-	Heading     string              `json:"heading,omitempty"`
-	Attachments []AttachmentRequest `json:"attachments"`
-	Visibility  string              `json:"visibility,omitempty"`
-	UserIsCm    bool                `json:"user_is_cm"`
+	Text        string                    `json:"text"`
+	TopicIDs    []string                  `json:"topic_ids"`
+	Heading     string                    `json:"heading,omitempty"`
+	Attachments []utils.AttachmentRequest `json:"attachments"`
+	Visibility  string                    `json:"visibility,omitempty"`
+	UserIsCm    bool                      `json:"user_is_cm"`
 }
 
 type DeletePostRequest struct {
@@ -97,20 +60,7 @@ func parseCreatePostRequest(c *gin.Context) (*CreatePostRequest, error) {
 
 	// Iterate over attachments and add widgets_data to widget_meta
 	if cpr.Attachments != nil {
-		for i := 0; i < len(cpr.Attachments); i++ {
-			if cpr.Attachments[i].AttachmentType == CustomWidget {
-
-				if cpr.Attachments[i].AttachmentMeta != nil {
-					widget_meta := widgets_data["attachments"].([]interface{})[i].(map[string]interface{})["attachment_meta"].(map[string]interface{})
-
-					if widget_meta != nil {
-						delete(widget_meta, "entity_id")
-						cpr.Attachments[i].AttachmentMeta = &AttachmentMeta{EntityID: cpr.Attachments[i].AttachmentMeta.EntityID}
-						cpr.Attachments[i].AttachmentMeta.WidgetMeta = widget_meta
-					}
-				}
-			}
-		}
+		cpr.Attachments = utils.ConvertAttachmentMetaForCustomWidgetAttachments(cpr.Attachments, raw_data)
 	}
 
 	return &cpr, nil
@@ -126,29 +76,9 @@ func parseEditPostRequest(c *gin.Context) (*EditPostRequest, error) {
 		return nil, err
 	}
 
-	// Unmarshal widgets data for attachment type custom wiget
-	widgets_data := make(map[string]interface{})
-	err := json.Unmarshal(raw_data, &widgets_data)
-	if err != nil {
-		return nil, err
-	}
-
 	// Iterate over attachments and add widgets_data to widget_meta
 	if cpr.Attachments != nil {
-		for i := 0; i < len(cpr.Attachments); i++ {
-			if cpr.Attachments[i].AttachmentType == CustomWidget {
-
-				if cpr.Attachments[i].AttachmentMeta != nil {
-					widget_meta := widgets_data["attachments"].([]interface{})[i].(map[string]interface{})["attachment_meta"].(map[string]interface{})
-
-					if widget_meta != nil {
-						delete(widget_meta, "entity_id")
-						cpr.Attachments[i].AttachmentMeta = &AttachmentMeta{EntityID: cpr.Attachments[i].AttachmentMeta.EntityID}
-						cpr.Attachments[i].AttachmentMeta.WidgetMeta = widget_meta
-					}
-				}
-			}
-		}
+		cpr.Attachments = utils.ConvertAttachmentMetaForCustomWidgetAttachments(cpr.Attachments, raw_data)
 	}
 
 	return &cpr, nil

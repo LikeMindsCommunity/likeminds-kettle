@@ -90,7 +90,7 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 
 	rtm := &constants.RefreshTokenMeta{
 		RefreshUuid:         uuid.NewV4().String(),
-		RefreshTokenExpires: time.Now().Add(time.Hour * 24 * 31).Unix(),
+		RefreshTokenExpires: time.Now().Add(time.Hour * REFRESH_TOKEN_EXPIRY).Unix(),
 	}
 
 	var err error
