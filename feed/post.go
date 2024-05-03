@@ -381,9 +381,16 @@ func createPostInternal(c *gin.Context, userId string) {
 	//Get tagged users from text
 	taggedUsers := getTaggedUsersFromText(utils.CreateHeaders(c, userId), createPostRequest.Text)
 	createPostRequest.UUIDs = taggedUsers
+	var createPostEndpoint string
 
-	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, CreatePostEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createPostRequest)
+	if !utils.IsPostApprovalNeeded(utils.GetRedisClientFromContext(c), headers) {
+		createPostEndpoint = CreatePostEndPoint
+	} else {
+		createPostEndpoint = CreatePendingPostEndPoint
+	}
+
+	// Send Request
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, createPostEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createPostRequest)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)

@@ -276,3 +276,15 @@ func UserTopicsConnectionEnabled(redisClient *redis.Client, headers map[string]i
 
 	return checkCommunitySettingEnabled(communitySettings, UserTopicsConnectionSettingType)
 }
+
+// Exposed method to check if pending post setting is enabled for a community
+func IsPostApprovalNeeded(redisClient *redis.Client, headers map[string]interface{}) bool {
+
+	communitySettings, err := fetchCommunitySettings(redisClient, headers)
+	if err != nil {
+		logging.Error(fmt.Sprintf("Error while fetching community settings, err: %v", err))
+		return false
+	}
+
+	return checkCommunitySettingEnabled(communitySettings, PostApprovalNeededSettingType)
+}
