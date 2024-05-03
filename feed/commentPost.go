@@ -11,13 +11,13 @@ import (
 
 type CreatePostCommentRequest struct {
 	TempID      *string                   `json:"temp_id"`
-	Text        string                    `json:"text" binding:"required"`
+	Text        string                    `json:"text"`
 	Attachments []utils.AttachmentRequest `json:"attachments"`
 	UUIDs       []string                  `json:"uuids"`
 	CreatedAt   int                       `json:"created_at"`
 }
 type EditCommentRequest struct {
-	Text        string                    `json:"text" binding:"required"`
+	Text        string                    `json:"text"`
 	Attachments []utils.AttachmentRequest `json:"attachments"`
 	UserIsCm    bool                      `json:"user_is_cm"`
 }
