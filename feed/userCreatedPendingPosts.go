@@ -43,7 +43,7 @@ func FetchUserCreatedPendingPosts(c *gin.Context) {
 	//Fetch member access to view post
 	success, response := user.FetchMemberAccess(c, VIEW_POST_ACTION, userId)
 	if !success {
-		utils.GeneralAPIError(c, utils.ErrorMemeberAccessFail)
+		utils.MemberAccessFailError(c)
 		return
 	}
 
@@ -54,7 +54,7 @@ func FetchUserCreatedPendingPosts(c *gin.Context) {
 	}
 
 	if !response.IsCm && userId != user_id {
-		utils.GeneralAPIError(c, utils.ErrorMemeberAccessFail)
+		utils.MemberAccessFailError(c)
 		return
 	}
 
