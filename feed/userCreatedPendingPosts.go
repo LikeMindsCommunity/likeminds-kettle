@@ -17,6 +17,11 @@ func FetchUserCreatedPendingPosts(c *gin.Context) {
 		return
 	}
 
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
+	}
+
 	headers := utils.CreateHeaders(c, userId)
 
 	//Params to be sent in the /user/<user_id>/post request
@@ -32,6 +37,24 @@ func FetchUserCreatedPendingPosts(c *gin.Context) {
 	user_id, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), user_id)
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	//Fetch member access to view post
+	success, response := user.FetchMemberAccess(c, VIEW_POST_ACTION, userId)
+	if !success {
+		utils.GeneralAPIError(c, utils.ErrorMemeberAccessFail)
+		return
+	}
+
+	//If not access
+	if !response.Access {
+		utils.MemberAccessFailError(c)
+		return
+	}
+
+	if !response.IsCm && userId != user_id {
+		utils.GeneralAPIError(c, utils.ErrorMemeberAccessFail)
 		return
 	}
 
