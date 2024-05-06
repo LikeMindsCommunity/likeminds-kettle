@@ -51,6 +51,11 @@ func PendingPost(c *gin.Context, method int) {
 		editPendingPostInternal(c, userId)
 
 	case utils.GETMethod:
+		botId := user.GetBotId(c)
+		if botId != "" {
+			userId = botId
+		}
+
 		fetchPendingPostInternal(c, userId)
 
 	case utils.DELETEMethod:
