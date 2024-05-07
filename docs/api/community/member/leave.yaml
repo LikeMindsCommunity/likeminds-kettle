@@ -1,8 +1,8 @@
 delete:
-  summary: Leave Community
+  description: Leave Community
   operationId: leaveCommunity
   tags:
-    - Community
+    - Member
   security:
     - bearerAuth: []
   responses:

@@ -8,14 +8,16 @@ get:
   security:
     - bearerAuth: []
   parameters:    
-      - $ref: "../../components/parameters/path/webhook_id.yaml"
+      - $ref: "../../components/parameters/headers/platformType.yaml"
+      - $ref: "../../components/parameters/path/webhookId.yaml"
   responses:
     '200':
       description: OK
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/responses/webhook_get.yaml"
+            $ref: "../../components/schemas/responses/get_webhook.yaml"
+
 
 patch:
   operationId: updateWebhook
@@ -27,20 +29,21 @@ patch:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../components/parameters/path/webhook_id.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/path/webhookId.yaml"
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/requests/webhook_edit.yaml"
+          $ref: "../../components/schemas/requests/webhookEdit.yaml"
   responses:
     '200':
       description: OK
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/responses/webhook_edit.yaml"
+            $ref: "../../components/schemas/responses/edit_webhook.yaml"
 
 
 delete:
@@ -53,7 +56,7 @@ delete:
   security:
     - bearerAuth: []
   parameters:
-    - $ref: "../../components/parameters/path/webhook_id.yaml"
+    - $ref: "../../components/parameters/path/webhookId.yaml"
   responses:
     '200':
       description: OK

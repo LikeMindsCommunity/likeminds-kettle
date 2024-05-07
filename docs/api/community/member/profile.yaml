@@ -1,10 +1,18 @@
 get:
-  summary: Get Community Member Profile
   operationId: getMemberProfile
   tags:
-    - Community
+    - Member
+
+  summary: Get Community Member Profile
+  description: This API fetches the profile of a community member
+
   security:
     - bearerAuth: []
+  
+  parameters:
+    - $ref: "../../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../../components/parameters/query/uuid.yaml"
+
   responses:
     "200":
       description: OK
@@ -14,23 +22,29 @@ get:
             $ref: "../../../components/schemas/responses/community_member_profile_get.yaml"
 
 
-
 put:
-  summary: Update Community Member Profile
+
   operationId: updateMemberProfile
   tags:
-    - Community
+    - Member
+
+  summary: Update Community Member Profile
+  description: This API updates the profile of a community member such as name, image, metadata, etc.
+
   security:
     - bearerAuth: []
+
   parameters:
     - $ref: "../../../components/parameters/headers/platformType.yaml"
     - $ref: "../../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../../components/parameters/headers/platformCode.yaml"
+
   requestBody:
     content:
       application/json:
         schema:
           $ref: "../../../components/schemas/requests/community_member_profile.yaml"
+          
   responses:
     "200":
       description: OK

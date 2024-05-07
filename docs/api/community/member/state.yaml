@@ -1,8 +1,8 @@
 get:
-  summary: Get Community Member State
+  description: Get Community Member State
   operationId: getCommunityMemberState
   tags:
-    - Community
+    - Member
   security:
     - bearerAuth: []
   parameters:

@@ -1,15 +1,16 @@
 get:
-  summary: Get Community Configurations
 
   operationId: getCommunityConfigurations
-
   tags:
     - Community
 
+  summary: Get Community Configurations
+  description: This API fetches community configurations set for the community.
   security:
     - bearerAuth: []
 
   parameters:
+    - $ref: "../../components/parameters/headers/platformType.yaml"
     - name: configuration_types
       in: query
       description: Configuration types to get
@@ -17,11 +18,144 @@ get:
         type: array
         items:
           type: string
+          enum: [media_limits, feed_metadata, profile_metadata, nsfw_filtering, guest_flow_metadata]
 
   responses:
     "200":
-      description: OK
+      description: Successful operation
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/responses/community_configurations.yaml"
+            $ref: "../../components/schemas/responses/communityConfigurations.yaml"
+          example:
+            success: true
+            data:
+              community_configurations:
+                - description: "Metadata related to feed and its entity"
+                  type: "feed_metadata"
+                  value:
+                    post: "resource"
+                - description: "NSFW filtering metadata for the community"
+                  type: "nsfw_filtering"
+                  value:
+                    cutoff_score: 0.8
+                    enabled: false
+                    error_status: ""
+                    inferdo_api_key: ""
+                - description: "User Profile metadata for community"
+                  type: "profile_metadata"
+                  value:
+                    widgets_enabled: false
+                - description: "Media size upload limit (in Kilobytes) for different file formats"
+                  type: "media_limits"
+                  value:
+                    max_image_size: 5124
+                    max_video_size: 102400
+                - description: "Widgets metadata for the community"
+                  type: "widgets_metadata"
+                  value:
+                    message: false
+                - description: "Community configurations for guest flow"
+                  type: "guest_flow_metadata"
+                  value:
+                    guest_users: "SINGLE"
+
+patch:
+  operationId: updateCommunityConfigurations
+  description: This API is used to update community configurations set for the community.
+  
+  tags:
+    - Community
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+  
+  requestBody:
+    description: Community configuration to be updated
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            type:
+              type: string
+            value:
+              type: object
+              additionalProperties: true
+
+        example:
+          media_limits:
+            value:
+              type: "media_limits"
+              value:
+                max_image_size: 5124
+                max_video_size: 102400
+          feed_metadata:
+            value:
+              type: "feed_metadata"
+              value:
+                comment: "comment"
+          profile_metadata:
+            value:
+              type: "profile_metadata"
+              value:
+                widgets_enabled: false
+          nsfw_filtering:
+            value:
+              type: "nsfw_filtering"
+              value:
+                enabled: false
+                inferdo_api_key: ""
+                cutoff_score: 0.8
+                error_status: ""
+          widgets_metadata:
+            value:
+              type: "widgets_metadata"
+              value:
+                message: false
+          guest_flow_metadata:
+            value:
+              type: "guest_flow_metadata"
+              value:
+                guest_users: "SINGLE"
+
+  responses:
+    '200':
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  community_configurations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        description:
+                          type: string
+                        type:
+                          type: string
+                        value:
+                          type: object
+                          additionalProperties: true
+
+          example:
+            success: true
+            data:
+              community_configuration:
+                description: "Metadata related to feed and its entity"
+                type: "feed_metadata"
+                value:
+                  comment: "comment"
+                  post: "resource"
+              record_updated: true

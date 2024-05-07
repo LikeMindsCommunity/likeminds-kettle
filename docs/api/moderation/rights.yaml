@@ -1,11 +1,9 @@
 get:
-  summary: Fetch Moderation Rights
-
   operationId: getModetationRights
-
   tags:
     - Moderation
 
+  summary: Fetch Moderation Rights
   description: This API fetches Moderation rights for a user
 
   security:
@@ -29,13 +27,11 @@ get:
             $ref: "../../components/schemas/responses/moderation_rights_get.yaml"
 
 put: 
-  summary: Update Moderation Rights
-
   operationId: updateModetationRights
-
   tags:
     - Moderation
 
+  summary: Update Moderation Rights
   description: This API updates Moderation rights for a user
 
   security:
@@ -49,12 +45,14 @@ put:
     - $ref: "../../components/parameters/query/is_cm.yaml"
     - $ref: "../../components/parameters/query/user_id.yaml"
     - $ref: "../../components/parameters/query/uuid.yaml"
+
   requestBody:
     required: true
     content:
       application/json:
         schema:
           $ref: "../../components/schemas/responses/moderation_rights_update.yaml"
+
   responses:
     '200':
       description: OK
@@ -67,15 +65,12 @@ put:
                 type: boolean
 
 
-
 patch: 
-  summary: Modify Moderation Rights
-
   operationId: modifyModetationRights
-
   tags:
     - Moderation
 
+  summary: Modify Moderation Rights
   description: This API modifies Moderation rights for a user
 
   security:
@@ -96,6 +91,7 @@ patch:
       application/json:
         schema:
           $ref: "../../components/schemas/responses/moderation_rights_modify.yaml"
+
   responses:
     "200":
       description: OK

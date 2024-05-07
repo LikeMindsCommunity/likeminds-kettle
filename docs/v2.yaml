@@ -18,6 +18,9 @@ tags:
   - name: Feedroom
   - name: Poll
   - name: Community
+    description: APIs for Community Management
+  - name: Member
+    description: APIs for Community Member Management
   - name: Moderation
   - name: Conversation
   - name: Onboarding Screens
@@ -143,30 +146,6 @@ paths:
     $ref: "./api/community/community.yaml"
   /community/removal_reports:
     $ref: "./api/community/removal.yaml"
-  /community/member:
-    $ref: "./api/community/member/member.yaml"
-  /community/member/leave:
-    $ref: "./api/community/member/leave.yaml"
-  /community/member/state:
-    $ref: "./api/community/member/state.yaml"
-  /community/member/role:
-    $ref: "./api/community/member/role.yaml"
-  /community/member/remove:
-    $ref: "./api/community/member/remove.yaml"
-  /community/member/pending:
-    $ref: "./api/community/member/pending.yaml"
-  /community/member/profile:
-    $ref: "./api/community/member/profile.yaml"
-  /community/member/chatroom:
-    $ref: "./api/community/member/chatroom.yaml"
-  /community/member/channel/status:
-    $ref: "./api/community/member/status.yaml"
-  /community/member/{user_id}/channel:
-    $ref: "./api/community/member/channel.yaml"
-  /community/member/home/meta:
-    $ref: "./api/community/member/meta.yaml"
-  /community/member/join:
-    $ref: "./api/community/member/join.yaml"
   /community/questions:
     $ref: "./api/community/questions.yaml"
   /community/report:
@@ -215,6 +194,31 @@ paths:
      $ref: "./api/community/invite.yaml"
   /community/configurations:
      $ref: "./api/community/configuration.yaml"
+
+  /community/member:
+    $ref: "./api/community/member/member.yaml"
+  /community/member/leave:
+    $ref: "./api/community/member/leave.yaml"
+  /community/member/state:
+    $ref: "./api/community/member/state.yaml"
+  /community/member/role:
+    $ref: "./api/community/member/role.yaml"
+  /community/member/remove:
+    $ref: "./api/community/member/remove.yaml"
+  /community/member/pending:
+    $ref: "./api/community/member/pending.yaml"
+  /community/member/profile:
+    $ref: "./api/community/member/profile.yaml"
+  /community/member/chatroom:
+    $ref: "./api/community/member/chatroom.yaml"
+  /community/member/channel/status:
+    $ref: "./api/community/member/status.yaml"
+  /community/member/{user_id}/channel:
+    $ref: "./api/community/member/channel.yaml"
+  /community/member/home/meta:
+    $ref: "./api/community/member/meta.yaml"
+  /community/member/join:
+    $ref: "./api/community/member/join.yaml"
 
   /moderation/rights:
     $ref: "./api/moderation/rights.yaml"
@@ -279,10 +283,10 @@ paths:
     $ref: "./api/feed/v1/user/save.yaml"
   /feed/user/{user_id}/post:
     $ref: "./api/feed/v1/user/post.yaml"
-  /feed/user/{user_id}/activity:
-    $ref: "./api/feed/v1/user/activity/activity.yaml"
+  /feed/user/{uuid}/activity:
+    $ref: "./api/feed/v1/user/activity/profile_activity.yaml"
   /feed/user/activity:
-    $ref: "./api/feed/v1/user/activity.yaml"
+    $ref: "./api/feed/v1/user/activity/notification_activity.yaml"
   /feed/user/activity/{activity_id}/mark_read:
     $ref: "./api/feed/v1/user/activity/mark_read.yaml"
   /feed/user/activity/unread_count:

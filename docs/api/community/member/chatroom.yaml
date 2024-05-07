@@ -1,8 +1,8 @@
 get:
-  summary: Get Community Member Chatrooms
+  description: Get Community Member Chatrooms
   operationId: getMemberChatrooms
   tags:
-    - Community
+    - Member
   security:
     - bearerAuth: []
   parameters:

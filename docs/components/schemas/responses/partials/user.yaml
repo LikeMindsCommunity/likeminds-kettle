@@ -23,6 +23,8 @@ properties:
         type: string
       uuid:
         type: string
+      widget_id:
+        type: string
   is_guest:
     type: boolean
   is_deleted:

@@ -1,10 +1,10 @@
 put:
-  summary: Join Community
+  description: Join Community
 
   operationId: memberJoinCommunity
 
   tags:
-    - Community
+    - Member
 
   security:
     - bearerAuth: []
