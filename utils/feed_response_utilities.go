@@ -15,8 +15,8 @@ func AppendRepostPostUsersFromFeedDataResponse(dataResponse map[string]interface
 	return userIDs
 }
 
-// AppendPollOptionAddedByUsersFromFeedDataResponse | adds uuids from poll options to API response user uuid list
-func AppendPollOptionAddedByUsersFromFeedDataResponse(dataResponse map[string]interface{}, userIDs []string) []string {
+// AppendPollOptionCreatorsFromFeedDataResponse | adds uuids from poll options to API response user uuid list
+func AppendPollOptionCreatorsFromFeedDataResponse(dataResponse map[string]interface{}, userIDs []string) []string {
 	// fetch options creator uuid
 	if widgets, ok := dataResponse["widgets"]; ok {
 

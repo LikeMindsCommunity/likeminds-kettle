@@ -115,7 +115,7 @@ func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{
 		}
 
 		user_ids = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_ids)
-		user_ids = utils.AppendPollOptionAddedByUsersFromFeedDataResponse(dataResponse, user_ids)
+		user_ids = utils.AppendPollOptionCreatorsFromFeedDataResponse(dataResponse, user_ids)
 
 		// Get userId
 		userId := user.GetRequestingUserId(c)
