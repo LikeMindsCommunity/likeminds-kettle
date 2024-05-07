@@ -1,8 +1,8 @@
 get:
-  summary: Get Community Member Profile
+  description: Get Community Member Profile
   operationId: getMemberProfile
   tags:
-    - Community
+    - Member
   security:
     - bearerAuth: []
   responses:
@@ -16,10 +16,10 @@ get:
 
 
 put:
-  summary: Update Community Member Profile
+  description: Update Community Member Profile
   operationId: updateMemberProfile
   tags:
-    - Community
+    - Member
   security:
     - bearerAuth: []
   parameters:

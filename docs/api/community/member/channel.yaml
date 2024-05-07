@@ -1,8 +1,8 @@
 get:
-  summary: Get Community Member Channels
+  description: Get Community Member Channels
   operationId: getCommunityMemberChannels
   tags:
-    - Community
+    - Member
   security:
     - bearerAuth: []
   parameters:

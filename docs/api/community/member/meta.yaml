@@ -1,10 +1,10 @@
 get:
-  summary: Get Community Member Home Meta
+  description: Get Community Member Home Meta
 
   operationId: getCommunityMemberHomeMeta
 
   tags:
-    - Community
+    - Member
 
   security:
     - bearerAuth: []

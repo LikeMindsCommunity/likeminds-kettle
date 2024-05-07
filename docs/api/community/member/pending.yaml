@@ -1,8 +1,8 @@
 get:
-  summary: Fetch Pending Community Members
+  description: Fetch Pending Community Members
   operationId: fetchPendingMembers
   tags:
-    - Community
+    - Member
   security:
     - bearerAuth: []
   parameters:

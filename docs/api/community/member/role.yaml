@@ -1,8 +1,8 @@
 get:
-  summary: Get Community Member Role and Rights
+  description: Get Community Member Role and Rights
   operationId: getCommunityMemberRole
   tags:
-    - Community
+    - Member
   security:
     - bearerAuth: []
   parameters:

@@ -1,8 +1,8 @@
 get:
-  summary: Get Community Member Channel Status
+  description: Get Community Member Channel Status
   operationId: getCommunityMemberChannelStatus
   tags:
-    - Community
+    - Member
   security:
     - bearerAuth: []
   parameters:

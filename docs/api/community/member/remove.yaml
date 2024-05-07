@@ -1,8 +1,8 @@
 delete:
-  summary: Remove Community Members
+  description: Remove Community Members
   operationId: removeCommunityMembers
   tags:
-    - Community
+    - Member
   security:
     - bearerAuth: []
   parameters:
