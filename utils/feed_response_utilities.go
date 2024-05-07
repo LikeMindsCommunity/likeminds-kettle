@@ -24,15 +24,17 @@ func AppendPollOptionCreatorsFromFeedDataResponse(dataResponse map[string]interf
 		for _, widgetData := range widgetsData {
 
 			// extract _lm_meta from each widget object
-			if lmMeta, ok := widgetData.(map[string]interface{})["_lm_meta"]; ok {
+			if lmMeta, ok := widgetData.(map[string]interface{})["_lm_meta"]; ok && lmMeta != nil {
 
 				// extract options array from _lm_meta object
-				if options, ok := lmMeta.(map[string]interface{})["options"].([]interface{}); ok {
-					for _, option := range options {
+				if lmMetaOptions, ok := lmMeta.(map[string]interface{})["options"]; ok {
+					if options, ok := lmMetaOptions.([]interface{}); ok {
+						for _, option := range options {
 
-						// extract option creator uuid from each option
-						if uuid, ok := option.(map[string]interface{})["uuid"]; ok {
-							userIDs = append(userIDs, uuid.(string))
+							// extract option creator uuid from each option
+							if uuid, ok := option.(map[string]interface{})["uuid"]; ok {
+								userIDs = append(userIDs, uuid.(string))
+							}
 						}
 					}
 				}
