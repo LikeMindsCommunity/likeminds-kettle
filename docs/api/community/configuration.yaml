@@ -1,10 +1,11 @@
 get:
-  operationId: getCommunityConfigurations
-  description: This API fetches community configurations set for the community.
 
+  operationId: getCommunityConfigurations
   tags:
     - Community
 
+  summary: Get Community Configurations
+  description: This API fetches community configurations set for the community.
   security:
     - bearerAuth: []
 

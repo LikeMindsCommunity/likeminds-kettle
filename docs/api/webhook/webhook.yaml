@@ -15,7 +15,7 @@ get:
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/responses/webhooksGet.yaml"
+            $ref: "../../components/schemas/responses/get_webhooks.yaml"
           example:
             success: true
             data:
@@ -69,7 +69,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/responses/webhookEnable.yaml"
+            $ref: "../../components/schemas/responses/enable_webhook.yaml"
           example:
             success: true
             data:

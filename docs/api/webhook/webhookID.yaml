@@ -16,7 +16,7 @@ get:
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/responses/webhookGet.yaml"
+            $ref: "../../components/schemas/responses/get_webhook.yaml"
 
 
 patch:
@@ -43,7 +43,7 @@ patch:
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/responses/webhookEdit.yaml"
+            $ref: "../../components/schemas/responses/edit_webhook.yaml"
 
 
 delete:
