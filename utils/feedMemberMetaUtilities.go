@@ -194,6 +194,7 @@ func GetUsersMetaFromFeedData(redisClient *redis.Client, headers map[string]inte
 	}
 
 	user_unique_ids = AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_unique_ids)
+	user_unique_ids = AppendPollOptionCreatorsFromFeedDataResponse(dataResponse, user_unique_ids)
 
 	// Fetch user data for given user_unique_ids
 	user_data, err := FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_unique_ids)

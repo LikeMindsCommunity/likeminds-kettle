@@ -85,6 +85,7 @@ func FetchUserCreatedPosts(c *gin.Context) {
 		}
 
 		user_ids = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_ids)
+		user_ids = utils.AppendPollOptionCreatorsFromFeedDataResponse(dataResponse, user_ids)
 
 		redisClient := utils.GetRedisClientFromContext(c)
 
