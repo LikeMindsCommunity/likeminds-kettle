@@ -1,0 +1,146 @@
+get:
+
+  operationId: getUserActivity
+  tags:
+    - Feed - V1
+
+  summary: Retrieve user profile activity
+  description: This API fetches user profile activity for a given user.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../../components/parameters/path/uuid.yaml"
+    - $ref: "../../../../../components/parameters/query/page.yaml"
+    - $ref: "../../../../../components/parameters/query/pageSize.yaml"
+
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  activities:
+                    type: array
+                    items:
+                      $ref: '../../../../../components/schemas/responses/partials/activity.yaml'
+                  topics:
+                    type: object
+                  users:
+                    type: array
+                    items:
+                      $ref: '../../../../../components/schemas/responses/partials/user.yaml'
+                  widgets: 
+                    type: array
+                    items:
+                      $ref: "../../../../../components/schemas/responses/partials/widget.yaml"
+          example:
+            value:
+              success: true
+              data:
+                activities:
+                  - _id: "64c8ec83b316b8c4b7d799b3"
+                    action: 7
+                    action_by: ["aea7e1cb-87d9-43b5-8e4e-2f58f1d3174c"]
+                    action_on: "7b37d6ea-ba9c-42eb-b2ad-7b1711186eb8"
+                    activity_entity_data:
+                      _id: "65dc3a676032b27a96863507"
+                      attachments: []
+                      comments_count: 0
+                      community_id: 50524
+                      created_at: 1708931687812
+                      is_edited: false
+                      is_liked: false
+                      level: 0
+                      likes_count: 0
+                      menu_items:
+                        - id: 6
+                          title: "Delete"
+                      post_data:
+                        _id: "64c7976cda0cb0c93ab206e7"
+                        attachments: []
+                        comment_ids: null
+                        comments_count: 6
+                        community_id: 50524
+                        created_at: 1690802028863
+                        heading: ""
+                        is_edited: true
+                        is_liked: false
+                        is_pending_post: false
+                        is_pinned: false
+                        is_repost: false
+                        is_reposted_by_user: false
+                        is_saved: false
+                        likes_count: 2
+                        menu_items:
+                          - id: 4
+                            title: "Report"
+                        post_status: ""
+                        repost_count: 0
+                        temp_id: null
+                        text: "Heyy jajaiaj jeejje"
+                        topics: null
+                        updated_at: 1713277085948
+                        user_id: "7b37d6ea-ba9c-42eb-b2ad-7b1711186eb8"
+                        uuid: "7b37d6ea-ba9c-42eb-b2ad-7b1711186eb8"
+                      post_id: "64c7976cda0cb0c93ab206e7"
+                      replies: []
+                      temp_id: null
+                      text: "also comment on post"
+                      updated_at: 1708931687812
+                      user_id: "aea7e1cb-87d9-43b5-8e4e-2f58f1d3174c"
+                      uuid: "aea7e1cb-87d9-43b5-8e4e-2f58f1d3174c"
+                    activity_text: "<<user_name|route://user_profile/aea7e1cb-87d9-43b5-8e4e-2f58f1d3174c>> left a comment on this Macbook"
+                    created_at: 1708931687820
+                    cta: "route://post_detail?post_id=64c7976cda0cb0c93ab206e7&comment_id=65dc3a676032b27a96863507"
+                    entity_id: "65dc3a676032b27a96863507"
+                    entity_owner_id: "aea7e1cb-87d9-43b5-8e4e-2f58f1d3174c"
+                    entity_type: 1
+                    is_read: false
+                    updated_at: 1708931687820
+                    uuid: "aea7e1cb-87d9-43b5-8e4e-2f58f1d3174c"
+                topics: {}
+                users:
+                  "7b37d6ea-ba9c-42eb-b2ad-7b1711186eb8":
+                    custom_title: ""
+                    id: 89438
+                    image_url: ""
+                    is_deleted: false
+                    is_guest: false
+                    name: "shubh api 5"
+                    question_answers: null
+                    sdk_client_info:
+                      community: 50524
+                      user: 89438
+                      user_unique_id: "shubh-api-5"
+                      uuid: "shubh-api-5"
+                      widget_id: ""
+                    state: 4
+                    user_unique_id: "7b37d6ea-ba9c-42eb-b2ad-7b1711186eb8"
+                    uuid: "7b37d6ea-ba9c-42eb-b2ad-7b1711186eb8"
+                  "aea7e1cb-87d9-43b5-8e4e-2f58f1d3174c":
+                    custom_title: "Community Manager"
+                    id: 89024
+                    image_url: "https://static.vecteezy.com/packs/media/components/home/unlock-vecteezy/img/find-your-path-photo-88c20e3c9e9fba9c4627ed61865c6a13.jpg"
+                    is_deleted: false
+                    is_guest: false
+                    name: "user_name"
+                    question_answers: null
+                    sdk_client_info:
+                      community: 50524
+                      user: 89024
+                      user_unique_id: "user_unique_id"
+                      uuid: "user_unique_id"
+                      widget_id: ""
+                    state: 1
+                    user_unique_id: "aea7e1cb-87d9-43b5-8e4e-2f58f1d3174c"
+                    uuid: "aea7e1cb-87d9-43b5-8e4e-2f58f1d3174c"
+                widgets: {}

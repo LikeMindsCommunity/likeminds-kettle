@@ -283,10 +283,10 @@ paths:
     $ref: "./api/feed/v1/user/save.yaml"
   /feed/user/{user_id}/post:
     $ref: "./api/feed/v1/user/post.yaml"
-  /feed/user/{user_id}/activity:
-    $ref: "./api/feed/v1/user/activity/activity.yaml"
+  /feed/user/{uuid}/activity:
+    $ref: "./api/feed/v1/user/activity/profile_activity.yaml"
   /feed/user/activity:
-    $ref: "./api/feed/v1/user/activity.yaml"
+    $ref: "./api/feed/v1/user/activity/notification_activity.yaml"
   /feed/user/activity/{activity_id}/mark_read:
     $ref: "./api/feed/v1/user/activity/mark_read.yaml"
   /feed/user/activity/unread_count:

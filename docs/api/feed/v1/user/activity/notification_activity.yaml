@@ -1,0 +1,23 @@
+get:
+
+  operationId: getUserActivityFeed
+  tags:
+    - Feed - V1
+
+  summary: Get User Notification Feed
+  description: This API fetches user notification feed for the logged in given user.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../../components/parameters/query/page.yaml"
+    - $ref: "../../../../../components/parameters/query/pageSize.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../../components/schemas/responses/feed_activity_get.yaml"

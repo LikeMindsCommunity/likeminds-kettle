@@ -1,0 +1,32 @@
+type: object
+properties:
+  _id:
+    type: string
+  action:
+    type: integer
+  action_by:
+    type: array
+    items:
+      type: string
+  action_on:
+    type: string
+  activity_entity_data:
+    type: object
+  activity_text:
+    type: string
+  created_at:
+    type: integer
+  cta:
+    type: string
+  entity_id:
+    type: string
+  entity_owner_id:
+    type: string
+  entity_type:
+    type: integer
+  is_read:
+    type: boolean
+  updated_at:
+    type: integer
+  uuid:
+    type: string
