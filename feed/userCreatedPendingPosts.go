@@ -9,12 +9,17 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-// FetchUserCreatedPost is used to fetch posts created by a user
-func FetchUserCreatedPosts(c *gin.Context) {
+// FetchUserCreatedPendingPost is used to fetch pending posts created by a user
+func FetchUserCreatedPendingPosts(c *gin.Context) {
 	//Authorize User
 	userId := user.GetRequestingUserId(c)
 	if userId == "" {
 		return
+	}
+
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
 	}
 
 	headers := utils.CreateHeaders(c, userId)
@@ -28,9 +33,17 @@ func FetchUserCreatedPosts(c *gin.Context) {
 	//Access query params and url generation
 	user_id := c.Param("user_id")
 
+	//Get user_unique_id from user_id internally
+	user_id, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), user_id)
+	if err != nil {
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
 	//Fetch member access to view post
 	success, response := user.FetchMemberAccess(c, VIEW_POST_ACTION, userId)
 	if !success {
+		utils.MemberAccessFailError(c)
 		return
 	}
 
@@ -40,21 +53,16 @@ func FetchUserCreatedPosts(c *gin.Context) {
 		return
 	}
 
-	//Param updatiion
-	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
-
-	//Get user_unique_id from user_id internally
-	user_id, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), user_id)
-	if err != nil {
-		utils.GeneralAPIError(c, err.Error())
+	if !response.IsCm && userId != user_id {
+		utils.MemberAccessFailError(c)
 		return
 	}
 
 	//Url generation
-	UserCreatedPostsEndPoint := fmt.Sprintf(FetchUserCreatedPostsEndPoint, user_id)
+	userCreatedPendingPostsEndPoint := fmt.Sprintf(FetchUserCreatedPendingPostsEndPoint, user_id)
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, UserCreatedPostsEndPoint, utils.GETRequest, headers, params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, userCreatedPendingPostsEndPoint, utils.GETRequest, headers, params, nil)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
@@ -64,18 +72,17 @@ func FetchUserCreatedPosts(c *gin.Context) {
 
 	//If flow succeeds
 	dataResponse := apiCR.Response
+	dataResponse = populatePendingPostsDataResponse(c, dataResponse)
+
+	//Send response
+	utils.GenerateResponse(c, dataResponse, true)
+}
+
+// Internal method to populate users data
+func populatePendingPostsDataResponse(c *gin.Context, dataResponse map[string]interface{}) map[string]interface{} {
 	if value, ok := dataResponse["posts"]; ok {
 		posts := value.([]interface{})
 		user_ids := []string{}
-
-		if value, ok := dataResponse["filtered_comments"]; ok {
-			if commentData, ok := value.(map[string]interface{}); ok {
-
-				for _, val := range commentData {
-					posts = append(posts, val)
-				}
-			}
-		}
 
 		//Fetch posts user id
 		for _, post_data := range posts {
@@ -84,16 +91,15 @@ func FetchUserCreatedPosts(c *gin.Context) {
 			}
 		}
 
-		user_ids = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_ids)
-		user_ids = utils.AppendPollOptionCreatorsFromFeedDataResponse(dataResponse, user_ids)
-
+		userId := user.GetRequestingUserId(c)
 		redisClient := utils.GetRedisClientFromContext(c)
+		headers := utils.CreateHeaders(c, userId)
 
 		//Fetch user data for given user_unique_ids
 		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_ids)
 		if err != nil {
 			utils.GeneralAPIError(c, utils.ErrorFetchingUserData)
-			return
+			return nil
 		}
 
 		//Update user data in dataResponse
@@ -103,6 +109,5 @@ func FetchUserCreatedPosts(c *gin.Context) {
 		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
 	}
 
-	//Send response
-	utils.GenerateResponse(c, dataResponse, true)
+	return dataResponse
 }

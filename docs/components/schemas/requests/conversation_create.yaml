@@ -1,7 +1,6 @@
 type: object
 properties:
   chatroom_id:
-    required: true
     type: integer
     description: Chatroom ID in which conversation posted.
   text:

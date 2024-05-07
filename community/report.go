@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/nateshr/likeminds-authentication/constants"
 	log "github.com/nateshr/likeminds-authentication/logging"
+	"github.com/nateshr/likeminds-authentication/requests"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/feed"
@@ -37,11 +39,6 @@ type PushReportV1Request struct {
 
 type CloseReportRequest struct {
 	ReportID int `json:"report_id" binding:"required"`
-}
-
-type CloseReportsNewRequest struct {
-	ReportIds []int  `json:"report_ids" binding:"required"`
-	Status    string `json:"status,omitempty"`
 }
 
 func parsePushReportRequest(c *gin.Context) (*PushReportRequest, error) {
@@ -79,9 +76,9 @@ func parseCloseReportRequest(c *gin.Context) (*CloseReportRequest, error) {
 	return &crr, nil
 }
 
-func parseCloseReportsNewRequest(c *gin.Context) (*CloseReportsNewRequest, error) {
+func parseCloseReportsNewRequest(c *gin.Context) (*requests.CloseReportsNewRequest, error) {
 	//POST body params
-	var crr CloseReportsNewRequest
+	var crr requests.CloseReportsNewRequest
 
 	if err := c.ShouldBindJSON(&crr); err != nil {
 		return nil, err
@@ -253,7 +250,7 @@ func pushReportsInternalV1(c *gin.Context, userId string) {
 	}
 
 	// Send Request
-	utils.SendRequest(c, utils.CoreService, CommunityReportV1EndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, pushReportV1Request)
+	utils.SendRequest(c, utils.CoreService, constants.CommunityReportV1EndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, pushReportV1Request)
 }
 
 // Internal method to close reports Old
@@ -283,7 +280,7 @@ func updateReportsInternal(c *gin.Context, userId string) {
 	}
 
 	//Send Request to api/community/report/close
-	utils.SendRequest(c, utils.CoreService, CommunityReportV1EndPoint, utils.PATCHRequest, utils.CreateHeaders(c, userId), nil, crnr)
+	utils.SendRequest(c, utils.CoreService, constants.CommunityReportV1EndPoint, utils.PATCHRequest, utils.CreateHeaders(c, userId), nil, crnr)
 }
 
 // Internal method to fetch posts and comments data for the reports

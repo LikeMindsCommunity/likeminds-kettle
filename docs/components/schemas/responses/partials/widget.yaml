@@ -1,0 +1,24 @@
+type: object
+description: Widget object
+properties:
+  _id:
+    type: string
+    description: Widget ID
+  _lm_meta:
+    type: object
+    description: Internal LM meta
+  created_at:
+    type: integer
+    description: Widget creation timestamp
+  updated_at:
+    type: integer
+    description: Widget update timestamp
+  parent_entity_id:
+    type: string
+    description: Parent entity ID
+  parent_entity_type:
+    type: string
+    description: Parent entity type
+  metadata:
+    type: object
+    description: Widget metadata

@@ -65,7 +65,9 @@ func getPollVotesInternal(c *gin.Context, userId string, endPoint string) {
 
 	//Params to be sent in the /poll/<poll_id>/vote request
 	params := map[string]string{
-		ParamVotes: c.Query(ParamVotes),
+		ParamVotes:         c.Query(ParamVotes),
+		feed.ParamPage:     c.Query(feed.ParamPage),
+		feed.ParamPageSize: c.Query(feed.ParamPageSize),
 	}
 
 	//Fetch member access to view poll votes

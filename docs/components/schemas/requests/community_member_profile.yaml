@@ -11,3 +11,10 @@ properties:
           type: string
   image_url:
     type: string
+    description: User's image URL
+  name:
+    type: string
+    description: User's name
+  metadata:
+    type: object
+    description: Widget metadata for the user

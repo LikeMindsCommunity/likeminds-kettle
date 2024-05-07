@@ -4,4 +4,6 @@ package token
 const (
 	PROD_AUTH_TOKEN_EXPIRY = 15
 	BETA_AUTH_TOKEN_EXPIRY = 60
+
+	REFRESH_TOKEN_EXPIRY = 744 // 31 days
 )

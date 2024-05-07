@@ -1,13 +1,10 @@
 get:
-  summary: Fetch Chatrooms of a Community
-
   operationId: getChatrooms
-
   tags:
     - Chatroom
 
-  description: |
-    This API fetches chatrooms of a community or a single chatroom(if chatroom_id is passed in query parameters)
+  summary: Fetch Chatrooms of a Community
+  description: This API fetches chatrooms of a community or a single chatroom (if chatroom_id is passed in query parameters)
 
   security:
     - bearerAuth: []
@@ -22,16 +19,32 @@ get:
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/responses/partials/chatroom.yaml"
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  chatroom:
+                    $ref: "../../components/schemas/responses/partials/chatroom.yaml"
+                  chatrooms:
+                    type: array
+                    items:
+                      $ref: "../../components/schemas/responses/partials/chatroom.yaml"
+                  widgets:
+                    type: array
+                    items:
+                      $ref: "../../components/schemas/responses/partials/widget.yaml"
 
 
 post:
-  summary: Create Chatroom
-
   operationId: createChatroom
-
   tags:
     - Chatroom
+  
+  summary: Create Chatroom
+  description: This API creates a chatroom in a community (Admin only)
 
   security:
     - bearerAuth: []
@@ -53,12 +66,13 @@ post:
 
 
 put:
-  summary: Update Chatroom
 
   operationId: updateChatroom
-
   tags:
     - Chatroom
+
+  summary: Update Chatroom
+  description: This API updates a chatroom in a community (Admin only)
 
   security:
     - bearerAuth: []
@@ -83,12 +97,12 @@ put:
 
 
 delete:
-  summary: Delete Chatroom
-
   operationId: deleteChatroom
-
   tags:
     - Chatroom
+
+  summary: Delete Chatroom
+  description: This API deletes a chatroom in a community (Admin only)
 
   security:
     - bearerAuth: []

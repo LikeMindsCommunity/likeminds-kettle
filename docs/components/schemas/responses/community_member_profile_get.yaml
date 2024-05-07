@@ -19,43 +19,9 @@ properties:
           properties:
             question:
               type: object
-              properties:
-                can_add_options:
-                  type: boolean
-                community:
-                  type: integer
-                field:
-                  type: boolean
-                help_text:
-                  type: string
-                id:
-                  type: integer
-                is_compulsory:
-                  type: boolean
-                is_hidden:
-                  type: boolean
-                optional:
-                  type: boolean
-                question_title:
-                  type: string
-                rank:
-                  type: integer
-                remove_state:
-                  type: boolean
-                state:
-                  type: integer
-                value:
-                  type: string
             question_answer:
               type: object
-              properties:
-                answer:
-                  type: string
-                community_id:
-                  type: integer
-                image_url:
-                  type: string
-                member_id:
-                  type: integer
-                question_id:
-                  type: integer
+      widgets: 
+        type: array
+        items:
+          $ref: "./partials/widget.yaml"

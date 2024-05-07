@@ -14,3 +14,33 @@ func AppendRepostPostUsersFromFeedDataResponse(dataResponse map[string]interface
 
 	return userIDs
 }
+
+// AppendPollOptionCreatorsFromFeedDataResponse | adds uuids from poll options to API response user uuid list
+func AppendPollOptionCreatorsFromFeedDataResponse(dataResponse map[string]interface{}, userIDs []string) []string {
+	// fetch options creator uuid
+	if widgets, ok := dataResponse["widgets"]; ok {
+
+		widgetsData := widgets.(map[string]interface{})
+		for _, widgetData := range widgetsData {
+
+			// extract _lm_meta from each widget object
+			if lmMeta, ok := widgetData.(map[string]interface{})["_lm_meta"]; ok && lmMeta != nil {
+
+				// extract options array from _lm_meta object
+				if lmMetaOptions, ok := lmMeta.(map[string]interface{})["options"]; ok {
+					if options, ok := lmMetaOptions.([]interface{}); ok {
+						for _, option := range options {
+
+							// extract option creator uuid from each option
+							if uuid, ok := option.(map[string]interface{})["uuid"]; ok {
+								userIDs = append(userIDs, uuid.(string))
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return userIDs
+}
