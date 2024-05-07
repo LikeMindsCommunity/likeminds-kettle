@@ -1,10 +1,17 @@
 get:
   description: Get Community Member Profile
   operationId: getMemberProfile
+
   tags:
     - Member
+
   security:
     - bearerAuth: []
+  
+  parameters:
+    - $ref: "../../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../../components/parameters/query/uuid.yaml"
+
   responses:
     "200":
       description: OK
@@ -14,23 +21,27 @@ get:
             $ref: "../../../components/schemas/responses/community_member_profile_get.yaml"
 
 
-
 put:
   description: Update Community Member Profile
   operationId: updateMemberProfile
+
   tags:
     - Member
+
   security:
     - bearerAuth: []
+
   parameters:
     - $ref: "../../../components/parameters/headers/platformType.yaml"
     - $ref: "../../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../../components/parameters/headers/platformCode.yaml"
+
   requestBody:
     content:
       application/json:
         schema:
           $ref: "../../../components/schemas/requests/community_member_profile.yaml"
+          
   responses:
     "200":
       description: OK
