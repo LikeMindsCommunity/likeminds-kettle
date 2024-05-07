@@ -1,9 +1,10 @@
 get:
-  description: Get Community Member Profile
   operationId: getMemberProfile
-
   tags:
     - Member
+
+  summary: Get Community Member Profile
+  description: This API fetches the profile of a community member
 
   security:
     - bearerAuth: []
@@ -22,11 +23,13 @@ get:
 
 
 put:
-  description: Update Community Member Profile
-  operationId: updateMemberProfile
 
+  operationId: updateMemberProfile
   tags:
     - Member
+
+  summary: Update Community Member Profile
+  description: This API updates the profile of a community member such as name, image, metadata, etc.
 
   security:
     - bearerAuth: []

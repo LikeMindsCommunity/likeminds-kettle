@@ -2,9 +2,10 @@ get:
   operationId: getCommunityMembers
   tags:
     - Member
+
   summary: Fetch Community Members
-  description: |-
-    This API fetches members of a community
+  description: This API fetches members of a community
+
   parameters:
     - $ref: "../../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../../components/parameters/headers/versionCode.yaml"
@@ -31,9 +32,10 @@ post:
   operationId: createCommunityMember
   tags:
       - Member
+
   summary: Create Community Members
-  description: |-
-    This API create members of a community
+  description: This API create members in a community
+
   parameters:
     - $ref: "../../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../../components/parameters/headers/versionCode.yaml"
@@ -57,9 +59,10 @@ put:
   operationId: updateCommunityMember
   tags:
         - Member
+
   summary: Update Community Members
-  description: |-
-    This API updates members of a community
+  description: This API updates members of a community
+
   parameters:
     - $ref: "../../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../../components/parameters/headers/versionCode.yaml"
@@ -81,10 +84,13 @@ put:
 
 
 delete:
-  description: Remove Members from Community
   operationId: removeMembers
   tags:
     - Member
+
+  summary: Remove Members from Community
+  description: This API is used to remove members from a community. (Admin only API)
+
   security:
     - bearerAuth: []
   parameters:
