@@ -51,7 +51,7 @@ func Login(c *gin.Context) {
 	userIsGuest := userObject[ResponseUserIsGuest].(bool)
 
 	//Create login and refresh token
-	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, "", token.BETA_AUTH_TOKEN_EXPIRY, userIsGuest)
+	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, "", token.BETA_AUTH_TOKEN_EXPIRY, -1, userIsGuest)
 	if err != nil {
 		//If token creation fails
 		utils.GeneralAPIError(c, err.Error())

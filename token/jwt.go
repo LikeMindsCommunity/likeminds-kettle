@@ -66,12 +66,13 @@ func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode strin
 }
 
 // CreateLTMAndRTM is used to create login and refresh token meta
-func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int64, isGuestUser bool) (*constants.LoginTokenMeta, *constants.RefreshTokenMeta, error) {
+func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int64, rtm_expiry_beta int64, isGuestUser bool) (*constants.LoginTokenMeta, *constants.RefreshTokenMeta, error) {
 
 	isBeta := environment.GoDotEnvVariable("BETA_ENVIRONMENT")
 
 	// Setting LTM token expiry to 15 minutes for Prod
 	LTMTokenExpiryTime := time.Duration(PROD_AUTH_TOKEN_EXPIRY)
+	RTMTokenExpiryTime := time.Duration(time.Hour * REFRESH_TOKEN_EXPIRY)
 
 	if isBeta == "true" {
 
@@ -81,6 +82,10 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 		}
 
 		LTMTokenExpiryTime = time.Duration(token_expiry_beta)
+
+		if rtm_expiry_beta > 0 {
+			RTMTokenExpiryTime = time.Duration(time.Minute * time.Duration(rtm_expiry_beta))
+		}
 	}
 
 	ltm := &constants.LoginTokenMeta{
@@ -90,7 +95,7 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 
 	rtm := &constants.RefreshTokenMeta{
 		RefreshUuid:         uuid.NewV4().String(),
-		RefreshTokenExpires: time.Now().Add(time.Hour * REFRESH_TOKEN_EXPIRY).Unix(),
+		RefreshTokenExpires: time.Now().Add(RTMTokenExpiryTime).Unix(),
 	}
 
 	var err error
