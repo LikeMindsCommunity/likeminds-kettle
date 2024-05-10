@@ -12,6 +12,13 @@ import (
 // Refresh to generate new LTM and RTM tokens
 func Refresh(c *gin.Context) {
 
+	request := struct {
+		RTMTokenExpiryBeta int64 `json:"token_expiry_beta,omitempty"`
+	}{}
+
+	//Parse request body
+	c.BindJSON(&request)
+
 	//Check if request has RTM token or not
 	currentRTM, ok := c.MustGet(constants.ParamRTM).(*constants.RefreshTokenMeta)
 	if !ok {
@@ -19,9 +26,14 @@ func Refresh(c *gin.Context) {
 		return
 	}
 
+	ltmExpiry := token.BETA_AUTH_TOKEN_EXPIRY
+	if request.RTMTokenExpiryBeta > 0 {
+		ltmExpiry = int(request.RTMTokenExpiryBeta)
+	}
+
 	//Create login and refresh token meta from ltm
 	ltm, _, err := token.CreateLTMAndRTM(currentRTM.UserUniqueID, currentRTM.ApiKey,
-		token.BETA_AUTH_TOKEN_EXPIRY, -1, currentRTM.IsGuest)
+		int64(ltmExpiry), -1, currentRTM.IsGuest)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, utils.Response{
 			Success:      false,
