@@ -1,12 +1,20 @@
 get:
-  summary: Get Conversations
   operationId: getConversations
   tags:
     - Conversation
+
+  summary: Get Conversations
+  description: This API enables you to get all conversations (messages) inside a chatroom.
+
   security:
     - bearerAuth: []
+
   parameters:
-    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../components/parameters/query/chatroomId.yaml"
+    - $ref: "../../components/parameters/query/conversationId.yaml"
+    - $ref: "../../components/parameters/query/scroll_direction.yaml"
+    - $ref: "../../components/parameters/query/paginate_by.yaml"
+
   responses:
     "200":
       description: OK

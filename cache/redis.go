@@ -108,6 +108,18 @@ func Increment(client *redis.Client, key string) error {
 	return nil
 }
 
+// Expire | set the expiration time for the key
+func ExpireAt(client *redis.Client, key string, expiration time.Time) error {
+	err := client.ExpireAt(key, expiration).Err()
+	if err != nil {
+		logging.Error(fmt.Sprint("cache expiry set failed for key: ", key, " | err: ", err.Error()))
+		return err
+	}
+
+	logging.Info(fmt.Sprintf("cache expiry set for key: %s with expiry: %v", key, expiration.String()))
+	return nil
+}
+
 // IsLTMBlacklisted checks if token is blacklisted or not => user is logged out or not
 func IsLTMBlacklisted(client *redis.Client, ltm *constants.LoginTokenMeta) bool {
 	userUniqueID, _ := client.Get(ltm.AccessUuid).Result()
