@@ -1,0 +1,9 @@
+name: scroll_direction
+in: query
+description: Scroll direction for conversation pagination
+schema:
+  type: number
+  default: 1
+  enum:
+    - 0
+    - 1
