@@ -9,15 +9,19 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
+type RefreshRequest struct {
+	TokenExpiryBeta int `json:"token_expiry_beta,omitempty"`
+}
+
 // Refresh to generate new LTM and RTM tokens
 func Refresh(c *gin.Context) {
 
-	request := struct {
-		RTMTokenExpiryBeta int64 `json:"token_expiry_beta,omitempty"`
-	}{}
-
-	//Parse request body
-	c.BindJSON(&request)
+	//Parse Request
+	request := RefreshRequest{}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
 
 	//Check if request has RTM token or not
 	currentRTM, ok := c.MustGet(constants.ParamRTM).(*constants.RefreshTokenMeta)
@@ -27,13 +31,12 @@ func Refresh(c *gin.Context) {
 	}
 
 	ltmExpiry := token.BETA_AUTH_TOKEN_EXPIRY
-	if request.RTMTokenExpiryBeta > 0 {
-		ltmExpiry = int(request.RTMTokenExpiryBeta)
+	if request.TokenExpiryBeta > 0 {
+		ltmExpiry = request.TokenExpiryBeta
 	}
 
 	//Create login and refresh token meta from ltm
-	ltm, _, err := token.CreateLTMAndRTM(currentRTM.UserUniqueID, currentRTM.ApiKey,
-		int64(ltmExpiry), -1, currentRTM.IsGuest)
+	ltm, _, err := token.CreateLTMAndRTM(currentRTM.UserUniqueID, currentRTM.ApiKey, int64(ltmExpiry), -1, currentRTM.IsGuest)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, utils.Response{
 			Success:      false,
