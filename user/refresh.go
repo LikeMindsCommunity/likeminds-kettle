@@ -1,6 +1,7 @@
 package user
 
 import (
+	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,9 +19,11 @@ func Refresh(c *gin.Context) {
 
 	//Parse Request
 	request := RefreshRequest{}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		utils.GeneralAPIError(c, err.Error())
-		return
+	if err := c.BindJSON(&request); err != nil {
+		if err != io.EOF { // ignore EOF errors
+			utils.GeneralAPIError(c, err.Error())
+			return
+		}
 	}
 
 	//Check if request has RTM token or not
