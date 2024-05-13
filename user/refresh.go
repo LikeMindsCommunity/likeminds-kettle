@@ -9,8 +9,19 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
+type RefreshRequest struct {
+	TokenExpiryBeta int `json:"token_expiry_beta,omitempty"`
+}
+
 // Refresh to generate new LTM and RTM tokens
 func Refresh(c *gin.Context) {
+
+	//Parse Request
+	request := RefreshRequest{}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
 
 	//Check if request has RTM token or not
 	currentRTM, ok := c.MustGet(constants.ParamRTM).(*constants.RefreshTokenMeta)
@@ -19,9 +30,13 @@ func Refresh(c *gin.Context) {
 		return
 	}
 
+	ltmExpiry := token.BETA_AUTH_TOKEN_EXPIRY
+	if request.TokenExpiryBeta > 0 {
+		ltmExpiry = request.TokenExpiryBeta
+	}
+
 	//Create login and refresh token meta from ltm
-	ltm, _, err := token.CreateLTMAndRTM(currentRTM.UserUniqueID, currentRTM.ApiKey,
-		token.BETA_AUTH_TOKEN_EXPIRY, currentRTM.IsGuest)
+	ltm, _, err := token.CreateLTMAndRTM(currentRTM.UserUniqueID, currentRTM.ApiKey, int64(ltmExpiry), -1, currentRTM.IsGuest)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, utils.Response{
 			Success:      false,
