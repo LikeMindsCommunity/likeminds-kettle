@@ -1,0 +1,6 @@
+name: paginate_by
+in: query
+description: Number of items to return per page
+schema:
+  type: number
+  default: 20
