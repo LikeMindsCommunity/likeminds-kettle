@@ -28,6 +28,7 @@ func InitRedis() *redis.Client {
 
 // Get | get the key object value from cache storage
 func Get(client *redis.Client, key string) (string, bool, error) {
+	logging.Error(fmt.Sprint("ERROR: ", key))
 	val, err := client.Get(key).Result()
 	if err == redis.Nil {
 		logging.Info(fmt.Sprint("cache miss for key: ", key))

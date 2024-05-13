@@ -55,7 +55,7 @@ func getCommunityIdAgainstApiKeyFromCache(redisClient *redis.Client, apiKey stri
 	}
 
 	if !exists {
-		logging.Error(fmt.Sprintf("community_id not found in cache for api-key: %s", apiKey))
+		logging.Info(fmt.Sprintf("community_id not found in cache for api-key: %s", apiKey))
 		return communityId
 	}
 

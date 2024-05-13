@@ -1,7 +1,7 @@
 package user
 
 import (
-	"io"
+	"encoding/json"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,14 +17,10 @@ type RefreshRequest struct {
 // Refresh to generate new LTM and RTM tokens
 func Refresh(c *gin.Context) {
 
-	//Parse Request
+	// Parse Request
 	request := RefreshRequest{}
-	if err := c.BindJSON(&request); err != nil {
-		if err != io.EOF { // ignore EOF errors
-			utils.GeneralAPIError(c, err.Error())
-			return
-		}
-	}
+	jsonData, _ := c.GetRawData()
+	json.Unmarshal(jsonData, &request)
 
 	//Check if request has RTM token or not
 	currentRTM, ok := c.MustGet(constants.ParamRTM).(*constants.RefreshTokenMeta)
