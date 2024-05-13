@@ -101,6 +101,7 @@ func SetMultipleValues(client *redis.Client, values ...interface{}) error {
 func Increment(client *redis.Client, key string) error {
 	err := client.Incr(key).Err()
 	if err != nil {
+		logging.Error(fmt.Sprint("cache increment failed for key: ", key, " | err: ", err.Error()))
 		return err
 	}
 
