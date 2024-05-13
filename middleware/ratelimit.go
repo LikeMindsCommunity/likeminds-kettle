@@ -84,7 +84,13 @@ func checkTierDataForCommunityId(tierData []utils.TierDataType, communityId int,
 			if err != nil {
 				return true, err
 			}
-			redisClient.ExpireAt(rateLimitCurrentValueKey, time.Now().Add(time.Second*time.Duration(rateLimitTTL)))
+
+			// Set expiration time for the key
+			err = cache.ExpireAt(redisClient, rateLimitCurrentValueKey, time.Now().Add(time.Second*time.Duration(rateLimitTTL)))
+			if err != nil {
+				return true, err
+			}
+
 			currentValue = "1"
 		}
 
