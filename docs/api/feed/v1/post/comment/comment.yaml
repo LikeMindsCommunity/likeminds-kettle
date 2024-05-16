@@ -1,13 +1,10 @@
 post:
-  summary: Create Comment on Post
-
   operationId: createComment
-
   tags:
     - Feed - V1
 
-  description: |
-    This API creates a new comment on a Post.
+  summary: Create Comment on Post
+  description: This API creates a new comment on a Post.
 
   security:
     - bearerAuth: []

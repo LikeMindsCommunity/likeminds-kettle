@@ -46,7 +46,7 @@ func VerifyOTP(c *gin.Context) {
 		userUniqueID := userObject[ResponseUserUniqueId].(string)
 		userIsGuest := userObject[user.ResponseUserIsGuest].(bool)
 
-		ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, "", token.BETA_AUTH_TOKEN_EXPIRY, userIsGuest)
+		ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, "", token.BETA_AUTH_TOKEN_EXPIRY, token.DEFAULT_TOKEN_EXPIRY, userIsGuest)
 		if err != nil {
 			//If token creation fails
 			utils.GeneralAPIError(c, err.Error())

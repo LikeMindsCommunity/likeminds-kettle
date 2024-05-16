@@ -18,15 +18,16 @@ type QuestionAnswer struct {
 
 // InitiateSDKRequest | user initiate request schema
 type InitiateSDKRequest struct {
-	UserName        string           `json:"user_name"`
-	UserUniqueID    string           `json:"user_unique_id"`
-	UUID            string           `json:"uuid,omitempty"`
-	ImageURL        string           `json:"image_url"`
-	IsGuest         bool             `json:"is_guest"`
-	QuestionAnswers []QuestionAnswer `json:"question_answers"`
-	User            user.User        `json:"user,omitempty"`
-	TokenExpiryBeta int64            `json:"token_expiry_beta,omitempty"`
-	SharedBy        string           `json:"shared_by,omitempty"`
+	UserName           string           `json:"user_name"`
+	UserUniqueID       string           `json:"user_unique_id"`
+	UUID               string           `json:"uuid,omitempty"`
+	ImageURL           string           `json:"image_url"`
+	IsGuest            bool             `json:"is_guest"`
+	QuestionAnswers    []QuestionAnswer `json:"question_answers"`
+	User               user.User        `json:"user,omitempty"`
+	TokenExpiryBeta    int64            `json:"token_expiry_beta,omitempty"`
+	RTMTokenExpiryBeta int64            `json:"rtm_token_expiry_beta,omitempty"`
+	SharedBy           string           `json:"shared_by,omitempty"`
 }
 
 // InitiateSDK is used to initiate sdk
@@ -87,7 +88,7 @@ func InitiateSDK(c *gin.Context) {
 
 	// Create login and refresh token
 	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, c.GetHeader(utils.HeadersApiKey),
-		initiateSDKRequest.TokenExpiryBeta, userIsGuest)
+		initiateSDKRequest.TokenExpiryBeta, initiateSDKRequest.RTMTokenExpiryBeta, userIsGuest)
 
 	if err != nil {
 		// If token creation fails
