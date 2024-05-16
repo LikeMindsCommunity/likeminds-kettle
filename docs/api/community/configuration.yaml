@@ -34,7 +34,11 @@ get:
                 - description: "Metadata related to feed and its entity"
                   type: "feed_metadata"
                   value:
-                    post: "resource"
+                    post: "post"
+                    comment: "comment"
+                    like_entity_variable:
+                      entity_name: "like"
+                      past_tense_verb: "liked"
                 - description: "NSFW filtering metadata for the community"
                   type: "nsfw_filtering"
                   value:
@@ -98,7 +102,11 @@ patch:
             value:
               type: "feed_metadata"
               value:
+                post: "post"
                 comment: "comment"
+                like_entity_variable:
+                  entity_name: "like"
+                  past_tense_verb: "liked"
           profile_metadata:
             value:
               type: "profile_metadata"

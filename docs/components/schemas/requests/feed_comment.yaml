@@ -2,3 +2,22 @@ type: object
 properties:
   text:
     type: string
+    description: The text of the comment
+    example: "This is a comment"
+  temp_id:
+    type: string
+    description: The temporary id of the comment
+    example: "123456"
+  attachments:
+    type: array
+    description: The attachments of the comment
+    items:
+      type: object
+      properties:
+        attachment_type:
+          type: number
+          description: The type of the attachment
+          example: 1
+        attachment_meta:
+          type: object
+          description: The metadata of the attachment
