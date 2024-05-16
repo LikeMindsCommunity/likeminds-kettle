@@ -36,9 +36,9 @@ get:
                   value:
                     post: "post"
                     comment: "comment"
-                    like_variable:
-                      like_present: "like"
-                      like_past: "liked"
+                    like_entity_variable:
+                      entity_name: "like"
+                      past_tense_verb: "liked"
                 - description: "NSFW filtering metadata for the community"
                   type: "nsfw_filtering"
                   value:
@@ -104,9 +104,9 @@ patch:
               value:
                 post: "post"
                 comment: "comment"
-                like_variable:
-                  like_present: "like"
-                  like_past: "liked"
+                like_entity_variable:
+                  entity_name: "like"
+                  past_tense_verb: "liked"
           profile_metadata:
             value:
               type: "profile_metadata"
