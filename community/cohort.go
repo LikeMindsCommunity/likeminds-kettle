@@ -78,10 +78,9 @@ func Cohort(c *gin.Context, method int) {
 
 		// Body to be sent in the create cohort api internally
 		createCohortRequest, err := parseCreateCohortRequest(c)
-
 		if err != nil {
 			// If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 
@@ -111,10 +110,9 @@ func Cohort(c *gin.Context, method int) {
 
 		// Body to be sent in the delete cohort api internally
 		editCohortRequest, err := parseEditCohortRequest(c)
-
 		if err != nil {
 			// If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 
@@ -125,10 +123,9 @@ func Cohort(c *gin.Context, method int) {
 
 		// Body to be sent in the edit member api internally
 		editCohortRequest, err := parseEditCohortRequest(c)
-
 		if err != nil {
 			// If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 

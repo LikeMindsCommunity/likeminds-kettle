@@ -72,7 +72,7 @@ func CommentPost(c *gin.Context) {
 	createPostCommentRequest, err := parseCreateCommentRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 	}
 
 	//Fetch member access to view post
@@ -146,7 +146,7 @@ func EditCommentPost(c *gin.Context) {
 	editCommentRequest, err := parseEditCommentRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 	}
 
 	//If the user is not the comment creator

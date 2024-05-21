@@ -76,7 +76,7 @@ func GetUserComments(c *gin.Context) {
 
 	} else {
 		if err := parseUserCommentsResponse(respBytes, &userCommentsAPIResponse); err != nil {
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 		}
 
 		dataResponse = userCommentsAPIResponse.Response

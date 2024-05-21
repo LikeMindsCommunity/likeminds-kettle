@@ -29,7 +29,7 @@ func Login(c *gin.Context) {
 	loginRequest, err := parseLoginRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

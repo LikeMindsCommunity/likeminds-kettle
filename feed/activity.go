@@ -66,11 +66,12 @@ func UserActivity(c *gin.Context, method int) {
 }
 
 func createUserActivityInternal(c *gin.Context, userId string, EndPoint string) {
+
 	//Body to be sent in the /user/<user_id>/activity POST request
 	createUserActivityRequest, err := parseCreateUserActivityRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 	}
 
 	//Fetch member access to create post

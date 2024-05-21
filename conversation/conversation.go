@@ -221,7 +221,7 @@ func createConversationInternal(c *gin.Context, userId string) {
 	createConversationRequest, err := parseCreateConversationRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -241,7 +241,7 @@ func editConversationInternal(c *gin.Context, userId string) {
 	editConversationRequest, err := parseEditConversationRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -261,7 +261,7 @@ func deleteConversationInternal(c *gin.Context, userId string) {
 	deleteConversationRequest, err := parseDeleteConversationRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

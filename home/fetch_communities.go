@@ -28,7 +28,7 @@ func FetchCommunities(c *gin.Context) {
 	ltm, ok := c.MustGet(constants.ParamLTM).(*constants.LoginTokenMeta)
 	if !ok {
 		//If token is not available
-		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
+		utils.GeneralBadRequestError(c, utils.ErrorInvalidLTM)
 		return
 	}
 

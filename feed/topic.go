@@ -155,11 +155,12 @@ func GetTopicInternal(c *gin.Context, userId string) {
 }
 
 func createTopicsInternal(c *gin.Context, userId string) {
+
 	//Body to be sent in the /topic POST request
 	createTopicsRequest, err := parseCreateTopicsRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -193,7 +194,7 @@ func deleteTopicsInternal(c *gin.Context, userId string) {
 	deleteTopicsRequest, err := parseDeleteTopicsRequest(c)
 	if err != nil {
 		//If DELETE body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -221,7 +222,7 @@ func editTopicInternal(c *gin.Context, userId string) {
 	editTopicRequest, err := parseEditTopicRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

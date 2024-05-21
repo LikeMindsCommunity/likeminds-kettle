@@ -56,10 +56,9 @@ func GetBotResponse(c *gin.Context, method int) *utils.Response {
 
 		createToken = true
 		botRequest, err := parseBotRequest(c)
-
 		if err != nil {
 			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return nil
 		}
 

@@ -5,7 +5,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//WASubscriptionRequest
+// WASubscriptionRequest
 type WASubscriptionRequest struct {
 	Id             string `json:"id" binding:"required"`
 	Created        string `json:"created" binding:"required"`
@@ -26,14 +26,14 @@ type WASubscriptionRequest struct {
 	SenderName     string `json:"senderName" binding:"required"`
 }
 
-//WASubscription is used to update the WA subscription of a user
+// WASubscription is used to update the WA subscription of a user
 func WASubscription(c *gin.Context) {
 
 	//Body to be sent in the auto follow for all members api internally
 	waSubscriptionRequest, err := parseWASubscriptionRequst(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
