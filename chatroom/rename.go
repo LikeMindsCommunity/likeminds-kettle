@@ -25,7 +25,7 @@ func RenameChatroom(c *gin.Context) {
 	renameChatroomRequest, err := parseRenameChatroomRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

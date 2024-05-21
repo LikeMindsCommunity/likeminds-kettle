@@ -64,12 +64,12 @@ func Questions(c *gin.Context, method int) {
 
 	switch method {
 	case utils.PUTMethod:
+
 		// Body to be sent in the api/community/edit_questions POST request
 		editQuestionsRequest, err := parseEditQuestionRequest(c)
-
 		if err != nil {
 			// If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 

@@ -33,7 +33,7 @@ func ChatroomFollow(c *gin.Context) {
 
 	chatroomFollowRequest, err := parseChatroomFollowRequest(c)
 	if err != nil {
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

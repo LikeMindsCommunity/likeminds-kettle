@@ -132,7 +132,7 @@ func editRightsInternal(c *gin.Context, userId string) {
 	rightsRequest, err := parseRightsRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -184,7 +184,7 @@ func updateRightsInternal(c *gin.Context, userId string) {
 	rightsRequest, err := parseRightsRequest(c)
 	if err != nil {
 		//If body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

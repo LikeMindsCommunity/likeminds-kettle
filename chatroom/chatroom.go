@@ -219,12 +219,12 @@ func getChatroomInternal(c *gin.Context, userId string) {
 }
 
 func createChatroomInternal(c *gin.Context, userId string) {
+
 	//Body to be sent in the api/chatroom/create POST request
 	createChatroomRequest, err := parseCreateChatroomRequest(c)
-
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -240,12 +240,12 @@ func createChatroomInternal(c *gin.Context, userId string) {
 }
 
 func editChatroomInternal(c *gin.Context, userId string) {
+
 	//Body to be sent in the api/chatroom/edit POST request
 	editChatroomRequest, err := parseEditChatroomRequest(c)
-
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -255,12 +255,12 @@ func editChatroomInternal(c *gin.Context, userId string) {
 }
 
 func deleteChatroomInternal(c *gin.Context, userId string) {
+
 	//Body to be sent in the api/chatroom_delete POST request
 	deleteChatroomRequest, err := parseDeleteChatroomRequest(c)
-
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

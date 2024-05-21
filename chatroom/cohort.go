@@ -46,10 +46,9 @@ func ChatroomCohort(c *gin.Context, method int) {
 
 		// Body to be sent in the add cohort POST request
 		addCohortRequest, err := parseAddCohortRequest(c)
-
 		if err != nil {
 			// If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 
@@ -57,12 +56,12 @@ func ChatroomCohort(c *gin.Context, method int) {
 		utils.SendRequest(c, utils.CoreService, AddCohortsToChatroomEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, addCohortRequest)
 
 	case utils.DELETEMethod:
+
 		// Body to be sent in the add cohort POST request
 		removeCohortRequest, err := parseRemoveCohortRequest(c)
-
 		if err != nil {
 			// If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 

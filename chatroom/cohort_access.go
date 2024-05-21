@@ -50,10 +50,9 @@ func CohortAccess(c *gin.Context, method int) {
 
 		// Body to be sent in the edit cohort access api internally
 		editCohortAccessRequest, err := parseEditCohortAccessRequest(c)
-
 		if err != nil {
 			// If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 

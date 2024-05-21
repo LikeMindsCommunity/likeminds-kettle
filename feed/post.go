@@ -254,7 +254,7 @@ func createPostInternal(c *gin.Context, userId string) {
 	createPostRequest, err := parseCreatePostRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -380,7 +380,7 @@ func editPostInternal(c *gin.Context, userId string) {
 	editPostRequest, err := parseEditPostRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -452,7 +452,7 @@ func deletePostInternal(c *gin.Context, userId string) {
 			deletePostRequest = &DeletePostRequest{}
 		} else {
 			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 	}

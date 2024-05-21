@@ -80,12 +80,12 @@ func createMemberConnectionInternal(c *gin.Context, userId string, createMemberC
 }
 
 func acceptRejectMemberConnectionInternal(c *gin.Context, userId string, acceptRejectMemberConnectionEndPoint string) {
+
 	// Body to be sent in the accept reject member conneciton api internally
 	acceptRejectMemberConnectionRequest, err := parseAcceptRejectMemberConnectionRequest(c)
-
 	if err != nil {
 		// If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

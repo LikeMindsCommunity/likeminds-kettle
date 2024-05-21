@@ -180,6 +180,7 @@ func LTMorVTMValidationMiddleware() gin.HandlerFunc {
 			}
 
 			c.Next()
+			return
 		}
 
 		// Extract VTM info from token, internally it checks if token is valid or not

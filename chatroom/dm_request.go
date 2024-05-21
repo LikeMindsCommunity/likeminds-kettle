@@ -43,7 +43,7 @@ func InitiatingDMRequest(c *gin.Context) {
 	initiateDMRequest, err := parseInitiateDMRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

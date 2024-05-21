@@ -56,7 +56,7 @@ func CommunityDMSettings(c *gin.Context, method int) {
 		editCommunityDMSettingsRequest, err := parseEditCommunityDMSettingsRequest(c)
 		if err != nil {
 			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 

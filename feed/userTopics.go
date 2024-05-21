@@ -140,7 +140,7 @@ func updateUserTopicsInternal(c *gin.Context, userId string, isCm bool) {
 	// Parse request body
 	updateUserTopicsRequest, err := parseUpdateUserTopicsRequest(c)
 	if err != nil {
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
