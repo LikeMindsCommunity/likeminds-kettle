@@ -35,10 +35,9 @@ func InitiateSDK(c *gin.Context) {
 
 	// Body to be sent in the initiate SDK api internally
 	initiateSDKRequest, err := parseInitiateSDKRequest(c)
-
 	if err != nil {
 		// If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -87,9 +86,7 @@ func InitiateSDK(c *gin.Context) {
 	userIsGuest := userObject[user.ResponseUserIsGuest].(bool)
 
 	// Create login and refresh token
-	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, c.GetHeader(utils.HeadersApiKey),
-		initiateSDKRequest.TokenExpiryBeta, initiateSDKRequest.RTMTokenExpiryBeta, userIsGuest)
-
+	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, c.GetHeader(utils.HeadersApiKey), initiateSDKRequest.TokenExpiryBeta, initiateSDKRequest.RTMTokenExpiryBeta, userIsGuest)
 	if err != nil {
 		// If token creation fails
 		utils.GeneralAPIError(c, err.Error())

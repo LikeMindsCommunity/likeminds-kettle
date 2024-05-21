@@ -38,7 +38,7 @@ func RemoveMember(c *gin.Context) {
 	removeMemberRequest, err := parseRemoveMemberRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -50,7 +50,7 @@ func RemoveMember(c *gin.Context) {
 		}
 
 		if len(user_unique_ids) == 0 {
-			utils.GeneralAPIError(c, utils.ErrorNoUserFoundWithGivenIds)
+			utils.GeneralBadRequestError(c, utils.ErrorNoUserFoundWithGivenIds)
 			return
 		}
 

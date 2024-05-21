@@ -49,10 +49,9 @@ func ContentDownloadSettings(c *gin.Context, method int) {
 
 		// Body to be sent in the api/community/update_content_download_settings API internally
 		memberRequest, err := parseEditContentDownloadSettingsRequest(c)
-
 		if err != nil {
 			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 

@@ -27,7 +27,6 @@ func GetUserFeedMeta(c *gin.Context) {
 
 	//Get user_unique_id from user_id internally
 	userUUID, err := utility.GetUUIDInternally(headers, userID)
-
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
 		return

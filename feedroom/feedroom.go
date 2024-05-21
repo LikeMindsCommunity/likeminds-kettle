@@ -162,7 +162,7 @@ func createFeedroomInternal(c *gin.Context, userId string) {
 	createFeedroomRequest, err := parseCreateFeedroomRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -191,7 +191,7 @@ func editFeedroomInternal(c *gin.Context, userId string) {
 	editFeedroomRequest, err := parseEditFeedroomRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -213,7 +213,7 @@ func deleteFeedroomInternal(c *gin.Context, userId string) {
 	deleteFeedroomRequest, err := parseDeleteFeedroomRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

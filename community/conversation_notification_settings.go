@@ -58,7 +58,7 @@ func CommunityNotificationSettings(c *gin.Context, method int) {
 		editConversationNotificationSettingsRequest, err := parseEditConversationNotificationSettingsRequest(c)
 		if err != nil {
 			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 

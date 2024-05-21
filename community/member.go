@@ -160,7 +160,7 @@ func addMemberInternal(c *gin.Context, userId string) {
 	memberRequest, err := parseAddMemberRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -181,7 +181,7 @@ func editMemberInternal(c *gin.Context, userId string) {
 	memberRequest, err := parseEditMemberRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -195,7 +195,7 @@ func removeMembersInternal(c *gin.Context, userId string) {
 	memberRequest, err := parseDeleteMembersRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

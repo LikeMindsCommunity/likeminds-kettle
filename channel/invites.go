@@ -67,10 +67,9 @@ func ChannelInvites(c *gin.Context, method int) {
 	case utils.PUTMethod:
 
 		updateChannelInviteRequest, err := parseUpdateChannelInviteRequest(c)
-
 		if err != nil {
 			// If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 

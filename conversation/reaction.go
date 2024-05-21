@@ -93,7 +93,7 @@ func addReactionInternal(c *gin.Context, userId string) {
 	addReactionRequest, err := parseAddReactionRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -107,7 +107,7 @@ func removeReactionInternal(c *gin.Context, userId string) {
 	removeReactionRequest, err := parseRemoveReactionRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

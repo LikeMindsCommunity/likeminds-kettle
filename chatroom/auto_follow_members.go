@@ -31,7 +31,7 @@ func AutoFollowMembers(c *gin.Context) {
 	autoFollowMembersRequest, err := parseAutoFollowMembersRequst(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

@@ -69,7 +69,7 @@ func CommunityRights(c *gin.Context, method int) {
 		editCommunityRightsRequest, err := parseEditCommunityRightsRequest(c)
 		if err != nil {
 			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 
@@ -89,7 +89,7 @@ func UpdateCommunityRightsInternal(c *gin.Context, userId string) {
 	editCommunityRightsRequest, err := parseEditCommunityRightsRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

@@ -231,7 +231,7 @@ func pushReportsInternalOld(c *gin.Context, userId string) {
 	pushReportRequest, err := parsePushReportRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -245,7 +245,7 @@ func pushReportsInternalV1(c *gin.Context, userId string) {
 	pushReportV1Request, err := parsePushReportV1Request(c)
 	if err != nil {
 		// Throw error if parsing fails
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -260,7 +260,7 @@ func closeReportsInternalOld(c *gin.Context, userId string) {
 	closeReportRequest, err := parseCloseReportRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -275,7 +275,7 @@ func updateReportsInternal(c *gin.Context, userId string) {
 	crnr, err := parseCloseReportsNewRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

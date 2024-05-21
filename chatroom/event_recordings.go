@@ -87,9 +87,8 @@ func uploadEventRecordingsInternal(c *gin.Context, userId string) {
 
 	// Parse request body params
 	uploadEventRecordingsRequest, err := parseUploadEventRecordingsRequest(c)
-
 	if err != nil {
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -102,9 +101,8 @@ func deleteEventRecordingsInternal(c *gin.Context, userId string) {
 
 	// Parse request body params
 	deleteEventRecordingsRequest, err := parseDeleteEventRecordingsRequest(c)
-
 	if err != nil {
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 

@@ -6,7 +6,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//CreateScreenRequest | create Onboarding Screen Schema
+// CreateScreenRequest | create Onboarding Screen Schema
 type CreateScreenRequest struct {
 	Index     int64  `json:"index" binding:"required"`
 	Image     string `json:"image" binding:"required"`
@@ -30,27 +30,27 @@ type DeleteScreenRequest struct {
 	Id int64 `json:"id" binding:"required"`
 }
 
-//CreateScreen is used to create a new onboarding screen
+// CreateScreen is used to create a new onboarding screen
 func CreateScreen(c *gin.Context) {
 	OnboardingScreen(c, utils.POSTMethod)
 }
 
-//EditScreen is used to edit an existing onboarding screen
+// EditScreen is used to edit an existing onboarding screen
 func EditScreen(c *gin.Context) {
 	OnboardingScreen(c, utils.PUTMethod)
 }
 
-//GetScreen is used to get an existing onboarding screen
+// GetScreen is used to get an existing onboarding screen
 func GetScreen(c *gin.Context) {
 	OnboardingScreen(c, utils.GETMethod)
 }
 
-//DeleteScreen is used to delete an existing onboarding screen
+// DeleteScreen is used to delete an existing onboarding screen
 func DeleteScreen(c *gin.Context) {
 	OnboardingScreen(c, utils.DELETEMethod)
 }
 
-//OnboardingScreen method handles onboarding screens for each client project
+// OnboardingScreen method handles onboarding screens for each client project
 func OnboardingScreen(c *gin.Context, method int) {
 
 	userId := ""
@@ -86,7 +86,7 @@ func OnboardingScreen(c *gin.Context, method int) {
 		screenRequest, err := parseCreateScreenRequest(c)
 		if err != nil {
 			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 
@@ -99,7 +99,7 @@ func OnboardingScreen(c *gin.Context, method int) {
 		screenRequest, err := parseUpdateScreenRequest(c)
 		if err != nil {
 			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 
@@ -112,7 +112,7 @@ func OnboardingScreen(c *gin.Context, method int) {
 		screenRequest, err := parseDeleteScreenRequest(c)
 		if err != nil {
 			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 

@@ -215,7 +215,7 @@ func createCommentInternal(c *gin.Context, userId string) {
 	createCommentReplyRequest, err := parseCreateCommentRequest(c)
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -283,7 +283,7 @@ func deleteCommentInternal(c *gin.Context, userId string) {
 			deleteCommentRequest = &DeleteCommentRequest{}
 		} else {
 			//If POST body params are missing
-			utils.GeneralAPIError(c, err.Error())
+			utils.GeneralBadRequestError(c, err.Error())
 			return
 		}
 	}

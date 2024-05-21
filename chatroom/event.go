@@ -121,11 +121,9 @@ func createEventInternal(c *gin.Context, userId string) {
 
 	// body to be sent in POST request
 	createEventRequest, err := parseCreateEventRequest(c)
-
 	if err != nil {
-
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -137,10 +135,9 @@ func editEventInternal(c *gin.Context, userId string) {
 
 	// body to be sent in PUT request
 	editEventRequest, err := parseEditEventRequest(c)
-
 	if err != nil {
 		//If POST body params are missing
-		utils.GeneralAPIError(c, err.Error())
+		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
@@ -177,5 +174,5 @@ func editEventInternal(c *gin.Context, userId string) {
 	}
 
 	// If event_type is not valid, return error
-	utils.GeneralAPIError(c, "Invalid event_type")
+	utils.GeneralBadRequestError(c, "Invalid event_type")
 }
