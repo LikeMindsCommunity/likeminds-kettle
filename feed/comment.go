@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
@@ -25,23 +26,17 @@ func parseDeleteCommentRequest(c *gin.Context) (*DeleteCommentRequest, error) {
 }
 
 func populateCommentDataResponse(c *gin.Context, dataResponse map[string]interface{}) map[string]interface{} {
-	if value, ok := dataResponse["comment"]; ok {
-		comment_data := value.(map[string]interface{})
-		user_ids := []string{}
+	if value, ok := dataResponse[constants.ResponseKeyComment]; ok {
+		commentData := value.(map[string]interface{})
+		userIds := []string{}
 
 		// Fetch comment user id
-		if comment_user_unique_id, ok := comment_data["uuid"]; ok {
-			user_ids = append(user_ids, comment_user_unique_id.(string))
+		if commentUserUniqueId, ok := commentData["uuid"]; ok {
+			userIds = append(userIds, commentUserUniqueId.(string))
 		}
 
-		// Fetch replies user id
-		if replies, ok := comment_data["replies"]; ok {
-			for _, reply_data := range replies.([]interface{}) {
-				if user_unique_id, ok := reply_data.(map[string]interface{})["uuid"]; ok {
-					user_ids = append(user_ids, user_unique_id.(string))
-				}
-			}
-		}
+		// append replies user id
+		userIds = append(userIds, fetchUserIdsFromReplyData(commentData)...)
 
 		// Get UserId
 		userId := user.GetRequestingUserId(c)
@@ -49,33 +44,49 @@ func populateCommentDataResponse(c *gin.Context, dataResponse map[string]interfa
 		redisClient := utils.GetRedisClientFromContext(c)
 
 		// Fetch user data for given user_unique_ids
-		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_ids)
+		userData, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, userIds)
 		if err != nil {
 			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
 			return nil
 		}
 
-		var comment_user utils.MemberMeta
+		var commentUser utils.MemberMeta
 
 		// Validation of comment based on community member
-		comment_user_unique_id, ok := comment_data["uuid"]
+		commentUserUniqueId, ok := commentData["uuid"]
 		if ok {
-			comment_user, ok = user_data[comment_user_unique_id.(string)]
+			commentUser, ok = userData[commentUserUniqueId.(string)]
 		}
 
-		if ok && comment_user.IsDeleted {
+		if ok && commentUser.IsDeleted {
 			utils.GeneralBadRequestError(c, "Invalid comment_id sent!")
 			return nil
 		}
 
 		// Update users data in dataResponse
-		dataResponse["users"] = user_data
+		dataResponse["users"] = userData
 
 		// Update user topics data in dataResponse
-		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
+		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userIds)
 	}
 
 	return dataResponse
+}
+
+// fetches user ids from comment reply data
+func fetchUserIdsFromReplyData(commentData map[string]interface{}) []string {
+	userIds := []string{}
+
+	// Fetch replies user id
+	if replies, ok := commentData["replies"]; ok {
+		for _, replyData := range replies.([]interface{}) {
+			if userUniqueId, ok := replyData.(map[string]interface{})["uuid"]; ok {
+				userIds = append(userIds, userUniqueId.(string))
+			}
+		}
+	}
+
+	return userIds
 }
 
 // CreateCommentReply is used to create a new reply on a comment
@@ -122,9 +133,9 @@ func Comment(c *gin.Context, method int) {
 
 func getCommentInternal(c *gin.Context, userId string) {
 	//Access query params and url generation
-	post_id := c.Param("post_id")
-	comment_id := c.Param("comment_id")
-	GetCommentEndPoint := fmt.Sprintf(SingleCommentEndPoint, post_id, comment_id)
+	postId := c.Param("post_id")
+	commentId := c.Param("comment_id")
+	GetCommentEndPoint := fmt.Sprintf(SingleCommentEndPoint, postId, commentId)
 
 	//Params to be sent in the /post/<post_id>/comment/<comment_id> request
 	params := map[string]string{
@@ -207,9 +218,9 @@ func FetchCommentByIdInternal(c *gin.Context, userId string, commentId string) m
 
 func createCommentInternal(c *gin.Context, userId string) {
 	//Access query params and url generation
-	post_id := c.Param("post_id")
-	comment_id := c.Param("comment_id")
-	CreateCommentEndPoint := fmt.Sprintf(SingleCommentReplyEndPoint, post_id, comment_id)
+	postId := c.Param("post_id")
+	commentId := c.Param("comment_id")
+	CreateCommentEndPoint := fmt.Sprintf(SingleCommentReplyEndPoint, postId, commentId)
 
 	//Body to be sent in the /post/<post_id>/comment/<comment_id> POST request
 	createCommentReplyRequest, err := parseCreateCommentRequest(c)
@@ -250,10 +261,10 @@ func createCommentInternal(c *gin.Context, userId string) {
 
 func deleteCommentInternal(c *gin.Context, userId string) {
 	//Access query params and url generation
-	post_id := c.Param("post_id")
-	comment_id := c.Param("comment_id")
-	DeleteCommentEndPoint := fmt.Sprintf(SingleCommentEndPoint, post_id, comment_id)
-	GetCommentEndPoint := fmt.Sprintf(SingleCommentEndPoint, post_id, comment_id)
+	postId := c.Param("post_id")
+	commentId := c.Param("comment_id")
+	DeleteCommentEndPoint := fmt.Sprintf(SingleCommentEndPoint, postId, commentId)
+	GetCommentEndPoint := fmt.Sprintf(SingleCommentEndPoint, postId, commentId)
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, GetCommentEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
@@ -266,14 +277,14 @@ func deleteCommentInternal(c *gin.Context, userId string) {
 
 	//If flow succeeds
 	dataResponse := apiCR.Response
-	if _, ok := dataResponse["comment"]; !ok {
+	if _, ok := dataResponse[constants.ResponseKeyComment]; !ok {
 		utils.GeneralBadRequestError(c, "Invalid comment_id sent!")
 		return
 	}
 
 	//Fetch comment user id
-	comment_data := dataResponse["comment"].(map[string]interface{})
-	comment_user_unique_id := comment_data["uuid"]
+	commentData := dataResponse[constants.ResponseKeyComment].(map[string]interface{})
+	commentUserUniqueId := commentData["uuid"]
 
 	//Body to be sent in the /post/<post_id>/comment/<comment_id> DELETE request
 	deleteCommentRequest, err := parseDeleteCommentRequest(c)
@@ -289,7 +300,7 @@ func deleteCommentInternal(c *gin.Context, userId string) {
 	}
 
 	//If the user is not the comment creator
-	if comment_user_unique_id != userId {
+	if commentUserUniqueId != userId {
 		//Fetch member access to delete comment
 		success, response := user.FetchMemberAccess(c, DELETE_COMMENT_ACTION, userId)
 		if !success {

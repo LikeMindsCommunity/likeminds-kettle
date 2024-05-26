@@ -51,17 +51,17 @@ func FetchUserUniqueIdsFromAnyUserIds(headers map[string]interface{}, userIds in
 	switch userIds := userIds.(type) {
 	case []string:
 		if len(userIds) == 0 {
-			return nil, fmt.Errorf("userIds cannot be empty")
+			return nil, fmt.Errorf(utils.ErrorEmptyUserIds)
 		}
 		params[ParamMemberIDs] = utils.ParseStringArrayToString(userIds)
 	case []interface{}:
 		if len(userIds) == 0 {
-			return nil, fmt.Errorf("userIds cannot be empty")
+			return nil, fmt.Errorf(utils.ErrorEmptyUserIds)
 		}
 		params[ParamMemberIDs] = utils.ParseInterfaceListToStringList(userIds)
 	case string:
 		if userIds == "" {
-			return nil, fmt.Errorf("userIds cannot be empty")
+			return nil, fmt.Errorf(utils.ErrorEmptyUserIds)
 		}
 		params[ParamMemberIDs] = userIds
 	}

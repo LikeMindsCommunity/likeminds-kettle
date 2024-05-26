@@ -113,7 +113,7 @@ func GetWebhook(c *gin.Context) {
 		userId = botId
 	}
 
-	webhookId := c.Param("webhook_id")
+	webhookId := c.Param(utils.ParamWebhookId)
 
 	webhookEndpoint := fmt.Sprintf(WebhookEndpoint, webhookId)
 

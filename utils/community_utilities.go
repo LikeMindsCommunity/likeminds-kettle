@@ -258,7 +258,7 @@ func FeedRepostSettingsEnabled(redisClient *redis.Client, headers map[string]int
 
 	communitySettings, err := fetchCommunitySettings(redisClient, headers)
 	if err != nil {
-		logging.Error(fmt.Sprintf("Error while fetching community settings, err: %v", err))
+		logging.Error(fmt.Sprintf(ErrorFetchCommunitySettingsFailed, err))
 		return false
 	}
 
@@ -270,7 +270,7 @@ func UserTopicsConnectionEnabled(redisClient *redis.Client, headers map[string]i
 
 	communitySettings, err := fetchCommunitySettings(redisClient, headers)
 	if err != nil {
-		logging.Error(fmt.Sprintf("Error while fetching community settings, err: %v", err))
+		logging.Error(fmt.Sprintf(ErrorFetchCommunitySettingsFailed, err))
 		return false
 	}
 
@@ -282,7 +282,7 @@ func IsPostApprovalNeeded(redisClient *redis.Client, headers map[string]interfac
 
 	communitySettings, err := fetchCommunitySettings(redisClient, headers)
 	if err != nil {
-		logging.Error(fmt.Sprintf("Error while fetching community settings, err: %v", err))
+		logging.Error(fmt.Sprintf(ErrorFetchCommunitySettingsFailed, err))
 		return false
 	}
 

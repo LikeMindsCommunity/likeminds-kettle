@@ -52,8 +52,8 @@ func parseCreatePostRequest(c *gin.Context) (*CreatePostRequest, error) {
 	}
 
 	// Unmarshal widgets data for attachment type custom widget
-	widgets_data := make(map[string]interface{})
-	err := json.Unmarshal(raw_data, &widgets_data)
+	widgetsData := make(map[string]interface{})
+	err := json.Unmarshal(raw_data, &widgetsData)
 	if err != nil {
 		return nil, err
 	}
@@ -97,25 +97,25 @@ func parseDeletePostRequest(c *gin.Context) (*DeletePostRequest, error) {
 
 func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{}) map[string]interface{} {
 	if value, ok := dataResponse["post"]; ok {
-		post_data := value.(map[string]interface{})
-		user_ids := []string{}
+		postData := value.(map[string]interface{})
+		userIds := []string{}
 
 		//Fetch post user id
-		if post_user_unique_id, ok := post_data["uuid"]; ok {
-			user_ids = append(user_ids, post_user_unique_id.(string))
+		if postUserUniqueId, ok := postData["uuid"]; ok {
+			userIds = append(userIds, postUserUniqueId.(string))
 		}
 
 		//Fetch replies user id
-		if replies, ok := post_data["replies"]; ok {
+		if replies, ok := postData["replies"]; ok {
 			for _, reply_data := range replies.([]interface{}) {
 				if user_unique_id, ok := reply_data.(map[string]interface{})["uuid"]; ok {
-					user_ids = append(user_ids, user_unique_id.(string))
+					userIds = append(userIds, user_unique_id.(string))
 				}
 			}
 		}
 
-		user_ids = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_ids)
-		user_ids = utils.AppendPollOptionCreatorsFromFeedDataResponse(dataResponse, user_ids)
+		userIds = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, userIds)
+		userIds = utils.AppendPollOptionCreatorsFromFeedDataResponse(dataResponse, userIds)
 
 		// Get userId
 		userId := user.GetRequestingUserId(c)
@@ -123,16 +123,16 @@ func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{
 		headers := utils.CreateHeaders(c, userId)
 
 		//Fetch user data for given user_unique_ids
-		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_ids)
+		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, userIds)
 		if err != nil {
 			utils.GeneralAPIError(c, utils.ErrorFetchingUserData)
 			return nil
 		}
 
 		//Validation of post based on community member
-		if post_user_unique_id, ok := post_data["uuid"]; ok {
-			if post_user, ok := user_data[post_user_unique_id.(string)]; ok {
-				if post_user.IsDeleted {
+		if postUserUniqueId, ok := postData["uuid"]; ok {
+			if postUser, ok := user_data[postUserUniqueId.(string)]; ok {
+				if postUser.IsDeleted {
 					utils.GeneralBadRequestError(c, "Invalid post_id sent!")
 					return nil
 				}
@@ -143,7 +143,7 @@ func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{
 		dataResponse["users"] = user_data
 
 		// Update user topics data in dataResponse
-		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
+		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userIds)
 	}
 
 	return dataResponse
@@ -180,14 +180,14 @@ func Post(c *gin.Context, method int) {
 	//Send request
 	switch method {
 	case utils.GETMethod:
-		postId := c.Param("post_id")
-		post_data := GetPostInternal(c, userId, postId)
-		if post_data == nil {
+		postId := c.Param(ParamPostId)
+		postData := GetPostInternal(c, userId, postId)
+		if postData == nil {
 			return
 		}
 
 		//Send response
-		utils.GenerateResponse(c, post_data, true)
+		utils.GenerateResponse(c, postData, true)
 
 	case utils.POSTMethod:
 		createPostInternal(c, userId)
@@ -273,11 +273,9 @@ func createPostInternal(c *gin.Context, userId string) {
 	//Update user_is_cm in request
 	createPostRequest.UserIsCm = response.IsCm
 
-	if createPostRequest.IsRepost {
-		if !utils.FeedRepostSettingsEnabled(utils.GetRedisClientFromContext(c), headers) {
-			utils.GeneralBadRequestError(c, utils.ErrorRepostSettingNotEnabled)
-			return
-		}
+	if createPostRequest.IsRepost && !utils.FeedRepostSettingsEnabled(utils.GetRedisClientFromContext(c), headers) {
+		utils.GeneralBadRequestError(c, utils.ErrorRepostSettingNotEnabled)
+		return
 	}
 
 	if createPostRequest.OnBehalfOfUUID != "" {
@@ -352,9 +350,9 @@ func createPostInternal(c *gin.Context, userId string) {
 
 func editPostInternal(c *gin.Context, userId string) {
 
-	post_id := c.Param("post_id")
-	EditPostEndPoint := fmt.Sprintf(SinglePostEndPoint, post_id)
-	GetPostEndPoint := fmt.Sprintf(SinglePostEndPoint, post_id)
+	postId := c.Param(ParamPostId)
+	EditPostEndPoint := fmt.Sprintf(SinglePostEndPoint, postId)
+	GetPostEndPoint := fmt.Sprintf(SinglePostEndPoint, postId)
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, GetPostEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
@@ -373,8 +371,8 @@ func editPostInternal(c *gin.Context, userId string) {
 	}
 
 	//Fetch post user id
-	post_data := dataResponse["post"].(map[string]interface{})
-	post_user_unique_id := post_data["uuid"]
+	postData := dataResponse["post"].(map[string]interface{})
+	postUserUniqueId := postData["uuid"]
 
 	//Body to be sent in the /post/<post_id> PUT request
 	editPostRequest, err := parseEditPostRequest(c)
@@ -384,7 +382,7 @@ func editPostInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	if post_user_unique_id != userId {
+	if postUserUniqueId != userId {
 
 		// Fetch member access to edit post
 		success, response := user.FetchMemberAccess(c, EDIT_POST_ACTION, userId)
@@ -420,9 +418,9 @@ func editPostInternal(c *gin.Context, userId string) {
 }
 
 func deletePostInternal(c *gin.Context, userId string) {
-	post_id := c.Param("post_id")
-	DeletePostEndPoint := fmt.Sprintf(SinglePostEndPoint, post_id)
-	GetPostEndPoint := fmt.Sprintf(SinglePostEndPoint, post_id)
+	postId := c.Param(ParamPostId)
+	DeletePostEndPoint := fmt.Sprintf(SinglePostEndPoint, postId)
+	GetPostEndPoint := fmt.Sprintf(SinglePostEndPoint, postId)
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, GetPostEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
@@ -441,8 +439,8 @@ func deletePostInternal(c *gin.Context, userId string) {
 	}
 
 	//Fetch post user id
-	post_data := dataResponse["post"].(map[string]interface{})
-	post_user_unique_id := post_data["uuid"]
+	postData := dataResponse["post"].(map[string]interface{})
+	postUserUniqueId := postData["uuid"]
 
 	//Body to be sent in the /post/<post_id> DELETE request
 	deletePostRequest, err := parseDeletePostRequest(c)
@@ -458,7 +456,7 @@ func deletePostInternal(c *gin.Context, userId string) {
 	}
 
 	//If the user is not the post creator
-	if post_user_unique_id != userId {
+	if postUserUniqueId != userId {
 		//Fetch member access to delete post
 		success, response := user.FetchMemberAccess(c, DELETE_POST_ACTION, userId)
 		if !success {

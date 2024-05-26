@@ -38,7 +38,7 @@ type MemberMetaResponse struct {
 	Members      []MemberMeta `json:"members"`
 }
 
-func fetchmembersMetaFromCache(redisClient *redis.Client, communityId int, userUniqueIds []string) ([]MemberMeta, []string, error) {
+func fetchMembersMetaFromCache(redisClient *redis.Client, communityId int, userUniqueIds []string) ([]MemberMeta, []string, error) {
 
 	membersMeta := []MemberMeta{}
 	remainingMemberIds := []string{}
@@ -71,7 +71,7 @@ func fetchmembersMetaFromCache(redisClient *redis.Client, communityId int, userU
 	return membersMeta, remainingMemberIds, nil
 }
 
-func fetchMembersMetaFromAPI(headers map[string]interface{}, userUniqueIds []string) ([]MemberMeta, error) {
+func fetchMembersMetaFromAPI(redisClient *redis.Client, communityId int, headers map[string]interface{}, userUniqueIds []string) ([]MemberMeta, error) {
 
 	//Params to be sent in the api/community_member/fetch_access request
 	params := map[string]string{
@@ -94,7 +94,14 @@ func fetchMembersMetaFromAPI(headers map[string]interface{}, userUniqueIds []str
 		return nil, fmt.Errorf("error fetching members meta: %s", membersMetaResponse.ErrorMessage)
 	}
 
-	return membersMetaResponse.Members, nil
+	membersMeta := membersMetaResponse.Members
+
+	// Save fetched members meta to cache in background
+	if redisClient != nil {
+		go saveMembersMetaInCache(redisClient, communityId, membersMeta)
+	}
+
+	return membersMeta, nil
 }
 
 // save response to cache
@@ -134,7 +141,7 @@ func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[s
 
 	// fetch member meta from cache
 	if redisClient != nil {
-		membersMeta, remainingMemberIds, err := fetchmembersMetaFromCache(redisClient, communityId, userUniqueIds)
+		membersMeta, remainingMemberIds, err := fetchMembersMetaFromCache(redisClient, communityId, userUniqueIds)
 		if err != nil {
 			return nil, err
 		}
@@ -151,7 +158,7 @@ func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[s
 	// fetch remaining members meta from api
 	if len(userUniqueIds) > 0 {
 
-		membersMeta, err := fetchMembersMetaFromAPI(headers, userUniqueIds)
+		membersMeta, err := fetchMembersMetaFromAPI(redisClient, communityId, headers, userUniqueIds)
 		if err != nil {
 			return nil, err
 		}
@@ -159,11 +166,6 @@ func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[s
 		// Add fetched members meta to memberMetaMap
 		for _, memberData := range membersMeta {
 			memberMetaMap[memberData.UserUniqueId] = memberData
-		}
-
-		// Save fetched members meta to cache in background
-		if redisClient != nil {
-			go saveMembersMetaInCache(redisClient, communityId, membersMeta)
 		}
 	}
 

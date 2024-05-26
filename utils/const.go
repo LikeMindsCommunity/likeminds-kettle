@@ -113,6 +113,7 @@ const ParamUUID = "uuid"
 const ParamPageSize = "page_size"
 const ParamCommunityID = "community_id"
 const ParamTierType = "tier_type"
+const ParamWebhookId = "webhook_id"
 
 // Endpoints
 const FetchCommunityConfigurationsEndpoint = "/api/community/configurations"

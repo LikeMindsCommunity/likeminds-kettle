@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -132,14 +133,14 @@ func Project(c *gin.Context, method int) {
 
 		projectApiResp := apiCR.Response
 
-		if projectApiResp["api_key"] == nil {
+		if projectApiResp[constants.ResponseKeyApiKey] == nil {
 			utils.GeneralAPIError(c, "Community not created")
 			return
 		}
 
 		// Fetch Community ID from API Key
 		redis := utils.GetRedisClientFromContext(c)
-		communityId, err := utils.FetchCommunityIdFromApiKey(redis, projectApiResp["api_key"].(string))
+		communityId, err := utils.FetchCommunityIdFromApiKey(redis, projectApiResp[constants.ResponseKeyApiKey].(string))
 		if err != nil {
 			utils.GeneralAPIError(c, err.Error())
 			return
@@ -159,7 +160,7 @@ func Project(c *gin.Context, method int) {
 
 			// Delete the created community
 			headers := utils.CreateHeaders(c, botId)
-			headers[utils.HeadersApiKey] = projectApiResp["api_key"].(string)
+			headers[utils.HeadersApiKey] = projectApiResp[constants.ResponseKeyApiKey].(string)
 			resp, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, ProjectEndpoint, utils.DELETERequest, headers, nil, nil)
 			if err != nil || statusCode != http.StatusOK {
 				if err == nil {

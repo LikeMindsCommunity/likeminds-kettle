@@ -42,7 +42,7 @@ func RateLimitingMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 
 		//Get TierData Function
 		tierType := communityBillingData.TierType
-		tierData, err := utils.FetchTierData(redisClient, communityId, headers, tierType)
+		tierData, err := utils.FetchTierData(redisClient, headers, tierType)
 		if err != nil {
 			logging.Error(err)
 			return

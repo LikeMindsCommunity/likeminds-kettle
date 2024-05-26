@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/cache"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/logging"
 )
 
@@ -180,11 +181,43 @@ func FetchUserTopicsForUserUniqueIds(redisClient *redis.Client, headers map[stri
 func FetchAndUpdateUserTopicsDataForResponse(redisClient *redis.Client, headers map[string]interface{}, dataResponse map[string]interface{}, userUniqueIds []string,
 ) map[string]interface{} {
 
+	userTopics, topicsMeta, widgetsMeta := fetchUserTopicsAndWidgetsMeta(redisClient, headers, userUniqueIds)
+
+	// update userTopics in dataResponse
+	if dataResponse[constants.ResponseKeyUserTopics] == nil {
+		dataResponse[constants.ResponseKeyUserTopics] = map[string]interface{}{}
+	}
+	for key, value := range userTopics {
+		dataResponse[constants.ResponseKeyUserTopics].(map[string]interface{})[key] = value
+	}
+
+	// Update topic meta in dataResponse
+	if dataResponse[constants.ResponseKeyTopics] == nil {
+		dataResponse[constants.ResponseKeyTopics] = map[string]interface{}{}
+	}
+	for key, value := range topicsMeta {
+		dataResponse[constants.ResponseKeyTopics].(map[string]interface{})[key] = value
+	}
+
+	// Update widget meta in dataResponse
+	if dataResponse[constants.ResponseKeyWidgets] == nil {
+		dataResponse[constants.ResponseKeyWidgets] = map[string]interface{}{}
+	}
+	for key, value := range widgetsMeta {
+		dataResponse[constants.ResponseKeyWidgets].(map[string]interface{})[key] = value
+	}
+
+	return dataResponse
+}
+
+// method to fetch user topics and widgets meta
+func fetchUserTopicsAndWidgetsMeta(redisClient *redis.Client, headers map[string]interface{},
+	userUniqueIds []string) (UserTopics, map[string]TopicMeta, map[string]WidgetResponse) {
+
 	userTopics, topicsMeta, widgetsMeta := UserTopics{}, map[string]TopicMeta{}, map[string]WidgetResponse{}
 
 	// if user Topics connection is enabled, fetch related data
 	if UserTopicsConnectionEnabled(redisClient, headers) {
-
 		err := error(nil)
 
 		// fetch user topics data for user_unique_ids
@@ -216,29 +249,5 @@ func FetchAndUpdateUserTopicsDataForResponse(redisClient *redis.Client, headers 
 		}
 	}
 
-	// update userTopics in dataResponse
-	if dataResponse["user_topics"] == nil {
-		dataResponse["user_topics"] = map[string]interface{}{}
-	}
-	for key, value := range userTopics {
-		dataResponse["user_topics"].(map[string]interface{})[key] = value
-	}
-
-	// Update topic meta in dataResponse
-	if dataResponse["topics"] == nil {
-		dataResponse["topics"] = map[string]interface{}{}
-	}
-	for key, value := range topicsMeta {
-		dataResponse["topics"].(map[string]interface{})[key] = value
-	}
-
-	// Update widget meta in dataResponse
-	if dataResponse["widgets"] == nil {
-		dataResponse["widgets"] = map[string]interface{}{}
-	}
-	for key, value := range widgetsMeta {
-		dataResponse["widgets"].(map[string]interface{})[key] = value
-	}
-
-	return dataResponse
+	return userTopics, topicsMeta, widgetsMeta
 }

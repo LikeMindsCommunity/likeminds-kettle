@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/chatroom"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/feed"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -99,26 +100,26 @@ func fetchPostDependentFeed(c *gin.Context, userId string, params map[string]str
 
 	//If flow succeeds
 	dataResponse := apiCR.Response
-	chatroom_ids := []int{}
-	post_counts := map[string]int{}
+	chatroomIds := []int{}
+	finalPostCounts := map[string]int{}
 
 	chatrooms, ok := dataResponse["chatrooms"]
 	if ok {
 		for _, chatroom := range chatrooms.([]interface{}) {
 			chatroom_id, ok := chatroom.(map[string]interface{})["id"]
 			if ok {
-				chatroom_ids = append(chatroom_ids, int(chatroom_id.(float64)))
-				post_counts[strconv.Itoa(int(chatroom_id.(float64)))] = 0
+				chatroomIds = append(chatroomIds, int(chatroom_id.(float64)))
+				finalPostCounts[strconv.Itoa(int(chatroom_id.(float64)))] = 0
 			}
 		}
 	}
 
-	temp_params, _ := json.Marshal(chatroom_ids)
+	tempParams, _ := json.Marshal(chatroomIds)
 
 	//Generate params for ExploreFeed Request
 	exploreFeedParams := map[string]string{
 		ParamOrderType:   params[ParamOrderType],
-		ParamChatroomIds: fmt.Sprintf("%v", string(temp_params)),
+		ParamChatroomIds: fmt.Sprintf("%v", string(tempParams)),
 	}
 
 	//Send Request to get post community feed on Swarm Service
@@ -132,13 +133,13 @@ func fetchPostDependentFeed(c *gin.Context, userId string, params map[string]str
 
 	//If flow succeeds
 	swarmDataResponse := apiCR.Response
-	if postCounts, ok := swarmDataResponse["post_counts"]; ok {
-		for chatroom_id, post_count := range postCounts.(map[string]interface{}) {
-			post_counts[chatroom_id] = int(post_count.(float64))
+	if postCounts, ok := swarmDataResponse[constants.ResponseKeyPostCounts]; ok {
+		for chatroom_id, postCount := range postCounts.(map[string]interface{}) {
+			finalPostCounts[chatroom_id] = int(postCount.(float64))
 		}
 	}
 
-	dataResponse["post_counts"] = post_counts
+	dataResponse[constants.ResponseKeyPostCounts] = finalPostCounts
 
 	return dataResponse
 }
@@ -215,13 +216,13 @@ func fetchPostIndependentFeed(c *gin.Context, userId string, params map[string]s
 
 	//If flow succeeds
 	caravanDataResponse := apiCR.Response
-	if postCounts, ok := swarmDataResponse["post_counts"]; ok {
+	if postCounts, ok := swarmDataResponse[constants.ResponseKeyPostCounts]; ok {
 		for chatroom_id, post_count := range postCounts.(map[string]interface{}) {
 			post_counts[chatroom_id] = int(post_count.(float64))
 		}
 	}
 
-	caravanDataResponse["post_counts"] = post_counts
+	caravanDataResponse[constants.ResponseKeyPostCounts] = post_counts
 
 	return caravanDataResponse
 }
