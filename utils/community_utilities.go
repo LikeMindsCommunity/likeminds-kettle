@@ -165,7 +165,7 @@ func fetchCommunitySettingsFromCache(redisClient *redis.Client, communityId int)
 	cacheKey := fmt.Sprintf(cache.CommunitySettingsCacheKey, communityId)
 	value, exists, _ := cache.Get(redisClient, cacheKey)
 	if !exists {
-		logging.Error(fmt.Sprintf("Community settings not found in cache for communityId: %d", communityId))
+		logging.Info(fmt.Sprintf("Community settings not found in cache for communityId: %d", communityId))
 		return nil
 	}
 
