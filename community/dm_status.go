@@ -43,7 +43,7 @@ func DMStatus(c *gin.Context) {
 		dataResponse := apiCR.Response
 
 		// if show_dm is true
-		if dataResponse[showDmResponse] != nil && dataResponse[showDmResponse] == true {
+		if dataResponse[showDmResponse] != nil && dataResponse[showDmResponse].(bool) {
 
 			//Body to be sent in the /chatroom/create_dm POST request
 			createDMbody := map[string]string{

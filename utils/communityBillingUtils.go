@@ -82,7 +82,7 @@ func FetchCommunityBillingData(redisClient *redis.Client, communityId int, heade
 	return communityBillingMeta, nil
 }
 
-func FetchTierData(redisClient *redis.Client, communityId int, headers map[string]interface{}, tierType int) ([]TierDataType, error) {
+func FetchTierData(redisClient *redis.Client, headers map[string]interface{}, tierType int) ([]TierDataType, error) {
 
 	cacheKey := fmt.Sprintf(cache.TierDataKey, tierType)
 	value, exists, err := cache.Get(redisClient, cacheKey)

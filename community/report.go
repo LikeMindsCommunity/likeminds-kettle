@@ -287,10 +287,10 @@ func updateReportsInternal(c *gin.Context, userId string) {
 func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}) ([]string, map[string]interface{},
 	map[string]interface{}, map[string]interface{}, map[string]interface{}, map[string]utils.MemberMeta, map[string]interface{}) {
 
-	var post_ids []string
-	var pending_post_ids []string
-	var comment_ids []string
-	var user_ids []string
+	var postIds []string
+	var pendingPostIds []string
+	var commentIds []string
+	var userIds []string
 
 	var posts map[string]interface{}
 	var comments map[string]interface{}
@@ -311,26 +311,26 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 
 		if ok {
 			if int(typeValue.(float64)) == feed.POST_REPORT_TYPE {
-				post_ids = append(post_ids, report.(map[string]interface{})["entity_id"].(string))
+				postIds = append(postIds, report.(map[string]interface{})["entity_id"].(string))
 			}
 
 			if int(typeValue.(float64)) == feed.COMMENT_REPORT_TYPE || int(typeValue.(float64)) == feed.REPLY_REPORT_TYPE {
-				comment_ids = append(comment_ids, report.(map[string]interface{})["entity_id"].(string))
+				commentIds = append(commentIds, report.(map[string]interface{})["entity_id"].(string))
 			}
 
 			if int(typeValue.(float64)) == feed.PENDING_POST_REPORT_TYPE {
-				pending_post_ids = append(pending_post_ids, report.(map[string]interface{})["entity_id"].(string))
+				pendingPostIds = append(pendingPostIds, report.(map[string]interface{})["entity_id"].(string))
 			}
 
 		}
 	}
 
 	// if comment_ids are not empty then fetch comments data
-	if len(comment_ids) > 0 {
+	if len(commentIds) > 0 {
 
 		// create params for the request
 		params := map[string]string{
-			feed.ParamCommentIds: utils.ParseStringArrayToString(comment_ids),
+			feed.ParamCommentIds: utils.ParseStringArrayToString(commentIds),
 			feed.ParamUserIsCm:   "true",
 		}
 
@@ -345,17 +345,15 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 
 				// Get user_ids and post_ids from comments
 				for _, comment := range comments {
-					user_ids = append(user_ids, comment.(map[string]interface{})["uuid"].(string))
+					userIds = append(userIds, comment.(map[string]interface{})["uuid"].(string))
 
 					// If comment is reply then get parent comment's user id
-					if parentComment, ok := comment.(map[string]interface{})["parent_comment"]; ok {
-						if parentComment != nil {
-							user_ids = append(user_ids, parentComment.(map[string]interface{})["uuid"].(string))
-						}
+					if parentComment, ok := comment.(map[string]interface{})["parent_comment"]; ok && parentComment != nil {
+						userIds = append(userIds, parentComment.(map[string]interface{})["uuid"].(string))
 					}
 
 					// Get post_id from comments
-					post_ids = append(post_ids, comment.(map[string]interface{})["post_id"].(string))
+					postIds = append(postIds, comment.(map[string]interface{})["post_id"].(string))
 				}
 
 			}
@@ -363,7 +361,7 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 	}
 
 	// if post_ids are not empty then fetch posts data
-	if len(post_ids) > 0 || len(pending_post_ids) > 0 {
+	if len(postIds) > 0 || len(pendingPostIds) > 0 {
 
 		// create params for the request
 		params := map[string]string{
@@ -371,13 +369,13 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 		}
 
 		// If post_ids are not empty, add post_ids to params
-		if len(post_ids) > 0 {
-			params[feed.ParamPostIds] = utils.ParseStringArrayToString(post_ids)
+		if len(postIds) > 0 {
+			params[feed.ParamPostIds] = utils.ParseStringArrayToString(postIds)
 		}
 
 		// If pending_post_ids are not empty, add pending_post_ids to params
-		if len(pending_post_ids) > 0 {
-			params[feed.ParamPendingPostIds] = utils.ParseStringArrayToString(pending_post_ids)
+		if len(pendingPostIds) > 0 {
+			params[feed.ParamPendingPostIds] = utils.ParseStringArrayToString(pendingPostIds)
 		}
 
 		//Send request to swarm service
@@ -393,26 +391,26 @@ func fetchReportsEntityData(c *gin.Context, userId string, reports []interface{}
 
 			// Iterate over posts and get user ids
 			for _, post := range posts {
-				user_ids = append(user_ids, post.(map[string]interface{})["uuid"].(string))
+				userIds = append(userIds, post.(map[string]interface{})["uuid"].(string))
 			}
 
 			for _, repostedPost := range repostedPosts {
-				user_ids = append(user_ids, repostedPost.(map[string]interface{})["uuid"].(string))
+				userIds = append(userIds, repostedPost.(map[string]interface{})["uuid"].(string))
 			}
 		}
 	}
 
 	// If user_ids are not empty, get users data
-	if len(user_ids) > 0 {
+	if len(userIds) > 0 {
 		var err error
 
 		// Call Internal method to fetch users data
-		users, err = utils.FetchMemberMetaMapForUserUniqueIds(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), user_ids)
+		users, err = utils.FetchMemberMetaMapForUserUniqueIds(utils.GetRedisClientFromContext(c), utils.CreateHeaders(c, userId), userIds)
 		if err != nil {
 			log.Error(fmt.Sprintf("Error while fetching users data for reports: %s", err))
 		}
 	}
 
-	return user_ids, posts, comments, topics, widgets, users, repostedPosts
+	return userIds, posts, comments, topics, widgets, users, repostedPosts
 
 }

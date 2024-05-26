@@ -148,11 +148,9 @@ func createOrUpdateWidgetForMemberProfile(c *gin.Context, userId string, metaDat
 
 	// Get widget id from response
 	dataResponse := apiCr.Response
-	if widgets, ok := dataResponse["widgets"].([]interface{}); ok {
-		if len(widgets) > 0 {
-			if id, ok := widgets[0].(map[string]interface{})["_id"].(string); ok {
-				widgetId = id
-			}
+	if widgets, ok := dataResponse["widgets"].([]interface{}); ok && len(widgets) > 0 {
+		if id, ok := widgets[0].(map[string]interface{})["_id"].(string); ok {
+			widgetId = id
 		}
 	}
 

@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/constants"
 )
 
 // Exposed utility method to parse response for widget_ids using regex
@@ -33,8 +34,8 @@ func ParseAndFetchWidgets(c *gin.Context, userId string, dataResponse map[string
 		return dataResponse
 	}
 
-	if dataResponse["widgets"] == nil {
-		dataResponse["widgets"] = map[string]interface{}{}
+	if dataResponse[constants.ResponseKeyWidgets] == nil {
+		dataResponse[constants.ResponseKeyWidgets] = map[string]interface{}{}
 	}
 
 	// Parse and fetch widget ids from data response
@@ -46,7 +47,7 @@ func ParseAndFetchWidgets(c *gin.Context, userId string, dataResponse map[string
 		widgetsMap, _ := fetchWidgetMetaMapFromWidgetIds(GetRedisClientFromContext(c), CreateHeaders(c, userId), widgetIds)
 
 		for widgetId, widgetMeta := range widgetsMap {
-			dataResponse["widgets"].(map[string]interface{})[widgetId] = widgetMeta
+			dataResponse[constants.ResponseKeyWidgets].(map[string]interface{})[widgetId] = widgetMeta
 		}
 	}
 

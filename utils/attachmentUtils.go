@@ -56,16 +56,14 @@ func ConvertAttachmentMetaForCustomWidgetAttachments(attachments []AttachmentReq
 	}
 
 	for i := 0; i < len(attachments); i++ {
-		if attachments[i].AttachmentType == constants.CustomWidget {
+		if attachments[i].AttachmentType == constants.CustomWidget && attachments[i].AttachmentMeta != nil {
 
-			if attachments[i].AttachmentMeta != nil {
-				widget_meta := widgetData["attachments"].([]interface{})[i].(map[string]interface{})["attachment_meta"].(map[string]interface{})
+			widget_meta := widgetData["attachments"].([]interface{})[i].(map[string]interface{})["attachment_meta"].(map[string]interface{})
 
-				if widget_meta != nil {
-					delete(widget_meta, "entity_id")
-					attachments[i].AttachmentMeta = &AttachmentMeta{EntityID: attachments[i].AttachmentMeta.EntityID}
-					attachments[i].AttachmentMeta.WidgetMeta = widget_meta
-				}
+			if widget_meta != nil {
+				delete(widget_meta, "entity_id")
+				attachments[i].AttachmentMeta = &AttachmentMeta{EntityID: attachments[i].AttachmentMeta.EntityID}
+				attachments[i].AttachmentMeta.WidgetMeta = widget_meta
 			}
 		}
 	}
