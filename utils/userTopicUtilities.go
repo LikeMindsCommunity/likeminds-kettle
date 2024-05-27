@@ -134,38 +134,9 @@ func FetchUserTopicsForUserUniqueIds(redisClient *redis.Client, headers map[stri
 	if len(userUniqueIds) > 0 {
 
 		// fetch user topics from API
-		userTopicsFromAPI, topicsFromAPI, widgetsFromAPI, err := fetchUserTopicsFromSwarmService(headers, userUniqueIds)
+		userTopicsFromAPI, err := fetchUserTopicsFromApiAndSaveInCache(headers, userUniqueIds, redisClient, communityId)
 		if err != nil {
 			return nil, err
-		}
-
-		if redisClient != nil {
-
-			// save user topics to cache
-			go saveUserTopicsToCache(redisClient, communityId, userTopicsFromAPI)
-
-			// save topics meta to cache
-			go func() {
-				topicsData := []TopicMeta{}
-				for _, topic := range topicsFromAPI {
-					topicsData = append(topicsData, topic)
-				}
-
-				// save topics to cache
-				saveTopicsInCache(redisClient, communityId, topicsData)
-			}()
-
-			// save widgets meta to cache
-			go func() {
-				widgetsData := []WidgetResponse{}
-				for _, widget := range widgetsFromAPI {
-					widgetsData = append(widgetsData, widget)
-				}
-
-				// save widgets to cache
-				saveWidgetsToCache(redisClient, communityId, widgetsData)
-			}()
-
 		}
 
 		// merge user topics from cache and API
@@ -175,6 +146,46 @@ func FetchUserTopicsForUserUniqueIds(redisClient *redis.Client, headers map[stri
 	}
 
 	return userTopicsMap, nil
+}
+
+func fetchUserTopicsFromApiAndSaveInCache(headers map[string]interface{}, userUniqueIds []string, redisClient *redis.Client, communityId int,
+) (UserTopics, error) {
+
+	userTopics, topicsFromAPI, widgetsFromAPI, err := fetchUserTopicsFromSwarmService(headers, userUniqueIds)
+	if err != nil {
+		return nil, err
+	}
+
+	if redisClient != nil {
+
+		// save user topics to cache
+		go saveUserTopicsToCache(redisClient, communityId, userTopics)
+
+		// save topics meta to cache
+		go func() {
+			topicsData := []TopicMeta{}
+			for _, topic := range topicsFromAPI {
+				topicsData = append(topicsData, topic)
+			}
+
+			// save topics to cache
+			saveTopicsInCache(redisClient, communityId, topicsData)
+		}()
+
+		// save widgets meta to cache
+		go func() {
+			widgetsData := []WidgetResponse{}
+			for _, widget := range widgetsFromAPI {
+				widgetsData = append(widgetsData, widget)
+			}
+
+			// save widgets to cache
+			saveWidgetsToCache(redisClient, communityId, widgetsData)
+		}()
+
+	}
+
+	return userTopics, nil
 }
 
 // External method to fetch user topics (If enabled) and its related data for userUniqueIds and update in dataResponse

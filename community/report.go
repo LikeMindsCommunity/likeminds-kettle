@@ -200,8 +200,8 @@ func getReportsInternal(c *gin.Context, userId string) {
 
 		dataResponse["posts"] = posts
 		dataResponse["comments"] = comments
-		dataResponse["topics"] = topics
-		dataResponse["widgets"] = widgets
+		dataResponse[constants.ResponseKeyTopics] = topics
+		dataResponse[constants.ResponseKeyWidgets] = widgets
 		dataResponse["users"] = users
 		dataResponse["reposted_posts"] = repostedPosts
 
@@ -350,7 +350,7 @@ func fetchCommentsData(headers map[string]interface{}, commentIds []string,
 		response := utils.ValidateClientResponseWithoutContext(respBytes, statusCode, err)
 		if response != nil {
 			comments = response["comments"].(map[string]interface{})
-			widgets = response["widgets"].(map[string]interface{})
+			widgets = response[constants.ResponseKeyWidgets].(map[string]interface{})
 		}
 	}
 
@@ -384,7 +384,7 @@ func fetchPostsData(headers map[string]interface{}, postIds []string, pendingPos
 	if response != nil {
 		posts = response["posts"].(map[string]interface{})
 		topics = response["topics"].(map[string]interface{})
-		widgets = response["widgets"].(map[string]interface{})
+		widgets = response[constants.ResponseKeyWidgets].(map[string]interface{})
 		repostedPosts = response["reposted_posts"].(map[string]interface{})
 
 	}

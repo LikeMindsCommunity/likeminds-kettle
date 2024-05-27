@@ -117,7 +117,8 @@ func saveTopicsInCache(redisClient *redis.Client, communityId int, topicsMeta []
 }
 
 // External utility method to fetch topics meta map from topic ids from cache if present else from API
-func FetchTopicsMetaFromTopicsIds(redisClient *redis.Client, headers map[string]interface{}, topicIds []string) (map[string]TopicMeta, error) {
+func FetchTopicsMetaFromTopicsIds(redisClient *redis.Client, headers map[string]interface{}, topicIds []string,
+) (map[string]TopicMeta, error) {
 
 	// Fetch communityId from ApiKey
 	communityId, err := FetchCommunityIdFromApiKey(redisClient, headers[HeadersApiKey].(string))
@@ -150,31 +151,43 @@ func FetchTopicsMetaFromTopicsIds(redisClient *redis.Client, headers map[string]
 	// Fetch topics meta from swarm service
 	if len(topicIds) > 0 {
 
-		fetchedTopicsMeta, fetchedWidgetsMeta, err := fetchTopicsFromSwarmService(headers, topicIds)
+		topics, err := fetchTopicsFromApiAndSaveInCache(headers, topicIds, redisClient, communityId)
 		if err != nil {
 			return nil, err
 		}
 
-		if redisClient != nil {
-			// save fetched topics meta to cache
-			go saveTopicsInCache(redisClient, communityId, fetchedTopicsMeta)
-
-			// save fetched widgets meta to cache
-			go func() {
-				widgetsResponse := []WidgetResponse{}
-				for _, widgetResponse := range fetchedWidgetsMeta {
-					widgetsResponse = append(widgetsResponse, widgetResponse)
-				}
-
-				saveWidgetsToCache(redisClient, communityId, widgetsResponse)
-			}()
-		}
-
 		// convert topics meta to map
-		for _, topicMeta := range fetchedTopicsMeta {
+		for _, topicMeta := range topics {
 			topicsMeta[topicMeta.ID] = topicMeta
 		}
+
 	}
 
 	return topicsMeta, nil
+}
+
+func fetchTopicsFromApiAndSaveInCache(headers map[string]interface{}, topicIds []string, redisClient *redis.Client, communityId int,
+) ([]TopicMeta, error) {
+
+	topics, fetchedWidgetsMeta, err := fetchTopicsFromSwarmService(headers, topicIds)
+	if err != nil {
+		return nil, err
+	}
+
+	if redisClient != nil {
+		// save fetched topics meta to cache
+		go saveTopicsInCache(redisClient, communityId, topics)
+
+		// save fetched widgets meta to cache
+		go func() {
+			widgetsResponse := []WidgetResponse{}
+			for _, widgetResponse := range fetchedWidgetsMeta {
+				widgetsResponse = append(widgetsResponse, widgetResponse)
+			}
+
+			saveWidgetsToCache(redisClient, communityId, widgetsResponse)
+		}()
+	}
+
+	return topics, nil
 }

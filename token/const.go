@@ -8,3 +8,12 @@ const (
 	REFRESH_TOKEN_EXPIRY = 744 // 31 days
 	DEFAULT_TOKEN_EXPIRY = -1
 )
+
+// Auth token data params
+const (
+	TokemAccessUUID   = "access_uuid"
+	TokenAPIKey       = "api_key"
+	TokenUserUniqueId = "user_unique_id"
+	TokenIsGuest      = "is_guest"
+	TokenExp          = "exp"
+)

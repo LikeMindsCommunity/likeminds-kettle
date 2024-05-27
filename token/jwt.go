@@ -23,9 +23,9 @@ func CreateOTM(apiKey string) (*constants.OnboardingTokenMeta, error) {
 	var err error
 
 	otmClaims := jwt.MapClaims{}
-	otmClaims["access_uuid"] = otm.AccessUuid
-	otmClaims["exp"] = otm.AccessTokenExpires
-	otmClaims["api_key"] = apiKey
+	otmClaims[TokemAccessUUID] = otm.AccessUuid
+	otmClaims[TokenExp] = otm.AccessTokenExpires
+	otmClaims[TokenAPIKey] = apiKey
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, otmClaims)
 	otm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
 	if err != nil {
@@ -43,9 +43,9 @@ func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode strin
 	var err error
 
 	vtmClaims := jwt.MapClaims{}
-	vtmClaims["access_uuid"] = vtm.AccessUuid
-	vtmClaims["exp"] = vtm.AccessTokenExpires
-	vtmClaims["api_key"] = apiKey
+	vtmClaims[TokemAccessUUID] = vtm.AccessUuid
+	vtmClaims[TokenExp] = vtm.AccessTokenExpires
+	vtmClaims[TokenAPIKey] = apiKey
 
 	if emailId != "" {
 		vtmClaims["email_id"] = emailId
@@ -103,10 +103,10 @@ func CreateLTMAndRTM(userUniqueID string, apiKey string, tokenExpiryBeta int64, 
 	//Creating login token meta
 	//os.Setenv("ACCESS_SECRET", "JWT_SECRET") //this should be in an env file
 	ltmClaims := jwt.MapClaims{}
-	ltmClaims["access_uuid"] = ltm.AccessUuid
-	ltmClaims["user_unique_id"] = userUniqueID
-	ltmClaims["api_key"] = apiKey
-	ltmClaims["is_guest"] = isGuestUser
+	ltmClaims[TokemAccessUUID] = ltm.AccessUuid
+	ltmClaims[TokenUserUniqueId] = userUniqueID
+	ltmClaims[TokenAPIKey] = apiKey
+	ltmClaims[TokenIsGuest] = isGuestUser
 
 	bytesData, err := json.Marshal(ltmClaims)
 
@@ -118,7 +118,7 @@ func CreateLTMAndRTM(userUniqueID string, apiKey string, tokenExpiryBeta int64, 
 		}
 	}
 
-	ltmClaims["exp"] = ltm.AccessTokenExpires
+	ltmClaims[TokenExp] = ltm.AccessTokenExpires
 
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, ltmClaims)
 	ltm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
@@ -129,9 +129,9 @@ func CreateLTMAndRTM(userUniqueID string, apiKey string, tokenExpiryBeta int64, 
 	//Creating refresh token meta
 	rtmClaims := jwt.MapClaims{}
 	rtmClaims["refresh_uuid"] = rtm.RefreshUuid
-	rtmClaims["user_unique_id"] = userUniqueID
-	rtmClaims["api_key"] = apiKey
-	rtmClaims["is_guest"] = isGuestUser
+	rtmClaims[TokenUserUniqueId] = userUniqueID
+	rtmClaims[TokenAPIKey] = apiKey
+	rtmClaims[TokenIsGuest] = isGuestUser
 
 	bytesData, err = json.Marshal(rtmClaims)
 
@@ -143,7 +143,7 @@ func CreateLTMAndRTM(userUniqueID string, apiKey string, tokenExpiryBeta int64, 
 		}
 	}
 
-	rtmClaims["exp"] = rtm.RefreshTokenExpires
+	rtmClaims[TokenExp] = rtm.RefreshTokenExpires
 
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtmClaims)
 	rtm.RefreshToken, err = rt.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
@@ -192,13 +192,13 @@ func ExtractOTM(bearerToken string) (*constants.OnboardingTokenMeta, error) {
 	claims, ok := token.Claims.(jwt.MapClaims)
 
 	if ok && token.Valid {
-		accessUuid, ok := claims["access_uuid"].(string)
+		accessUuid, ok := claims[TokemAccessUUID].(string)
 
 		if !ok {
 			return nil, err
 		}
 
-		apiKey, _ := claims["api_key"].(string)
+		apiKey, _ := claims[TokenAPIKey].(string)
 
 		return &constants.OnboardingTokenMeta{
 			AccessUuid: accessUuid,
@@ -221,13 +221,13 @@ func ExtractVTM(bearerToken string) (*constants.VerifyTokenMeta, error) {
 	claims, ok := token.Claims.(jwt.MapClaims)
 
 	if ok && token.Valid {
-		accessUuid, ok := claims["access_uuid"].(string)
+		accessUuid, ok := claims[TokemAccessUUID].(string)
 
 		if !ok {
 			return nil, err
 		}
 
-		apiKey, _ := claims["api_key"].(string)
+		apiKey, _ := claims[TokenAPIKey].(string)
 		emailId, _ := claims["email_id"].(string)
 		mobileNo, _ := claims["mobile_no"].(string)
 		countryCode, _ := claims["country_code"].(string)
@@ -266,17 +266,17 @@ func ExtractLTM(bearerToken string) (*constants.LoginTokenMeta, error) {
 
 		var atExpires int64
 
-		atExpiresFloat, ok := jwt_claims["exp"].(float64)
+		atExpiresFloat, ok := jwt_claims[TokenExp].(float64)
 
 		if !ok {
-			atExpiresFloat, ok = claims["exp"].(float64)
+			atExpiresFloat, ok = claims[TokenExp].(float64)
 		}
 
 		if atExpiresFloat != 0 {
 			atExpires = int64(atExpiresFloat)
 		}
 
-		accessUuid, ok := claims["access_uuid"].(string)
+		accessUuid, ok := claims[TokemAccessUUID].(string)
 		if !ok {
 			return nil, errors.New("access_uuid is empty")
 		}
@@ -285,15 +285,15 @@ func ExtractLTM(bearerToken string) (*constants.LoginTokenMeta, error) {
 		} else if atExpires < time.Now().Unix() {
 			return nil, errors.New("LTM expired!")
 		}
-		userUniqueID, ok := claims["user_unique_id"].(string)
+		userUniqueID, ok := claims[TokenUserUniqueId].(string)
 		if !ok {
 			return nil, errors.New("user_unique_id is empty")
 		}
-		isGuest, ok := claims["is_guest"].(bool)
+		isGuest, ok := claims[TokenIsGuest].(bool)
 		if !ok {
 			return nil, errors.New("is_guest is empty")
 		}
-		apiKey, _ := claims["api_key"].(string)
+		apiKey, _ := claims[TokenAPIKey].(string)
 		return &constants.LoginTokenMeta{
 			AccessUuid:         accessUuid,
 			UserUniqueID:       userUniqueID,
@@ -325,10 +325,10 @@ func ExtractRTM(bearerToken string) (*constants.RefreshTokenMeta, error) {
 
 		var rtExpires int64
 
-		rtExpiresFloat, ok := jwt_claims["exp"].(float64)
+		rtExpiresFloat, ok := jwt_claims[TokenExp].(float64)
 
 		if !ok {
-			rtExpiresFloat, ok = claims["exp"].(float64)
+			rtExpiresFloat, ok = claims[TokenExp].(float64)
 		}
 
 		if rtExpiresFloat != 0 {
@@ -344,15 +344,15 @@ func ExtractRTM(bearerToken string) (*constants.RefreshTokenMeta, error) {
 		} else if rtExpires < time.Now().Unix() {
 			return nil, errors.New("RTM expired!")
 		}
-		userUniqueID, ok := claims["user_unique_id"].(string)
+		userUniqueID, ok := claims[TokenUserUniqueId].(string)
 		if !ok {
 			return nil, errors.New("user_unique_id is empty")
 		}
-		isGuest, ok := claims["is_guest"].(bool)
+		isGuest, ok := claims[TokenIsGuest].(bool)
 		if !ok {
 			return nil, errors.New("is_guest is empty")
 		}
-		apiKey, _ := claims["api_key"].(string)
+		apiKey, _ := claims[TokenAPIKey].(string)
 		return &constants.RefreshTokenMeta{
 			RefreshUuid:         refreshUuid,
 			UserUniqueID:        userUniqueID,
