@@ -30,57 +30,50 @@ func CommunityFeed(c *gin.Context, method int) {
 	switch method {
 	case utils.GETMethod:
 
-		//Params to be sent in the fetch_feed request
-		params := map[string]string{
-			ChatroomIDParam:               c.Query(ChatroomIDParam),
-			ParamPinned:                   c.Query(ParamPinned),
-			chatroom.ParamScrollDirection: c.Query(chatroom.ParamScrollDirection),
-			ParamOrderType:                c.Query(ParamOrderType),
-			ParamPage:                     c.Query(ParamPage),
-			ParamPageSize:                 c.Query(ParamPageSize),
-			ParamType:                     c.Query(ParamType),
-		}
+		//Get Community Feed
+		getCommunityFeedInternal(c, userId)
 
-		if params[ParamType] == strconv.Itoa(PostFeedType) {
-			if params[ParamOrderType] == strconv.Itoa(OrderTypeNewest) || params[ParamOrderType] == strconv.Itoa(OrderTypeMostParticipants) {
-				//Fetch post dependent data
-				dataResponse := fetchPostDependentFeed(c, userId, params)
-				if dataResponse == nil {
-					return
-				}
-
-				//Send Response
-				utils.GenerateResponse(c, dataResponse, true)
-			} else if params[ParamOrderType] == strconv.Itoa(OrderTypeRecentlyActive) || params[ParamOrderType] == strconv.Itoa(OrderTypeMostMessages) {
-				//Fetch post independent data
-				dataResponse := fetchPostIndependentFeed(c, userId, params)
-				if dataResponse == nil {
-					return
-				}
-
-				//Send Response
-				utils.GenerateResponse(c, dataResponse, true)
-			} else {
-				utils.GeneralBadRequestError(c, "invalid order_type sent")
-				return
-			}
-
-		} else {
-
-			//Get Request response
-			respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, CommunityFetchFeedEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
-			if respBytes == nil {
-				return
-			}
-
-			//Parse and generate response
-			utils.ParseResponse(c, respBytes, statusCode, true)
-
-		}
 	}
 }
 
-func fetchPostDependentFeed(c *gin.Context, userId string, params map[string]string) map[string]interface{} {
+func getCommunityFeedInternal(c *gin.Context, userId string) {
+
+	//Params to be sent in the fetch_feed request
+	params := map[string]string{
+		ChatroomIDParam:               c.Query(ChatroomIDParam),
+		ParamPinned:                   c.Query(ParamPinned),
+		chatroom.ParamScrollDirection: c.Query(chatroom.ParamScrollDirection),
+		ParamOrderType:                c.Query(ParamOrderType),
+		ParamPage:                     c.Query(ParamPage),
+		ParamPageSize:                 c.Query(ParamPageSize),
+		ParamType:                     c.Query(ParamType),
+	}
+
+	if params[ParamType] == strconv.Itoa(PostFeedType) {
+		if params[ParamOrderType] == strconv.Itoa(OrderTypeNewest) || params[ParamOrderType] == strconv.Itoa(OrderTypeMostParticipants) {
+			fetchAndRespondPostDependentFeed(c, userId, params)
+
+		} else if params[ParamOrderType] == strconv.Itoa(OrderTypeRecentlyActive) || params[ParamOrderType] == strconv.Itoa(OrderTypeMostMessages) {
+			fetchAndRespondPostIndependentFeed(c, userId, params)
+
+		} else {
+			utils.GeneralBadRequestError(c, "invalid order_type sent")
+		}
+
+	} else {
+
+		//Get Request response
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, CommunityFetchFeedEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse and generate response
+		utils.ParseResponse(c, respBytes, statusCode, true)
+	}
+}
+
+func fetchAndRespondPostDependentFeed(c *gin.Context, userId string, params map[string]string) {
 	//Generate params for CommunityPostFeed Request
 	communityFeedParams := map[string]string{
 		ParamPinned:    params[ParamPinned],
@@ -95,11 +88,12 @@ func fetchPostDependentFeed(c *gin.Context, userId string, params map[string]str
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
 	if apiCR == nil {
-		return nil
+		return
 	}
 
 	//If flow succeeds
 	dataResponse := apiCR.Response
+
 	chatroomIds := []int{}
 	finalPostCounts := map[string]int{}
 
@@ -128,7 +122,7 @@ func fetchPostDependentFeed(c *gin.Context, userId string, params map[string]str
 	//Validate response
 	apiCR = utils.ValidateClientResponse(c, respBytes, statusCode)
 	if apiCR == nil {
-		return nil
+		return
 	}
 
 	//If flow succeeds
@@ -141,17 +135,19 @@ func fetchPostDependentFeed(c *gin.Context, userId string, params map[string]str
 
 	dataResponse[constants.ResponseKeyPostCounts] = finalPostCounts
 
-	return dataResponse
+	//Send Response
+	utils.GenerateResponse(c, dataResponse, true)
 }
 
-func fetchPostIndependentFeed(c *gin.Context, userId string, params map[string]string) map[string]interface{} {
+func fetchAndRespondPostIndependentFeed(c *gin.Context, userId string, params map[string]string) {
+
 	//Send Request to get excluded chatrooms list on Caravan Service
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, CommunityExcludedChatroomsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
 	if apiCR == nil {
-		return nil
+		return
 	}
 
 	//If flow succeeds
@@ -181,19 +177,19 @@ func fetchPostIndependentFeed(c *gin.Context, userId string, params map[string]s
 	//Validate response
 	apiCR = utils.ValidateClientResponse(c, respBytes, statusCode)
 	if apiCR == nil {
-		return nil
+		return
 	}
 
 	//If flow succeeds
 	swarmDataResponse := apiCR.Response
 	selectedChatroomIds := []int{}
-	post_counts := map[string]int{}
+	postCountMap := map[string]int{}
 
 	chatroomIds, ok = swarmDataResponse["chatroom_ids"]
 	if ok {
 		for _, chatroomId := range chatroomIds.([]interface{}) {
 			selectedChatroomIds = append(selectedChatroomIds, int(chatroomId.(float64)))
-			post_counts[strconv.Itoa(int(chatroomId.(float64)))] = 0
+			postCountMap[strconv.Itoa(int(chatroomId.(float64)))] = 0
 		}
 	}
 
@@ -211,18 +207,19 @@ func fetchPostIndependentFeed(c *gin.Context, userId string, params map[string]s
 	//Validate response
 	apiCR = utils.ValidateClientResponse(c, respBytes, statusCode)
 	if apiCR == nil {
-		return nil
+		return
 	}
 
 	//If flow succeeds
 	caravanDataResponse := apiCR.Response
 	if postCounts, ok := swarmDataResponse[constants.ResponseKeyPostCounts]; ok {
 		for chatroom_id, post_count := range postCounts.(map[string]interface{}) {
-			post_counts[chatroom_id] = int(post_count.(float64))
+			postCountMap[chatroom_id] = int(post_count.(float64))
 		}
 	}
 
-	caravanDataResponse[constants.ResponseKeyPostCounts] = post_counts
+	caravanDataResponse[constants.ResponseKeyPostCounts] = postCountMap
 
-	return caravanDataResponse
+	//Send Response
+	utils.GenerateResponse(c, caravanDataResponse, true)
 }

@@ -98,7 +98,7 @@ func createPendingPostInternal(c *gin.Context, userId string) {
 func editPendingPostInternal(c *gin.Context, userId string) {
 	pendingPostId := c.Param("pending_post_id")
 
-	editPostEndPoint := fmt.Sprintf(EditPendingPostEndPoint, pendingPostId)
+	editPostEndPoint := fmt.Sprintf(PendingPostEndPoint, pendingPostId)
 
 	// Body to be sent in the /post/pending/<pending_post_id> PUT request
 	eppr, err := parseEditPostRequest(c)
@@ -137,7 +137,7 @@ func editPendingPostInternal(c *gin.Context, userId string) {
 func fetchPendingPostInternal(c *gin.Context, userId string) {
 	pendingPostId := c.Param("pending_post_id")
 
-	fetchPostEndPoint := fmt.Sprintf(FetchPendingPostEndPoint, pendingPostId)
+	fetchPostEndPoint := fmt.Sprintf(PendingPostEndPoint, pendingPostId)
 
 	// Fetch member access to view topics
 	success, response := user.FetchMemberAccess(c, IS_MEMBER, userId)
@@ -180,7 +180,7 @@ func fetchPendingPostInternal(c *gin.Context, userId string) {
 // Internal method to delete pending post
 func deletePendingPostInternal(c *gin.Context, userId string, botId string) {
 	pendingPostId := c.Param("pending_post_id")
-	deletePostEndPoint := fmt.Sprintf(DeletePendingPostEndPoint, pendingPostId)
+	deletePostEndPoint := fmt.Sprintf(PendingPostEndPoint, pendingPostId)
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, deletePostEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, nil)

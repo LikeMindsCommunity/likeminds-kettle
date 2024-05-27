@@ -16,9 +16,7 @@ const SingleUserActivityEndPoint = "/user/%s/activity"
 const FetchUserFeedMetaEndPoint = "/user/%s/meta"
 const UserCommentsEndPoint = "/user/%s/comment"
 const CreatePendingPostEndPoint = "/post/pending"
-const EditPendingPostEndPoint = "/post/pending/%s"
-const FetchPendingPostEndPoint = "/post/pending/%s"
-const DeletePendingPostEndPoint = "/post/pending/%s"
+const PendingPostEndPoint = "/post/pending/%s"
 const FetchUserCreatedPendingPostsEndPoint = "/user/%s/post/pending"
 
 // GetUserActivityEndPoint | swarm API endpoint for user activity list

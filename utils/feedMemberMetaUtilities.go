@@ -186,23 +186,23 @@ func GetUsersMetaFromFeedData(redisClient *redis.Client, headers map[string]inte
 	dataResponse map[string]interface{},
 ) (map[string]MemberMeta, []string, error) {
 
-	user_unique_ids := []string{}
+	userUniqueIds := []string{}
 
 	// Fetch user ids from array
 	for _, data := range feedDataArray {
 		if user_unique_id, ok := data.(map[string]interface{})["uuid"]; ok {
-			user_unique_ids = append(user_unique_ids, user_unique_id.(string))
+			userUniqueIds = append(userUniqueIds, user_unique_id.(string))
 		}
 	}
 
-	user_unique_ids = AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_unique_ids)
-	user_unique_ids = AppendPollOptionCreatorsFromFeedDataResponse(dataResponse, user_unique_ids)
+	userUniqueIds = AppendRepostPostUsersFromFeedDataResponse(dataResponse, userUniqueIds)
+	userUniqueIds = AppendPollOptionCreatorsFromFeedDataResponse(dataResponse, userUniqueIds)
 
-	// Fetch user data for given user_unique_ids
-	user_data, err := FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_unique_ids)
+	// Fetch user data for given userUniqueIds
+	user_data, err := FetchMemberMetaMapForUserUniqueIds(redisClient, headers, userUniqueIds)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return user_data, user_unique_ids, nil
+	return user_data, userUniqueIds, nil
 }

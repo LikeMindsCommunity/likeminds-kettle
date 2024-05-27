@@ -37,11 +37,8 @@ func CreateHeaders(c *gin.Context, userUniqueID string) map[string]interface{} {
 // Add more headers to already existing headers
 func AddHeaders(c *gin.Context, headerValMap map[string]string) {
 
-	if headerValMap != nil {
-
-		for header, val := range headerValMap {
-			c.Request.Header.Add(header, val)
-		}
+	for header, val := range headerValMap {
+		c.Request.Header.Add(header, val)
 	}
 }
 
