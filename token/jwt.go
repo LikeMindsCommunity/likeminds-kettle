@@ -27,7 +27,7 @@ func CreateOTM(apiKey string) (*constants.OnboardingTokenMeta, error) {
 	otmClaims[TokenExp] = otm.AccessTokenExpires
 	otmClaims[TokenAPIKey] = apiKey
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, otmClaims)
-	otm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
+	otm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable(utils.EnvAccessSecret)))
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode strin
 	}
 
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, vtmClaims)
-	vtm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
+	vtm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable(utils.EnvAccessSecret)))
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +101,6 @@ func CreateLTMAndRTM(userUniqueID string, apiKey string, tokenExpiryBeta int64, 
 
 	var err error
 	//Creating login token meta
-	//os.Setenv("ACCESS_SECRET", "JWT_SECRET") //this should be in an env file
 	ltmClaims := jwt.MapClaims{}
 	ltmClaims[TokemAccessUUID] = ltm.AccessUuid
 	ltmClaims[TokenUserUniqueId] = userUniqueID
@@ -121,7 +120,7 @@ func CreateLTMAndRTM(userUniqueID string, apiKey string, tokenExpiryBeta int64, 
 	ltmClaims[TokenExp] = ltm.AccessTokenExpires
 
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, ltmClaims)
-	ltm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
+	ltm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable(utils.EnvAccessSecret)))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -146,7 +145,7 @@ func CreateLTMAndRTM(userUniqueID string, apiKey string, tokenExpiryBeta int64, 
 	rtmClaims[TokenExp] = rtm.RefreshTokenExpires
 
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtmClaims)
-	rtm.RefreshToken, err = rt.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
+	rtm.RefreshToken, err = rt.SignedString([]byte(environment.GoDotEnvVariable(utils.EnvAccessSecret)))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -168,12 +167,11 @@ func ExtractToken(bearerToken string) string {
 func VerifyToken(bearerToken string) (*jwt.Token, error) {
 	tokenString := ExtractToken(bearerToken)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		//os.Setenv("ACCESS_SECRET", "JWT_SECRET")
 		//Make sure that the token method conform to "SigningMethodHMAC"
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(environment.GoDotEnvVariable("ACCESS_SECRET")), nil
+		return []byte(environment.GoDotEnvVariable(utils.EnvAccessSecret)), nil
 	})
 	if err != nil {
 		return nil, err

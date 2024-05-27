@@ -7,6 +7,7 @@ const (
 	ResponseKeyTopics     = "topics"
 	ResponseKeyUserTopics = "user_topics"
 	ResponseKeyPostCounts = "post_counts"
+	ResponseKeyEntityId   = "entity_id"
 )
 
 // Response keys for community entities

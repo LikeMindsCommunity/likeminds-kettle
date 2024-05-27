@@ -314,15 +314,15 @@ func extractIdsFromReports(reports []interface{}) ([]string, []string, []string)
 
 		if ok {
 			if int(typeValue.(float64)) == feed.POST_REPORT_TYPE {
-				postIds = append(postIds, report.(map[string]interface{})["entity_id"].(string))
+				postIds = append(postIds, report.(map[string]interface{})[constants.ResponseKeyEntityId].(string))
 			}
 
 			if int(typeValue.(float64)) == feed.COMMENT_REPORT_TYPE || int(typeValue.(float64)) == feed.REPLY_REPORT_TYPE {
-				commentIds = append(commentIds, report.(map[string]interface{})["entity_id"].(string))
+				commentIds = append(commentIds, report.(map[string]interface{})[constants.ResponseKeyEntityId].(string))
 			}
 
 			if int(typeValue.(float64)) == feed.PENDING_POST_REPORT_TYPE {
-				pendingPostIds = append(pendingPostIds, report.(map[string]interface{})["entity_id"].(string))
+				pendingPostIds = append(pendingPostIds, report.(map[string]interface{})[constants.ResponseKeyEntityId].(string))
 			}
 
 		}
