@@ -288,6 +288,15 @@ func ApiMiddleware(client *redis.Client) gin.HandlerFunc {
 	}
 }
 
+func HstsMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Header("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+		c.Header("Content-Type-Options", "nosniff")
+		c.Header("Cache-Control", "no-cache; no-store; must-revalidate")
+		c.Next()
+	}
+}
+
 // GuestAccessCheckMiddleware | restrict guest access on endpoints
 func GuestAccessCheckMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
