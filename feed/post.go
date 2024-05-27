@@ -95,10 +95,13 @@ func parseDeletePostRequest(c *gin.Context) (*DeletePostRequest, error) {
 	return &dpr, nil
 }
 
-func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{}) map[string]interface{} {
-	if value, ok := dataResponse["post"]; ok {
-		postData := value.(map[string]interface{})
-		userIds := []string{}
+func extractUserIdsFromFeedDataResponse(dataResponse map[string]interface{}) []string {
+
+	userIds := []string{}
+
+	if _, ok := dataResponse["post"]; ok {
+
+		postData := dataResponse["post"].(map[string]interface{})
 
 		//Fetch post user id
 		if postUserUniqueId, ok := postData["uuid"]; ok {
@@ -113,9 +116,22 @@ func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{
 				}
 			}
 		}
+	}
 
-		userIds = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, userIds)
-		userIds = utils.AppendPollOptionCreatorsFromFeedDataResponse(dataResponse, userIds)
+	userIds = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, userIds)
+	userIds = utils.AppendPollOptionCreatorsFromFeedDataResponse(dataResponse, userIds)
+
+	return userIds
+}
+
+func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{},
+) map[string]interface{} {
+
+	if value, ok := dataResponse["post"]; ok {
+
+		postData := value.(map[string]interface{})
+
+		userIds := extractUserIdsFromFeedDataResponse(dataResponse)
 
 		// Get userId
 		userId := user.GetRequestingUserId(c)
@@ -131,11 +147,9 @@ func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{
 
 		//Validation of post based on community member
 		if postUserUniqueId, ok := postData["uuid"]; ok {
-			if postUser, ok := user_data[postUserUniqueId.(string)]; ok {
-				if postUser.IsDeleted {
-					utils.GeneralBadRequestError(c, "Invalid post_id sent!")
-					return nil
-				}
+			if postUser, ok := user_data[postUserUniqueId.(string)]; ok && postUser.IsDeleted {
+				utils.GeneralBadRequestError(c, utils.ErrorInvalidPostIdSent)
+				return nil
 			}
 		}
 
@@ -279,32 +293,15 @@ func createPostInternal(c *gin.Context, userId string) {
 	}
 
 	if createPostRequest.OnBehalfOfUUID != "" {
-		//Fetch member access to change author
-		success, response := user.FetchMemberAccess(c, CHANGE_AUTHOR_ACTION, userId)
-		if !success {
+
+		isCm, parsedUUID := validateAndFetchOnBehalfUUID(c, userId, createPostRequest)
+		if !isCm {
 			return
 		}
 
-		//If not access
-		if !response.Access {
-			utils.MemberAccessFailError(c)
-			return
-		}
-
-		//Update user_is_cm in request
-		createPostRequest.UserIsCm = response.IsCm
-
-		//Get parsed UUID from core service
-		parsedUUID, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), createPostRequest.OnBehalfOfUUID)
-
-		//If error in fetching UUID
-		if err != nil || parsedUUID == "" {
-			utils.GeneralBadRequestError(c, "Invalid on_behalf_of_uuid sent!")
-			return
-		}
-
-		//Update UUID in request
+		createPostRequest.UserIsCm = isCm
 		createPostRequest.OnBehalfOfUUID = parsedUUID
+
 	}
 
 	//Get tagged users from text
@@ -348,6 +345,33 @@ func createPostInternal(c *gin.Context, userId string) {
 	utils.GenerateResponse(c, dataResponse, true)
 }
 
+func validateAndFetchOnBehalfUUID(c *gin.Context, userId string, createPostRequest *CreatePostRequest,
+) (bool, string) {
+
+	//Fetch member access to change author
+	success, response := user.FetchMemberAccess(c, CHANGE_AUTHOR_ACTION, userId)
+	if !success {
+		return false, ""
+	}
+
+	//If not access
+	if !response.Access {
+		utils.MemberAccessFailError(c)
+		return false, ""
+	}
+
+	//Get parsed UUID from core service
+	parsedUUID, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), createPostRequest.OnBehalfOfUUID)
+
+	//If error in fetching UUID
+	if err != nil || parsedUUID == "" {
+		utils.GeneralBadRequestError(c, "Invalid on_behalf_of_uuid sent!")
+		return false, ""
+	}
+
+	return response.IsCm, parsedUUID
+}
+
 func editPostInternal(c *gin.Context, userId string) {
 
 	postId := c.Param(ParamPostId)
@@ -366,7 +390,7 @@ func editPostInternal(c *gin.Context, userId string) {
 	//If flow succeeds
 	dataResponse := apiCR.Response
 	if _, ok := dataResponse["post"]; !ok {
-		utils.GeneralBadRequestError(c, "Invalid post_id sent!")
+		utils.GeneralBadRequestError(c, utils.ErrorInvalidPostIdSent)
 		return
 	}
 
@@ -434,7 +458,7 @@ func deletePostInternal(c *gin.Context, userId string) {
 	//If flow succeeds
 	dataResponse := apiCR.Response
 	if _, ok := dataResponse["post"]; !ok {
-		utils.GeneralBadRequestError(c, "Invalid post_id sent!")
+		utils.GeneralBadRequestError(c, utils.ErrorInvalidPostIdSent)
 		return
 	}
 

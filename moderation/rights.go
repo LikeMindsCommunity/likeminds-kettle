@@ -97,9 +97,9 @@ func getRightsInternal(c *gin.Context, userId string) {
 	}
 
 	//GET Request params
-	is_cm := c.Query(ParamIsCm)
+	isCm := c.Query(ParamIsCm)
 
-	if is_cm == "" || is_cm == "false" {
+	if isCm == "" || isCm == "false" {
 		//If is_cm is missing or false, call fetch member rights api internally
 
 		//Get Request response
@@ -136,10 +136,10 @@ func editRightsInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	is_cm := rightsRequest.IsCM
+	isCm := rightsRequest.IsCM
 
-	if !is_cm {
-		//If is_cm is missing or false, call update member rights api internally
+	if !isCm {
+		//If isCm is missing or false, call update member rights api internally
 
 		//Send Request
 		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, UpdateMemberRights, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, rightsRequest)
@@ -188,10 +188,10 @@ func updateRightsInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	is_cm := rightsRequest.IsCM
+	isCm := rightsRequest.IsCM
 
-	if !is_cm {
-		//If is_cm is missing or false, call update member rights api internally
+	if !isCm {
+		//If isCm is missing or false, call update member rights api internally
 
 		//Send Request
 		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, UpdateMemberRights, utils.PATCHRequest, utils.CreateHeaders(c, userId), nil, rightsRequest)
@@ -225,35 +225,40 @@ func updateRightsInternal(c *gin.Context, userId string) {
 	}
 }
 
-// createFeedRightsAcitivity is used to create feed rights activity for members
-func createFeedRightsAcitivity(c *gin.Context, userId string, rights []Right, uuid string) bool {
+func extractActionFromRights(rights []Right) (string, string) {
 
-	post_action := ""
-	comment_action := ""
-
+	postAction, commentAction := "", ""
 	for _, right := range rights {
 		if right.Id == CREATE_POST_RIGHT_ID {
 
 			if right.IsSelected {
-				post_action = CREATE_POST_PERMISSION_ADDED_ACTION
+				postAction = CREATE_POST_PERMISSION_ADDED_ACTION
 			} else {
-				post_action = CREATE_POST_PERMISSION_REMOVED_ACTION
+				postAction = CREATE_POST_PERMISSION_REMOVED_ACTION
 			}
 		}
 
 		if right.Id == COMMENT_AND_REPLY_RIGHT_ID {
 
 			if right.IsSelected {
-				comment_action = CREATE_COMMENT_PERMISSION_ADDED_ACTION
+				commentAction = CREATE_COMMENT_PERMISSION_ADDED_ACTION
 			} else {
-				comment_action = CREATE_COMMENT_PERMISSION_REMOVED_ACTION
+				commentAction = CREATE_COMMENT_PERMISSION_REMOVED_ACTION
 			}
 		}
 	}
 
-	if post_action != "" {
+	return postAction, commentAction
+}
+
+// createFeedRightsAcitivity is used to create feed rights activity for members
+func createFeedRightsAcitivity(c *gin.Context, userId string, rights []Right, uuid string) bool {
+
+	postAction, commentAction := extractActionFromRights(rights)
+
+	if postAction != "" {
 		createActivityRequest := CreateActivityRequest{
-			Action: post_action,
+			Action: postAction,
 		}
 
 		//Send Request
@@ -269,9 +274,9 @@ func createFeedRightsAcitivity(c *gin.Context, userId string, rights []Right, uu
 		}
 	}
 
-	if comment_action != "" {
+	if commentAction != "" {
 		createActivityRequest := CreateActivityRequest{
-			Action: comment_action,
+			Action: commentAction,
 		}
 
 		//Send Request

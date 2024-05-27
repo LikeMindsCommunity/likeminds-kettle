@@ -3,6 +3,7 @@ package middleware
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -37,7 +38,7 @@ func OTMValidationMiddleware() gin.HandlerFunc {
 
 			// Set API key in request header
 			if otm.ApiKey != "" {
-				c.Request.Header["X-Api-Key"] = []string{otm.ApiKey}
+				c.Request.Header[utils.HeadersApiKey] = []string{otm.ApiKey}
 			}
 		}
 		c.Next()
@@ -67,7 +68,7 @@ func VTMValidationMiddleware(isMandatory bool) gin.HandlerFunc {
 
 			// // Set API key in request header
 			if vtm.ApiKey != "" {
-				c.Request.Header["X-Api-Key"] = []string{vtm.ApiKey}
+				c.Request.Header[utils.HeadersApiKey] = []string{vtm.ApiKey}
 			}
 		}
 		c.Next()
@@ -117,7 +118,7 @@ func LTMValidationMiddleware(redisClient *redis.Client, isGuestAccess bool) gin.
 
 			// Set API key in request header
 			if ltm.ApiKey != "" {
-				c.Request.Header["X-Api-Key"] = []string{ltm.ApiKey}
+				c.Request.Header[utils.HeadersApiKey] = []string{ltm.ApiKey}
 			}
 		}
 		c.Next()
@@ -149,7 +150,7 @@ func RTMValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 		}
 		// Set API key in request header
 		if rtm.ApiKey != "" {
-			c.Request.Header["X-Api-Key"] = []string{rtm.ApiKey}
+			c.Request.Header[utils.HeadersApiKey] = []string{rtm.ApiKey}
 		}
 		c.Next()
 	}
@@ -176,7 +177,7 @@ func LTMorVTMValidationMiddleware() gin.HandlerFunc {
 
 			// Set API key in request header
 			if ltm.ApiKey != "" {
-				c.Request.Header["X-Api-Key"] = []string{ltm.ApiKey}
+				c.Request.Header[utils.HeadersApiKey] = []string{ltm.ApiKey}
 			}
 
 			c.Next()
@@ -191,7 +192,7 @@ func LTMorVTMValidationMiddleware() gin.HandlerFunc {
 
 			// Set API key in request header
 			if vtm.ApiKey != "" {
-				c.Request.Header["X-Api-Key"] = []string{vtm.ApiKey}
+				c.Request.Header[utils.HeadersApiKey] = []string{vtm.ApiKey}
 			}
 
 			c.Next()
@@ -210,9 +211,11 @@ func LTMorVTMValidationMiddleware() gin.HandlerFunc {
 
 func LogoutValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
+
 		//Extract LTM from token, internally it checks if token is valid or not
 		ltm, err := token.ExtractLTM(c.Request.Header.Get(constants.HeaderAuthorization))
 		if ltm == nil {
+
 			log.Error(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
 				Success:      false,
@@ -220,6 +223,7 @@ func LogoutValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 			})
 			return
 		} else {
+
 			//Check if LTM is black listed or not
 			if cache.IsLTMBlacklisted(redisClient, ltm) {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
@@ -228,6 +232,7 @@ func LogoutValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 				})
 				return
 			}
+
 			//Get RTM token from body
 			var logoutRequest user.LogoutRequest
 			if err := c.ShouldBindJSON(&logoutRequest); err != nil {
@@ -237,8 +242,9 @@ func LogoutValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 				})
 				return
 			}
-			//Extract RTM from token, internally it checks if token is valid or not
-			rtm, err := token.ExtractRTM(logoutRequest.RefreshToken)
+
+			//Extract and validate RTM token
+			rtm, err := extractAndValidateRTMToken(logoutRequest.RefreshToken, redisClient)
 			if rtm == nil {
 				log.Error(err)
 				c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
@@ -247,14 +253,6 @@ func LogoutValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 				})
 				return
 			} else {
-				//Check if RTM is black listed or not
-				if cache.IsRTMBlacklisted(redisClient, rtm) {
-					c.AbortWithStatusJSON(http.StatusUnauthorized, utils.Response{
-						Success:      false,
-						ErrorMessage: utils.ErrorDeviceLoggedOut,
-					})
-					return
-				}
 				//If valid and not blacklisted, set "ltm" and "rtm" in context, to be used in later APIs
 				c.Set(constants.ParamLTM, ltm)
 				c.Set(constants.ParamRTM, rtm)
@@ -262,6 +260,22 @@ func LogoutValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 		}
 		c.Next()
 	}
+}
+
+func extractAndValidateRTMToken(refreshToken string, redisClient *redis.Client) (*constants.RefreshTokenMeta, error) {
+
+	//Extract RTM from token, internally it checks if token is valid or not
+	rtm, err := token.ExtractRTM(refreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	//Check if RTM is black listed or not
+	if cache.IsRTMBlacklisted(redisClient, rtm) {
+		return nil, fmt.Errorf(utils.ErrorDeviceLoggedOut)
+	}
+
+	return rtm, nil
 }
 
 // Internal service validation middelware

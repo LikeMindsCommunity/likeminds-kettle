@@ -39,8 +39,9 @@ func SavePost(c *gin.Context, method int) {
 }
 
 func getSavePostsInternal(c *gin.Context, userId string) {
+
 	//Access query params and url generation
-	user_id := c.Param("user_id")
+	paramUserId := c.Param("user_id")
 
 	headers := utils.CreateHeaders(c, userId)
 
@@ -66,14 +67,14 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
 	//Get user_unique_id from user_id internally
-	user_id, err := utility.GetUUIDInternally(headers, user_id)
+	uuid, err := utility.GetUUIDInternally(headers, paramUserId)
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 
 	//Url generation
-	FetchSavePostEndPoint := fmt.Sprintf(FetchUserSavedPostsEndPoint, user_id)
+	FetchSavePostEndPoint := fmt.Sprintf(FetchUserSavedPostsEndPoint, uuid)
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchSavePostEndPoint, utils.GETRequest, headers, params, nil)
@@ -84,34 +85,11 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	//If flow succeeds
-	dataResponse := apiCR.Response
-	if value, ok := dataResponse["posts"]; ok {
-
-		posts := value.([]interface{})
-
-		if value, ok := dataResponse["filtered_comments"]; ok {
-			if commentData, ok := value.(map[string]interface{}); ok {
-
-				for _, val := range commentData {
-					posts = append(posts, val)
-				}
-			}
-		}
-
-		redisClient := utils.GetRedisClientFromContext(c)
-
-		user_data, userUniqueIds, err := utils.GetUsersMetaFromFeedData(redisClient, headers, posts, dataResponse)
-		if err != nil {
-			utils.GenerateResponse(c, nil, false)
-			return
-		}
-
-		//Update user data in dataResponse
-		dataResponse["users"] = user_data
-
-		// Update user topics data in dataResponse
-		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
+	// If flow succeeds
+	dataResponse, err := populateDataResponseForFeed(headers, utils.GetRedisClientFromContext(c), apiCR.Response)
+	if err != nil {
+		utils.GenerateResponse(c, nil, false)
+		return
 	}
 
 	//Send response
@@ -120,8 +98,8 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 
 func createSavePostInternal(c *gin.Context, userId string) {
 	//Access query params and url generation
-	post_id := c.Param("post_id")
-	SavePostEndPoint := fmt.Sprintf(SinglePostSaveEndPoint, post_id)
+	paramPostId := c.Param("post_id")
+	SavePostEndPoint := fmt.Sprintf(SinglePostSaveEndPoint, paramPostId)
 
 	//Fetch member access to create post
 	success, response := user.FetchMemberAccess(c, SAVE_POST_ACTION, userId)

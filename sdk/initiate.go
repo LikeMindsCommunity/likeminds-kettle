@@ -30,6 +30,29 @@ type InitiateSDKRequest struct {
 	SharedBy           string           `json:"shared_by,omitempty"`
 }
 
+func extractDetailsFromVTM(vtm *constants.VerifyTokenMeta, isr *InitiateSDKRequest) *InitiateSDKRequest {
+
+	// vtm := verifyTokenMeta.(*constants.VerifyTokenMeta)
+
+	if isr.User.Name == "" && isr.UserName != "" {
+		isr.User.Name = isr.UserName
+	}
+
+	if isr.User.Email == "" && vtm.EmailID != "" {
+		isr.User.Email = vtm.EmailID
+	}
+
+	if isr.User.MobileNo == "" && vtm.MobileNo != "" {
+		isr.User.MobileNo = vtm.MobileNo
+	}
+
+	if isr.User.CountryCode == "" && vtm.CountryCode != "" {
+		isr.User.CountryCode = vtm.CountryCode
+	}
+
+	return isr
+}
+
 // InitiateSDK is used to initiate sdk
 func InitiateSDK(c *gin.Context) {
 
@@ -42,25 +65,8 @@ func InitiateSDK(c *gin.Context) {
 	}
 
 	verifyTokenMeta, ok := c.Get(constants.ParamVTM)
-
 	if ok {
-		vtm := verifyTokenMeta.(*constants.VerifyTokenMeta)
-
-		if initiateSDKRequest.User.Name == "" && initiateSDKRequest.UserName != "" {
-			initiateSDKRequest.User.Name = initiateSDKRequest.UserName
-		}
-
-		if initiateSDKRequest.User.Email == "" && vtm.EmailID != "" {
-			initiateSDKRequest.User.Email = vtm.EmailID
-		}
-
-		if initiateSDKRequest.User.MobileNo == "" && vtm.MobileNo != "" {
-			initiateSDKRequest.User.MobileNo = vtm.MobileNo
-		}
-
-		if initiateSDKRequest.User.CountryCode == "" && vtm.CountryCode != "" {
-			initiateSDKRequest.User.CountryCode = vtm.CountryCode
-		}
+		initiateSDKRequest = extractDetailsFromVTM(verifyTokenMeta.(*constants.VerifyTokenMeta), initiateSDKRequest)
 	}
 
 	// Send Request

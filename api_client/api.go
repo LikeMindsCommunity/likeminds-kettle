@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/nateshr/likeminds-authentication/environment"
+	"github.com/nateshr/likeminds-authentication/logging"
 )
 
 type BodyType int
@@ -99,11 +100,11 @@ func AddParams(req *http.Request, params map[string]string) {
 	req.URL.RawQuery = q.Encode()
 }
 
-func UpdateBody(pro *PostRequestOptions, body_type BodyType) (*http.Request, error) {
+func UpdateBody(pro *PostRequestOptions, bodyType BodyType) (*http.Request, error) {
 
 	var req *http.Request
 
-	switch body_type {
+	switch bodyType {
 	case BodyTypeRaw:
 
 		data, err := json.Marshal(pro.Body)
@@ -140,8 +141,9 @@ func UpdateBody(pro *PostRequestOptions, body_type BodyType) (*http.Request, err
 }
 
 func convertToFormURLEncoded(body *[]byte) url.Values {
+
 	// datamap | converts incoming request body into a map
-	var datamap map[(string)]interface{}
+	var datamap map[string]interface{}
 	json.Unmarshal(*body, &datamap)
 
 	// payload | form-url-encode paylaod
@@ -164,7 +166,7 @@ func (c *APIClient) sendRequest(req *http.Request) ([]byte, int, error) {
 	defer func(Body io.ReadCloser) {
 		err = Body.Close()
 		if err != nil {
-
+			logging.Error(fmt.Sprint("error closing response body", err))
 		}
 	}(resp.Body)
 
@@ -207,9 +209,9 @@ func (c *APIClient) GetRequest(gro *GetRequestOptions) ([]byte, int, error) {
 	return respBytes, statusCode, nil
 }
 
-func (c *APIClient) PostRequest(pro *PostRequestOptions, body_type BodyType) ([]byte, int, error) {
+func (c *APIClient) PostRequest(pro *PostRequestOptions, bodyType BodyType) ([]byte, int, error) {
 
-	req, err := UpdateBody(pro, body_type)
+	req, err := UpdateBody(pro, bodyType)
 	if err != nil {
 		return nil, DefaultStatusCode, err
 	}

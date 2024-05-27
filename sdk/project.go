@@ -88,123 +88,120 @@ func Project(c *gin.Context, method int) {
 	if userId == "" {
 		return
 	}
+
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
+	}
+
 	headers := utils.CreateHeaders(c, userId)
 
 	switch method {
 	case utils.GETMethod:
-
-		//Params to be sent in the SDK fetch request internally
-		params := map[string]string{
-			ParamCommunityCreator: userId,
-		}
-
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.GETRequest, headers, params, nil)
+		getProjectInternal(c, userId, headers)
 
 	case utils.POSTMethod:
-
-		//Call POST api/bot to create bot
-		response := user.GetBotResponse(c, utils.POSTMethod)
-		if response == nil {
-			return
-		}
-
-		botId := user.GetUserUniqueIDFromResponse(response)
-
-		//Params to be sent in the create sdk project request internally
-		projectRequest, err := parseCreateProjectRequest(c, userId)
-		if err != nil {
-			//If POST body params are missing
-			utils.GeneralBadRequestError(c, err.Error())
-			return
-		}
-
-		//Send Create Project request and recieve API key
-		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, ProjectEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, botId), nil, projectRequest)
-		if respBytes == nil {
-			return
-		}
-
-		//Validate response
-		apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
-		if apiCR == nil {
-			return
-		}
-
-		projectApiResp := apiCR.Response
-
-		if projectApiResp[constants.ResponseKeyApiKey] == nil {
-			utils.GeneralAPIError(c, "Community not created")
-			return
-		}
-
-		// Fetch Community ID from API Key
-		redis := utils.GetRedisClientFromContext(c)
-		communityId, err := utils.FetchCommunityIdFromApiKey(redis, projectApiResp[constants.ResponseKeyApiKey].(string))
-		if err != nil {
-			utils.GeneralAPIError(c, err.Error())
-			return
-		}
-
-		//Send Request to create billing plan for community
-		communityBillingRequest := map[string]interface{}{}
-		billingEndpoint := utils.BillingPlanEnpoint + "/" + fmt.Sprint(communityId)
-		billingPlanRespBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, billingEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, communityBillingRequest)
-		if err != nil || statusCode != http.StatusOK {
-
-			if err == nil {
-				err = fmt.Errorf("error creating billing plan")
-			}
-
-			logging.Error(fmt.Sprintf("Error creating billing plan, response: %s err: %s ", string(billingPlanRespBytes), err.Error()))
-
-			// Delete the created community
-			headers := utils.CreateHeaders(c, botId)
-			headers[utils.HeadersApiKey] = projectApiResp[constants.ResponseKeyApiKey].(string)
-			resp, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, ProjectEndpoint, utils.DELETERequest, headers, nil, nil)
-			if err != nil || statusCode != http.StatusOK {
-				if err == nil {
-					err = fmt.Errorf("error deleting community")
-				}
-				logging.Error(fmt.Sprintf("Error deleting community, response: %s err: %s ", string(resp), err.Error()))
-			}
-
-			utils.GeneralAPIError(c, "Error creating billing plan")
-			return
-		}
-
-		//Send Response
-		utils.ParseResponse(c, respBytes, statusCode, false)
+		createProjectInternal(c, userId, headers)
 
 	case utils.PUTMethod:
-
-		botId := user.GetBotId(c)
-		if botId != "" {
-			userId = botId
-		}
-
-		//Params to be sent in the update sdk project request internally
-		projectRequest, err := parseUpdateProjectRequest(c)
-		if err != nil {
-			//If POST body params are missing
-			utils.GeneralBadRequestError(c, err.Error())
-			return
-		}
-
-		//Send Request
-		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, projectRequest)
+		updateProjectInternal(c, headers)
 
 	case utils.DELETEMethod:
-
-		botId := user.GetBotId(c)
-		if botId != "" {
-			userId = botId
-		}
-
 		//Send Request
 		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, nil)
-
 	}
+}
+
+func getProjectInternal(c *gin.Context, userId string, headers map[string]interface{}) {
+
+	//Params to be sent in the SDK fetch request internally
+	params := map[string]string{
+		ParamCommunityCreator: userId,
+	}
+
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.GETRequest, headers, params, nil)
+}
+
+func createProjectInternal(c *gin.Context, userId string, headers map[string]interface{}) {
+
+	//Params to be sent in the create sdk project request internally
+	projectRequest, err := parseCreateProjectRequest(c, userId)
+	if err != nil {
+		//If POST body params are missing
+		utils.GeneralBadRequestError(c, err.Error())
+		return
+	}
+
+	//Send Create Project request and recieve API key
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, ProjectEndpoint, utils.POSTRequestRawBody, headers, nil, projectRequest)
+	if respBytes == nil {
+		return
+	}
+
+	//Validate response
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR == nil {
+		return
+	}
+
+	projectApiResp := apiCR.Response
+
+	if projectApiResp[constants.ResponseKeyApiKey] == nil {
+		utils.GeneralAPIError(c, "Community not created")
+		return
+	}
+
+	// Fetch Community ID from API Key
+	redis := utils.GetRedisClientFromContext(c)
+	communityId, err := utils.FetchCommunityIdFromApiKey(redis, projectApiResp[constants.ResponseKeyApiKey].(string))
+	if err != nil {
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
+
+	//Send Request to create billing plan for community
+	communityBillingRequest := map[string]interface{}{}
+	billingEndpoint := utils.BillingPlanEnpoint + "/" + fmt.Sprint(communityId)
+	billingPlanRespBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, billingEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, communityBillingRequest)
+	if err != nil || statusCode != http.StatusOK {
+
+		if err == nil {
+			err = fmt.Errorf("error creating billing plan")
+		}
+
+		logging.Error(fmt.Sprintf("Error creating billing plan, response: %s err: %s ", string(billingPlanRespBytes), err.Error()))
+
+		// Delete the created community
+		headers[utils.HeadersApiKey] = projectApiResp[constants.ResponseKeyApiKey].(string)
+		resp, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, ProjectEndpoint, utils.DELETERequest, headers, nil, nil)
+		if err != nil || statusCode != http.StatusOK {
+			if err == nil {
+				err = fmt.Errorf("error deleting community")
+			}
+			logging.Error(fmt.Sprintf("Error deleting community, response: %s err: %s ", string(resp), err.Error()))
+		}
+
+		utils.GeneralAPIError(c, "Error creating billing plan")
+		return
+	}
+
+	//Send Response
+	utils.ParseResponse(c, respBytes, statusCode, false)
+}
+
+func updateProjectInternal(c *gin.Context, headers map[string]interface{}) {
+
+	//Params to be sent in the update sdk project request internally
+	projectRequest, err := parseUpdateProjectRequest(c)
+	if err != nil {
+		//If POST body params are missing
+		utils.GeneralBadRequestError(c, err.Error())
+		return
+	}
+
+	//Send Request
+	utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.PUTRequest, headers, nil, projectRequest)
 }
 
 func parseCreateProjectRequest(c *gin.Context, projectCreatorID string) (*CreateProjectRequest, error) {

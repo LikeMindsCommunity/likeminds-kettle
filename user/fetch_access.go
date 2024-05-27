@@ -11,11 +11,11 @@ type MemberAccessResponse struct {
 }
 
 // FetchMemberAccess | fetch member access for sent action
-func FetchMemberAccess(c *gin.Context, access_type string, userId string) (bool, *MemberAccessResponse) {
+func FetchMemberAccess(c *gin.Context, accessType string, userId string) (bool, *MemberAccessResponse) {
 
 	//Params to be sent in the api/community_member/fetch_access request
 	params := map[string]string{
-		ParamAccessType: access_type,
+		ParamAccessType: accessType,
 	}
 
 	//Params Validation

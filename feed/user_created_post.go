@@ -11,6 +11,7 @@ import (
 
 // FetchUserCreatedPost is used to fetch posts created by a user
 func FetchUserCreatedPosts(c *gin.Context) {
+
 	//Authorize User
 	userId := user.GetRequestingUserId(c)
 	if userId == "" {
@@ -26,7 +27,7 @@ func FetchUserCreatedPosts(c *gin.Context) {
 	}
 
 	//Access query params and url generation
-	user_id := c.Param("user_id")
+	paramUserId := c.Param("user_id")
 
 	//Fetch member access to view post
 	success, response := user.FetchMemberAccess(c, VIEW_POST_ACTION, userId)
@@ -44,7 +45,7 @@ func FetchUserCreatedPosts(c *gin.Context) {
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
 	//Get user_unique_id from user_id internally
-	user_id, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), user_id)
+	user_id, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), paramUserId)
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
 		return
@@ -62,45 +63,10 @@ func FetchUserCreatedPosts(c *gin.Context) {
 		return
 	}
 
-	//If flow succeeds
-	dataResponse := apiCR.Response
-	if value, ok := dataResponse["posts"]; ok {
-		posts := value.([]interface{})
-		user_ids := []string{}
-
-		if value, ok := dataResponse["filtered_comments"]; ok {
-			if commentData, ok := value.(map[string]interface{}); ok {
-
-				for _, val := range commentData {
-					posts = append(posts, val)
-				}
-			}
-		}
-
-		//Fetch posts user id
-		for _, post_data := range posts {
-			if user_unique_id, ok := post_data.(map[string]interface{})["uuid"]; ok {
-				user_ids = append(user_ids, user_unique_id.(string))
-			}
-		}
-
-		user_ids = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_ids)
-		user_ids = utils.AppendPollOptionCreatorsFromFeedDataResponse(dataResponse, user_ids)
-
-		redisClient := utils.GetRedisClientFromContext(c)
-
-		//Fetch user data for given user_unique_ids
-		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_ids)
-		if err != nil {
-			utils.GeneralAPIError(c, utils.ErrorFetchingUserData)
-			return
-		}
-
-		//Update user data in dataResponse
-		dataResponse["users"] = user_data
-
-		// Update user topics data in dataResponse
-		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
+	dataResponse, err := populateDataResponseForFeed(headers, utils.GetRedisClientFromContext(c), apiCR.Response)
+	if err != nil {
+		utils.GenerateResponse(c, nil, false)
+		return
 	}
 
 	//Send response

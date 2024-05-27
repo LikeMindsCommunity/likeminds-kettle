@@ -4,12 +4,14 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
 // FetchUniversalFeed is used to fetch universal feed by a user
 func FetchUniversalFeed(c *gin.Context) {
+
 	//Authorize User
 	userId := user.GetRequestingUserId(c)
 	if userId == "" {
@@ -50,35 +52,42 @@ func FetchUniversalFeed(c *gin.Context) {
 		return
 	}
 
-	//If flow succeeds
-	dataResponse := apiCR.Response
+	dataResponse, err := populateDataResponseForFeed(headers, utils.GetRedisClientFromContext(c), apiCR.Response)
+	if err != nil {
+		utils.GenerateResponse(c, nil, false)
+		return
+	}
+
+	//Send response
+	utils.GenerateResponse(c, dataResponse, true)
+}
+
+func populateDataResponseForFeed(headers map[string]interface{}, redisClient *redis.Client, dataResponse map[string]interface{},
+) (map[string]interface{}, error) {
+
 	if value, ok := dataResponse["posts"]; ok {
+
 		posts := value.([]interface{})
 
 		if value, ok := dataResponse["filtered_comments"]; ok {
 			if commentData, ok := value.(map[string]interface{}); ok {
-
 				for _, val := range commentData {
 					posts = append(posts, val)
 				}
 			}
 		}
 
-		redisClient := utils.GetRedisClientFromContext(c)
-
-		user_data, userUniqueIds, err := utils.GetUsersMetaFromFeedData(redisClient, headers, posts, dataResponse)
+		userData, userUniqueIds, err := utils.GetUsersMetaFromFeedData(redisClient, headers, posts, dataResponse)
 		if err != nil {
-			utils.GenerateResponse(c, nil, false)
-			return
+			return dataResponse, err
 		}
 
 		//Update user data in dataResponse
-		dataResponse["users"] = user_data
+		dataResponse["users"] = userData
 
 		// Update user topics data in dataResponse
 		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
 	}
 
-	//Send response
-	utils.GenerateResponse(c, dataResponse, true)
+	return dataResponse, nil
 }

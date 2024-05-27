@@ -133,8 +133,8 @@ func Comment(c *gin.Context, method int) {
 
 func getCommentInternal(c *gin.Context, userId string) {
 	//Access query params and url generation
-	postId := c.Param("post_id")
-	commentId := c.Param("comment_id")
+	postId := c.Param(ParamPostId)
+	commentId := c.Param(ParamCommentId)
 	GetCommentEndPoint := fmt.Sprintf(SingleCommentEndPoint, postId, commentId)
 
 	//Params to be sent in the /post/<post_id>/comment/<comment_id> request

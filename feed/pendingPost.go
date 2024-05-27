@@ -2,9 +2,11 @@ package feed
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/constants"
+	"github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/requests"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -96,7 +98,7 @@ func createPendingPostInternal(c *gin.Context, userId string) {
 
 // Internal method to edit a pending post
 func editPendingPostInternal(c *gin.Context, userId string) {
-	pendingPostId := c.Param("pending_post_id")
+	pendingPostId := c.Param(ParamPendingPostId)
 
 	editPostEndPoint := fmt.Sprintf(PendingPostEndPoint, pendingPostId)
 
@@ -200,6 +202,9 @@ func deletePendingPostInternal(c *gin.Context, userId string, botId string) {
 
 		// Send Request to api/community/report
 		respBytes, statusCode = utils.GetRequestResponse(c, utils.CoreService, constants.CommunityReportV1EndPoint, utils.PATCHRequest, utils.CreateHeaders(c, botId), nil, crnr)
+		if statusCode != http.StatusOK {
+			logging.Error(fmt.Sprintf("Error closing report: %v", string(respBytes)))
+		}
 	}
 
 	dataResponse = map[string]interface{}{
@@ -212,12 +217,12 @@ func deletePendingPostInternal(c *gin.Context, userId string, botId string) {
 // Internal method to populate users data
 func populatePendingPostDataResponse(c *gin.Context, dataResponse map[string]interface{}) map[string]interface{} {
 	if value, ok := dataResponse["post"]; ok {
-		post_data := value.(map[string]interface{})
-		user_ids := []string{}
+		postData := value.(map[string]interface{})
+		userIds := []string{}
 
 		// Fetch post user id
-		if post_user_unique_id, ok := post_data["uuid"]; ok {
-			user_ids = append(user_ids, post_user_unique_id.(string))
+		if post_user_unique_id, ok := postData["uuid"]; ok {
+			userIds = append(userIds, post_user_unique_id.(string))
 		}
 
 		// Get userId
@@ -226,19 +231,17 @@ func populatePendingPostDataResponse(c *gin.Context, dataResponse map[string]int
 		headers := utils.CreateHeaders(c, userId)
 
 		//Fetch user data for given user_unique_ids
-		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_ids)
+		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, userIds)
 		if err != nil {
 			utils.GeneralAPIError(c, utils.ErrorFetchingUserData)
 			return nil
 		}
 
 		//Validation of post based on community member
-		if post_user_unique_id, ok := post_data["uuid"]; ok {
-			if post_user, ok := user_data[post_user_unique_id.(string)]; ok {
-				if post_user.IsDeleted {
-					utils.GeneralBadRequestError(c, "Invalid post_id sent!")
-					return nil
-				}
+		if post_user_unique_id, ok := postData["uuid"]; ok {
+			if post_user, ok := user_data[post_user_unique_id.(string)]; ok && post_user.IsDeleted {
+				utils.GeneralBadRequestError(c, utils.ErrorInvalidPostIdSent)
+				return nil
 			}
 		}
 
@@ -246,7 +249,7 @@ func populatePendingPostDataResponse(c *gin.Context, dataResponse map[string]int
 		dataResponse["users"] = user_data
 
 		// Update user topics data in dataResponse
-		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
+		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userIds)
 	}
 
 	return dataResponse
