@@ -1,5 +1,7 @@
 package utils
 
+import "github.com/go-redis/redis/v7"
+
 // AppendRepostPostUsersFromFeedDataResponse | adds uuids from reposted_posts container to API response user uuid list
 func AppendRepostPostUsersFromFeedDataResponse(dataResponse map[string]interface{}, userIDs []string) []string {
 	// fetch respost_post user ids
@@ -43,4 +45,34 @@ func AppendPollOptionCreatorsFromFeedDataResponse(dataResponse map[string]interf
 	}
 
 	return userIDs
+}
+
+func PopulateDataResponseForFeed(headers map[string]interface{}, redisClient *redis.Client, dataResponse map[string]interface{},
+) (map[string]interface{}, error) {
+
+	if value, ok := dataResponse["posts"]; ok {
+
+		posts := value.([]interface{})
+
+		if value, ok := dataResponse["filtered_comments"]; ok {
+			if commentData, ok := value.(map[string]interface{}); ok {
+				for _, val := range commentData {
+					posts = append(posts, val)
+				}
+			}
+		}
+
+		userData, userUniqueIds, err := GetUsersMetaFromFeedData(redisClient, headers, posts, dataResponse)
+		if err != nil {
+			return dataResponse, err
+		}
+
+		//Update user data in dataResponse
+		dataResponse["users"] = userData
+
+		// Update user topics data in dataResponse
+		dataResponse = FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
+	}
+
+	return dataResponse, nil
 }

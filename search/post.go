@@ -75,37 +75,10 @@ func PostSearch(c *gin.Context) {
 		return
 	}
 
-	//If flow succeeds
-	dataResponse = apiCR.Response
-	if value, ok := dataResponse["posts"]; ok {
-		posts := value.([]interface{})
-		user_ids := []string{}
-
-		//Fetch posts user id
-		for _, post_data := range posts {
-			if user_unique_id, ok := post_data.(map[string]interface{})["uuid"]; ok {
-				user_ids = append(user_ids, user_unique_id.(string))
-			}
-		}
-
-		user_ids = utils.AppendRepostPostUsersFromFeedDataResponse(dataResponse, user_ids)
-		user_ids = utils.AppendPollOptionCreatorsFromFeedDataResponse(dataResponse, user_ids)
-
-		redisClient := utils.GetRedisClientFromContext(c)
-
-		//Fetch user data for given user_unique_ids
-		user_data, err := utils.FetchMemberMetaMapForUserUniqueIds(redisClient, headers, user_ids)
-		if err != nil {
-			utils.GeneralBadRequestError(c, utils.ErrorFetchingUserData)
-			return
-		}
-
-		//Update user data in dataResponse
-		dataResponse["users"] = user_data
-
-		// Update user topics data in dataResponse
-		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, user_ids)
-
+	dataResponse, err := utils.PopulateDataResponseForFeed(headers, utils.GetRedisClientFromContext(c), apiCR.Response)
+	if err != nil {
+		utils.GenerateResponse(c, nil, false)
+		return
 	}
 
 	//Send response

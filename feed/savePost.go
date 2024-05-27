@@ -86,7 +86,7 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 	}
 
 	// If flow succeeds
-	dataResponse, err := populateDataResponseForFeed(headers, utils.GetRedisClientFromContext(c), apiCR.Response)
+	dataResponse, err := utils.PopulateDataResponseForFeed(headers, utils.GetRedisClientFromContext(c), apiCR.Response)
 	if err != nil {
 		utils.GenerateResponse(c, nil, false)
 		return

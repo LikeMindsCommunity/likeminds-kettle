@@ -14,7 +14,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-func CreateOTM(api_key string) (*constants.OnboardingTokenMeta, error) {
+func CreateOTM(apiKey string) (*constants.OnboardingTokenMeta, error) {
 	otm := &constants.OnboardingTokenMeta{
 		AccessUuid:         uuid.NewV4().String(),
 		AccessTokenExpires: time.Now().Add(time.Minute * 15).Unix(),
@@ -25,7 +25,7 @@ func CreateOTM(api_key string) (*constants.OnboardingTokenMeta, error) {
 	otmClaims := jwt.MapClaims{}
 	otmClaims["access_uuid"] = otm.AccessUuid
 	otmClaims["exp"] = otm.AccessTokenExpires
-	otmClaims["api_key"] = api_key
+	otmClaims["api_key"] = apiKey
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, otmClaims)
 	otm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable("ACCESS_SECRET")))
 	if err != nil {
@@ -66,7 +66,7 @@ func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode strin
 }
 
 // CreateLTMAndRTM is used to create login and refresh token meta
-func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int64, rtm_expiry_beta int64, isGuestUser bool,
+func CreateLTMAndRTM(userUniqueID string, apiKey string, tokenExpiryBeta int64, rtmExpiryBeta int64, isGuestUser bool,
 ) (*constants.LoginTokenMeta, *constants.RefreshTokenMeta, error) {
 
 	isBeta := environment.GoDotEnvVariable("BETA_ENVIRONMENT")
@@ -78,14 +78,14 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 	if isBeta == "true" {
 
 		// Setting default LTM token expiry to 60 minutes for Beta
-		if token_expiry_beta <= 0 {
-			token_expiry_beta = BETA_AUTH_TOKEN_EXPIRY
+		if tokenExpiryBeta <= 0 {
+			tokenExpiryBeta = BETA_AUTH_TOKEN_EXPIRY
 		}
 
-		LTMTokenExpiryTime = time.Duration(token_expiry_beta)
+		LTMTokenExpiryTime = time.Duration(tokenExpiryBeta)
 
-		if rtm_expiry_beta > 0 {
-			RTMTokenExpiryTime = time.Duration(time.Minute * time.Duration(rtm_expiry_beta))
+		if rtmExpiryBeta > 0 {
+			RTMTokenExpiryTime = time.Duration(time.Minute * time.Duration(rtmExpiryBeta))
 		}
 	}
 
@@ -105,7 +105,7 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 	ltmClaims := jwt.MapClaims{}
 	ltmClaims["access_uuid"] = ltm.AccessUuid
 	ltmClaims["user_unique_id"] = userUniqueID
-	ltmClaims["api_key"] = api_key
+	ltmClaims["api_key"] = apiKey
 	ltmClaims["is_guest"] = isGuestUser
 
 	bytesData, err := json.Marshal(ltmClaims)
@@ -130,7 +130,7 @@ func CreateLTMAndRTM(userUniqueID string, api_key string, token_expiry_beta int6
 	rtmClaims := jwt.MapClaims{}
 	rtmClaims["refresh_uuid"] = rtm.RefreshUuid
 	rtmClaims["user_unique_id"] = userUniqueID
-	rtmClaims["api_key"] = api_key
+	rtmClaims["api_key"] = apiKey
 	rtmClaims["is_guest"] = isGuestUser
 
 	bytesData, err = json.Marshal(rtmClaims)
