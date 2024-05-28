@@ -102,7 +102,7 @@ func createPendingPostInternal(c *gin.Context, userId string) {
 func editPendingPostInternal(c *gin.Context, userId string) {
 	pendingPostId := c.Param("pending_post_id")
 
-	// Fetch member access to view topics
+	// Fetch member access to check whether member is CM or not
 	success, response := user.FetchMemberAccess(c, IS_MEMBER, userId)
 	if !success {
 		return
