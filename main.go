@@ -3,37 +3,37 @@ package main
 import (
 	"fmt"
 
-	"github.com/nateshr/likeminds-authentication/constants"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v7"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	"github.com/nateshr/likeminds-authentication/internalServices"
+	"github.com/nateshr/likeminds-authentication/cache"
+	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/middleware"
 	"github.com/nateshr/likeminds-authentication/utility/frontendLogger"
 	"github.com/nateshr/likeminds-authentication/utility/monitoring"
-	"github.com/nateshr/likeminds-authentication/webhook"
 
-	"github.com/nateshr/likeminds-authentication/widget"
-
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v7"
-	"github.com/nateshr/likeminds-authentication/cache"
-	"github.com/nateshr/likeminds-authentication/channel"
+	"github.com/nateshr/likeminds-authentication/handlers/channel"
 	"github.com/nateshr/likeminds-authentication/handlers/chatroom"
 	"github.com/nateshr/likeminds-authentication/handlers/community"
 	"github.com/nateshr/likeminds-authentication/handlers/conversation"
 	"github.com/nateshr/likeminds-authentication/handlers/feed"
 	"github.com/nateshr/likeminds-authentication/handlers/feedroom"
 	"github.com/nateshr/likeminds-authentication/handlers/home"
+	"github.com/nateshr/likeminds-authentication/handlers/internalServices"
 	"github.com/nateshr/likeminds-authentication/handlers/moderation"
 	"github.com/nateshr/likeminds-authentication/handlers/otp"
 	"github.com/nateshr/likeminds-authentication/handlers/poll"
 	"github.com/nateshr/likeminds-authentication/handlers/sdk"
 	"github.com/nateshr/likeminds-authentication/handlers/search"
 	"github.com/nateshr/likeminds-authentication/handlers/user"
+	"github.com/nateshr/likeminds-authentication/handlers/webhook"
+	"github.com/nateshr/likeminds-authentication/handlers/widget"
 	"github.com/nateshr/likeminds-authentication/utility"
+
 	"github.com/nateshr/likeminds-authentication/web"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
