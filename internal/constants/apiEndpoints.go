@@ -160,7 +160,7 @@ const (
 	FeedPostIDCommentRoute          = "/feed/post/:post_id/comment"
 	FeedPostIDCommentIDRoute        = "/feed/post/:post_id/comment/:comment_id"
 	FeedPostIDCommentIDLikeRoute    = "/feed/post/:post_id/comment/:comment_id/like"
-	FeedPostIDCommentIdCommentRoute = "/feed/post/:post_id/comment/:comment_id/comment"
+	FeedPostIDCommentIDCommentRoute = "/feed/post/:post_id/comment/:comment_id/comment"
 	FeedUserIDSaveRoute             = "/feed/user/:user_id/save"
 	FeedUserIDPostRoute             = "/feed/user/:user_id/post"
 	FeedUserIDCommentRoute          = "/feed/user/:user_id/comment"
