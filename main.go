@@ -8,12 +8,10 @@ import (
 	"github.com/go-redis/redis/v7"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	"github.com/nateshr/likeminds-authentication/cache"
 	"github.com/nateshr/likeminds-authentication/constants"
+	"github.com/nateshr/likeminds-authentication/internal/cache"
 	"github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/middleware"
-	"github.com/nateshr/likeminds-authentication/utility/frontendLogger"
-	"github.com/nateshr/likeminds-authentication/utility/monitoring"
 
 	"github.com/nateshr/likeminds-authentication/handlers/channel"
 	"github.com/nateshr/likeminds-authentication/handlers/chatroom"
@@ -30,6 +28,8 @@ import (
 	"github.com/nateshr/likeminds-authentication/handlers/search"
 	"github.com/nateshr/likeminds-authentication/handlers/user"
 	"github.com/nateshr/likeminds-authentication/handlers/utility"
+	"github.com/nateshr/likeminds-authentication/handlers/utility/frontendLogger"
+	"github.com/nateshr/likeminds-authentication/handlers/utility/monitoring"
 	"github.com/nateshr/likeminds-authentication/handlers/webhook"
 	"github.com/nateshr/likeminds-authentication/handlers/widget"
 

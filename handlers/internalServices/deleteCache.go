@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/cache"
+	"github.com/nateshr/likeminds-authentication/internal/cache"
 	"github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/utils"
 )

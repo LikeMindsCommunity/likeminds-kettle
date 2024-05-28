@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v7"
-	"github.com/nateshr/likeminds-authentication/cache"
 	"github.com/nateshr/likeminds-authentication/constants"
+	"github.com/nateshr/likeminds-authentication/internal/cache"
 	"github.com/nateshr/likeminds-authentication/logging"
 )
 

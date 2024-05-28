@@ -7,8 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
-	"github.com/nateshr/likeminds-authentication/cache"
 	"github.com/nateshr/likeminds-authentication/environment"
+	"github.com/nateshr/likeminds-authentication/internal/cache"
 	"github.com/nateshr/likeminds-authentication/logging"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
