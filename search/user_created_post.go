@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/feed"
+	"github.com/nateshr/likeminds-authentication/handlers/feed"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utility"
 	"github.com/nateshr/likeminds-authentication/utils"
@@ -12,6 +12,7 @@ import (
 
 // UserCreatedPostSearch is used to perform search on the user created posts
 func UserCreatedPostSearch(c *gin.Context) {
+
 	// fetch url params
 	user_id := c.Param("user_id")
 
