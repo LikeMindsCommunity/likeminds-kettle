@@ -5,13 +5,13 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/api_client"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/chatroom"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/community"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/conversation"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/feed"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
+	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 )
 
 // GeneralSearch is used to perform search on the content

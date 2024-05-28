@@ -6,11 +6,11 @@ import (
 	log "github.com/nateshr/likeminds-authentication/internal/logging"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/api_client"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/feed"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/utility"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
+	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 )
 
 type RemoveMemberRequest struct {

@@ -7,7 +7,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/logging"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/api_client"
+	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 )
 
 // Generate Response to be sent on request success
