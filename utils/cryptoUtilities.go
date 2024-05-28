@@ -9,8 +9,8 @@ import (
 	"encoding/hex"
 	"io"
 
-	"github.com/nateshr/likeminds-authentication/environment"
-	"github.com/nateshr/likeminds-authentication/logging"
+	"github.com/nateshr/likeminds-authentication/internal/environment"
+	"github.com/nateshr/likeminds-authentication/internal/logging"
 )
 
 var keyPhrase = mdHashing(environment.GoDotEnvVariable("SECRET_KEY"))

@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/environment"
-	"github.com/nateshr/likeminds-authentication/logging"
+	"github.com/nateshr/likeminds-authentication/internal/environment"
+	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 

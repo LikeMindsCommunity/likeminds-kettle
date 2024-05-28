@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	log "github.com/nateshr/likeminds-authentication/logging"
+	log "github.com/nateshr/likeminds-authentication/internal/logging"
 )
 
 // This function is used to parse interface list to string list

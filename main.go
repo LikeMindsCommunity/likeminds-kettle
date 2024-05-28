@@ -8,9 +8,9 @@ import (
 	"github.com/go-redis/redis/v7"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
-	"github.com/nateshr/likeminds-authentication/logging"
+	"github.com/nateshr/likeminds-authentication/internal/constants"
+	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/middleware"
 
 	"github.com/nateshr/likeminds-authentication/handlers/channel"

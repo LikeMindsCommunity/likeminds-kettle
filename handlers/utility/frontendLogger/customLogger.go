@@ -7,9 +7,8 @@ import (
 
 	"cloud.google.com/go/logging"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/environment"
-	log "github.com/nateshr/likeminds-authentication/logging"
-
+	"github.com/nateshr/likeminds-authentication/internal/environment"
+	log "github.com/nateshr/likeminds-authentication/internal/logging"
 )
 
 var (

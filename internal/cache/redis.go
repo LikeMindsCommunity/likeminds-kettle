@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v7"
-	"github.com/nateshr/likeminds-authentication/constants"
-	"github.com/nateshr/likeminds-authentication/environment"
-	"github.com/nateshr/likeminds-authentication/logging"
+	"github.com/nateshr/likeminds-authentication/internal/constants"
+	"github.com/nateshr/likeminds-authentication/internal/environment"
+	"github.com/nateshr/likeminds-authentication/internal/logging"
 )
 
 func InitRedis() *redis.Client {

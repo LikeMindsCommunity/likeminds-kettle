@@ -11,9 +11,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs/types"
-	"github.com/nateshr/likeminds-authentication/environment"
+	"github.com/nateshr/likeminds-authentication/internal/environment"
+	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/utils"
-	"github.com/nateshr/likeminds-authentication/logging"
 )
 
 type CloudwatchPayloadEntry struct {
@@ -21,7 +21,7 @@ type CloudwatchPayloadEntry struct {
 	Timestamp   time.Time              `json:"timestamp"`
 }
 
-func GetCloudwatchClient() (*cloudwatchlogs.Client, error){
+func GetCloudwatchClient() (*cloudwatchlogs.Client, error) {
 	// Load AWS SDK config
 	cloudwatchIAMUserKey := environment.GoDotEnvVariable(utils.CloudwatchIAMUserKey)
 	cloudwatchIAMUserSecret := environment.GoDotEnvVariable(utils.CloudwatchIAMUserSecret)
@@ -40,28 +40,28 @@ func GetCloudwatchClient() (*cloudwatchlogs.Client, error){
 }
 
 func LogToCloudWatch(client *cloudwatchlogs.Client, logGroupName string, logStreamName string, entries []CloudwatchPayloadEntry) error {
-	
+
 	// Put log events
 	for _, entry := range entries {
-        timestamp := entry.Timestamp.UnixMilli()
+		timestamp := entry.Timestamp.UnixMilli()
 		jsonString, err := json.Marshal(entry.JsonPayload)
 		if err != nil {
 			logging.Error(fmt.Sprint("Error marshalling JSON: ", err.Error()))
 		}
 
-        output, err := client.PutLogEvents(context.TODO(), &cloudwatchlogs.PutLogEventsInput{
-            LogGroupName:  &logGroupName,
-            LogStreamName: &logStreamName,
-            LogEvents: []types.InputLogEvent{{
-                Message:   aws.String(string(jsonString)),
-                Timestamp: aws.Int64(timestamp),
-            }},
-        })
-        if err != nil {
+		output, err := client.PutLogEvents(context.TODO(), &cloudwatchlogs.PutLogEventsInput{
+			LogGroupName:  &logGroupName,
+			LogStreamName: &logStreamName,
+			LogEvents: []types.InputLogEvent{{
+				Message:   aws.String(string(jsonString)),
+				Timestamp: aws.Int64(timestamp),
+			}},
+		})
+		if err != nil {
 			logging.Info(fmt.Sprint("PutLogEvents function output: ", output))
-            return err
-        }
-    }
+			return err
+		}
+	}
 	return nil
 }
 
@@ -92,5 +92,3 @@ func CreateLogStreamIfNotExist(client *cloudwatchlogs.Client, logGroupName, logS
 	})
 	return err
 }
-
-

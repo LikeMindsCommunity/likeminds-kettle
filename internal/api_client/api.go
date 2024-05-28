@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nateshr/likeminds-authentication/environment"
-	"github.com/nateshr/likeminds-authentication/logging"
+	"github.com/nateshr/likeminds-authentication/internal/environment"
+	"github.com/nateshr/likeminds-authentication/internal/logging"
 )
 
 type BodyType int

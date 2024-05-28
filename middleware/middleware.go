@@ -10,12 +10,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
-	"github.com/nateshr/likeminds-authentication/api_client"
-	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/handlers/token"
 	"github.com/nateshr/likeminds-authentication/handlers/user"
+	"github.com/nateshr/likeminds-authentication/internal/api_client"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
-	log "github.com/nateshr/likeminds-authentication/logging"
+	"github.com/nateshr/likeminds-authentication/internal/constants"
+	log "github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 

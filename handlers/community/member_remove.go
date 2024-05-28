@@ -3,13 +3,13 @@ package community
 import (
 	"fmt"
 
-	log "github.com/nateshr/likeminds-authentication/logging"
+	log "github.com/nateshr/likeminds-authentication/internal/logging"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/api_client"
 	"github.com/nateshr/likeminds-authentication/handlers/feed"
 	"github.com/nateshr/likeminds-authentication/handlers/user"
 	"github.com/nateshr/likeminds-authentication/handlers/utility"
+	"github.com/nateshr/likeminds-authentication/internal/api_client"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 

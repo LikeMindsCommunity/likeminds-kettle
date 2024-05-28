@@ -5,8 +5,8 @@ import (
 	"reflect"
 
 	"github.com/go-redis/redis/v7"
-	"github.com/nateshr/likeminds-authentication/constants"
-	log "github.com/nateshr/likeminds-authentication/logging"
+	"github.com/nateshr/likeminds-authentication/internal/constants"
+	log "github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/requests"
 
 	"github.com/gin-gonic/gin"

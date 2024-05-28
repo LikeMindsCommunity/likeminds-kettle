@@ -5,7 +5,7 @@ import (
 	"regexp"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/constants"
+	"github.com/nateshr/likeminds-authentication/internal/constants"
 )
 
 // Exposed utility method to parse response for widget_ids using regex

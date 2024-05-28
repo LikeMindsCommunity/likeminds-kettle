@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
-	"github.com/nateshr/likeminds-authentication/logging"
+	"github.com/nateshr/likeminds-authentication/internal/logging"
 )
 
 type CommunityBillingMeta struct {

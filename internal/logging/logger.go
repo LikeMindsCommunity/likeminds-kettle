@@ -2,7 +2,7 @@ package logging
 
 import (
 	coralogix "github.com/coralogix/go-coralogix-sdk"
-	"github.com/nateshr/likeminds-authentication/environment"
+	"github.com/nateshr/likeminds-authentication/internal/environment"
 	"github.com/sirupsen/logrus"
 )
 

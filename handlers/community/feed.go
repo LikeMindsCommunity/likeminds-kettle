@@ -6,10 +6,10 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/constants"
 	"github.com/nateshr/likeminds-authentication/handlers/chatroom"
 	"github.com/nateshr/likeminds-authentication/handlers/feed"
 	"github.com/nateshr/likeminds-authentication/handlers/user"
+	"github.com/nateshr/likeminds-authentication/internal/constants"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 

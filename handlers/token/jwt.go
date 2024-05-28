@@ -9,8 +9,8 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/myesui/uuid"
-	"github.com/nateshr/likeminds-authentication/constants"
-	"github.com/nateshr/likeminds-authentication/environment"
+	"github.com/nateshr/likeminds-authentication/internal/constants"
+	"github.com/nateshr/likeminds-authentication/internal/environment"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
