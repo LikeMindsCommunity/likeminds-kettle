@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/community"
+	"github.com/nateshr/likeminds-authentication/handlers/community"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
