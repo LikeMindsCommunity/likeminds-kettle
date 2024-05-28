@@ -2,7 +2,7 @@ package search
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/conversation"
+	"github.com/nateshr/likeminds-authentication/handlers/conversation"
 	"github.com/nateshr/likeminds-authentication/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
