@@ -2,11 +2,11 @@ package conversation
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/handlers/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//FetchEventLink is used to fetch event link
+// FetchEventLink is used to fetch event link
 func FetchEventLink(c *gin.Context) {
 
 	//Authorize User

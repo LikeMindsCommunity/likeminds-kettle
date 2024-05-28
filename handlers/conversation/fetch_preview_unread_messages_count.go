@@ -2,11 +2,11 @@ package conversation
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/handlers/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//FetchPreviewUnreadMessagesCount is used to fetch count of unread preview messages
+// FetchPreviewUnreadMessagesCount is used to fetch count of unread preview messages
 func FetchPreviewUnreadMessagesCount(c *gin.Context) {
 
 	//Authorize User

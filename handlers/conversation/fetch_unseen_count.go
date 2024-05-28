@@ -2,11 +2,11 @@ package conversation
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/handlers/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//FetchEventUnseenCount is used to fetch event unseen count
+// FetchEventUnseenCount is used to fetch event unseen count
 func FetchEventUnseenCount(c *gin.Context) {
 
 	//Authorize User

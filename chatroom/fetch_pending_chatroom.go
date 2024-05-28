@@ -2,11 +2,11 @@ package chatroom
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/handlers/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//FetchPendingChatroom is used to fetch pending chatrooms
+// FetchPendingChatroom is used to fetch pending chatrooms
 func FetchPendingChatroom(c *gin.Context) {
 
 	//Authorize User

@@ -2,11 +2,11 @@ package conversation
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/user"
+	"github.com/nateshr/likeminds-authentication/handlers/user"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
-//UnreadConversationNotification is used to fetch list of unread conversation for notification
+// UnreadConversationNotification is used to fetch list of unread conversation for notification
 func UnreadConversationNotification(c *gin.Context) {
 
 	//Authorize User
