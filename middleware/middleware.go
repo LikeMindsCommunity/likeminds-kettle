@@ -288,13 +288,26 @@ func ApiMiddleware(client *redis.Client) gin.HandlerFunc {
 	}
 }
 
-func HstsMiddleware() gin.HandlerFunc {
+// AddResponseHeadersMiddleware | adds necessary API response headers
+func AddResponseHeadersMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Header("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
-		c.Header("X-Content-Type-Options", "nosniff")
-		c.Header("Cache-Control", "no-cache; no-store; must-revalidate")
+		addTransportSecurityHeaders(c)
+		addAPIContentResponseHeaders(c)
+		addCacheControlHeaders(c)
 		c.Next()
 	}
+}
+
+func addTransportSecurityHeaders(c *gin.Context) {
+	c.Header(StrictTransportSecurityHeaderKey, StrictTransportSecurityHeaderValue)
+}
+
+func addAPIContentResponseHeaders(c *gin.Context) {
+	c.Header(ContentTypeOptionsHeaderKey, ContentTypeOptionsHeaderValue)
+}
+
+func addCacheControlHeaders(c *gin.Context) {
+	c.Header(CacheControlHeaderKey, CacheControlHeaderValue)
 }
 
 // GuestAccessCheckMiddleware | restrict guest access on endpoints
