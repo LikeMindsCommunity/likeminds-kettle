@@ -3,7 +3,7 @@ package chatroom
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/handlers/user"
-	"github.com/nateshr/likeminds-authentication/utils"
+	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 type highlights struct {

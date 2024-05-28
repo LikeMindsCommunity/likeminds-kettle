@@ -8,7 +8,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/handlers/community"
 	"github.com/nateshr/likeminds-authentication/handlers/feed"
 	"github.com/nateshr/likeminds-authentication/handlers/user"
-	"github.com/nateshr/likeminds-authentication/utils"
+	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 // PostSearch is used to perform search on the posts

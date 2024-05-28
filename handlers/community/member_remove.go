@@ -10,7 +10,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/handlers/user"
 	"github.com/nateshr/likeminds-authentication/handlers/utility"
 	"github.com/nateshr/likeminds-authentication/internal/api_client"
-	"github.com/nateshr/likeminds-authentication/utils"
+	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 type RemoveMemberRequest struct {

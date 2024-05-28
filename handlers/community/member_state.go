@@ -3,7 +3,7 @@ package community
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/handlers/user"
-	"github.com/nateshr/likeminds-authentication/utils"
+	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 // FetchMemberState is used to fetch member state in a community

@@ -3,7 +3,7 @@ package community
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/handlers/user"
-	"github.com/nateshr/likeminds-authentication/utils"
+	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 // GetManagementTools is used to get community management tools

@@ -1,9 +1,10 @@
 package web
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/utils"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 // Home is used to validate health check and host / path

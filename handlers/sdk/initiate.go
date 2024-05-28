@@ -5,7 +5,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/handlers/token"
 	"github.com/nateshr/likeminds-authentication/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/constants"
-	"github.com/nateshr/likeminds-authentication/utils"
+	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 // InitiateSDKEndPoint | togther service user initiate endpoint

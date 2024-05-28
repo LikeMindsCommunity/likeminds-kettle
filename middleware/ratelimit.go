@@ -10,7 +10,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/cache"
 	"github.com/nateshr/likeminds-authentication/internal/environment"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
-	"github.com/nateshr/likeminds-authentication/utils"
+	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 func RateLimitingMiddleware(redisClient *redis.Client) gin.HandlerFunc {

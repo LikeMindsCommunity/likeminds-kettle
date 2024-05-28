@@ -11,7 +11,7 @@ import (
 	"github.com/myesui/uuid"
 	"github.com/nateshr/likeminds-authentication/internal/constants"
 	"github.com/nateshr/likeminds-authentication/internal/environment"
-	"github.com/nateshr/likeminds-authentication/utils"
+	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 func CreateOTM(apiKey string) (*constants.OnboardingTokenMeta, error) {
