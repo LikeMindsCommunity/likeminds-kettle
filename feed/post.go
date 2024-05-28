@@ -352,6 +352,7 @@ func createPostInternal(c *gin.Context, userId string) {
 
 func editPostInternal(c *gin.Context, userId string) {
 
+	headers := utils.CreateHeaders(c, userId)
 	post_id := c.Param("post_id")
 	EditPostEndPoint := fmt.Sprintf(SinglePostEndPoint, post_id)
 	GetPostEndPoint := fmt.Sprintf(SinglePostEndPoint, post_id)
@@ -400,6 +401,11 @@ func editPostInternal(c *gin.Context, userId string) {
 
 		// Update user_is_cm in request
 		editPostRequest.UserIsCm = response.IsCm
+	}
+
+	if utils.IsPostApprovalNeeded(utils.GetRedisClientFromContext(c), headers) && !editPostRequest.UserIsCm {
+		utils.MemberAccessFailError(c)
+		return
 	}
 
 	//Send Request
