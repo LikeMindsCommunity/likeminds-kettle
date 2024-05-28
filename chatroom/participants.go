@@ -164,10 +164,10 @@ func addParticipantsInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	is_secret := participantRequest.IsSecret
+	isSecret := participantRequest.IsSecret
 
-	if !is_secret {
-		//If is_secret is missing or false, call add chatroom participant api internally
+	if !isSecret {
+		//If isSecret is missing or false, call add chatroom participant api internally
 
 		//Get Request response
 		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, AddParticipantsEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, participantRequest)
