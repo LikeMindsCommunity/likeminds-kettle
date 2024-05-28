@@ -288,6 +288,28 @@ func ApiMiddleware(client *redis.Client) gin.HandlerFunc {
 	}
 }
 
+// AddResponseHeadersMiddleware | adds necessary API response headers
+func AddResponseHeadersMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		addTransportSecurityHeaders(c)
+		addAPIContentResponseHeaders(c)
+		addCacheControlHeaders(c)
+		c.Next()
+	}
+}
+
+func addTransportSecurityHeaders(c *gin.Context) {
+	c.Header(StrictTransportSecurityHeaderKey, StrictTransportSecurityHeaderValue)
+}
+
+func addAPIContentResponseHeaders(c *gin.Context) {
+	c.Header(ContentTypeOptionsHeaderKey, ContentTypeOptionsHeaderValue)
+}
+
+func addCacheControlHeaders(c *gin.Context) {
+	c.Header(CacheControlHeaderKey, CacheControlHeaderValue)
+}
+
 // GuestAccessCheckMiddleware | restrict guest access on endpoints
 func GuestAccessCheckMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
