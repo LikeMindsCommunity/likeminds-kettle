@@ -38,7 +38,7 @@ func OTMValidationMiddleware() gin.HandlerFunc {
 
 			// Set API key in request header
 			if otm.ApiKey != "" {
-				c.Request.Header[utils.HeadersApiKey] = []string{otm.ApiKey}
+				c.Request.Header[ContextApiKeyHeader] = []string{otm.ApiKey}
 			}
 		}
 		c.Next()
@@ -68,7 +68,7 @@ func VTMValidationMiddleware(isMandatory bool) gin.HandlerFunc {
 
 			// // Set API key in request header
 			if vtm.ApiKey != "" {
-				c.Request.Header[utils.HeadersApiKey] = []string{vtm.ApiKey}
+				c.Request.Header[ContextApiKeyHeader] = []string{vtm.ApiKey}
 			}
 		}
 		c.Next()
@@ -118,7 +118,7 @@ func LTMValidationMiddleware(redisClient *redis.Client, isGuestAccess bool) gin.
 
 			// Set API key in request header
 			if ltm.ApiKey != "" {
-				c.Request.Header[utils.HeadersApiKey] = []string{ltm.ApiKey}
+				c.Request.Header[ContextApiKeyHeader] = []string{ltm.ApiKey}
 			}
 		}
 		c.Next()
@@ -150,7 +150,7 @@ func RTMValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 		}
 		// Set API key in request header
 		if rtm.ApiKey != "" {
-			c.Request.Header[utils.HeadersApiKey] = []string{rtm.ApiKey}
+			c.Request.Header[ContextApiKeyHeader] = []string{rtm.ApiKey}
 		}
 		c.Next()
 	}
@@ -177,7 +177,7 @@ func LTMorVTMValidationMiddleware() gin.HandlerFunc {
 
 			// Set API key in request header
 			if ltm.ApiKey != "" {
-				c.Request.Header[utils.HeadersApiKey] = []string{ltm.ApiKey}
+				c.Request.Header[ContextApiKeyHeader] = []string{ltm.ApiKey}
 			}
 
 			c.Next()
@@ -192,7 +192,7 @@ func LTMorVTMValidationMiddleware() gin.HandlerFunc {
 
 			// Set API key in request header
 			if vtm.ApiKey != "" {
-				c.Request.Header[utils.HeadersApiKey] = []string{vtm.ApiKey}
+				c.Request.Header[ContextApiKeyHeader] = []string{vtm.ApiKey}
 			}
 
 			c.Next()

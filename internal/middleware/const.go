@@ -2,20 +2,29 @@ package middleware
 
 const RPM = 1 // RPM
 
-// StrictTransportSecurityHeaderKey | strict transport security (TLS) header key
-const StrictTransportSecurityHeaderKey = "Strict-Transport-Security"
+// Security Headers
+const (
 
-// StrictTransportSecurityHeaderValue | strict transport security (TLS) header value, max-age (in hours)
-const StrictTransportSecurityHeaderValue = "max-age=720; includeSubDomains"
+	// StrictTransportSecurityHeaderKey | strict transport security (TLS) header key
+	StrictTransportSecurityHeaderKey = "Strict-Transport-Security"
 
-// ContentTypeOptionsHeaderKey | api content type options header key
-const ContentTypeOptionsHeaderKey = "X-Content-Type-Options"
+	// StrictTransportSecurityHeaderValue | strict transport security (TLS) header value, max-age (in hours)
+	StrictTransportSecurityHeaderValue = "max-age=720; includeSubDomains"
 
-// ContentTypeOptionsHeaderValue | api content type options header value
-const ContentTypeOptionsHeaderValue = "nosniff"
+	// ContentTypeOptionsHeaderKey | api content type options header key
+	ContentTypeOptionsHeaderKey = "X-Content-Type-Options"
 
-// CacheControlHeaderKey | application cache control header key
-const CacheControlHeaderKey = "Cache-Control"
+	// ContentTypeOptionsHeaderValue | api content type options header value
+	ContentTypeOptionsHeaderValue = "nosniff"
 
-// CacheControlHeaderValue | application cache control header value
-const CacheControlHeaderValue = "no-cache; no-store; must-revalidate"
+	// CacheControlHeaderKey | application cache control header key
+	CacheControlHeaderKey = "Cache-Control"
+
+	// CacheControlHeaderValue | application cache control header value
+	CacheControlHeaderValue = "no-cache; no-store; must-revalidate"
+)
+
+// Context Headers
+const (
+	ContextApiKeyHeader = "X-Api-Key"
+)
