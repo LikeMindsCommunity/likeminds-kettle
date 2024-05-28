@@ -30,10 +30,9 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/handlers/utility"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/utility/frontendLogger"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/utility/monitoring"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/web"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/webhook"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/widget"
-
-	"github.com/nateshr/likeminds-authentication/web"
 )
 
 var (
