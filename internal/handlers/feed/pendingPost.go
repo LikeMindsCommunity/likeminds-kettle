@@ -50,6 +50,10 @@ func PendingPost(c *gin.Context, method int) {
 		createPendingPostInternal(c, userId)
 
 	case utils.PUTMethod:
+		botId := user.GetBotId(c)
+		if botId != "" {
+			userId = botId
+		}
 		editPendingPostInternal(c, userId)
 
 	case utils.GETMethod:
@@ -99,6 +103,27 @@ func createPendingPostInternal(c *gin.Context, userId string) {
 // Internal method to edit a pending post
 func editPendingPostInternal(c *gin.Context, userId string) {
 	pendingPostId := c.Param(ParamPendingPostId)
+
+	// Fetch member access to check whether member is CM or not
+	success, response := user.FetchMemberAccess(c, IS_MEMBER, userId)
+	if !success {
+		return
+	}
+
+	//If not access
+	if !response.Access {
+		utils.MemberAccessFailError(c)
+		return
+	}
+
+	//add Admin role in headers if user is cm
+	if response.IsCm {
+		headers := map[string]string{
+			utils.HeaderMemberRole: utils.CMRole,
+		}
+
+		utils.AddHeaders(c, headers)
+	}
 
 	editPostEndPoint := fmt.Sprintf(PendingPostEndPoint, pendingPostId)
 

@@ -374,6 +374,7 @@ func validateAndFetchOnBehalfUUID(c *gin.Context, userId string, createPostReque
 
 func editPostInternal(c *gin.Context, userId string) {
 
+	headers := utils.CreateHeaders(c, userId)
 	postId := c.Param(ParamPostId)
 	EditPostEndPoint := fmt.Sprintf(SinglePostEndPoint, postId)
 	GetPostEndPoint := fmt.Sprintf(SinglePostEndPoint, postId)
@@ -422,6 +423,11 @@ func editPostInternal(c *gin.Context, userId string) {
 
 		// Update user_is_cm in request
 		editPostRequest.UserIsCm = response.IsCm
+	}
+
+	if utils.IsPostApprovalNeeded(utils.GetRedisClientFromContext(c), headers) && !editPostRequest.UserIsCm {
+		utils.MemberAccessFailError(c)
+		return
 	}
 
 	//Send Request

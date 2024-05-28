@@ -46,6 +46,7 @@ func main() {
 	initGin()
 	redisClient = cache.InitRedis()
 	router.Use(cors.New(enableCors()))
+	router.Use(middleware.AddResponseHeadersMiddleware())
 	router.Use(middleware.ApiMiddleware(redisClient))
 	router.Use(middleware.LoggingMiddleware())
 	//Attach prometheus service as middleware
