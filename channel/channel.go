@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/chatroom"
+	"github.com/nateshr/likeminds-authentication/handlers/chatroom"
 	"github.com/nateshr/likeminds-authentication/handlers/feedroom"
 	"github.com/nateshr/likeminds-authentication/handlers/user"
 	"github.com/nateshr/likeminds-authentication/utils"

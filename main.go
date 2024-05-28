@@ -19,7 +19,7 @@ import (
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/cache"
 	"github.com/nateshr/likeminds-authentication/channel"
-	"github.com/nateshr/likeminds-authentication/chatroom"
+	"github.com/nateshr/likeminds-authentication/handlers/chatroom"
 	"github.com/nateshr/likeminds-authentication/handlers/community"
 	"github.com/nateshr/likeminds-authentication/handlers/conversation"
 	"github.com/nateshr/likeminds-authentication/handlers/feed"
