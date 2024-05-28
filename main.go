@@ -29,9 +29,9 @@ import (
 	"github.com/nateshr/likeminds-authentication/handlers/sdk"
 	"github.com/nateshr/likeminds-authentication/handlers/search"
 	"github.com/nateshr/likeminds-authentication/handlers/user"
+	"github.com/nateshr/likeminds-authentication/handlers/utility"
 	"github.com/nateshr/likeminds-authentication/handlers/webhook"
 	"github.com/nateshr/likeminds-authentication/handlers/widget"
-	"github.com/nateshr/likeminds-authentication/utility"
 
 	"github.com/nateshr/likeminds-authentication/web"
 )

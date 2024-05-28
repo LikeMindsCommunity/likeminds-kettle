@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/handlers/chatroom"
 	"github.com/nateshr/likeminds-authentication/handlers/user"
-	"github.com/nateshr/likeminds-authentication/utility"
+	"github.com/nateshr/likeminds-authentication/handlers/utility"
 	"github.com/nateshr/likeminds-authentication/utils"
 )
 
