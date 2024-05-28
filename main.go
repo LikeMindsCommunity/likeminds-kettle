@@ -11,7 +11,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/cache"
 	"github.com/nateshr/likeminds-authentication/internal/constants"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
-	"github.com/nateshr/likeminds-authentication/middleware"
+	"github.com/nateshr/likeminds-authentication/internal/middleware"
 
 	"github.com/nateshr/likeminds-authentication/handlers/channel"
 	"github.com/nateshr/likeminds-authentication/handlers/chatroom"
