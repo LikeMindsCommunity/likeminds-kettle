@@ -51,15 +51,14 @@ type CreateProjectRequest struct {
 }
 
 type UpdateProjectRequest struct {
-	CommunityName         string                   `json:"name"`
-	Branding              CommunityBrandingRequest `json:"branding"`
-	Headline              string                   `json:"headline"`
-	ImageURL              string                   `json:"image_url"`
-	FirebaseServerKey     string                   `json:"firebase_server_key"`
-	Platform              []Platform               `json:"platform"`
-	ProjectCreator        string                   `json:"project_creator"`
-	IsJoinFormEnabled     bool                     `json:"is_join_form_enabled"`
-	GcpServiceAccountFile map[string]interface{}   `json:"gcp_service_account_file"`
+	CommunityName     string                   `json:"name"`
+	Branding          CommunityBrandingRequest `json:"branding"`
+	Headline          string                   `json:"headline"`
+	ImageURL          string                   `json:"image_url"`
+	FirebaseServerKey string                   `json:"firebase_server_key"`
+	Platform          []Platform               `json:"platform"`
+	ProjectCreator    string                   `json:"project_creator"`
+	IsJoinFormEnabled bool                     `json:"is_join_form_enabled"`
 }
 
 // CreateProject is used to create a new sdk project
