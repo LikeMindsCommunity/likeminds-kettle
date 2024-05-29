@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/internal/constants"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
@@ -90,30 +91,31 @@ func Project(c *gin.Context, method int) {
 		return
 	}
 
-	botId := user.GetBotId(c)
-	if botId != "" {
-		userId = botId
-	}
-
-	headers := utils.CreateHeaders(c, userId)
-
 	switch method {
 	case utils.GETMethod:
-		getProjectInternal(c, userId, headers)
+		getProjectInternal(c, userId)
 
 	case utils.POSTMethod:
-		createProjectInternal(c, userId, headers)
+		createProjectInternal(c, userId)
 
 	case utils.PUTMethod:
-		updateProjectInternal(c, headers)
+		updateProjectInternal(c, userId)
 
 	case utils.DELETEMethod:
+
+		botId := user.GetBotId(c)
+		if botId != "" {
+			userId = botId
+		}
+
 		//Send Request
 		utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, nil)
 	}
 }
 
-func getProjectInternal(c *gin.Context, userId string, headers map[string]interface{}) {
+func getProjectInternal(c *gin.Context, userId string) {
+
+	headers := utils.CreateHeaders(c, userId)
 
 	//Params to be sent in the SDK fetch request internally
 	params := map[string]string{
@@ -124,7 +126,17 @@ func getProjectInternal(c *gin.Context, userId string, headers map[string]interf
 	utils.SendRequest(c, utils.CoreService, ProjectEndpoint, utils.GETRequest, headers, params, nil)
 }
 
-func createProjectInternal(c *gin.Context, userId string, headers map[string]interface{}) {
+func createProjectInternal(c *gin.Context, userId string) {
+
+	//Call POST api/bot to create bot
+	response := user.GetBotResponse(c, utils.POSTMethod)
+	if response == nil {
+		return
+	}
+
+	botId := user.GetUserUniqueIDFromResponse(response)
+
+	headers := utils.CreateHeaders(c, botId)
 
 	//Params to be sent in the create sdk project request internally
 	projectRequest, err := parseCreateProjectRequest(c, userId)
@@ -153,18 +165,30 @@ func createProjectInternal(c *gin.Context, userId string, headers map[string]int
 		return
 	}
 
-	// Fetch Community ID from API Key
-	redis := utils.GetRedisClientFromContext(c)
-	communityId, err := utils.FetchCommunityIdFromApiKey(redis, projectApiResp[constants.ResponseKeyApiKey].(string))
+	// Create billing plan for community
+	err = createCommunityBillingPlan(utils.GetRedisClientFromContext(c), projectApiResp, headers)
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 
+	//Send Response
+	utils.ParseResponse(c, respBytes, statusCode, false)
+}
+
+func createCommunityBillingPlan(redis *redis.Client, projectApiResp map[string]interface{}, headers map[string]interface{},
+) error {
+
+	// Fetch Community ID from API Key
+	communityId, err := utils.FetchCommunityIdFromApiKey(redis, projectApiResp[constants.ResponseKeyApiKey].(string))
+	if err != nil {
+		return err
+	}
+
 	//Send Request to create billing plan for community
 	communityBillingRequest := map[string]interface{}{}
 	billingEndpoint := utils.BillingPlanEnpoint + "/" + fmt.Sprint(communityId)
-	billingPlanRespBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, billingEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, communityBillingRequest)
+	billingPlanRespBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SubscriptionService, billingEndpoint, utils.POSTRequestRawBody, headers, nil, communityBillingRequest)
 	if err != nil || statusCode != http.StatusOK {
 
 		if err == nil {
@@ -183,15 +207,20 @@ func createProjectInternal(c *gin.Context, userId string, headers map[string]int
 			logging.Error(fmt.Sprintf("Error deleting community, response: %s err: %s ", string(resp), err.Error()))
 		}
 
-		utils.GeneralAPIError(c, "Error creating billing plan")
-		return
+		return fmt.Errorf("Error creating billing plan")
 	}
 
-	//Send Response
-	utils.ParseResponse(c, respBytes, statusCode, false)
+	return nil
 }
 
-func updateProjectInternal(c *gin.Context, headers map[string]interface{}) {
+func updateProjectInternal(c *gin.Context, userId string) {
+
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
+	}
+
+	headers := utils.CreateHeaders(c, userId)
 
 	//Params to be sent in the update sdk project request internally
 	projectRequest, err := parseUpdateProjectRequest(c)
