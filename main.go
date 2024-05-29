@@ -249,7 +249,7 @@ func main() {
 	router.GET(constants.FeedPostIDLikeRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.GetPostLikes)
 	router.PUT(constants.FeedPostIDPinRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.PinPost)
 	router.PUT(constants.FeedPostIDSaveRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.CreateSavePost)
-	router.POST(constants.FeedPostIDCommentRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.CommentPost)
+	router.POST(constants.FeedPostIDCommentIDRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.CommentPost)
 	router.GET(constants.FeedPostIDCommentIDRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), feed.GetComment)
 	router.DELETE(constants.FeedPostIDCommentIDRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.DeleteComment)
 	router.PUT(constants.FeedPostIDCommentIDRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.EditCommentPost)
