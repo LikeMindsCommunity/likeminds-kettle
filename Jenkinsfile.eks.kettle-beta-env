@@ -11,41 +11,18 @@ pipeline {
         stage("Building Application Docker Image"){
             steps{
                 script{
-                    // sh 'gcloud auth configure-docker asia.gcr.io'
-                    sh 'docker build -f Dockerfile.kettle-beta-env -t asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/nateshr/likeminds-authentication/kettle:${BUILD_NUMBER} . '
+                    sh "sudo docker build -f Dockerfile.kettle-beta-env -t 081371230266.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:kettle-V$BUILD_NUMBER ."
                     sh 'docker images'
                 }
             }
         }
-        
-        // stage("Pushing Application Docker Image to Google Artifact Registry"){
-        //     steps{
-        //         script{
-        //             sh 'gcloud auth configure-docker asia.gcr.io'
-        //             sh 'docker push asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/nateshr/likeminds-authentication/kettle:${BUILD_NUMBER}'
-        //         }
-        //     }
-        // }
-              
-        // stage('Deploy to GKE') {
-        //     steps{
-        //         sh '''
-        //         sed -i 's/kettle:.*/kettle:'${BUILD_NUMBER}'"/g' deployment-kettle-beta.yaml
-        //         gcloud container clusters get-credentials ${CLUSTER_NAME} --region ${LOCATION} --project ${PROJECT_ID} --internal-ip
-        //         kubectl apply -f /var/lib/jenkins/workspace/likeminds-kettle-beta/deployment-kettle-beta.yaml
-        //         '''
-        //     }
-        // }
-        
-        // stage ("Build and Push OpenAPI Spec file to S3") {
-        //     steps{
-        //         sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
-        //         withAWS(region:"ap-south-1", credentials:"AWS-S3-CREDS"){
-        //                 s3Upload(file:'_build/v2.yaml', bucket:'beta-likeminds-media', path:'api-docs/v2.yaml', acl:'PublicRead')
-        //         }
-        //     }
-        // }
-    }  
+
+        stage ('Remove Image from jenkins') {
+            steps {
+                sh "sudo docker rmi 081371230266.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:kettle-V$BUILD_NUMBER"
+            }
+        }
+    }
         post { 
         always { 
             cleanWs()
