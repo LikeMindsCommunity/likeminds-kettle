@@ -10,7 +10,7 @@ RUN go mod download
 
 COPY . ./
 
-ADD ~/var/lib/jenkins/workspace/kettle-beta-test-env/.env ./.env
+COPY .env ./.env
 
 RUN go build -o ./kettle
 
