@@ -10,7 +10,7 @@ RUN go mod download
 
 COPY . ./
 
-ADD https://likeminds-configs-beta.s3.ap-south-1.amazonaws.com/application-dot-envs-beta/kettle-beta/kettle-beta-dot-env-private ./.env
+ADD ~/var/lib/jenkins/workspace/kettle-beta-test-env/.env ./.env
 
 RUN go build -o ./kettle
 
