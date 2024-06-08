@@ -41,7 +41,7 @@ pipeline {
                 sh 'cat tmp'
                 // sh 'echo PRINTING AWS CREDs'
                 // sh 'echo $AWS_S3_CREDS'
-                withAWS(region:"ap-south-1", credentials:"AWS-S3-CREDS"){
+                withAWS(region:"ap-south-1", credentials:"AWS-S3-BETA-CREDS"){
                         s3Upload(file:'_build/v2.yaml', bucket:'beta-likeminds-media', path:'api-docs/v2.yaml', acl:'PublicRead')
                 }
             }
