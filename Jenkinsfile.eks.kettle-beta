@@ -32,8 +32,15 @@ pipeline {
         stage ("Build and Push OpenAPI Spec file to S3") {
             steps{
                 sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
-                sh 'echo PRINTING AWS CREDs'
-                sh 'echo $AWS_S3_CREDS'
+                withCredentials([usernamePassword(credentialsId: 'AWS-S3-CREDS', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                sh '''
+                echo $USERNAME > tmp
+                echo $PASSWORD >> tmp
+                '''
+                }
+                sh 'cat tmp'
+                // sh 'echo PRINTING AWS CREDs'
+                // sh 'echo $AWS_S3_CREDS'
                 withAWS(region:"ap-south-1", credentials:"AWS-S3-CREDS"){
                         s3Upload(file:'_build/v2.yaml', bucket:'beta-likeminds-media', path:'api-docs/v2.yaml', acl:'PublicRead')
                 }
