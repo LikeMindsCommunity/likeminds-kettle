@@ -32,10 +32,10 @@ pipeline {
         stage ("Build and Push OpenAPI Spec file to S3") {
             steps{
                 sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
-                withCredentials([usernamePassword(credentialsId: 'AWS-S3-CREDS', passwordVariable: 'PWD', usernameVariable: 'USR')]) {
+                withCredentials([usernamePassword(credentialsId: 'AWS-S3-CREDS', passwordVariable: 'PASS', usernameVariable: 'USR')]) {
                 sh '''
                 echo $USR > tmp
-                echo $PWD >> tmp
+                echo $PASS >> tmp
                 '''
                 }
                 sh 'cat tmp'
