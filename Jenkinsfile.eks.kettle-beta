@@ -31,36 +31,37 @@ pipeline {
 
         stage ("Build and Push OpenAPI Spec file to S3") {
             steps{
-                sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
-                withCredentials([usernamePassword(credentialsId: 'AWS-S3-CREDS', passwordVariable: 'PASS', usernameVariable: 'USR')]) {
-                sh '''
-                echo $USR > tmp
-                echo $PASS >> tmp
-                '''
-                }
-                sh 'cat tmp'
+                //sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
+                // withCredentials([usernamePassword(credentialsId: 'AWS-S3-CREDS', passwordVariable: 'PASS', usernameVariable: 'USR')]) {
+                // sh '''
+                // echo $USR > tmp
+                // echo $PASS >> tmp
+                // '''
+                // }
+                // sh 'cat tmp'
                 // sh 'echo PRINTING AWS CREDs'
                 // sh 'echo $AWS_S3_CREDS'
-                withAWS(region:"ap-south-1", credentials:"AWS-S3-BETA-CREDS"){
-                        s3Upload(file:'_build/v2.yaml', bucket:'beta-likeminds-media', path:'api-docs/v2.yaml', acl:'PublicRead')
+                sh 'touch new.txt'
+                withAWS(region:"ap-south-1", credentials:"AWS-S3-CREDS"){
+                        s3Upload(file:'new.txt', bucket:'beta-likeminds-media', path:'api-docs/new.txt', acl:'PublicRead')
                 }
             }
         }
 
-        stage ("update tag and push helm charts") {
-          steps {
-             script{
-                  git branch: 'LM-10466-aws-migration', url: 'git@github.com:LikeMindsCommunity/LikeMinds-Infra-Config.git'
-                  sh "ls"
-                  sh 'sed -i "s/tag: kettle-V[0-9]*/tag: kettle-V${BUILD_NUMBER}/g" ./stag/kettle-beta/values.yaml'
-                  sh "git add ./stag/kettle-beta/values.yaml"
-                  sh "git status"
-                  sh 'git commit -m "CI/CD pipeline updated $IMAGE_TAG image to new image tag"'
-                  sh 'git config --global credential.helper cache'
-		          sh "git push origin LM-10466-aws-migration"
-                }
-            }
-        }
+        // stage ("update tag and push helm charts") {
+        //   steps {
+        //      script{
+        //           git branch: 'LM-10466-aws-migration', url: 'git@github.com:LikeMindsCommunity/LikeMinds-Infra-Config.git'
+        //           sh "ls"
+        //           sh 'sed -i "s/tag: kettle-V[0-9]*/tag: kettle-V${BUILD_NUMBER}/g" ./stag/kettle-beta/values.yaml'
+        //           sh "git add ./stag/kettle-beta/values.yaml"
+        //           sh "git status"
+        //           sh 'git commit -m "CI/CD pipeline updated $IMAGE_TAG image to new image tag"'
+        //           sh 'git config --global credential.helper cache'
+		//           sh "git push origin LM-10466-aws-migration"
+        //         }
+        //     }
+        // }
 
     }
 }
