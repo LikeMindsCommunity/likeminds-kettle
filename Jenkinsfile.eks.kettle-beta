@@ -33,7 +33,7 @@ pipeline {
             steps{
                 sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
                 withCredentials([usernamePassword(credentialsId: 'AWS-S3-CREDS', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-                    sh 'aws s3 cp _build/v2.yaml s3://beta-likeminds-media/api-docs/v2.yaml'
+                    sh 'aws --region=ap-south-1 s3 cp --acl=public-read _build/v2.yaml s3://beta-likeminds-media/api-docs/v2.yaml'
                 }
                 // sh 'cat tmp'
                 // sh 'echo PRINTING AWS CREDs'
