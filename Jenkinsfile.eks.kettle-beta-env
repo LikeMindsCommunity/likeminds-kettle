@@ -21,7 +21,7 @@ pipeline {
                 script{
                     sh "ls -al"
                     sh "sudo docker build -f Dockerfile.kettle-beta-env -t 081371230266.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:kettle-V$BUILD_NUMBER ."
-                    sh 'docker images'
+                    sh 'sudo docker images'
                 }
             }
         }
