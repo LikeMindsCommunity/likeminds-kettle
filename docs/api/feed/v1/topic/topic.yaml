@@ -11,7 +11,7 @@ post:
     - bearerAuth: []
 
   requestBody:
-    description: New topic params
+    description: Topic details to be created
     required: true
     content:
       application/json:
