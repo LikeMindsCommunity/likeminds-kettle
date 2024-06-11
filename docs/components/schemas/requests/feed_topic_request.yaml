@@ -1,0 +1,20 @@
+type: object
+properties:
+  name:
+    type: string
+    description: Name of the topic
+  is_enabled:
+    type: boolean
+    default: true
+    description: Is the topic enabled
+  priority:
+    type: integer
+    default: 0
+    description: Priority of the topic
+  is_searchable:
+    type: boolean
+    default: true
+    description: Is the topic searchable in search
+  metadata:
+    type: object
+    description: Widget Metadata for the topic

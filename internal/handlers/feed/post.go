@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/internal/constants"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/chatroom"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/utility"
@@ -272,20 +273,13 @@ func createPostInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	//Fetch member access to create post
-	success, response := user.FetchMemberAccess(c, CREATE_POST_ACTION, userId)
-	if !success {
-		return
-	}
-
-	//If not access
-	if !response.Access {
-		utils.MemberAccessFailError(c)
+	access, isCm := checkAccessForCreatPost(c, userId, isPollInPostAttachments(createPostRequest.Attachments))
+	if !access {
 		return
 	}
 
 	//Update user_is_cm in request
-	createPostRequest.UserIsCm = response.IsCm
+	createPostRequest.UserIsCm = isCm
 
 	if createPostRequest.IsRepost && !utils.FeedRepostSettingsEnabled(utils.GetRedisClientFromContext(c), headers) {
 		utils.GeneralBadRequestError(c, utils.ErrorRepostSettingNotEnabled)
@@ -343,6 +337,57 @@ func createPostInternal(c *gin.Context, userId string) {
 
 	//Generate Response
 	utils.GenerateResponse(c, dataResponse, true)
+}
+
+func checkAccessForCreatPost(c *gin.Context, userId string, isPoll bool) (bool, bool) {
+
+	var userIsCm bool
+
+	// if poll in attachments, check for create_feed_poll access else check for create_post access
+	if isPoll {
+
+		//Fetch member access to create post
+		success, response := user.FetchMemberAccess(c, CREATE_FEED_POLL, userId)
+		if !success {
+			return false, false
+		}
+
+		//If not access
+		if !response.Access {
+			utils.AccessForbiddenError(c, utils.ErrorCreateFeedPollUnAuthorized)
+			return false, false
+		}
+
+		userIsCm = response.IsCm
+	} else {
+
+		//Fetch member access to create post
+		success, response := user.FetchMemberAccess(c, CREATE_POST_ACTION, userId)
+		if !success {
+			return false, false
+		}
+
+		//If not access
+		if !response.Access {
+			utils.MemberAccessFailError(c)
+			return false, false
+		}
+
+		userIsCm = response.IsCm
+	}
+
+	return true, userIsCm
+}
+
+func isPollInPostAttachments(attachments []utils.AttachmentRequest) bool {
+
+	for _, attachment := range attachments {
+		if (attachment.AttachmentType == constants.PollWidget) || (attachment.Type == constants.PollWidgetEnum) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func validateAndFetchOnBehalfUUID(c *gin.Context, userId string, createPostRequest *CreatePostRequest,

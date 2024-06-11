@@ -75,6 +75,13 @@ func MemberAccessFailError(c *gin.Context) {
 	})
 }
 
+func AccessForbiddenError(c *gin.Context, errorMessage string) {
+	c.JSON(http.StatusForbidden, Response{
+		Success:      false,
+		ErrorMessage: errorMessage,
+	})
+}
+
 func GeneralBadRequestError(c *gin.Context, errorMessage string) {
 	c.JSON(http.StatusBadRequest, Response{
 		Success:      false,

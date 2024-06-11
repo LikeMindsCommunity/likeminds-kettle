@@ -1,4 +1,12 @@
 type: object
 properties:
-  name:
-    type: string
+  names:
+    type: array
+    description: Names of the topics
+    items:
+      type: string
+  topics:
+    type: array
+    description: Topics to be created
+    items:
+      $ref: "./feed_topic_request.yaml"
