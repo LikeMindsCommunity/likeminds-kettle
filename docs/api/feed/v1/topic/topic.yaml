@@ -40,15 +40,58 @@ get:
     - bearerAuth: []
 
   parameters:
-    - name: is_enabled
-      in: query
-      description: Filter by enabled status
-      schema:
-        type: boolean
-    - $ref: "../../../../components/parameters/query/search.yaml"
-    - $ref: "../../../../components/parameters/query/searchType.yaml"
-    - $ref: "../../../../components/parameters/query/page.yaml"
-    - $ref: "../../../../components/parameters/query/pageSize.yaml"
+  - name: page
+    in: query
+    description: Page number
+    schema:
+      type: integer
+  - name: page_size
+    in: query
+    description: Number of items per page
+    schema:
+      type: integer
+  - name: search_type
+    in: query
+    description: Type of search
+    schema:
+      type: string
+      enum:
+        - name
+  - name: search
+    in: query
+    description: Search query
+    schema:
+      type: string
+  - name: is_enabled
+    in: query
+    description: Filter by enabled status
+    schema:
+      type: boolean
+  - name: min_posts
+    in: query
+    description: Topics with minimum number of posts
+    schema:
+      type: integer
+  - name: parent_ids
+    in: query
+    description: Array of parent ids | get children of these topics
+    schema:
+      type: array
+      items:
+        type: string
+  - name: order_by
+    in: query
+    description: Order by field
+    schema:
+      type: array
+      items:
+        type: string
+        enum:
+          - alphabetical_asc
+          - priority_desc
+          - created_at_desc
+          - number_of_posts_desc
+    example: []
     
   responses:
     "200":

@@ -1,7 +1,8 @@
 put:
-  summary: Update a topic by ID
-
   operationId: updateTopicById
+  
+  summary: Update a topic by ID
+  description: This API is used to update a topic by ID
 
   tags:
     - Feed - V1
@@ -23,7 +24,8 @@ put:
     content:
       application/json:
         schema:
-          $ref: "../../../../components/schemas/requests/feed_topic_update.yaml"
+          # $ref: "../../../../components/schemas/requests/feed_topic_update.yaml"
+          $ref: "../../../../components/schemas/requests/feed_topic_request.yaml"
 
   responses:
     "200":

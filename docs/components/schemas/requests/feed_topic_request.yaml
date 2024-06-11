@@ -18,5 +18,3 @@ properties:
   metadata:
     type: object
     description: Widget Metadata for the topic
-required:
-  - name
