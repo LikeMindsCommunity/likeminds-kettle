@@ -27,7 +27,6 @@ tags:
   - name: DM
   - name: Search
   - name: User
-  - name: Feed
   - name: Feed - V1
     description: APIs related to Feed (Api Revamp v1)
   - name: Community Feed

@@ -1,7 +1,8 @@
 post:
-  summary: Create a new topic
-
   operationId: createTopic
+
+  summary: Create a new topic
+  description: This API is used to create new topic/s
 
   tags:
     - Feed - V1
@@ -10,7 +11,7 @@ post:
     - bearerAuth: []
 
   requestBody:
-    description: New topic details
+    description: New topic params
     required: true
     content:
       application/json:
@@ -27,9 +28,10 @@ post:
 
 
 get:
-  summary: Get topics based on filters
-
   operationId: getTopics
+
+  summary: Get topics based on filters
+  description: This API is used to get topics based on filters
 
   tags:
     - Feed - V1
