@@ -10,3 +10,14 @@ const (
 	PollWidget
 	ArticleWidget
 )
+
+// enums for attachment type
+const (
+	ImageWidgetEnum    = "image"
+	VideoWidgetEnum    = "video"
+	DocumentWidgetEnum = "document"
+	LinkWidgetEnum     = "link"
+	CustomWidgetEnum   = "custom"
+	PollWidgetEnum     = "poll"
+	ArticleWidgetEnum  = "article"
+)

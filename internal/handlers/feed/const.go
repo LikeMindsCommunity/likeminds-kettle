@@ -85,6 +85,7 @@ const (
 	EDIT_TOPIC_ACTION      = "edit_topic"
 	IS_MEMBER              = "is_member"
 	CHANGE_AUTHOR_ACTION   = "change_author"
+	CREATE_FEED_POLL       = "create_feed_poll"
 )
 
 const (

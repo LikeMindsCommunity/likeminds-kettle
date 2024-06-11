@@ -84,15 +84,8 @@ func createPendingPostInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	//Fetch member access to create post
-	success, response := user.FetchMemberAccess(c, CREATE_POST_ACTION, userId)
-	if !success {
-		return
-	}
-
-	//If not access
-	if !response.Access {
-		utils.MemberAccessFailError(c)
+	access, _ := checkAccessForCreatPost(c, userId, isPollInPostAttachments(cppr.Attachments))
+	if !access {
 		return
 	}
 
