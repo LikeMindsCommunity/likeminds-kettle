@@ -1,10 +1,14 @@
+// Deployment jenkins script file for GCP GKE kettle-beta deployment
+// We have moved deployment to AWS jenkins deploying service on AWS EKS
+// File is deprecated and moved to deployment-deprecated directory
+
 pipeline {
     agent any
     // environment {
-    //     PROJECT_ID = 'likeminds-prod-prj-5464'
-    //     CLUSTER_NAME = 'likeminds-prod-autopilot-cluster'
+    //     PROJECT_ID = 'likeminds-nonprod-prj-24e1'
+    //     CLUSTER_NAME = 'likeminds-nonprod-autopilot-cluster'
     //     LOCATION = 'asia-south1'
-    //     CREDENTIALS_ID = 'likeminds-prod-prj-5464'
+    //     CREDENTIALS_ID = 'likeminds-nonprod-prj-24e1'
     // }
     stages {
         stage("Checkout code") {
@@ -17,16 +21,15 @@ pipeline {
             steps{
                 script{
                     sh 'gcloud auth configure-docker asia.gcr.io'
-                    sh 'docker build -f Dockerfile.kettle-prod -t asia.gcr.io/likeminds-prod-prj-5464/likeminds-authentication/kettle:${BUILD_NUMBER} . '
+                    sh 'docker build -f Dockerfile.kettle-beta -t asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/nateshr/likeminds-authentication/kettle:${BUILD_NUMBER} . '
                     }
                 }
             }
-
-        stage("Pushing Application Docker Image to Google Artifact Registry"){
+         stage("Pushing Application Docker Image to Google Artifact Registry"){
             steps{
                 script{
                     sh 'gcloud auth configure-docker asia.gcr.io'
-                    sh 'docker push asia.gcr.io/likeminds-prod-prj-5464/likeminds-authentication/kettle:${BUILD_NUMBER}'
+                    sh 'docker push asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/nateshr/likeminds-authentication/kettle:${BUILD_NUMBER}'
                       }
                  }
             }
@@ -34,20 +37,22 @@ pipeline {
         stage('Deploy to GKE') {
             steps{
                 sh '''
-                sed -i 's/kettle:.*/kettle:'${BUILD_NUMBER}'"/g' deployment-kettle-prod.yaml
+                sed -i 's/kettle:.*/kettle:'${BUILD_NUMBER}'"/g' deployment-kettle-beta.yaml
                 gcloud container clusters get-credentials ${CLUSTER_NAME} --region ${LOCATION} --project ${PROJECT_ID} --internal-ip
-                kubectl apply -f /var/lib/jenkins/workspace/likeminds-kettle-prod/deployment-kettle-prod.yaml
+                kubectl apply -f /var/lib/jenkins/workspace/likeminds-kettle-beta/deployment-kettle-beta.yaml
                 '''
             }
         }
+        
         stage ("Build and Push OpenAPI Spec file to S3") {
             steps{
                 sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
                 withAWS(region:"ap-south-1", credentials:"AWS-S3-CREDS"){
-                        s3Upload(file:'_build/v2.yaml', bucket:'prod-likeminds-media', path:'api-docs/v2.yaml', acl:'PublicRead')
+                        s3Upload(file:'_build/v2.yaml', bucket:'beta-likeminds-media', path:'api-docs/v2.yaml', acl:'PublicRead')
                 }
             }
         }
+    }  
         post { 
         always { 
             cleanWs()
