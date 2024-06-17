@@ -10,8 +10,6 @@ RUN go mod download
 
 COPY . ./
 
-ADD https://likeminds-configs-beta.s3.ap-south-1.amazonaws.com/application-dot-envs-beta/kettle-beta/kettle-beta-dot-env-public ./.env
-
 RUN go build -o ./kettle
 
 CMD [ "./kettle" ]
