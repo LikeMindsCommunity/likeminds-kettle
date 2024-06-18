@@ -7,6 +7,14 @@ pipeline {
             }
          }
         
+        stage ("Download .env file from s3") {
+            steps{
+                withAWS(region:"ap-south-1", credentials:"AWS-S3-ENV"){
+                    s3Download(file:'.env', bucket:'likeminds-configs-prod', path:'application-dot-envs-prod/kettle-prod/kettle-prod-dot-env-private', force: true)
+                }
+            }
+        }
+
         stage ('Build Image') {
             steps {
                 sh "sudo docker build -f Dockerfile.kettle-prod -t 523792672653.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:kettle-V$BUILD_NUMBER ."
