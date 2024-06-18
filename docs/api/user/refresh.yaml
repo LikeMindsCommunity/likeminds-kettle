@@ -1,22 +1,38 @@
 post:
     operationId: refreshUserToken
-    description: This API refreshes and sends a new Authorization Token
     tags:
       - Login
-    security:
-    - bearerAuth: []
-    requestBody:
-      content:
-        application/json:
-          schema:
-            $ref: "../../components/schemas/requests/user_refresh_token.yaml"
-            required:
-              - refresh_token
+
+    summary: Refresh user token
+    description: This API refreshes and sends a new authorization token
+
+    parameters:
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Refresh token
+      example: "refresh_token"
 
     responses:
       '200':
-        description: Token refreshed successfully
+        description: Successful response
         content:
           application/json:
             schema:
               $ref: "../../components/schemas/responses/user_refresh_token.yaml"
+
+      '401':
+        description: Invalid RTM
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: 
+                  example: false
+                error_message:
+                  type: string
+                  example: "Invalid RTM"

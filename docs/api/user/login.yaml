@@ -2,6 +2,10 @@ post:
   operationId: loginUser
   tags: 
     - Login
+
+  summary: Login user
+  description: Login user with provided details
+
   security:
     - bearerAuth: []
   parameters:
@@ -18,7 +22,6 @@ post:
         schema:
           $ref: "../../components/schemas/requests/user_login.yaml"
           
-  summary: Login user
   responses:
     '200':
       description: User logged in successfully

@@ -3,7 +3,7 @@ post:
   tags:
     - Login
 
-  summary: Login or create user based on details provided
+  summary: Login or create user
   description: This API creates or login the user based on details provided from sdk client
 
   parameters:
@@ -42,11 +42,11 @@ post:
                 nullable: true
 
 get:
-  operationId: sdkInitate
+  operationId: sdkInitateGet
   tags:
     - Login
 
-  summary: Login user based on details provided
+  summary: Login user
   description: This API creates or login the user based on details provided from sdk client
 
   security:
