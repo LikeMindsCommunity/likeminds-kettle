@@ -1,0 +1,15 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      community:
+        $ref: "./partials/community.yaml"
+      user:
+        $ref: "./partials/user.yaml"
+      widgets: 
+        type: array
+        items:
+          $ref: "./partials/widget.yaml"

@@ -3,3 +3,10 @@ in: header
 description: Platform Code
 schema:
   type: string
+  enums:
+    - an
+    - ios
+    - web
+    - fl
+    - rn
+    - rt
