@@ -4,7 +4,7 @@ post:
     - Login
 
   summary: Login or create user
-  description: This API creates or login the user based on details provided from sdk client
+  description: This API creates or login the user based on details provided from SDK client
 
   parameters:
     - $ref: "../../components/parameters/headers/apiKey.yaml"
