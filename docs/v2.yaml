@@ -51,12 +51,12 @@ paths:
     $ref: "./api/user/login.yaml"
   /sdk/initiate:
     $ref: "./api/login/initiate.yaml" 
+  /user/refresh:
+    $ref: "./api/user/refresh.yaml"
   /otp/generate:
     $ref: "./api/otp/generate.yaml"
   /otp/verify:
     $ref: "./api/otp/verify.yaml"
-  /user/refresh:
-    $ref: "./api/user/refresh.yaml"
   /user/logout:
     $ref: "./api/user/logout.yaml"
   /user/token:

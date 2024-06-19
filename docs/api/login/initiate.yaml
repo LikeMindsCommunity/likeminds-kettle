@@ -3,15 +3,15 @@ post:
   tags:
     - Login
 
-  summary: sdk/initiate
-  description: This API creates or login the user based on details provided from sdk client
-
-  security:
-    - bearerAuth: []
+  summary: Login or create user
+  description: This API creates or login the user based on details provided from SDK client
 
   parameters:
     - $ref: "../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../components/parameters/headers/sdkSource.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/apiVersion.yaml"
 
   requestBody:
     required: true
@@ -28,6 +28,44 @@ post:
           schema:
             $ref: "../../components/schemas/responses/sdk_initiate.yaml"
             
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string
+                nullable: true
+
+get:
+  operationId: sdkInitateGet
+  tags:
+    - Login
+
+  summary: Login user
+  description: This API creates or login the user based on details provided from sdk client
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/sdkSource.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/apiVersion.yaml"
+  
+  responses:
+    "200":
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/sdk_initiate_get.yaml"
+
     "401":
       description: Unauthorized
       content:
