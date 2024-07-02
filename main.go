@@ -282,6 +282,7 @@ func main() {
 	router.GET(constants.FeedPersonalisedRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.FetchPersonalisedFeed)
 	router.POST(constants.FeedPersonalisedRecomputeRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.RecomputePersonalisedFeed)
 	router.POST(constants.FeedPersonalisedReorderRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.ReorderPersonalisedFeed)
+	router.POST(constants.FeedPostSeenRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.SeenPost)
 
 	// Utility Apis
 	router.GET(constants.HelperUrlRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), utility.DecodeUrl)

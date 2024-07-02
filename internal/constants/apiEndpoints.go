@@ -182,6 +182,7 @@ const (
 	FeedPersonalisedRoute           = "/feed/personalised"
 	FeedPersonalisedRecomputeRoute  = "/feed/personalised/recompute"
 	FeedPersonalisedReorderRoute    = "/feed/personalised/reorder"
+	FeedPostSeenRoute               = "/feed/post/seen"
 )
 
 // Utility Endpoints
