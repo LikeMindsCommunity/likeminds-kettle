@@ -41,7 +41,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.34.1"
+	var AppVersion string = "2.36.0"
 
 	initGin()
 	redisClient = cache.InitRedis()
@@ -279,6 +279,10 @@ func main() {
 	router.DELETE(constants.FeedPostPendingPostIDRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.DeletePendingPost)
 	router.GET(constants.FeedUserTopicsRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.FetchUsersTopics)
 	router.PATCH(constants.FeedUserUUIDTopicsRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.UpdateUserTopics)
+	router.GET(constants.FeedPersonalisedRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.FetchPersonalisedFeed)
+	router.POST(constants.FeedPersonalisedRecomputeRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.RecomputePersonalisedFeed)
+	router.POST(constants.FeedPersonalisedReorderRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.ReorderPersonalisedFeed)
+	router.POST(constants.FeedPostSeenRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.SeenPost)
 
 	// Utility Apis
 	router.GET(constants.HelperUrlRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), utility.DecodeUrl)

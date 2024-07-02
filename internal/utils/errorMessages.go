@@ -33,3 +33,4 @@ const ErrorFetchCommunitySettingsFailed = "Error while fetching community settin
 const ErrorEmptyUserIds = "userIds cannot be empty"
 const ErrorInvalidPostIdSent = "Invalid post id sent"
 const ErrorCreateFeedPollUnAuthorized = "You are not authorized to create feed poll"
+const PersonalisedFeedDisabledError = "Personalised feed is disabled."

@@ -134,6 +134,7 @@ const (
 	FeedRepostCommunitySettingType  = "feed_repost"
 	UserTopicsConnectionSettingType = "user_topics_connection"
 	PostApprovalNeededSettingType   = "post_approval_needed"
+	PersonalisedFeedSettingType     = "enable_personalised_feed"
 )
 
 // Member Roles
