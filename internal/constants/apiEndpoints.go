@@ -179,6 +179,9 @@ const (
 	FeedPostPendingPostIDRoute      = "feed/post/pending/:pending_post_id"
 	FeedUserTopicsRoute             = "/feed/user/topics"
 	FeedUserUUIDTopicsRoute         = "/feed/user/:uuid/topics"
+	FeedPersonalisedRoute           = "/feed/personalised"
+	FeedPersonalisedRecomputeRoute  = "/feed/personalised/recompute"
+	FeedPersonalisedReorderRoute    = "/feed/personalised/reorder"
 )
 
 // Utility Endpoints

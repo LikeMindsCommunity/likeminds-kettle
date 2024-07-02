@@ -19,6 +19,8 @@ const CreatePendingPostEndPoint = "/post/pending"
 const PendingPostEndPoint = "/post/pending/%s"
 const FetchUserCreatedPendingPostsEndPoint = "/user/%s/post/pending"
 const RecomputePersonalisedFeedEndPoint = "/personalised/recompute"
+const ReorderPersonalisedFeedEndPoint = "/personalised/reorder"
+const FetchPersonalisedFeedEndPoint = "/personalised"
 
 // GetUserActivityEndPoint | swarm API endpoint for user activity list
 const GetUserActivityEndPoint = "/user/activity"
