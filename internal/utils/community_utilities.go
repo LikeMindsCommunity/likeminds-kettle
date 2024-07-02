@@ -288,3 +288,15 @@ func IsPostApprovalNeeded(redisClient *redis.Client, headers map[string]interfac
 
 	return checkCommunitySettingEnabled(communitySettings, PostApprovalNeededSettingType)
 }
+
+// Exposed method to check if personalised feed setting is enabled for a community
+func IsPersonalisedFeedEnabled(redisClient *redis.Client, headers map[string]interface{}) bool {
+
+	communitySettings, err := fetchCommunitySettings(redisClient, headers)
+	if err != nil {
+		logging.Error(fmt.Sprintf("Error while fetching community settings, err: %v", err))
+		return false
+	}
+
+	return checkCommunitySettingEnabled(communitySettings, PersonalisedFeedSettingType)
+}
