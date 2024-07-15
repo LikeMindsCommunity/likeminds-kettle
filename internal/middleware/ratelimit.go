@@ -78,34 +78,23 @@ func checkTierDataForCommunityId(tierData []utils.TierDataType, communityId int,
 			return true, err
 		}
 
-		// If key does not exist in cache, set the key and expiry
-		if !exists {
-			err = cache.Increment(redisClient, rateLimitCurrentValueKey)
-			if err != nil {
-				return true, err
-			}
-
-			err = cache.ExpireAt(redisClient, rateLimitCurrentValueKey, time.Now().Add(time.Second*time.Duration(rateLimitTTL)))
-			if err != nil {
-				return true, err
-			}
-
-		} else { // Check and calculate rate limit based on tierValueType
-
+		// Check if rate limit current value is less than rate limit value
+		if exists {
 			err = checkRateLimit(rateLimitTierValueType, currentValue, rateLimitValue, rateLimitErrorMessage, rateLimitCurrentValueKey, redisClient)
 			if err != nil {
 				return false, err
 			}
-
-			// Increment
-			err = cache.Increment(redisClient, rateLimitCurrentValueKey)
-			if err != nil {
-				return true, err
-			}
 		}
 
-		// Set expiry for cache, if it is not set (in background)
+		// Increment value in cache and set TTL if it doesn't exist
 		go func() {
+
+			// Increment value (if exists) or set value to 1
+			err = cache.Increment(redisClient, rateLimitCurrentValueKey)
+			if err != nil {
+				logging.Error(fmt.Sprint("Some error occured while incrementing key: ", rateLimitCurrentValueKey, " | err: ", err))
+			}
+
 			ttl, err := cache.FetchTTL(redisClient, rateLimitCurrentValueKey)
 			if err != nil {
 				logging.Error(fmt.Sprint("Some error occured while fetching TTL for key: ", rateLimitCurrentValueKey, " | err: ", err))
