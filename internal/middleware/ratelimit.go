@@ -65,6 +65,7 @@ func RateLimitingMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 
 func checkTierDataForCommunityId(tierData []utils.TierDataType, communityId int, redisClient *redis.Client) (bool, error) {
 	for _, limitFactor := range tierData {
+
 		// Extract all the required values from tierData
 		rateLimitCurrentValueKey := limitFactor.RateLimitKeyName + fmt.Sprintf("_%d", communityId)
 		rateLimitValue := limitFactor.MaxRequestLimitValue
@@ -78,7 +79,7 @@ func checkTierDataForCommunityId(tierData []utils.TierDataType, communityId int,
 			return true, err
 		}
 
-		// Check if rate limit current value is less than rate limit value
+		// Check if current value is less than rate limit value
 		if exists {
 			err = checkRateLimit(rateLimitTierValueType, currentValue, rateLimitValue, rateLimitErrorMessage, rateLimitCurrentValueKey, redisClient)
 			if err != nil {
@@ -86,7 +87,7 @@ func checkTierDataForCommunityId(tierData []utils.TierDataType, communityId int,
 			}
 		}
 
-		// Increment value in cache and set TTL if it doesn't exist
+		// Increment and set TTL if it doesn't exist
 		go func() {
 
 			// Increment value (if exists) or set value to 1
