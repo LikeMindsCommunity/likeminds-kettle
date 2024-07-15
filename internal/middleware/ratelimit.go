@@ -102,22 +102,22 @@ func checkTierDataForCommunityId(tierData []utils.TierDataType, communityId int,
 			if err != nil {
 				return true, err
 			}
-
-			// Set expiration time for the key if it is not set (in background)
-			go func() {
-				ttl, err := cache.FetchTTL(redisClient, rateLimitCurrentValueKey)
-				if err != nil {
-					logging.Error(fmt.Sprint("Some error occured while fetching TTL for key: ", rateLimitCurrentValueKey, " | err: ", err))
-				}
-
-				if ttl.Seconds() <= 0 {
-					err = cache.ExpireAt(redisClient, rateLimitCurrentValueKey, time.Now().Add(time.Second*time.Duration(rateLimitTTL)))
-					if err != nil {
-						logging.Error(fmt.Sprint("Some error occured while setting TTL for key: ", rateLimitCurrentValueKey, " | err: ", err))
-					}
-				}
-			}()
 		}
+
+		// Set expiry for cache, if it is not set (in background)
+		go func() {
+			ttl, err := cache.FetchTTL(redisClient, rateLimitCurrentValueKey)
+			if err != nil {
+				logging.Error(fmt.Sprint("Some error occured while fetching TTL for key: ", rateLimitCurrentValueKey, " | err: ", err))
+			}
+
+			if ttl.Seconds() <= 0 {
+				err = cache.ExpireAt(redisClient, rateLimitCurrentValueKey, time.Now().Add(time.Second*time.Duration(rateLimitTTL)))
+				if err != nil {
+					logging.Error(fmt.Sprint("Some error occured while setting TTL for key: ", rateLimitCurrentValueKey, " | err: ", err))
+				}
+			}
+		}()
 
 	}
 	return true, nil
