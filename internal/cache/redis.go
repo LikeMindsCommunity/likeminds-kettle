@@ -121,6 +121,18 @@ func ExpireAt(client *redis.Client, key string, expiration time.Time) error {
 	return nil
 }
 
+// FetchTTL | get the TTL for key
+func FetchTTL(client *redis.Client, key string) (time.Duration, error) {
+	ttl, err := client.TTL(key).Result()
+	if err != nil {
+		logging.Error(fmt.Sprint("cache ttl fetch failed for key: ", key, " | err: ", err.Error()))
+		return 0, err
+	}
+
+	logging.Info(fmt.Sprintf("cache ttl fetch for key: %s with ttl: %v", key, ttl.String()))
+	return ttl, nil
+}
+
 // IsLTMBlacklisted checks if token is blacklisted or not => user is logged out or not
 func IsLTMBlacklisted(client *redis.Client, ltm *constants.LoginTokenMeta) bool {
 	userUniqueID, _ := client.Get(ltm.AccessUuid).Result()

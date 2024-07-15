@@ -55,7 +55,7 @@ func RateLimitingMiddleware(redisClient *redis.Client) gin.HandlerFunc {
 		}
 		// If any internal error occurs	log and continue
 		if err != nil {
-			logging.Error(err)
+			logging.Error(fmt.Sprint("Some error occured while checking TierData for CommunityId: ", err))
 			return
 		}
 
@@ -78,27 +78,47 @@ func checkTierDataForCommunityId(tierData []utils.TierDataType, communityId int,
 			return true, err
 		}
 
-		// If key does not exist in cache
+		// If key does not exist in cache, set the key and expiry
 		if !exists {
 			err = cache.Increment(redisClient, rateLimitCurrentValueKey)
 			if err != nil {
 				return true, err
 			}
 
-			// Set expiration time for the key
 			err = cache.ExpireAt(redisClient, rateLimitCurrentValueKey, time.Now().Add(time.Second*time.Duration(rateLimitTTL)))
 			if err != nil {
 				return true, err
 			}
 
-			currentValue = "1"
+		} else { // Check and calculate rate limit based on tierValueType
+
+			err = checkRateLimit(rateLimitTierValueType, currentValue, rateLimitValue, rateLimitErrorMessage, rateLimitCurrentValueKey, redisClient)
+			if err != nil {
+				return false, err
+			}
+
+			// Increment
+			err = cache.Increment(redisClient, rateLimitCurrentValueKey)
+			if err != nil {
+				return true, err
+			}
+
+			// Set expiration time for the key if it is not set (in background)
+			go func() {
+				ttl, err := cache.FetchTTL(redisClient, rateLimitCurrentValueKey)
+				if err != nil {
+					logging.Error(fmt.Sprint("Some error occured while fetching TTL for key: ", rateLimitCurrentValueKey, " | err: ", err))
+				}
+
+				if ttl.Seconds() <= 0 {
+					err = cache.ExpireAt(redisClient, rateLimitCurrentValueKey, time.Now().Add(time.Second*time.Duration(rateLimitTTL)))
+					if err != nil {
+						logging.Error(fmt.Sprint("Some error occured while setting TTL for key: ", rateLimitCurrentValueKey, " | err: ", err))
+					}
+				}
+			}()
 		}
 
-		// Check and calculate rate limit based on tier value type
-		err = checkRateLimit(rateLimitTierValueType, currentValue, rateLimitValue, rateLimitErrorMessage, rateLimitCurrentValueKey, redisClient)
-		if err != nil {
-			return false, err
-		}
 	}
 	return true, nil
 }
@@ -106,14 +126,11 @@ func checkTierDataForCommunityId(tierData []utils.TierDataType, communityId int,
 func checkRateLimit(rateLimitTierValueType int, currentValue string, rateLimitValue int, rateLimitErrorMessage string, rateLimitCurrentValueKey string, redisClient *redis.Client) error {
 	currentValueInt, _ := strconv.Atoi(currentValue)
 	switch rateLimitTierValueType {
-	//RPM
 	case RPM:
 		// If rate limit current value is less than rate limit value
 		if currentValueInt > rateLimitValue {
 			return fmt.Errorf(rateLimitErrorMessage)
 		}
-		err := cache.Increment(redisClient, rateLimitCurrentValueKey)
-		return err
 	}
 	return nil
 }
