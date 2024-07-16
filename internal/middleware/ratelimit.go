@@ -87,7 +87,7 @@ func checkTierDataForCommunityId(tierData []utils.TierDataType, communityId int,
 
 		// Check if current value is less than rate limit value
 		if exists {
-			err = checkRateLimit(rateLimitTierValueType, currentValue, rateLimitValue, rateLimitErrorMessage, redisClient)
+			err = checkRateLimit(rateLimitTierValueType, currentValue, rateLimitValue, rateLimitErrorMessage)
 			if err != nil {
 				return false, err
 			}
@@ -119,7 +119,7 @@ func checkTierDataForCommunityId(tierData []utils.TierDataType, communityId int,
 	return true, nil
 }
 
-func checkRateLimit(rateLimitTierValueType int, currentValue string, rateLimitValue int, rateLimitErrorMessage string, redisClient *redis.Client,
+func checkRateLimit(rateLimitTierValueType int, currentValue string, rateLimitValue int, rateLimitErrorMessage string,
 ) error {
 
 	currentValueInt, _ := strconv.Atoi(currentValue)
