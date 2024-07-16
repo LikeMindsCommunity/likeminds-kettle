@@ -34,20 +34,20 @@ type TierTypeApiResponse struct {
 	Data    []TierDataType `json:"data"`
 }
 
-func FetchCommunityBillingData(redisClient *redis.Client, communityId int, headers map[string]interface{}) (CommunityBillingMeta, error) {
-	// Cache key for community billing data
-	cacheKey := fmt.Sprintf(cache.CommunityBillingDataKey, communityId)
+func FetchCommunityBillingData(redisClient *redis.Client, communityId int, headers map[string]interface{},
+) (CommunityBillingMeta, error) {
+
 	// Get Community Billing data from cache
-	value, valueExists, err := cache.Get(redisClient, cacheKey)
-	//If error continue to next middleware
+	cacheKey := fmt.Sprintf(cache.CommunityBillingDataKey, communityId)
+	value, exists, err := cache.Get(redisClient, cacheKey)
 	if err != nil {
 		return CommunityBillingMeta{}, err
 	}
 
 	communityBillingMeta := CommunityBillingMeta{}
 
-	// communityBillingDataApi
-	if !valueExists {
+	if !exists {
+
 		// Get Value from API
 		respBytes, _, err := GetRequestResponseWithoutContext(SubscriptionService, fmt.Sprintf("%s/%d", BillingPlanEnpoint, communityId), GETRequest, headers, nil, nil)
 		if err != nil {
@@ -61,24 +61,29 @@ func FetchCommunityBillingData(redisClient *redis.Client, communityId int, heade
 			return communityBillingMeta, err
 		}
 
-		communityBillingMetaForCache, err := json.Marshal(billingPlanResp.BillingData)
+		// Save in cache in background
+		go func() {
+			bytes, err := json.Marshal(billingPlanResp.BillingData)
+			if err != nil {
+				logging.Error(fmt.Sprintf("Error while marshalling communityBillingMeta: %v", err))
+			}
 
-		if err != nil {
-			return communityBillingMeta, err
-		}
-		// Update value in Cache
-		err = cache.Set(redisClient, cacheKey, communityBillingMetaForCache, time.Hour*cache.CommunityBillingDataTTL)
-		if err != nil {
-			return communityBillingMeta, err
-		}
+			// Update value in Cache
+			err = cache.Set(redisClient, cacheKey, bytes, time.Hour*cache.CommunityBillingDataTTL)
+			if err != nil {
+				logging.Error(fmt.Sprintf("Error while setting communityBillingMeta in cache: %v", err))
+			}
+		}()
 
 	} else {
+
 		// Unmarshal value from cache
 		err := json.Unmarshal([]byte(value), &communityBillingMeta)
 		if err != nil {
 			return communityBillingMeta, err
 		}
 	}
+
 	return communityBillingMeta, nil
 }
 
@@ -94,9 +99,11 @@ func FetchTierData(redisClient *redis.Client, headers map[string]interface{}, ti
 	tierData := []TierDataType{}
 
 	if !exists {
+
 		params := map[string]string{
 			ParamTierType: strconv.Itoa(tierType),
 		}
+
 		// Get data from skulk service
 		respBytes, _, err := GetRequestResponseWithoutContext(SubscriptionService, TierEndpoint, GETRequest, headers, params, nil)
 		if err != nil {

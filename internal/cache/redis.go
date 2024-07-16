@@ -97,7 +97,7 @@ func SetMultipleValues(client *redis.Client, values ...interface{}) error {
 	return nil
 }
 
-// Increment | increment the key value by 1
+// Increment | increment the key value by 1 or set to 1 if key does not exist
 func Increment(client *redis.Client, key string) error {
 	err := client.Incr(key).Err()
 	if err != nil {
