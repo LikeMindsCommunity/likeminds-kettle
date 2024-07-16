@@ -97,7 +97,7 @@ func SetMultipleValues(client *redis.Client, values ...interface{}) error {
 	return nil
 }
 
-// Increment | increment the key value by 1
+// Increment | increment the key value by 1 or set to 1 if key does not exist
 func Increment(client *redis.Client, key string) error {
 	err := client.Incr(key).Err()
 	if err != nil {
@@ -119,6 +119,18 @@ func ExpireAt(client *redis.Client, key string, expiration time.Time) error {
 
 	logging.Info(fmt.Sprintf("cache expiry set for key: %s with expiry: %v", key, expiration.String()))
 	return nil
+}
+
+// FetchTTL | get the TTL for key
+func FetchTTL(client *redis.Client, key string) (time.Duration, error) {
+	ttl, err := client.TTL(key).Result()
+	if err != nil {
+		logging.Error(fmt.Sprint("cache ttl fetch failed for key: ", key, " | err: ", err.Error()))
+		return 0, err
+	}
+
+	logging.Info(fmt.Sprintf("cache ttl fetch for key: %s with ttl: %v", key, ttl.String()))
+	return ttl, nil
 }
 
 // IsLTMBlacklisted checks if token is blacklisted or not => user is logged out or not
