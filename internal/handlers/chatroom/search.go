@@ -22,11 +22,13 @@ func ChatroomSearch(c *gin.Context) {
 
 	//Params to be sent in the chatroom search api internally
 	params := map[string]string{
-		ParamSearch:       c.Query(ParamSearch),
-		ParamFollowStatus: c.Query(ParamFollowStatus),
-		ParamPage:         c.Query(ParamPage),
-		ParamPageSize:     c.Query(ParamPageSize),
-		ParamSearchType:   c.Query(ParamSearchType),
+		ParamSearch:        c.Query(ParamSearch),
+		ParamFollowStatus:  c.Query(ParamFollowStatus),
+		ParamPage:          c.Query(ParamPage),
+		ParamPageSize:      c.Query(ParamPageSize),
+		ParamSearchType:    c.Query(ParamSearchType),
+		ParamChatroomTypes: c.Query(ParamChatroomTypes),
+		ParamOrderBy:       c.Query(ParamOrderBy),
 	}
 
 	//Get Request response
