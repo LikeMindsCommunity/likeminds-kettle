@@ -107,6 +107,7 @@ const ParamHasContent = "has_content"
 const ParamIsEditMode = "is_edit_mode"
 const ParamIncludedConversationStates = "included_conversation_states"
 const ParamIsLocalDb = "is_local_db"
+const ParamOrderBy = "order_by"
 
 const (
 	SdkApiType = 1
