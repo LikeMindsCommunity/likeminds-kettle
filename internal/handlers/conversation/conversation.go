@@ -232,7 +232,8 @@ func createConversationInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	utils.SendRequest(c, utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, createConversationRequest.ChatroomID), utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, respBytes)
+	chatroomPubSubTopic := fmt.Sprintf("chatroom:%s", createConversationRequest.ChatroomID)
+	utils.SendRequest(c, utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, chatroomPubSubTopic), utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, respBytes)
 	//Parse and generate response
 	utils.ParseResponse(c, respBytes, statusCode, true)
 }
