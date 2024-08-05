@@ -2,6 +2,7 @@ package conversation
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/community"
@@ -231,6 +232,7 @@ func createConversationInternal(c *gin.Context, userId string) {
 		return
 	}
 
+	utils.SendRequest(c, utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, createConversationRequest.ChatroomID), utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, respBytes)
 	//Parse and generate response
 	utils.ParseResponse(c, respBytes, statusCode, true)
 }
