@@ -21,7 +21,7 @@
 likeminds-authentication
 
 #Environment file
-.env
+#.env
 
 # Ignore DS Store files
 *.DS_Store
