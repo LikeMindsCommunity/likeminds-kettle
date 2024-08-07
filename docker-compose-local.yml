@@ -6,6 +6,8 @@ services:
     ports:
       - 6379:6379
     restart: always
+    networks:
+      - local_auth
   auth:
     container_name: auth
     hostname: auth
@@ -14,3 +16,9 @@ services:
     ports:
       - 8080:8080
     restart: always
+    networks:
+      - local_auth
+networks:
+  local_auth:
+    # Use a custom driver
+    driver: bridge
