@@ -3,7 +3,6 @@ package conversation
 import (
 	"encoding/json"
 	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/community"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
@@ -232,10 +231,19 @@ func createConversationInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	chatroomPubSubTopic := fmt.Sprintf("chatroom:%s", createConversationRequest.ChatroomID)
-	utils.SendRequest(c, utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, chatroomPubSubTopic), utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, respBytes)
 	//Parse and generate response
-	utils.ParseResponse(c, respBytes, statusCode, true)
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR != nil {
+		utils.GenerateResponse(c, apiCR.Response, true)
+		if apiCR.Success == true {
+			go publishConversation(c, apiCR.Response, createConversationRequest, userId)
+		}
+	}
+}
+
+func publishConversation(c *gin.Context, response map[string]interface{}, createConversationRequest *CreateConversationRequest, userId string) {
+	chatroomPubSubTopic := fmt.Sprintf("chatroom:%s", createConversationRequest.ChatroomID)
+	utils.SendRequest(c, utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, chatroomPubSubTopic), utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, response)
 }
 
 func editConversationInternal(c *gin.Context, userId string) {
