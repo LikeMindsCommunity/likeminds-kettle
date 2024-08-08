@@ -7,6 +7,7 @@ services:
       - 6379:6379
     restart: always
     networks:
+      # Name of the network created
       - local_auth
   auth:
     container_name: auth
@@ -17,8 +18,10 @@ services:
       - 8080:8080
     restart: always
     networks:
+      # Name of the network created
       - local_auth
 networks:
   local_auth:
     # Use a custom driver
     driver: bridge
+
