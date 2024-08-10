@@ -146,6 +146,7 @@ func main() {
 	router.POST(constants.ChatroomEventHighlightsRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), chatroom.AddEventHighlights)
 	router.POST(constants.ChatroomEventTestimonialsRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), chatroom.AddEventTestimonials)
 	router.POST(constants.ChatroomEventFAQRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), chatroom.AddEventFAQ)
+	router.GET(constants.ChatroomListenRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), chatroom.Listen)
 
 	// Community Apis
 	router.GET(constants.CommunityRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.Community)

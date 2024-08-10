@@ -16,4 +16,5 @@ const (
 	TokenUserUniqueId = "user_unique_id"
 	TokenIsGuest      = "is_guest"
 	TokenExp          = "exp"
+	TokenDeviceID     = "device_id"
 )

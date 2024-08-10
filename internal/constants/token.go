@@ -32,6 +32,7 @@ type LoginTokenMeta struct {
 	UserUniqueID       string
 	ApiKey             string
 	IsGuest            bool
+	DeviceID           string
 }
 
 type RefreshTokenMeta struct {
@@ -41,6 +42,7 @@ type RefreshTokenMeta struct {
 	UserUniqueID        string
 	ApiKey              string
 	IsGuest             bool
+	DeviceID            string
 }
 
 type VerifyTokenMeta struct {

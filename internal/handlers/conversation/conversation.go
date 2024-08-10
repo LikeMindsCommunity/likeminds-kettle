@@ -102,6 +102,7 @@ func Conversation(c *gin.Context, method int) {
 	if userId == "" {
 		return
 	}
+	deviceID := user.GetRequestingUserDeviceId(c)
 
 	//Send request
 	switch method {
@@ -111,7 +112,7 @@ func Conversation(c *gin.Context, method int) {
 
 	case utils.POSTMethod:
 
-		createConversationInternal(c, userId)
+		createConversationInternal(c, userId, deviceID)
 
 	case utils.PUTMethod:
 
@@ -215,7 +216,7 @@ func getConversationInternal(c *gin.Context, userId string) {
 	}
 }
 
-func createConversationInternal(c *gin.Context, userId string) {
+func createConversationInternal(c *gin.Context, userId string, deviceID string) {
 
 	//Body to be sent in the create conversation api internally
 	createConversationRequest, err := parseCreateConversationRequest(c)
@@ -236,14 +237,14 @@ func createConversationInternal(c *gin.Context, userId string) {
 	if apiCR != nil {
 		utils.GenerateResponse(c, apiCR.Response, true)
 		if apiCR.Success == true {
-			go publishConversation(c, apiCR.Response, createConversationRequest, userId)
+			go publishConversation(c, createConversationRequest, userId, deviceID, apiCR.Response)
 		}
 	}
 }
 
-func publishConversation(c *gin.Context, response map[string]interface{}, createConversationRequest *CreateConversationRequest, userId string) {
+func publishConversation(c *gin.Context, createConversationRequest *CreateConversationRequest, userId string, deviceID string, response map[string]interface{}) {
 	chatroomPubSubTopic := fmt.Sprintf("chatroom:%s", createConversationRequest.ChatroomID)
-	utils.SendRequest(c, utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, chatroomPubSubTopic), utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, response)
+	utils.SendRequest(c, utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, chatroomPubSubTopic), utils.POSTRequestRawBody, utils.CreateHeadersFromToken(c, userId, deviceID), nil, response)
 }
 
 func editConversationInternal(c *gin.Context, userId string) {

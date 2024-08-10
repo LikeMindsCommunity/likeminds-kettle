@@ -39,11 +39,14 @@ func Logout(c *gin.Context) {
 		return
 	}
 
+	//Get Device ID from ltm token
+	deviceID := ltm.DeviceID
+
 	//Send request internally if DeviceId header exists
-	if c.GetHeader(utils.HeadersDeviceId) != "" {
+	if c.GetHeader(utils.HeadersDeviceId) != "" || deviceID != "" {
 
 		//Send Request
-		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, LogoutEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, ltm.UserUniqueID), nil, nil)
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, LogoutEndPoint, utils.POSTRequestRawBody, utils.CreateHeadersFromToken(c, ltm.UserUniqueID, deviceID), nil, nil)
 		if respBytes == nil {
 			return
 		}

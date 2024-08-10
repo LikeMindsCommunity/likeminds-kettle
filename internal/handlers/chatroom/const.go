@@ -62,6 +62,7 @@ const AddEventInstructorsEndPoint = "/api/chatroom/event/add_or_update_instructo
 const AddEventHighlightsEndPoint = "/api/chatroom/event/add_or_update_highlights"
 const AddEventTestimonialsEndPoint = "/api/chatroom/event/add_or_update_member_testimonials"
 const AddEventFAQEndPoint = "/api/chatroom/event/add_or_update_event_faq"
+const ChatroomListenEndPoint = "/chatroom/listen"
 
 const ParamCommunityId = "community_id"
 const ParamChatroomId = "chatroom_id"

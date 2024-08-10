@@ -77,6 +77,7 @@ const (
 	ChatroomEventHighlightsRoute     = "/chatroom/event/highlights"
 	ChatroomEventTestimonialsRoute   = "/chatroom/event/testimonials"
 	ChatroomEventFAQRoute            = "/chatroom/event/faq"
+	ChatroomListenRoute              = "/chatroom/listen"
 )
 
 // Community Endpoints
