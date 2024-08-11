@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/community"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsub"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
@@ -237,14 +238,20 @@ func createConversationInternal(c *gin.Context, userId string, deviceID string) 
 	if apiCR != nil {
 		utils.GenerateResponse(c, apiCR.Response, true)
 		if apiCR.Success == true {
-			go publishConversation(c, createConversationRequest, userId, deviceID, apiCR.Response)
+			go publishConversationOnTopicTypeChatroom(c, createConversationRequest, userId, deviceID, apiCR.Response)
+			go publishConversationOnTopicTypeCommunity(c, userId, deviceID, apiCR.Response)
 		}
 	}
 }
 
-func publishConversation(c *gin.Context, createConversationRequest *CreateConversationRequest, userId string, deviceID string, response map[string]interface{}) {
-	chatroomPubSubTopic := fmt.Sprintf("chatroom:%s", createConversationRequest.ChatroomID)
-	utils.SendRequest(c, utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, chatroomPubSubTopic), utils.POSTRequestRawBody, utils.CreateHeadersFromToken(c, userId, deviceID), nil, response)
+func publishConversationOnTopicTypeChatroom(c *gin.Context, createConversationRequest *CreateConversationRequest, userId string, deviceID string, response map[string]interface{}) {
+	topicChatroom := fmt.Sprintf(pubsub.TopicTypeChatroom, createConversationRequest.ChatroomID)
+	utils.SendRequest(c, utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, topicChatroom), utils.POSTRequestRawBody, utils.CreateHeadersFromToken(c, userId, deviceID), nil, response)
+}
+
+func publishConversationOnTopicTypeCommunity(c *gin.Context, userId string, deviceID string, response map[string]interface{}) {
+	topicCommunity := fmt.Sprintf(pubsub.TopicTypeCommunity, response["data"].(map[string]interface{})["conversation"].(map[string]interface{})["member"].(map[string]interface{})["sdk_client_info"].(map[string]interface{})["community"])
+	utils.SendRequest(c, utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, topicCommunity), utils.POSTRequestRawBody, utils.CreateHeadersFromToken(c, userId, deviceID), nil, response)
 }
 
 func editConversationInternal(c *gin.Context, userId string) {

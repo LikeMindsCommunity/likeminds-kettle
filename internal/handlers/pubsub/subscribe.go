@@ -1,4 +1,4 @@
-package chatroom
+package pubsub
 
 import (
 	"github.com/gin-gonic/gin"
@@ -6,8 +6,8 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
-// Listen Exposed method to open chatroom socket connection
-func Listen(c *gin.Context) {
+// Subscribe Exposed method to open socket connection and subscribe to topic
+func Subscribe(c *gin.Context) {
 
 	// Authorize User
 	userId := user.GetRequestingUserId(c)
@@ -20,9 +20,9 @@ func Listen(c *gin.Context) {
 
 	// Params to be sent in the api/user/otp GET request
 	params := map[string]string{
-		ParamChatroomId: c.Query(ParamChatroomId),
+		ParamTopic: c.Query(ParamTopic),
 	}
 
 	// Send request to /chatroom/listen
-	utils.SendRequest(c, utils.PandemoniumService, ChatroomListenEndPoint, utils.GETMethod, utils.CreateHeadersFromToken(c, userId, deviceID), params, nil)
+	utils.SendRequest(c, utils.PandemoniumService, SubscribeEndPoint, utils.GETMethod, utils.CreateHeadersFromToken(c, userId, deviceID), params, nil)
 }

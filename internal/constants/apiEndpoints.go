@@ -77,7 +77,6 @@ const (
 	ChatroomEventHighlightsRoute     = "/chatroom/event/highlights"
 	ChatroomEventTestimonialsRoute   = "/chatroom/event/testimonials"
 	ChatroomEventFAQRoute            = "/chatroom/event/faq"
-	ChatroomListenRoute              = "/chatroom/listen"
 )
 
 // Community Endpoints
@@ -253,4 +252,9 @@ const (
 // Internal Endpoints
 const (
 	CacheRoute = "/cache"
+)
+
+// Pandemonium Endpoints
+const (
+	SubscribeRoute = "/subscribe"
 )

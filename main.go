@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsub"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -41,7 +42,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.37.0"
+	var AppVersion = "2.37.0"
 
 	initGin()
 	redisClient = cache.InitRedis()
@@ -146,7 +147,7 @@ func main() {
 	router.POST(constants.ChatroomEventHighlightsRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), chatroom.AddEventHighlights)
 	router.POST(constants.ChatroomEventTestimonialsRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), chatroom.AddEventTestimonials)
 	router.POST(constants.ChatroomEventFAQRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), chatroom.AddEventFAQ)
-	router.GET(constants.ChatroomListenRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), chatroom.Listen)
+	router.GET(constants.SubscribeRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), pubsub.Subscribe)
 
 	// Community Apis
 	router.GET(constants.CommunityRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.Community)
