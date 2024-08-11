@@ -58,6 +58,27 @@ func FetchPersonalisedFeed(c *gin.Context) {
 
 	headers := utils.CreateHeaders(c, userId)
 
+	// Check if personalised feed settings is enabled
+	if !utils.IsPersonalisedFeedEnabled(utils.GetRedisClientFromContext(c), headers) {
+		utils.GeneralBadRequestError(c, utils.PersonalisedFeedDisabledError)
+		return
+	}
+
+	shouldReorder := utils.GetBooleanFromString(c.Query(ParamShouldReorder))
+	shouldRecompute := utils.GetBooleanFromString(c.Query(ParamShouldRecompute))
+
+	// Reorder the metrics if should_reorder is true
+	if shouldReorder {
+		// Send request to /personalised/reorder
+		utils.GetRequestResponse(c, utils.SwarmService, ReorderPersonalisedFeedEndPoint, utils.POSTRequestRawBody, headers, nil, nil)
+	}
+
+	// Recompute the metrics in background if should_recompute is true
+	if shouldRecompute {
+		// Send request to /personalised/recompute
+		go utils.GetRequestResponse(c, utils.SwarmService, RecomputePersonalisedFeedEndPoint, utils.POSTRequestRawBody, headers, nil, nil)
+	}
+
 	params := map[string]string{
 		ParamPage:     c.Query(ParamPage),
 		ParamPageSize: c.Query(ParamPageSize),
