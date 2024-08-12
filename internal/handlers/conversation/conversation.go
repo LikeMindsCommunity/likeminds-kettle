@@ -244,11 +244,13 @@ func createConversationInternal(c *gin.Context, userId string, deviceID string) 
 	}
 }
 
+// publishConversationOnTopicTypeChatroom to publish Conversation on TopicTypeChatroom
 func publishConversationOnTopicTypeChatroom(c *gin.Context, createConversationRequest *CreateConversationRequest, userId string, deviceID string, response map[string]interface{}) {
 	topicChatroom := fmt.Sprintf(pubsub.TopicTypeChatroom, createConversationRequest.ChatroomID)
 	utils.SendRequest(c, utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, topicChatroom), utils.POSTRequestRawBody, utils.CreateHeadersFromToken(c, userId, deviceID), nil, response)
 }
 
+// publishConversationOnTopicTypeChatroom to publish Conversation on TopicTypeCommunity
 func publishConversationOnTopicTypeCommunity(c *gin.Context, userId string, deviceID string, response map[string]interface{}) {
 	topicCommunity := fmt.Sprintf(pubsub.TopicTypeCommunity, response["data"].(map[string]interface{})["conversation"].(map[string]interface{})["member"].(map[string]interface{})["sdk_client_info"].(map[string]interface{})["community"])
 	utils.SendRequest(c, utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, topicCommunity), utils.POSTRequestRawBody, utils.CreateHeadersFromToken(c, userId, deviceID), nil, response)

@@ -18,11 +18,11 @@ func Subscribe(c *gin.Context) {
 	// Authorize User
 	deviceID := user.GetRequestingUserDeviceId(c)
 
-	// Params to be sent in the api/user/otp GET request
+	// Params to be sent in the /subscribe GET request
 	params := map[string]string{
 		ParamTopic: c.Query(ParamTopic),
 	}
 
-	// Send request to /chatroom/listen
+	// Send request to /subscribe
 	utils.SendRequest(c, utils.PandemoniumService, SubscribeEndPoint, utils.GETMethod, utils.CreateHeadersFromToken(c, userId, deviceID), params, nil)
 }
