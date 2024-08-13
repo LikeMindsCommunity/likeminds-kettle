@@ -158,7 +158,7 @@ func extractFileIdFromDriveUrl(url string) (string, error) {
 func uploadDriveFileToS3(fileId string, filePath string) (string, error) {
 
 	// Call serverless function to upload file to s3
-	functionUrl := environment.GoDotEnvVariable(utils.EnvUploadFromDriveToS3LambdaUrl)
+	functionUrl := environment.GoDotEnvVariable(environment.EnvUploadFromDriveToS3LambdaUrl)
 
 	headers := gin.H{
 		utils.HeadersPlatformType: string(utils.PlatformKettleService),
@@ -166,7 +166,11 @@ func uploadDriveFileToS3(fileId string, filePath string) (string, error) {
 	}
 
 	// check if beta environment
-	isBeta := utils.GetBooleanFromString(environment.GoDotEnvVariable(utils.EnvIsBetaEnviornment))
+	isBeta := true
+	serverEnv := environment.GoDotEnvVariable(environment.EnvServerEnviornment)
+	if serverEnv == "prod" {
+		isBeta = false
+	}
 
 	body := gin.H{
 		"is_prod":   !isBeta,

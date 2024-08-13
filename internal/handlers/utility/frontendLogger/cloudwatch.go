@@ -13,7 +13,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs/types"
 	"github.com/nateshr/likeminds-authentication/internal/environment"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 type CloudwatchPayloadEntry struct {
@@ -23,8 +22,8 @@ type CloudwatchPayloadEntry struct {
 
 func GetCloudwatchClient() (*cloudwatchlogs.Client, error) {
 	// Load AWS SDK config
-	cloudwatchIAMUserKey := environment.GoDotEnvVariable(utils.CloudwatchIAMUserKey)
-	cloudwatchIAMUserSecret := environment.GoDotEnvVariable(utils.CloudwatchIAMUserSecret)
+	cloudwatchIAMUserKey := environment.GoDotEnvVariable(environment.CloudwatchIAMUserKey)
+	cloudwatchIAMUserSecret := environment.GoDotEnvVariable(environment.CloudwatchIAMUserSecret)
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(AwsRegion),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(cloudwatchIAMUserKey, cloudwatchIAMUserSecret, "")),

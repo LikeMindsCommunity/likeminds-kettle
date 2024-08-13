@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"crypto/tls"
 	"fmt"
 	"time"
 
@@ -13,12 +14,22 @@ import (
 func InitRedis() *redis.Client {
 	//Initializing Redis
 	dsn := environment.GoDotEnvVariable("REDIS_DSN")
+	password := environment.GoDotEnvVariable("REDIS_PASSWORD")
+
 	if len(dsn) == 0 {
 		dsn = "localhost:6379"
 	}
+
 	client := redis.NewClient(&redis.Options{
 		Addr: dsn,
 	})
+
+	serverEnv := environment.GoDotEnvVariable(environment.EnvServerEnviornment)
+	if serverEnv == "load" {
+		client.Options().Password = password
+		client.Options().TLSConfig = &tls.Config{MinVersion: tls.VersionTLS12}
+	}
+
 	_, err := client.Ping().Result()
 	if err != nil {
 		panic(err)
