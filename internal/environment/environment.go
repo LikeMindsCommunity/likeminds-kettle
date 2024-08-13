@@ -15,6 +15,8 @@ func GoDotEnvVariable(key string) string {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Uncomment this to make it work with IDE debug mode (tested on GoLand)
+	dir = "/Users/nateshrelhan/Workspace/LikeMinds-Authentication/"
 	environmentPath := filepath.Join(dir, ".env")
 	envs, err := godotenv.Read(environmentPath)
 
