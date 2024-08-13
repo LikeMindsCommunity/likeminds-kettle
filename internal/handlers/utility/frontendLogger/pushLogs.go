@@ -49,7 +49,7 @@ func PushLogs(c *gin.Context) {
 
 	headers := GetHeadersForLogging(c)
 
-	logPlatform := environment.GoDotEnvVariable(utils.EnvLogPlatform)
+	logPlatform := environment.GoDotEnvVariable(environment.EnvLogPlatform)
 
 	if logPlatform == "GCP" {
 		pushToGCP(c, headers, flr)

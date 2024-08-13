@@ -27,7 +27,7 @@ func CreateOTM(apiKey string) (*constants.OnboardingTokenMeta, error) {
 	otmClaims[TokenExp] = otm.AccessTokenExpires
 	otmClaims[TokenAPIKey] = apiKey
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, otmClaims)
-	otm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable(utils.EnvAccessSecret)))
+	otm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable(environment.EnvAccessSecret)))
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode strin
 	}
 
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, vtmClaims)
-	vtm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable(utils.EnvAccessSecret)))
+	vtm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable(environment.EnvAccessSecret)))
 	if err != nil {
 		return nil, err
 	}
@@ -69,13 +69,17 @@ func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode strin
 func CreateLTMAndRTM(userUniqueID string, apiKey string, tokenExpiryBeta int64, rtmExpiryBeta int64, isGuestUser bool,
 ) (*constants.LoginTokenMeta, *constants.RefreshTokenMeta, error) {
 
-	isBeta := environment.GoDotEnvVariable("BETA_ENVIRONMENT")
+	isBeta := true
+	serverEnv := environment.GoDotEnvVariable(environment.EnvServerEnviornment)
+	if serverEnv == "prod" {
+		isBeta = false
+	}
 
 	// LTM & RTM token expiry
 	LTMTokenExpiryTime := time.Duration(PROD_AUTH_TOKEN_EXPIRY)
 	RTMTokenExpiryTime := time.Duration(time.Hour * REFRESH_TOKEN_EXPIRY)
 
-	if isBeta == "true" {
+	if isBeta {
 
 		// Setting default LTM token expiry to 60 minutes for Beta
 		if tokenExpiryBeta <= 0 {
@@ -120,7 +124,7 @@ func CreateLTMAndRTM(userUniqueID string, apiKey string, tokenExpiryBeta int64, 
 	ltmClaims[TokenExp] = ltm.AccessTokenExpires
 
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, ltmClaims)
-	ltm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable(utils.EnvAccessSecret)))
+	ltm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable(environment.EnvAccessSecret)))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -145,7 +149,7 @@ func CreateLTMAndRTM(userUniqueID string, apiKey string, tokenExpiryBeta int64, 
 	rtmClaims[TokenExp] = rtm.RefreshTokenExpires
 
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtmClaims)
-	rtm.RefreshToken, err = rt.SignedString([]byte(environment.GoDotEnvVariable(utils.EnvAccessSecret)))
+	rtm.RefreshToken, err = rt.SignedString([]byte(environment.GoDotEnvVariable(environment.EnvAccessSecret)))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -171,7 +175,7 @@ func VerifyToken(bearerToken string) (*jwt.Token, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(environment.GoDotEnvVariable(utils.EnvAccessSecret)), nil
+		return []byte(environment.GoDotEnvVariable(environment.EnvAccessSecret)), nil
 	})
 	if err != nil {
 		return nil, err
