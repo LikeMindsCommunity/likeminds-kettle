@@ -253,3 +253,8 @@ const (
 const (
 	CacheRoute = "/cache"
 )
+
+// Pandemonium Endpoints
+const (
+	SubscribeRoute = "/subscribe"
+)

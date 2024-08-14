@@ -9,7 +9,7 @@ import (
 // GetRequestingUserId returns the User Unique ID of user based on request
 func GetRequestingUserId(c *gin.Context) string {
 
-	var userUniqueId string = ""
+	var userUniqueId = ""
 
 	//Check if request has LTM token or not
 	ltm, ok := c.MustGet(constants.ParamLTM).(*constants.LoginTokenMeta)
@@ -24,9 +24,27 @@ func GetRequestingUserId(c *gin.Context) string {
 	return userUniqueId
 }
 
+// GetRequestingUserDeviceId returns the User Device ID of user based on request
+func GetRequestingUserDeviceId(c *gin.Context) string {
+
+	var deviceID = ""
+
+	//Check if request has LTM token or not
+	ltm, ok := c.MustGet(constants.ParamLTM).(*constants.LoginTokenMeta)
+	if !ok {
+		//If token is not available
+		utils.GeneralAPIError(c, utils.ErrorInvalidLTM)
+		return ""
+	}
+
+	deviceID = ltm.DeviceID
+
+	return deviceID
+}
+
 func GetBotId(c *gin.Context) string {
 
-	var userUniqueId string = ""
+	var userUniqueId = ""
 
 	//Get Platform Type and API Key
 	platform_type := c.GetHeader(utils.HeadersPlatformType)
