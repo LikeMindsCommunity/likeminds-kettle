@@ -122,6 +122,7 @@ const (
 	CommunityMemberPendingRoute                    = "/community/member/pending"
 	CommunityRemovalReportsRoute                   = "/community/removal_reports"
 	CommunityMemberConnectionRoute                 = "/community/member/:user_id/connection"
+	CommunityMemberConnectionMetaRoute             = "/community/member/:user_id/connection_meta"
 )
 
 // Moderation Endpoints
