@@ -1,6 +1,7 @@
 name: x-version-code
 in: header
 description: Version Code
+example: 300
 schema:
   type: integer
   minimum: 0
