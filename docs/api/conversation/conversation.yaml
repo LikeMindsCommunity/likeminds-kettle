@@ -53,10 +53,13 @@ post:
 
 
 delete:
-  summary: Delete Conversation
   operationId: deleteConversation
   tags:
     - Conversation
+
+  summary: Delete Conversation
+  description: This API enables you to delete a conversation (message) inside a chatroom.
+
   security:
     - bearerAuth: []
   requestBody:
@@ -75,10 +78,13 @@ delete:
 
 
 put:
-  summary: Edit Conversation
   operationId: editConversation
   tags:
     - Conversation
+
+  summary: Edit Conversation
+  description: This API enables you to edit a conversation (message) inside a chatroom.
+
   security:
     - bearerAuth: []
   requestBody:
