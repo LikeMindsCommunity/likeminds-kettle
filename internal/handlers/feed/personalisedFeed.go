@@ -74,11 +74,7 @@ func FetchPersonalisedFeed(c *gin.Context) {
 	// Reorder the metrics if should_reorder is true
 	if shouldReorder {
 		// Send request to /personalised/reorder
-		respBytes, _ := utils.GetRequestResponse(c, utils.SwarmService, ReorderPersonalisedFeedEndPoint, utils.POSTRequestRawBody, headers, nil, nil)
-		if respBytes == nil {
-			utils.GenerateResponse(c, nil, false)
-			return
-		}
+		utils.GetRequestResponse(c, utils.SwarmService, ReorderPersonalisedFeedEndPoint, utils.POSTRequestRawBody, headers, nil, nil)
 	}
 
 	// Recompute the metrics in background if should_recompute is true
