@@ -64,6 +64,8 @@ const ParamParentIds = "parent_ids"
 const ParamTopicsOrderBy = "order_by"
 const ParamUserId = "user_id"
 const ParamUUIDs = "uuids"
+const ParamShouldReorder = "should_reorder"
+const ParamShouldRecompute = "should_recompute"
 
 const FeedRepostCommunitySettingType = "feed_repost"
 
