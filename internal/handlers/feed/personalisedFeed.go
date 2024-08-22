@@ -85,10 +85,7 @@ func FetchPersonalisedFeed(c *gin.Context) {
 	if shouldRecompute {
 		// Send request to /personalised/recompute
 		go func() {
-			respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, RecomputePersonalisedFeedEndPoint, utils.POSTRequestRawBody, headers, nil, nil)
-			if err != nil {
-				logging.Error(fmt.Sprintf("Error in recomputing personalised feed: %s", err.Error()))
-			}
+			respBytes, statusCode, _ := utils.GetRequestResponseWithoutContext(utils.SwarmService, RecomputePersonalisedFeedEndPoint, utils.POSTRequestRawBody, headers, nil, nil)
 
 			apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
 			convertedApiCR, _ := json.Marshal(apiCR)
