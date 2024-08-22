@@ -1,6 +1,7 @@
 package feed
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -73,17 +74,25 @@ func FetchPersonalisedFeed(c *gin.Context) {
 	// Reorder the metrics if should_reorder is true
 	if shouldReorder {
 		// Send request to /personalised/reorder
-		utils.GetRequestResponse(c, utils.SwarmService, ReorderPersonalisedFeedEndPoint, utils.POSTRequestRawBody, headers, nil, nil)
+		respBytes, _ := utils.GetRequestResponse(c, utils.SwarmService, ReorderPersonalisedFeedEndPoint, utils.POSTRequestRawBody, headers, nil, nil)
+		if respBytes == nil {
+			utils.GenerateResponse(c, nil, false)
+			return
+		}
 	}
 
 	// Recompute the metrics in background if should_recompute is true
 	if shouldRecompute {
 		// Send request to /personalised/recompute
 		go func() {
-			_, _, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, RecomputePersonalisedFeedEndPoint, utils.POSTRequestRawBody, headers, nil, nil)
+			respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, RecomputePersonalisedFeedEndPoint, utils.POSTRequestRawBody, headers, nil, nil)
 			if err != nil {
 				logging.Error(fmt.Sprintf("Error in recomputing personalised feed: %s", err.Error()))
 			}
+
+			apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+			convertedApiCR, _ := json.Marshal(apiCR)
+			logging.Error(fmt.Sprintf("Response of recompute personalised feed: %s", convertedApiCR))
 		}()
 	}
 
