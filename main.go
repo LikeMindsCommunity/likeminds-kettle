@@ -91,6 +91,7 @@ func main() {
 	router.POST(constants.SDKOnboardingRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), sdk.CreateScreen)
 	router.PUT(constants.SDKOnboardingRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), sdk.EditScreen)
 	router.DELETE(constants.SDKOnboardingRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), sdk.DeleteScreen)
+	router.GET(constants.SDKMauOverviewRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), sdk.GetMauOverview)
 
 	// Chatroom Apis
 	router.GET(constants.ChatroomRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), chatroom.GetChatroom)
