@@ -6,11 +6,17 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
-// MauOverviewEndPoint | togther service mau overview endpoint
-const MauOverviewEndPoint = "/api/sdk/mau_overview"
-
 func GetMauOverview(c *gin.Context){
+	
 	userId := user.GetRequestingUserId(c)
+	if userId == "" {
+		return
+	}
+
+	botId := user.GetBotId(c)
+	if botId != "" {
+		userId = botId
+	}
 
 	params := map[string]string{
 		ParamNoOfMonths: c.Query(ParamNoOfMonths),
