@@ -31,9 +31,10 @@ const (
 
 // SDK Endpoints
 const (
-	SDKInitiateRoute   = "/sdk/initiate"
-	SDKProjectRoute    = "/sdk/project"
-	SDKOnboardingRoute = "/sdk/onboarding"
+	SDKInitiateRoute   	= "/sdk/initiate"
+	SDKProjectRoute    	= "/sdk/project"
+	SDKOnboardingRoute 	= "/sdk/onboarding"
+	SDKMauOverviewRoute	= "/sdk/mau_overview"
 )
 
 // Chatroom Endpoints

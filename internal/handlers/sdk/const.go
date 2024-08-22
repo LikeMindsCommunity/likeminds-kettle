@@ -5,3 +5,4 @@ const OnboardingEndpoint = "/api/sdk/onboarding"
 
 const ParamCommunityCreator = "project_creator"
 const ParamScreenId = "screen_id"
+const ParamNoOfMonths = "no_of_months"
