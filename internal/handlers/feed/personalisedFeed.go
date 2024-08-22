@@ -1,8 +1,11 @@
 package feed
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
+	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
@@ -76,7 +79,12 @@ func FetchPersonalisedFeed(c *gin.Context) {
 	// Recompute the metrics in background if should_recompute is true
 	if shouldRecompute {
 		// Send request to /personalised/recompute
-		go utils.GetRequestResponse(c, utils.SwarmService, RecomputePersonalisedFeedEndPoint, utils.POSTRequestRawBody, headers, nil, nil)
+		go func() {
+			_, _, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, RecomputePersonalisedFeedEndPoint, utils.POSTRequestRawBody, headers, nil, nil)
+			if err != nil {
+				logging.Error(fmt.Sprintf("Error in recomputing personalised feed: %s", err.Error()))
+			}
+		}()
 	}
 
 	params := map[string]string{
