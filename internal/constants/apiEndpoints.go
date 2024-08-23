@@ -31,9 +31,10 @@ const (
 
 // SDK Endpoints
 const (
-	SDKInitiateRoute   = "/sdk/initiate"
-	SDKProjectRoute    = "/sdk/project"
-	SDKOnboardingRoute = "/sdk/onboarding"
+	SDKInitiateRoute   	= "/sdk/initiate"
+	SDKProjectRoute    	= "/sdk/project"
+	SDKOnboardingRoute 	= "/sdk/onboarding"
+	SDKMauOverviewRoute	= "/sdk/mau_overview"
 )
 
 // Chatroom Endpoints
@@ -122,6 +123,7 @@ const (
 	CommunityMemberPendingRoute                    = "/community/member/pending"
 	CommunityRemovalReportsRoute                   = "/community/removal_reports"
 	CommunityMemberConnectionRoute                 = "/community/member/:user_id/connection"
+	CommunityMemberConnectionMetaRoute             = "/community/member/:user_id/connection_meta"
 )
 
 // Moderation Endpoints

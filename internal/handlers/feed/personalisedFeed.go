@@ -1,8 +1,11 @@
 package feed
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
+	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
@@ -57,6 +60,35 @@ func FetchPersonalisedFeed(c *gin.Context) {
 	}
 
 	headers := utils.CreateHeaders(c, userId)
+
+	// Check if personalised feed settings is enabled
+	if !utils.IsPersonalisedFeedEnabled(utils.GetRedisClientFromContext(c), headers) {
+		utils.GeneralBadRequestError(c, utils.PersonalisedFeedDisabledError)
+		return
+	}
+
+	shouldReorder := utils.GetBooleanFromString(c.Query(ParamShouldReorder))
+	shouldRecompute := utils.GetBooleanFromString(c.Query(ParamShouldRecompute))
+
+	// Reorder the metrics if should_reorder is true
+	if shouldReorder {
+		// Send request to /personalised/reorder
+		respBytes, _ := utils.GetRequestResponse(c, utils.SwarmService, ReorderPersonalisedFeedEndPoint, utils.POSTRequestRawBody, headers, nil, nil)
+		if respBytes == nil {
+			return
+		}
+	}
+
+	// Recompute the metrics in background if should_recompute is true
+	if shouldRecompute {
+		// Send request to /personalised/recompute
+		go func() {
+			respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, RecomputePersonalisedFeedEndPoint, utils.POSTRequestRawBody, headers, nil, nil)
+			if err != nil || statusCode != 200 {
+				logging.Error(fmt.Sprintf("Error in recomputee personalised feed API: %v | response %v", err, string(respBytes)))
+			}
+		}()
+	}
 
 	params := map[string]string{
 		ParamPage:     c.Query(ParamPage),

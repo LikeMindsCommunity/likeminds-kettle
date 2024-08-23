@@ -1,9 +1,10 @@
 name: x-platform-code
 in: header
 description: Platform Code
+example: an
 schema:
   type: string
-  enums:
+  enum:
     - an
     - ios
     - web

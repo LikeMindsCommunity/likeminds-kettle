@@ -127,6 +127,7 @@ func setRouterA() {
 	routerA.POST(constants.SDKOnboardingRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), sdk.CreateScreen)
 	routerA.PUT(constants.SDKOnboardingRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), sdk.EditScreen)
 	routerA.DELETE(constants.SDKOnboardingRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), sdk.DeleteScreen)
+	routerA.GET(constants.SDKMauOverviewRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), sdk.GetMauOverview)
 
 	// Chatroom Apis
 	routerA.GET(constants.ChatroomRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), chatroom.GetChatroom)
@@ -247,6 +248,7 @@ func setRouterA() {
 	routerA.POST(constants.CommunityMemberConnectionRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.CreateMemberConnection)
 	routerA.PATCH(constants.CommunityMemberConnectionRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.AcceptRejectMemberConnection)
 	routerA.GET(constants.CommunityMemberConnectionRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.GetMemberConnection)
+	routerA.GET(constants.CommunityMemberConnectionMetaRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.GetMemberConnectionMeta)
 
 	// Moderation Apis
 	routerA.GET(constants.ModerationRightsRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), moderation.GetRights)
