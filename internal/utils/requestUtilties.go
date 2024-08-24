@@ -17,13 +17,8 @@ func RequestParamsToMap(obj interface{}) (newMap map[string]string, err error) {
 	return
 }
 
-// CreateHeaders Used to create headers for our internal APIs with userUniqueID fetched from token
+// CreateHeaders Used to create headers for our internal APIs
 func CreateHeaders(c *gin.Context, userUniqueID string) map[string]interface{} {
-	return CreateHeadersFromToken(c, userUniqueID, "")
-}
-
-// CreateHeadersFromToken Used to create headers for our internal APIs with userUniqueID and deviceID fetched from token
-func CreateHeadersFromToken(c *gin.Context, userUniqueID string, deviceID string) map[string]interface{} {
 	headers := make(map[string]interface{})
 	if len(userUniqueID) > 0 {
 		headers[HeadersMemberId] = userUniqueID
@@ -31,11 +26,7 @@ func CreateHeadersFromToken(c *gin.Context, userUniqueID string, deviceID string
 	headers[HeadersPlatformCode] = c.GetHeader(HeadersPlatformCode)
 	headers[HeadersVersionCode] = c.GetHeader(HeadersVersionCode)
 	headers[HeadersSdkSource] = c.GetHeader(HeadersSdkSource)
-	if len(deviceID) > 0 {
-		headers[HeadersDeviceId] = deviceID
-	} else {
-		headers[HeadersDeviceId] = c.GetHeader(HeadersDeviceId)
-	}
+	headers[HeadersDeviceId] = c.GetHeader(HeadersDeviceId)
 	headers[HeadersApiKey] = c.GetHeader(HeadersApiKey)
 	headers[HeadersAcceptVersion] = c.GetHeader(HeadersAcceptVersion)
 	headers[HeadersApiVersion] = c.GetHeader(HeadersApiVersion)

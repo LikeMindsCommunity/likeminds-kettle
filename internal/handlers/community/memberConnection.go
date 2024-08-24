@@ -8,25 +8,8 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
-type CreateConnectionMemberRequest struct {
-	ConnectionType              string `json:"connection_type"`
-	AutoAcceptConnectionRequest bool   `json:"connection_request_auto_accepted"`
-}
-
 type AcceptRejectConnectionMemberRequest struct {
-	Action         string `json:"action"`
-	ConnectionType string `json:"connection_type"`
-}
-
-func parseCreateConnectionMemberRequest(c *gin.Context) (*CreateConnectionMemberRequest, error) {
-	//POST body params
-	var ccmr CreateConnectionMemberRequest
-
-	if err := c.ShouldBindJSON(&ccmr); err != nil {
-		return nil, err
-	}
-
-	return &ccmr, nil
+	Action string `json:"action"`
 }
 
 func parseAcceptRejectMemberConnectionRequest(c *gin.Context) (*AcceptRejectConnectionMemberRequest, error) {
@@ -92,16 +75,8 @@ func getMemberConnectionInternal(c *gin.Context, userId string, getMemberConnect
 }
 
 func createMemberConnectionInternal(c *gin.Context, userId string, createMemberConnectionEndPoint string) {
-	// Body to be sent in the create connection member api internally
-	createConnectionMemberRequest, err := parseCreateConnectionMemberRequest(c)
-	if err != nil {
-		// If POST body params are missing
-		utils.GeneralBadRequestError(c, err.Error())
-		return
-	}
-
 	// Send Request
-	utils.SendRequest(c, utils.CoreService, createMemberConnectionEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createConnectionMemberRequest)
+	utils.SendRequest(c, utils.CoreService, createMemberConnectionEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, nil)
 }
 
 func acceptRejectMemberConnectionInternal(c *gin.Context, userId string, acceptRejectMemberConnectionEndPoint string) {

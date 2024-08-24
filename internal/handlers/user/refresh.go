@@ -35,7 +35,7 @@ func Refresh(c *gin.Context) {
 	}
 
 	//Create login and refresh token meta from ltm
-	ltm, _, err := token.CreateLTMAndRTM(currentRTM.UserUniqueID, currentRTM.ApiKey, int64(ltmExpiry), token.DEFAULT_TOKEN_EXPIRY, currentRTM.IsGuest, currentRTM.DeviceID)
+	ltm, _, err := token.CreateLTMAndRTM(currentRTM.UserUniqueID, currentRTM.ApiKey, int64(ltmExpiry), token.DEFAULT_TOKEN_EXPIRY, currentRTM.IsGuest)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, utils.Response{
 			Success:      false,

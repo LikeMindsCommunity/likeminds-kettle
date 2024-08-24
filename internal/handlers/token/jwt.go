@@ -66,7 +66,7 @@ func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode strin
 }
 
 // CreateLTMAndRTM is used to create login and refresh token meta
-func CreateLTMAndRTM(userUniqueID string, apiKey string, tokenExpiryBeta int64, rtmExpiryBeta int64, isGuestUser bool, deviceID string,
+func CreateLTMAndRTM(userUniqueID string, apiKey string, tokenExpiryBeta int64, rtmExpiryBeta int64, isGuestUser bool,
 ) (*constants.LoginTokenMeta, *constants.RefreshTokenMeta, error) {
 
 	isBeta := true
@@ -110,7 +110,6 @@ func CreateLTMAndRTM(userUniqueID string, apiKey string, tokenExpiryBeta int64, 
 	ltmClaims[TokenUserUniqueId] = userUniqueID
 	ltmClaims[TokenAPIKey] = apiKey
 	ltmClaims[TokenIsGuest] = isGuestUser
-	ltmClaims[TokenDeviceID] = deviceID
 
 	bytesData, err := json.Marshal(ltmClaims)
 
@@ -136,7 +135,6 @@ func CreateLTMAndRTM(userUniqueID string, apiKey string, tokenExpiryBeta int64, 
 	rtmClaims[TokenUserUniqueId] = userUniqueID
 	rtmClaims[TokenAPIKey] = apiKey
 	rtmClaims[TokenIsGuest] = isGuestUser
-	rtmClaims[TokenDeviceID] = deviceID
 
 	bytesData, err = json.Marshal(rtmClaims)
 
@@ -269,7 +267,7 @@ func ExtractLTM(bearerToken string) (*constants.LoginTokenMeta, error) {
 			claims = jwt_claims
 		}
 
-		atExpires, accessUUID, userUniqueId, apiKey, isGuest, err, deviceID := extractParamsFromLTM(jwt_claims, claims)
+		atExpires, accessUUID, userUniqueId, apiKey, isGuest, err := extractParamsFromLTM(jwt_claims, claims)
 		if err != nil {
 			return nil, err
 		}
@@ -280,16 +278,15 @@ func ExtractLTM(bearerToken string) (*constants.LoginTokenMeta, error) {
 			AccessTokenExpires: atExpires,
 			ApiKey:             apiKey,
 			IsGuest:            isGuest,
-			DeviceID:           deviceID,
 		}, nil
 	}
 	return nil, err
 }
 
 func extractParamsFromLTM(jwtClaims jwt.MapClaims, claims jwt.MapClaims,
-) (int64, string, string, string, bool, error, string) {
+) (int64, string, string, string, bool, error) {
 
-	atExpires, accessUUID, userUniqueId, apiKey, isGuest, deviceID := int64(0), "", "", "", false, ""
+	atExpires, accessUUID, userUniqueId, apiKey, isGuest := int64(0), "", "", "", false
 
 	atExpiresFloat, ok := jwtClaims[TokenExp].(float64)
 	if !ok {
@@ -301,29 +298,28 @@ func extractParamsFromLTM(jwtClaims jwt.MapClaims, claims jwt.MapClaims,
 	}
 
 	if atExpires == 0 {
-		return atExpires, accessUUID, userUniqueId, apiKey, isGuest, errors.New("exp is empty"), deviceID
+		return atExpires, accessUUID, userUniqueId, apiKey, isGuest, errors.New("exp is empty")
 	} else if atExpires < time.Now().Unix() {
-		return atExpires, accessUUID, userUniqueId, apiKey, isGuest, errors.New("LTM expired!"), deviceID
+		return atExpires, accessUUID, userUniqueId, apiKey, isGuest, errors.New("LTM expired!")
 	}
 
 	accessUUID, ok = claims[TokemAccessUUID].(string)
 	if !ok {
-		return atExpires, accessUUID, userUniqueId, apiKey, isGuest, errors.New("access_uuid is empty"), deviceID
+		return atExpires, accessUUID, userUniqueId, apiKey, isGuest, errors.New("access_uuid is empty")
 	}
 
 	userUniqueId, ok = claims[TokenUserUniqueId].(string)
 	if !ok {
-		return atExpires, accessUUID, userUniqueId, apiKey, isGuest, errors.New("user_unique_id is empty"), deviceID
+		return atExpires, accessUUID, userUniqueId, apiKey, isGuest, errors.New("user_unique_id is empty")
 	}
 	isGuest, ok = claims[TokenIsGuest].(bool)
 	if !ok {
-		return atExpires, accessUUID, userUniqueId, apiKey, isGuest, errors.New("is_guest is empty"), deviceID
+		return atExpires, accessUUID, userUniqueId, apiKey, isGuest, errors.New("is_guest is empty")
 	}
-	deviceID, ok = claims[TokenDeviceID].(string)
 
 	apiKey, _ = claims[TokenAPIKey].(string)
 
-	return atExpires, accessUUID, userUniqueId, apiKey, isGuest, nil, deviceID
+	return atExpires, accessUUID, userUniqueId, apiKey, isGuest, nil
 }
 
 // ExtractRTM is used to return RTM and check if bearer token is valid or not
@@ -344,7 +340,7 @@ func ExtractRTM(bearerToken string) (*constants.RefreshTokenMeta, error) {
 			claims = jwt_claims
 		}
 
-		rtExpires, refreshUuid, userUniqueID, apiKey, isGuest, err, deviceID := extractParamsFromRTM(jwt_claims, claims)
+		rtExpires, refreshUuid, userUniqueID, apiKey, isGuest, err := extractParamsFromRTM(jwt_claims, claims)
 		if err != nil {
 			return nil, err
 		}
@@ -356,16 +352,15 @@ func ExtractRTM(bearerToken string) (*constants.RefreshTokenMeta, error) {
 			ApiKey:              apiKey,
 			IsGuest:             isGuest,
 			RefreshToken:        ExtractToken(bearerToken),
-			DeviceID:            deviceID,
 		}, nil
 	}
 	return nil, err
 }
 
 func extractParamsFromRTM(jwtClaims jwt.MapClaims, claims jwt.MapClaims,
-) (int64, string, string, string, bool, error, string) {
+) (int64, string, string, string, bool, error) {
 
-	rtExpires, refreshUUID, userUniqueId, apiKey, isGuest, deviceID := int64(0), "", "", "", false, ""
+	rtExpires, refreshUUID, userUniqueId, apiKey, isGuest := int64(0), "", "", "", false
 
 	rtExpiresFloat, ok := jwtClaims[TokenExp].(float64)
 	if !ok {
@@ -375,29 +370,27 @@ func extractParamsFromRTM(jwtClaims jwt.MapClaims, claims jwt.MapClaims,
 		rtExpires = int64(rtExpiresFloat)
 	}
 	if rtExpires == 0 {
-		return rtExpires, refreshUUID, userUniqueId, apiKey, isGuest, errors.New("exp is empty"), deviceID
+		return rtExpires, refreshUUID, userUniqueId, apiKey, isGuest, errors.New("exp is empty")
 	} else if rtExpires < time.Now().Unix() {
-		return rtExpires, refreshUUID, userUniqueId, apiKey, isGuest, errors.New("RTM expired!"), deviceID
+		return rtExpires, refreshUUID, userUniqueId, apiKey, isGuest, errors.New("RTM expired!")
 	}
 
 	refreshUUID, ok = claims["refresh_uuid"].(string)
 	if !ok {
-		return rtExpires, refreshUUID, userUniqueId, apiKey, isGuest, errors.New("access_uuid is empty"), deviceID
+		return rtExpires, refreshUUID, userUniqueId, apiKey, isGuest, errors.New("access_uuid is empty")
 	}
 
 	userUniqueId, ok = claims[TokenUserUniqueId].(string)
 	if !ok {
-		return rtExpires, refreshUUID, userUniqueId, apiKey, isGuest, errors.New("user_unique_id is empty"), deviceID
+		return rtExpires, refreshUUID, userUniqueId, apiKey, isGuest, errors.New("user_unique_id is empty")
 	}
 
 	isGuest, ok = claims[TokenIsGuest].(bool)
 	if !ok {
-		return rtExpires, refreshUUID, userUniqueId, apiKey, isGuest, errors.New("is_guest is empty"), deviceID
+		return rtExpires, refreshUUID, userUniqueId, apiKey, isGuest, errors.New("is_guest is empty")
 	}
-
-	deviceID, _ = claims[TokenDeviceID].(string)
 
 	apiKey, _ = claims[TokenAPIKey].(string)
 
-	return rtExpires, refreshUUID, userUniqueId, apiKey, isGuest, nil, deviceID
+	return rtExpires, refreshUUID, userUniqueId, apiKey, isGuest, nil
 }

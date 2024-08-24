@@ -29,7 +29,6 @@ type APIClient struct {
 	CoreServiceBaseURL         string
 	SubscriptionServiceBaseURL string
 	SwarmServiceBaseUrl        string
-	PandemoniumServiceBaseUrl  string
 	HTTPClient                 *http.Client
 }
 
@@ -76,22 +75,11 @@ func GetSwarmServiceBaseUrl() string {
 	return SwarmServiceBaseURL
 }
 
-func GetPandemoniumServiceBaseUrl() string {
-	PandemoniumServiceBaseURL := environment.GoDotEnvVariable("PANDEMONIUM_BASE_URL")
-
-	if len(PandemoniumServiceBaseURL) == 0 {
-		PandemoniumServiceBaseURL = "https://pandemonium-beta.likeminds.community"
-	}
-
-	return PandemoniumServiceBaseURL
-}
-
 func NewAPIClient() *APIClient {
 	return &APIClient{
 		CoreServiceBaseURL:         GetCoreServiceBaseUrl(),
 		SubscriptionServiceBaseURL: GetSubscriptionServiceBaseUrl(),
 		SwarmServiceBaseUrl:        GetSwarmServiceBaseUrl(),
-		PandemoniumServiceBaseUrl:  GetPandemoniumServiceBaseUrl(),
 		HTTPClient: &http.Client{
 			Timeout: time.Minute,
 		},

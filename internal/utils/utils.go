@@ -109,9 +109,6 @@ func GetRequestResponseWithoutContext(serviceType ServiceType, url string, reque
 
 	case ExternalService:
 		finalUrl = url
-
-	case PandemoniumService:
-		finalUrl = client.PandemoniumServiceBaseUrl + url
 	}
 
 	switch requestType {
