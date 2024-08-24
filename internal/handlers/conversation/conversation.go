@@ -2,9 +2,10 @@ package conversation
 
 import (
 	"encoding/json"
-
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/community"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsub"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
@@ -102,6 +103,7 @@ func Conversation(c *gin.Context, method int) {
 	if userId == "" {
 		return
 	}
+	deviceID := user.GetRequestingUserDeviceId(c)
 
 	//Send request
 	switch method {
@@ -111,7 +113,7 @@ func Conversation(c *gin.Context, method int) {
 
 	case utils.POSTMethod:
 
-		createConversationInternal(c, userId)
+		createConversationInternal(c, userId, deviceID)
 
 	case utils.PUTMethod:
 
@@ -215,7 +217,7 @@ func getConversationInternal(c *gin.Context, userId string) {
 	}
 }
 
-func createConversationInternal(c *gin.Context, userId string) {
+func createConversationInternal(c *gin.Context, userId string, deviceID string) {
 
 	//Body to be sent in the create conversation api internally
 	createConversationRequest, err := parseCreateConversationRequest(c)
@@ -232,7 +234,33 @@ func createConversationInternal(c *gin.Context, userId string) {
 	}
 
 	//Parse and generate response
-	utils.ParseResponse(c, respBytes, statusCode, true)
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR != nil {
+		utils.GenerateResponse(c, apiCR.Response, true)
+		if apiCR.Success == true {
+			go publishConversationOnTopicTypeChatroom(c, createConversationRequest, userId, deviceID, apiCR.Response)
+			go publishConversationOnTopicTypeCommunity(c, userId, deviceID, apiCR.Response)
+		}
+	}
+}
+
+// publishConversationOnTopicTypeChatroom to publish Conversation on TopicTypeChatroom
+func publishConversationOnTopicTypeChatroom(c *gin.Context, createConversationRequest *CreateConversationRequest, userId string, deviceID string, response map[string]interface{}) {
+	topicChatroom := fmt.Sprintf(pubsub.TopicTypeChatroom, createConversationRequest.ChatroomID)
+	params := map[string]string{
+		pubsub.ParamTopicMessageType: pubsub.TopicMessageTypeConversation,
+	}
+	utils.SendRequest(c, utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, topicChatroom), utils.POSTRequestRawBody, utils.CreateHeadersFromToken(c, userId, deviceID), params, response)
+}
+
+// publishConversationOnTopicTypeChatroom to publish Conversation on TopicTypeCommunity
+func publishConversationOnTopicTypeCommunity(c *gin.Context, userId string, deviceID string, response map[string]interface{}) {
+	var communityID = response["conversation"].(map[string]interface{})["member"].(map[string]interface{})["sdk_client_info"].(map[string]interface{})["community"]
+	topicCommunity := fmt.Sprintf(pubsub.TopicTypeCommunity, communityID)
+	params := map[string]string{
+		pubsub.ParamTopicMessageType: pubsub.TopicMessageTypeConversation,
+	}
+	utils.SendRequest(c, utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, topicCommunity), utils.POSTRequestRawBody, utils.CreateHeadersFromToken(c, userId, deviceID), params, response)
 }
 
 func editConversationInternal(c *gin.Context, userId string) {

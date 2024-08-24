@@ -28,6 +28,7 @@ type InitiateSDKRequest struct {
 	TokenExpiryBeta    int64            `json:"token_expiry_beta,omitempty"`
 	RTMTokenExpiryBeta int64            `json:"rtm_token_expiry_beta,omitempty"`
 	SharedBy           string           `json:"shared_by,omitempty"`
+	DeviceID           string           `json:"device_id,omitempty"`
 }
 
 func extractDetailsFromVTM(vtm *constants.VerifyTokenMeta, isr *InitiateSDKRequest) *InitiateSDKRequest {
@@ -92,7 +93,7 @@ func InitiateSDK(c *gin.Context) {
 	userIsGuest := userObject[user.ResponseUserIsGuest].(bool)
 
 	// Create login and refresh token
-	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, c.GetHeader(utils.HeadersApiKey), initiateSDKRequest.TokenExpiryBeta, initiateSDKRequest.RTMTokenExpiryBeta, userIsGuest)
+	ltm, rtm, err := token.CreateLTMAndRTM(userUniqueID, c.GetHeader(utils.HeadersApiKey), initiateSDKRequest.TokenExpiryBeta, initiateSDKRequest.RTMTokenExpiryBeta, userIsGuest, initiateSDKRequest.DeviceID)
 	if err != nil {
 		// If token creation fails
 		utils.GeneralAPIError(c, err.Error())

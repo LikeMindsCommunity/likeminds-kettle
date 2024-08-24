@@ -22,6 +22,7 @@ const DeleteConversationEndPoint = "/api/delete_conversation"
 const EditConversationEndPoint = "/api/edit_conversation"
 const SyncConversationEndPoint = "/api/sync/conversations"
 const ConversationSearchEndPoint = "/api/search/conversation"
+const PublishEndPoint = "/publish/%s"
 
 const ParamChatroomId = "chatroom_id"
 const ParamConversationId = "conversation_id"

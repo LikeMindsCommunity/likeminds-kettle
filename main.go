@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsub"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/nateshr/likeminds-authentication/internal/cache"
@@ -91,6 +91,7 @@ func main() {
 	router.POST(constants.SDKOnboardingRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), sdk.CreateScreen)
 	router.PUT(constants.SDKOnboardingRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), sdk.EditScreen)
 	router.DELETE(constants.SDKOnboardingRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), sdk.DeleteScreen)
+	router.GET(constants.SDKMauOverviewRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), sdk.GetMauOverview)
 
 	// Chatroom Apis
 	router.GET(constants.ChatroomRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), chatroom.GetChatroom)
@@ -211,6 +212,7 @@ func main() {
 	router.POST(constants.CommunityMemberConnectionRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.CreateMemberConnection)
 	router.PATCH(constants.CommunityMemberConnectionRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.AcceptRejectMemberConnection)
 	router.GET(constants.CommunityMemberConnectionRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.GetMemberConnection)
+	router.GET(constants.CommunityMemberConnectionMetaRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.GetMemberConnectionMeta)
 
 	// Moderation Apis
 	router.GET(constants.ModerationRightsRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), moderation.GetRights)
@@ -347,6 +349,9 @@ func main() {
 
 	// Internal Apis
 	router.DELETE(constants.CacheRoute, middleware.InternalServiceValidationMiddleware(), internalServices.DeleteCache)
+
+	// Pandemonium APIs
+	router.GET(constants.SubscribeRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), pubsub.Subscribe)
 
 	logging.Info(fmt.Sprintf("application version: %s", AppVersion))
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))

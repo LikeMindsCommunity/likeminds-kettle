@@ -25,6 +25,7 @@ const (
 	SubscriptionService
 	SwarmService
 	ExternalService
+	PandemoniumService
 )
 
 type RequestType int
