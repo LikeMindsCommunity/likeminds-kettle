@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
@@ -46,7 +47,7 @@ var (
 )
 
 func main() {
-	var AppVersion = "2.37.1"
+	var AppVersion string = "2.39.0"
 
 	redisClient = cache.InitRedis()
 
