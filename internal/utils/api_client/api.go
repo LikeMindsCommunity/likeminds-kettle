@@ -86,6 +86,16 @@ func GetPandemoniumServiceBaseUrl() string {
 	return PandemoniumServiceBaseURL
 }
 
+func GetPandemoniumServiceWsUrl() string {
+	PandemoniumServiceWsURL := environment.GoDotEnvVariable("PANDEMONIUM_Ws_URL")
+
+	if len(PandemoniumServiceWsURL) == 0 {
+		PandemoniumServiceWsURL = "ws://pandemonium-beta.likeminds.community"
+	}
+
+	return PandemoniumServiceWsURL
+}
+
 func NewAPIClient() *APIClient {
 	return &APIClient{
 		CoreServiceBaseURL:         GetCoreServiceBaseUrl(),

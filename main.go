@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
@@ -47,7 +46,7 @@ var (
 )
 
 func main() {
-	var AppVersion string = "2.39.0"
+	var AppVersion = "2.39.0"
 
 	redisClient = cache.InitRedis()
 
@@ -420,10 +419,10 @@ func getPrometheusMetricService() *monitoring.PrometheusService {
 }
 
 func setRouterB() {
-	psURL, _ := url.Parse(api_client.GetPandemoniumServiceBaseUrl())
+	psURL, _ := url.Parse(api_client.GetPandemoniumServiceWsUrl())
 	psWSProxy := websocketproxy.NewProxy(psURL)
 	// Pandemonium APIs
-	routerB.GET(constants.SubscribeRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), gin.WrapH(psWSProxy))
+	routerB.GET(constants.SubscribeRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), middleware.WSProxyMiddleware(psWSProxy), gin.WrapH(psWSProxy))
 }
 
 func routerAServer() *http.Server {
