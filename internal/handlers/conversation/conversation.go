@@ -7,6 +7,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/handlers/community"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsub"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
+	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
@@ -250,7 +251,8 @@ func publishConversationOnTopicTypeChatroom(c *gin.Context, createConversationRe
 	params := map[string]string{
 		pubsub.ParamTopicMessageType: pubsub.TopicMessageTypeConversation,
 	}
-	utils.SendRequest(c, utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, topicChatroom), utils.POSTRequestRawBody, utils.CreateHeadersFromToken(c, userId, deviceID), params, response)
+	headers := utils.CreateHeadersFromToken(c, userId, deviceID)
+	publishDataOnPandemonium(topicChatroom, headers, params, response)
 }
 
 // publishConversationOnTopicTypeChatroom to publish Conversation on TopicTypeCommunity
@@ -260,7 +262,15 @@ func publishConversationOnTopicTypeCommunity(c *gin.Context, userId string, devi
 	params := map[string]string{
 		pubsub.ParamTopicMessageType: pubsub.TopicMessageTypeConversation,
 	}
-	utils.SendRequest(c, utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, topicCommunity), utils.POSTRequestRawBody, utils.CreateHeadersFromToken(c, userId, deviceID), params, response)
+	headers := utils.CreateHeadersFromToken(c, userId, deviceID)
+	publishDataOnPandemonium(topicCommunity, headers, params, response)
+}
+
+func publishDataOnPandemonium(topicChatroom string, headers map[string]interface{}, params map[string]string, response map[string]interface{}) {
+	respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, topicChatroom), utils.POSTRequestRawBody, headers, params, response)
+	if err != nil || statusCode != 200 {
+		logging.Error(fmt.Sprintf("Error in publishing data on pandemonium: %v | response %v", err, string(respBytes)))
+	}
 }
 
 func editConversationInternal(c *gin.Context, userId string) {
