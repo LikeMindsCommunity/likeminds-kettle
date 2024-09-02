@@ -87,7 +87,7 @@ func GetPandemoniumServiceBaseUrl() string {
 }
 
 func GetPandemoniumServiceWsUrl() string {
-	PandemoniumServiceWsURL := environment.GoDotEnvVariable("PANDEMONIUM_Ws_URL")
+	PandemoniumServiceWsURL := environment.GoDotEnvVariable("PANDEMONIUM_WS_URL")
 
 	if len(PandemoniumServiceWsURL) == 0 {
 		PandemoniumServiceWsURL = "ws://pandemonium-beta.likeminds.community"
