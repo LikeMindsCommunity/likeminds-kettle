@@ -6,6 +6,27 @@ properties:
   heading:
     type: string
     description: Heading of the Post
+  topic_ids:
+    type: array
+    description: Topic IDs for the Post
+    items:
+      type: array
+      items:
+        type: string
+  is_repost:
+    type: boolean
+    description: Is the Post a repost
+  feedroom_id:
+    type: string
+    description: Feedroom ID of the Post
+  visibility:
+    type: string
+    description: Visibility of the Post for connections
+    enum: [public, private]
+  created_at:
+    type: string
+    format: date-time
+    description: Creation date of the Post (For migrating old posts)
   on_behalf_of_uuid:
     type: string
     description: User on whose behalf you are creating a post
