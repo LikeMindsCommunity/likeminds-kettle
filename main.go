@@ -420,6 +420,7 @@ func getPrometheusMetricService() *monitoring.PrometheusService {
 
 func setRouterB() {
 	psURL, _ := url.Parse(api_client.GetPandemoniumServiceWsUrl())
+	logging.Info(fmt.Sprintf("WS URL - %s", psURL))
 	psWSProxy := websocketproxy.NewProxy(psURL)
 	// Pandemonium APIs
 	routerB.GET(constants.SubscribeRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), middleware.WSProxyMiddleware(psWSProxy), gin.WrapH(psWSProxy))
