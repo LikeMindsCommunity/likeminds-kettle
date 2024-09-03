@@ -21,6 +21,7 @@ const (
 	UserOTPRoute                  = "/user/otp"
 	UserOTPVerifyRoute            = "/user/otp/verify"
 	UserSocialLoginRoute          = "/user/social/login"
+	UserBlockRoute                = "/user/:user_uuid/block"
 )
 
 // Home Endpoints
@@ -31,10 +32,10 @@ const (
 
 // SDK Endpoints
 const (
-	SDKInitiateRoute   	= "/sdk/initiate"
-	SDKProjectRoute    	= "/sdk/project"
-	SDKOnboardingRoute 	= "/sdk/onboarding"
-	SDKMauOverviewRoute	= "/sdk/mau_overview"
+	SDKInitiateRoute    = "/sdk/initiate"
+	SDKProjectRoute     = "/sdk/project"
+	SDKOnboardingRoute  = "/sdk/onboarding"
+	SDKMauOverviewRoute = "/sdk/mau_overview"
 )
 
 // Chatroom Endpoints

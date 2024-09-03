@@ -12,6 +12,7 @@ const PushUserTokenEndPoint = "/api/push"
 const FetchUserMetaEndPoint = "/api/fetch_user_meta"
 const UserOTPEndpoint = "/api/user/otp"
 const UserSocialLoginEndpoint = "/api/user/social/login"
+const BlockUserEndpoint = "/api/user/%s/block"
 
 const ParamIngestCommunities = "ingest_your_communities"
 const ParamAccessType = "access_type"
@@ -37,6 +38,10 @@ const ParamOTP = "otp"
 const ParamLoginType = "login_type"
 const ParamSocialLoginToken = "token"
 const ParamTokenType = "token_type"
+const ParamUserUUID = "user_uuid"
+const ParamBlockUserType = "block_user_type"
+const ParamPage = "page"
+const ParamPageSize = "page_size"
 
 const (
 	VTM = "vtm"

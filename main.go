@@ -2,6 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+	"net/url"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
@@ -33,9 +37,6 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/sync/errgroup"
-	"log"
-	"net/http"
-	"net/url"
 )
 
 var (
@@ -111,6 +112,8 @@ func setRouterA() {
 	routerA.POST(constants.UserOTPRoute, middleware.OTMValidationMiddleware(), user.GenerateUserOTP)
 	routerA.GET(constants.UserOTPVerifyRoute, middleware.OTMValidationMiddleware(), user.VerifyUserOTP)
 	routerA.GET(constants.UserSocialLoginRoute, middleware.OTMValidationMiddleware(), user.UserSocialLogin)
+	routerA.PUT(constants.UserBlockRoute, middleware.LTMValidationMiddleware(redisClient, true), user.BlockUnblockUser)
+	routerA.GET(constants.UserBlockRoute, middleware.LTMValidationMiddleware(redisClient, true), user.GetBlockUser)
 
 	// Home Apis
 	routerA.POST(constants.HomeFetchCommunitiesRoute, middleware.LTMValidationMiddleware(redisClient, true), home.FetchCommunities)
