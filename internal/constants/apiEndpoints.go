@@ -31,7 +31,6 @@ const (
 
 // SDK Endpoints
 const (
-	SDKLoginRoute   	= "/sdk/login"
 	SDKInitiateRoute   	= "/sdk/initiate"
 	SDKProjectRoute    	= "/sdk/project"
 	SDKOnboardingRoute 	= "/sdk/onboarding"

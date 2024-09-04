@@ -3,7 +3,6 @@ package sdk
 const ProjectEndpoint = "/api/sdk/project"
 const OnboardingEndpoint = "/api/sdk/onboarding"
 const MauOverviewEndPoint = "/api/sdk/mau_overview"
-const SdkLoginEndPoint = "/api/sdk/login"
 
 const ParamCommunityCreator = "project_creator"
 const ParamScreenId = "screen_id"
