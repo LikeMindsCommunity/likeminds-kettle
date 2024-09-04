@@ -106,7 +106,7 @@ func readFromClientAndWriteToServer(conn *websocket.Conn, serverConn *websocket.
 			logging.Error(fmt.Sprintf(ErrorReadClientWs, err))
 			return
 		}
-		logging.Info(fmt.Sprintf(ReceivedMessageClientWs, msg, messageType))
+		logging.Info(fmt.Sprintf(ReceivedMessageClientWs, messageType))
 
 		// Forward the message to the WebSocket server
 		err = serverConn.WriteMessage(messageType, msg)
@@ -128,7 +128,7 @@ func readFromServerAndWriteToClient(conn *websocket.Conn, serverConn *websocket.
 			logging.Error(fmt.Sprintf(ErrorReadServerWs, err))
 			return
 		}
-		logging.Info(fmt.Sprintf(ReceivedMessageServerWs, msg, messageType))
+		logging.Info(fmt.Sprintf(ReceivedMessageServerWs, messageType))
 
 		// Forward the message to the client
 		err = conn.WriteMessage(messageType, msg)

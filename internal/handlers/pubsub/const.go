@@ -18,8 +18,8 @@ const (
 	WsConnectionEstablished = "Connected to websocket server"
 	PongWs                  = "Received pong from websocket server"
 	PingWs                  = "Sent ping to websocket server"
-	ReceivedMessageClientWs = "Received message from client: %v having message type as %v"
-	ReceivedMessageServerWs = "Received message from websocket server: %v having message type as %v"
+	ReceivedMessageClientWs = "Received message from client having message type as %v"
+	ReceivedMessageServerWs = "Received message from websocket server having message type as %v"
 )
 const (
 	ErrorUnableToCloseWs = "Unable to close ws error:"
