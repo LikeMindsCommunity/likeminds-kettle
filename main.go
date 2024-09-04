@@ -118,6 +118,7 @@ func setRouterA() {
 
 	// SDK Apis
 	routerA.POST(constants.SDKInitiateRoute, middleware.VTMValidationMiddleware(false), middleware.RateLimitingMiddleware(redisClient), sdk.InitiateSDK)
+	routerA.POST(constants.SDKLoginRoute, middleware.VTMValidationMiddleware(false), middleware.RateLimitingMiddleware(redisClient), sdk.SdkLogin)
 	routerA.GET(constants.SDKInitiateRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), sdk.FetchSdkUserInfo)
 	routerA.POST(constants.SDKProjectRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), sdk.CreateProject)
 	routerA.GET(constants.SDKProjectRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), sdk.GetProject)
