@@ -64,7 +64,7 @@ func UserOTP(c *gin.Context, method int) {
 		dataResponse := apiCR.Response
 
 		// Create verified token
-		vtm, err := token.CreateVTM(c.GetHeader(utils.HeadersApiKey), params[ParamEmailID], params[UserMobileNo], params[UserCountryCode])
+		vtm, err := token.CreateVTM(c.GetHeader(utils.HeadersApiKey), params[ParamEmailID], params[UserMobileNo], params[UserCountryCode], c.GetHeader(utils.HeadersPlatformType))
 
 		if err != nil {
 			// If token creation fails
