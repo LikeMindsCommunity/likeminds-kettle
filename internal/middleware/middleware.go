@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/koding/websocketproxy"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -472,25 +471,6 @@ func LoggingMiddleware() gin.HandlerFunc {
 			}
 
 			c.Next()
-		}
-	}
-}
-
-func WSProxyMiddleware(psWSProxy *websocketproxy.WebsocketProxy) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		psWSProxy.Director = func(incoming *http.Request, out http.Header) {
-			// Authorize User
-			userId := user.GetRequestingUserId(c)
-			if userId == "" {
-				return
-			}
-
-			// Authorize User
-			deviceID := user.GetRequestingUserDeviceId(c)
-			headersMap := utils.CreateHeadersFromToken(c, userId, deviceID)
-			for key, value := range headersMap {
-				out.Add(key, value.(string))
-			}
 		}
 	}
 }

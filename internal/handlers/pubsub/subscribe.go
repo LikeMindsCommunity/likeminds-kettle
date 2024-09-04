@@ -1,0 +1,143 @@
+package pubsub
+
+import (
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
+	"github.com/nateshr/likeminds-authentication/internal/logging"
+	"github.com/nateshr/likeminds-authentication/internal/utils"
+	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
+	"log"
+	"net/http"
+	"time"
+)
+
+var upgrader = newUpgrader()
+
+// newUpgrader creates a new websocket Upgrader
+func newUpgrader() websocket.Upgrader {
+	return websocket.Upgrader{
+		ReadBufferSize:  ReadBufferSizeDefault,
+		WriteBufferSize: WriteBufferSizeDefault,
+	}
+}
+
+// Subscribe to open WS against a topic
+func Subscribe(c *gin.Context) {
+	// Upgrade HTTP request
+	conn, err := upgraderHTTPToWs(c)
+	if err != nil {
+		updatedErr := fmt.Sprintf(ErrorFailedUpgrader, err)
+		logging.Error(updatedErr)
+		utils.GeneralAPIError(c, updatedErr)
+		return
+	} else {
+		defer disconnect(conn)
+	}
+
+	// Connect to the websocket server
+	serverConn, err := dialToWs(c)
+	if err != nil {
+		updatedErr := fmt.Sprintf(ErrorFailedDial, err)
+		logging.Error(updatedErr)
+		utils.GeneralAPIError(c, updatedErr)
+		return
+	} else {
+		defer disconnect(serverConn)
+	}
+	logging.Info(WsConnectionEstablished)
+
+	// Handle communication between the client and the websocket server
+	go readFromClientAndWriteToServer(conn, serverConn)
+	go readFromServerAndWriteToClient(conn, serverConn)
+}
+
+// upgraderHTTPToWs to upgrade the incoming HTTP request to a WebSocket connection
+func upgraderHTTPToWs(c *gin.Context) (*websocket.Conn, error) {
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	return conn, err
+}
+
+// createHeaders to createHeaders required for connecting with websocket server
+func createHeaders(c *gin.Context) http.Header {
+	out := http.Header{}
+	userId := user.GetRequestingUserId(c)
+	deviceID := user.GetRequestingUserDeviceId(c)
+	headersMap := utils.CreateHeadersFromToken(c, userId, deviceID)
+	for key, value := range headersMap {
+		out.Add(key, value.(string))
+	}
+	return out
+}
+
+// dialToWs to dial to websocket server
+func dialToWs(c *gin.Context) (*websocket.Conn, error) {
+	topic := c.Param("topic")
+	psURL := api_client.GetPandemoniumServiceWsUrl()
+	updatedPsURL := fmt.Sprintf("%s/subscribe/%s", psURL, topic)
+	serverConn, _, err := websocket.DefaultDialer.Dial(updatedPsURL, createHeaders(c))
+	if err == nil {
+		// Set up ping/pong handlers for the server connection
+		serverConn.SetPongHandler(func(string) error {
+			logging.Info(PongWs)
+			return nil
+		})
+		// Start a goroutine to send pings periodically to the websocket server
+		go func() {
+			for {
+				time.Sleep(PingPeriod)
+				if err := serverConn.WriteMessage(websocket.PingMessage, nil); err != nil {
+					logging.Info(fmt.Sprintf(ErrorPingWs, err))
+					return
+				}
+				logging.Info(PingWs)
+			}
+		}()
+	}
+	return serverConn, err
+}
+
+func readFromClientAndWriteToServer(conn *websocket.Conn, serverConn *websocket.Conn) {
+	for {
+		messageType, msg, err := conn.ReadMessage()
+		if err != nil {
+			logging.Error(fmt.Sprintf(ErrorReadClientWs, err))
+			return
+		}
+		logging.Info(fmt.Sprintf(ReceivedMessageClientWs, msg, messageType))
+
+		// Forward the message to the WebSocket server
+		err = serverConn.WriteMessage(messageType, msg)
+		if err != nil {
+			logging.Error(fmt.Sprintf(ErrorWriteServerWs, err))
+			return
+		}
+	}
+}
+
+func readFromServerAndWriteToClient(conn *websocket.Conn, serverConn *websocket.Conn) {
+	for {
+		messageType, msg, err := serverConn.ReadMessage()
+		if err != nil {
+			logging.Error(fmt.Sprintf(ErrorReadServerWs, err))
+			return
+		}
+		logging.Info(fmt.Sprintf(ReceivedMessageServerWs, msg, messageType))
+
+		// Forward the message to the client
+		err = conn.WriteMessage(messageType, msg)
+		if err != nil {
+			logging.Error(fmt.Sprintf(ErrorWriteClientWs, err))
+			return
+		}
+	}
+}
+
+func disconnect(conn *websocket.Conn) {
+	err := conn.Close()
+	if err != nil {
+		log.Println(ErrorUnableToCloseWs, err)
+		return
+	}
+}
