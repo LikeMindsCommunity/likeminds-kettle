@@ -83,18 +83,18 @@ func UserOTP(c *gin.Context, method int) {
 			//Send response with login, refresh token and verify otp api response
 			dataResponse[constants.ParamAccessToken] = ltm.AccessToken
 			dataResponse[constants.ParamRefreshToken] = rtm.RefreshToken
+		} else {
+			// Create verified token
+			vtm, err := token.CreateVTM(c.GetHeader(utils.HeadersApiKey), params[ParamEmailID], params[UserMobileNo], params[UserCountryCode], c.GetHeader(utils.HeadersPlatformType))
+
+			if err != nil {
+				// If token creation fails
+				utils.GeneralAPIError(c, err.Error())
+				return
+			}
+
+			dataResponse[constants.ParamAccessToken] = vtm.AccessToken
 		}
-
-		// Create verified token
-		vtm, err := token.CreateVTM(c.GetHeader(utils.HeadersApiKey), params[ParamEmailID], params[UserMobileNo], params[UserCountryCode], c.GetHeader(utils.HeadersPlatformType))
-
-		if err != nil {
-			// If token creation fails
-			utils.GeneralAPIError(c, err.Error())
-			return
-		}
-
-		dataResponse[constants.ParamAccessToken] = vtm.AccessToken
 
 		// Generate response
 		utils.GenerateResponse(c, dataResponse, false)
