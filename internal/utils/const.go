@@ -3,7 +3,7 @@ package utils
 const HeadersMemberId = "x-member-id"
 const HeadersVersionCode = "x-version-code"
 const HeadersPlatformCode = "x-platform-code"
-const HeadersPlatformType = "x-platform-type"
+const HeadersPlatformType = "X-Platform-Type"
 const HeadersSdkSource = "x-sdk-source"
 const HeadersDeviceId = "x-device-id"
 const HeadersApiKey = "x-api-key"
