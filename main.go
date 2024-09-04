@@ -2,6 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+	"net/url"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
@@ -33,9 +37,6 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/sync/errgroup"
-	"log"
-	"net/http"
-	"net/url"
 )
 
 var (
