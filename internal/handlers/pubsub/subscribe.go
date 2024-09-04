@@ -47,7 +47,7 @@ func Subscribe(c *gin.Context) {
 
 	// Handle communication between the client and the websocket server
 	go readFromClientAndWriteToServer(conn, serverConn)
-	go readFromServerAndWriteToClient(conn, serverConn)
+	readFromServerAndWriteToClient(conn, serverConn)
 }
 
 // upgraderHTTPToWs to upgrade the incoming HTTP request to a WebSocket connection
