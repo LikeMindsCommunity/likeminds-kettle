@@ -32,9 +32,10 @@ func Subscribe(c *gin.Context) {
 		logging.Error(updatedErr)
 		utils.GeneralAPIError(c, updatedErr)
 		return
-	} else {
-		defer disconnect(conn)
 	}
+	defer func() {
+		disconnect(conn)
+	}()
 
 	// Connect to the websocket server
 	serverConn, err := dialToWs(c)
@@ -43,9 +44,11 @@ func Subscribe(c *gin.Context) {
 		logging.Error(updatedErr)
 		utils.GeneralAPIError(c, updatedErr)
 		return
-	} else {
-		defer disconnect(serverConn)
 	}
+	defer func() {
+		disconnect(serverConn)
+	}()
+
 	logging.Info(WsConnectionEstablished)
 
 	// Handle communication between the client and the websocket server
