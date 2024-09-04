@@ -23,6 +23,7 @@ type OnboardingTokenMeta struct {
 	AccessTokenExpires int64
 	AccessToken        string
 	ApiKey             string
+	PlatformType	   string
 }
 
 type LoginTokenMeta struct {
@@ -50,6 +51,7 @@ type VerifyTokenMeta struct {
 	AccessTokenExpires int64
 	AccessToken        string
 	ApiKey             string
+	PlatformType	   string
 	EmailID            string
 	MobileNo           string
 	CountryCode        string
