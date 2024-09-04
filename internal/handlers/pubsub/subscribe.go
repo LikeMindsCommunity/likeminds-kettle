@@ -33,9 +33,6 @@ func Subscribe(c *gin.Context) {
 		utils.GeneralAPIError(c, updatedErr)
 		return
 	}
-	defer func() {
-		disconnect(conn)
-	}()
 
 	// Connect to the websocket server
 	serverConn, err := dialToWs(c)
@@ -45,9 +42,6 @@ func Subscribe(c *gin.Context) {
 		utils.GeneralAPIError(c, updatedErr)
 		return
 	}
-	defer func() {
-		disconnect(serverConn)
-	}()
 
 	logging.Info(WsConnectionEstablished)
 
@@ -102,6 +96,10 @@ func dialToWs(c *gin.Context) (*websocket.Conn, error) {
 }
 
 func readFromClientAndWriteToServer(conn *websocket.Conn, serverConn *websocket.Conn) {
+	defer func() {
+		disconnect(conn)
+		disconnect(serverConn)
+	}()
 	for {
 		messageType, msg, err := conn.ReadMessage()
 		if err != nil {
@@ -120,6 +118,10 @@ func readFromClientAndWriteToServer(conn *websocket.Conn, serverConn *websocket.
 }
 
 func readFromServerAndWriteToClient(conn *websocket.Conn, serverConn *websocket.Conn) {
+	defer func() {
+		disconnect(conn)
+		disconnect(serverConn)
+	}()
 	for {
 		messageType, msg, err := serverConn.ReadMessage()
 		if err != nil {
