@@ -5,6 +5,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
+	"github.com/gorilla/websocket"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
 	"github.com/nateshr/likeminds-authentication/internal/constants"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/channel"
@@ -30,6 +31,8 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/handlers/widget"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/middleware"
+	"github.com/nateshr/likeminds-authentication/internal/utils"
+	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/sync/errgroup"
 	"log"
@@ -41,6 +44,7 @@ var (
 	routerB     *gin.Engine
 	routerGroup errgroup.Group
 	redisClient *redis.Client
+	upgrader    = newUpgrader()
 )
 
 func main() {
@@ -418,7 +422,8 @@ func getPrometheusMetricService() *monitoring.PrometheusService {
 
 func setRouterB() {
 	// Pandemonium APIs
-	routerB.GET(constants.SubscribeRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), pubsub.Subscribe)
+	//routerB.GET(constants.SubscribeRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), pubsub.Subscribe)
+	routerB.GET(constants.SubscribeRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), handleWebSocket)
 }
 
 func routerAServer() *http.Server {
@@ -434,4 +439,86 @@ func routerBServer() *http.Server {
 		Handler: routerB,
 	}
 	return serverB
+}
+
+// newUpgrader creates a new websocket Upgrader
+func newUpgrader() websocket.Upgrader {
+	return websocket.Upgrader{
+		ReadBufferSize:  pubsub.ReadBufferSizeDefault,
+		WriteBufferSize: pubsub.WriteBufferSizeDefault,
+	}
+}
+
+// Handle WebSocket connections
+func handleWebSocket(c *gin.Context) {
+	// Upgrade the incoming HTTP request to a WebSocket connection
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		log.Printf("Failed to upgrade connection: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upgrade connection"})
+		return
+	}
+	defer conn.Close()
+
+	// Authorize User
+	out := http.Header{}
+	userId := user.GetRequestingUserId(c)
+	if userId == "" {
+		return
+	}
+
+	// Authorize User
+	deviceID := user.GetRequestingUserDeviceId(c)
+	headersMap := utils.CreateHeadersFromToken(c, userId, deviceID)
+	for key, value := range headersMap {
+		out.Add(key, value.(string))
+	}
+	// Connect to the WebSocket server
+	topic := c.Param("topic")
+	psURL := api_client.GetPandemoniumServiceWsUrl()
+	updatedPsURL := fmt.Sprintf("%s/subscribe/%s", psURL, topic)
+	serverConn, _, err := websocket.DefaultDialer.Dial(updatedPsURL, out)
+	if err != nil {
+		log.Printf("Failed to connect to WebSocket server: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to connect to WebSocket server"})
+		return
+	}
+	defer serverConn.Close()
+
+	log.Println("WebSocket connection established")
+
+	// Handle communication between the client and the WebSocket server
+	go func() {
+		for {
+			messageType, msg, err := conn.ReadMessage()
+			if err != nil {
+				log.Printf("Error reading message: %v", err)
+				return
+			}
+			log.Printf("Received message from client: %s", msg)
+
+			// Forward the message to the WebSocket server
+			err = serverConn.WriteMessage(messageType, msg)
+			if err != nil {
+				log.Printf("Error sending message to WebSocket server: %v", err)
+				return
+			}
+		}
+	}()
+
+	for {
+		messageType, msg, err := serverConn.ReadMessage()
+		if err != nil {
+			log.Printf("Error reading message from WebSocket server: %v", err)
+			return
+		}
+		log.Printf("Received message from WebSocket server: %s", msg)
+
+		// Forward the message to the client
+		err = conn.WriteMessage(messageType, msg)
+		if err != nil {
+			log.Printf("Error sending message to client: %v", err)
+			return
+		}
+	}
 }
