@@ -15,6 +15,7 @@ const (
 	PingSendWs              = "Sending ping to websocket server"
 	ReceivedMessageClientWs = "Received message from client having message type as %v"
 	ReceivedMessageServerWs = "Received message from websocket server having message type as %v"
+	ConnectionClosed        = "Connection closed"
 )
 
 const (
