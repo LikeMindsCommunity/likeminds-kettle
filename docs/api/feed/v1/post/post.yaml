@@ -1,11 +1,9 @@
 post:
-  summary: Create a New Post
-
   operationId: createNewPost
-
   tags:
     - Feed - V1
 
+  summary: Create a New Post
   description: This API creates a new Post.
 
   security:

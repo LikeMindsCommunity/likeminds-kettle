@@ -258,5 +258,5 @@ const (
 
 // Pandemonium Endpoints
 const (
-	SubscribeRoute = "/subscribe"
+	SubscribeRoute = "/subscribe/:topic"
 )
