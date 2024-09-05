@@ -83,7 +83,7 @@ func readFromClientAndWriteToServer(conn *websocket.Conn, serverConn *websocket.
 		disconnect(serverConn)
 	}()
 
-	/*go startPingMessageToServer(serverConn)
+	go startPingMessageToServer(serverConn)
 	serverConn.SetPongHandler(func(string) error {
 		log.Println(PongReceivedWs)
 		return nil
@@ -91,7 +91,7 @@ func readFromClientAndWriteToServer(conn *websocket.Conn, serverConn *websocket.
 	serverConn.SetPingHandler(func(string) error {
 		log.Println(PingReceivedWs)
 		return nil
-	})*/
+	})
 
 	for {
 		messageType, msg, err := conn.ReadMessage()
