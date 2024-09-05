@@ -66,7 +66,7 @@ func VerifyOTP(c *gin.Context) {
 		utils.GenerateResponse(c, dataResponse, true)
 	} else {
 		// Create onboarding token
-		otm, err := token.CreateOTM(c.GetHeader(utils.HeadersApiKey), c.GetHeader(utils.HeadersPlatformType))
+		otm, err := token.CreateOTM(c.GetHeader(utils.HeadersApiKey))
 
 		// If token creation fails
 		if err != nil {
