@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
@@ -32,8 +35,6 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/middleware"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/sync/errgroup"
-	"log"
-	"net/http"
 )
 
 var (
@@ -44,7 +45,7 @@ var (
 )
 
 func main() {
-	var AppVersion = "2.39.0"
+	var AppVersion = "2.40.0"
 
 	redisClient = cache.InitRedis()
 
