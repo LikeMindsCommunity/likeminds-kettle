@@ -47,7 +47,7 @@ func Subscribe(c *gin.Context) {
 
 	// Handle communication between the client and the websocket server
 	go readFromClientAndWriteToServer(conn, serverConn)
-	readFromServerAndWriteToClient(conn, serverConn)
+	go readFromServerAndWriteToClient(conn, serverConn)
 }
 
 // upgraderHTTPToWs to upgrade the incoming HTTP request to a WebSocket connection
@@ -74,24 +74,6 @@ func dialToWs(c *gin.Context) (*websocket.Conn, error) {
 	psURL := api_client.GetPandemoniumServiceWsUrl()
 	updatedPsURL := fmt.Sprintf("%s/subscribe/%s", psURL, topic)
 	serverConn, _, err := websocket.DefaultDialer.Dial(updatedPsURL, createHeaders(c))
-	if err == nil {
-		// Set up ping/pong handlers for the server connection
-		serverConn.SetPongHandler(func(string) error {
-			logging.Info(PongWs)
-			return nil
-		})
-		// Start a goroutine to send pings periodically to the websocket server
-		go func() {
-			for {
-				time.Sleep(PingPeriod)
-				if err := serverConn.WriteMessage(websocket.PingMessage, nil); err != nil {
-					logging.Info(fmt.Sprintf(ErrorPingWs, err))
-					return
-				}
-				logging.Info(PingWs)
-			}
-		}()
-	}
 	return serverConn, err
 }
 
@@ -100,6 +82,17 @@ func readFromClientAndWriteToServer(conn *websocket.Conn, serverConn *websocket.
 		disconnect(conn)
 		disconnect(serverConn)
 	}()
+
+	/*go startPingMessageToServer(serverConn)
+	serverConn.SetPongHandler(func(string) error {
+		log.Println(PongReceivedWs)
+		return nil
+	})
+	serverConn.SetPingHandler(func(string) error {
+		log.Println(PingReceivedWs)
+		return nil
+	})*/
+
 	for {
 		messageType, msg, err := conn.ReadMessage()
 		if err != nil {
@@ -122,6 +115,17 @@ func readFromServerAndWriteToClient(conn *websocket.Conn, serverConn *websocket.
 		disconnect(conn)
 		disconnect(serverConn)
 	}()
+
+	go startPingMessageToClient(conn)
+	conn.SetPongHandler(func(string) error {
+		log.Println(PongReceivedClient)
+		return nil
+	})
+	conn.SetPingHandler(func(string) error {
+		log.Println(PingReceivedClient)
+		return nil
+	})
+
 	for {
 		messageType, msg, err := serverConn.ReadMessage()
 		if err != nil {
@@ -144,5 +148,29 @@ func disconnect(conn *websocket.Conn) {
 	if err != nil {
 		log.Println(ErrorUnableToCloseWs, err)
 		return
+	}
+}
+
+func startPingMessageToClient(conn *websocket.Conn) {
+	// Start a goroutine to send pings periodically to the client
+	for {
+		time.Sleep(PingPeriod) // Interval between pings
+		if err := conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+			log.Printf(fmt.Sprintf(ErrorPingSendClient, err))
+			return
+		}
+		log.Println(PingSendClient)
+	}
+}
+
+func startPingMessageToServer(conn *websocket.Conn) {
+	// Start a goroutine to send pings periodically to the client
+	for {
+		time.Sleep(PingPeriod) // Interval between pings
+		if err := conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+			log.Printf(fmt.Sprintf(ErrorPingSendWs, err))
+			return
+		}
+		log.Println(PingSendWs)
 	}
 }
