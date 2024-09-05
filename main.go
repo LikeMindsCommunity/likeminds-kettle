@@ -2,14 +2,9 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net/http"
-	"net/url"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
-	"github.com/koding/websocketproxy"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
 	"github.com/nateshr/likeminds-authentication/internal/constants"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/channel"
@@ -23,6 +18,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/handlers/moderation"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/otp"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/poll"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsub"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/sdk"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/search"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
@@ -34,9 +30,10 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/handlers/widget"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/middleware"
-	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/sync/errgroup"
+	"log"
+	"net/http"
 )
 
 var (
@@ -420,11 +417,8 @@ func getPrometheusMetricService() *monitoring.PrometheusService {
 }
 
 func setRouterB() {
-	psURL, _ := url.Parse(api_client.GetPandemoniumServiceWsUrl())
-	logging.Info(fmt.Sprintf("WS URL - %s", psURL))
-	psWSProxy := websocketproxy.NewProxy(psURL)
 	// Pandemonium APIs
-	routerB.GET(constants.SubscribeRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), middleware.WSProxyMiddleware(psWSProxy), gin.WrapH(psWSProxy))
+	routerB.GET(constants.SubscribeRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), pubsub.Subscribe)
 }
 
 func routerAServer() *http.Server {
