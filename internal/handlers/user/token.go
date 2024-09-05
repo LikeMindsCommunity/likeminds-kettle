@@ -30,7 +30,7 @@ func CreateToken(c *gin.Context) {
 		}
 
 		// Create VTM token
-		vtm, tokenErr := token.CreateVTM(vtmData.ApiKey, vtmData.EmailID, vtmData.MobileNo, vtmData.CountryCode, vtmData.PlatformType)
+		vtm, tokenErr := token.CreateVTM(vtmData.ApiKey, vtmData.EmailID, vtmData.MobileNo, vtmData.CountryCode)
 
 		// If token creation fails
 		if tokenErr != nil {
@@ -42,7 +42,7 @@ func CreateToken(c *gin.Context) {
 
 	} else {
 		// Create OTM token
-		otm, tokenErr := token.CreateOTM(c.GetHeader(utils.HeadersApiKey), c.GetHeader(utils.HeadersPlatformType))
+		otm, tokenErr := token.CreateOTM(c.GetHeader(utils.HeadersApiKey))
 
 		// If token creation fails
 		if tokenErr != nil {

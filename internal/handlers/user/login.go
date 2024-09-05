@@ -22,27 +22,6 @@ type LoginRequest struct {
 	User      User   `json:"user"`
 }
 
-func extractLoginDetailsFromVTM(vtm *constants.VerifyTokenMeta, lr *LoginRequest) *LoginRequest {
-
-	if vtm.EmailID != "" {
-		lr.User.Email = vtm.EmailID
-	}
-
-	if vtm.MobileNo != "" {
-		lr.User.MobileNo = vtm.MobileNo
-	}
-
-	if vtm.CountryCode != "" {
-		lr.User.CountryCode = vtm.CountryCode
-	}
-
-	if vtm.PlatformType == string(utils.PlatformDashboard) {
-		lr.LoginType = string(utils.PlatformDashboard)
-	}
-
-	return lr
-}
-
 // Login used when user is signing up and generate login and refresh tokens
 func Login(c *gin.Context) {
 
@@ -52,11 +31,6 @@ func Login(c *gin.Context) {
 		//If POST body params are missing
 		utils.GeneralBadRequestError(c, err.Error())
 		return
-	}
-
-	verifyTokenMeta, ok := c.Get(constants.ParamVTM)
-	if ok {
-		loginRequest = extractLoginDetailsFromVTM(verifyTokenMeta.(*constants.VerifyTokenMeta), loginRequest)
 	}
 
 	//Send Request

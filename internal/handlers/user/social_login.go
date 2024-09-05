@@ -33,7 +33,7 @@ func UserSocialLogin(c *gin.Context) {
 	userSocialInfo, _ := dataResponse[ResponseUser].(map[string]interface{})
 
 	// Create verified token
-	vtm, err := token.CreateVTM(c.GetHeader(utils.HeadersApiKey), userSocialInfo[UserEmail].(string), "", "", c.GetHeader(utils.HeadersPlatformType))
+	vtm, err := token.CreateVTM(c.GetHeader(utils.HeadersApiKey), userSocialInfo[UserEmail].(string), "", "")
 
 	if err != nil {
 		// If token creation fails
