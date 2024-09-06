@@ -418,6 +418,9 @@ func getPrometheusMetricService() *monitoring.PrometheusService {
 }
 
 func setRouterB() {
+	// health check path '/' on ws router
+	routerB.GET("", web.Home)
+
 	// Pandemonium APIs
 	routerB.GET(constants.SubscribeRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), pubsub.Subscribe)
 }
