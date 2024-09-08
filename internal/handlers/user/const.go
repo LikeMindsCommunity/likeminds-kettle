@@ -38,6 +38,7 @@ const ParamLoginType = "login_type"
 const ParamSocialLoginToken = "token"
 const ParamTokenType = "token_type"
 const ParamPlatformtype = "platform_type"
+const ResponseUserExists = "existing_user"
 
 const (
 	VTM = "vtm"

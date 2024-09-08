@@ -36,6 +36,10 @@ func extractLoginDetailsFromVTM(vtm *constants.VerifyTokenMeta, lr *LoginRequest
 		lr.User.CountryCode = vtm.CountryCode
 	}
 
+	if vtm.PlatformType == string(utils.PlatformDashboard) {
+		lr.LoginType = string(utils.PlatformDashboard)
+	}
+
 	return lr
 }
 
