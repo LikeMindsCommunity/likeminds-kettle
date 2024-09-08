@@ -37,6 +37,7 @@ const ParamOTP = "otp"
 const ParamLoginType = "login_type"
 const ParamSocialLoginToken = "token"
 const ParamTokenType = "token_type"
+const ParamPlatformtype = "platform_type"
 
 const (
 	VTM = "vtm"
