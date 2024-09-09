@@ -39,17 +39,27 @@ func Subscribe(c *gin.Context) {
 
 	switch topicSplit[0] {
 	case TopicTypeChatroom:
-		userId := user.GetRequestingUserId(c)
-		if userId == "" || userId == "null" {
+		UUID := user.GetRequestingUserId(c)
+		var chatroomID string
+		if len(topicSplit) > 1 {
+			chatroomID = topicSplit[1]
+		}
+		//If UUID is missing, return error
+		if UUID == "" || UUID == "null" {
 			utils.GeneralBadRequestError(c, ErrorUserUUIDMissing)
 			return
 		}
+		//If chatroomID is missing, return error
+		if chatroomID == "" || chatroomID == "null" {
+			utils.GeneralBadRequestError(c, ErrorChatroomIDMissing)
+			return
+		}
 		params := map[string]string{
-			channel.ParamChannelId:          c.Param(channel.ParamChannelId),
+			channel.ParamChannelId:          chatroomID,
 			channel.ParamChannelActionTypes: c.Query(channel.ParamChannelActionTypes),
 		}
 		//Get chatroom details to verify if user has access to any chatroom / cohort based chatroom / secret chatroom
-		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, channel.SyncChannelDetailEndppoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, channel.SyncChannelDetailEndppoint, utils.GETRequest, utils.CreateHeaders(c, UUID), params, nil)
 		if respBytes == nil || statusCode != 200 {
 			utils.GeneralBadRequestError(c, ErrorUserChatroomAccess)
 			return
@@ -59,7 +69,12 @@ func Subscribe(c *gin.Context) {
 				utils.GeneralAPIError(c, fmt.Sprintf(ErrorUnmarshalErrorJson, err))
 				return
 			}
-			chatroomDetail := chatroomDetailParentResponse.ChatroomDetail
+			chatroomDetailArray := chatroomDetailParentResponse.ChatroomDetail
+			if len(chatroomDetailArray) < 1 {
+				utils.GeneralAPIError(c, ErrorChatroomResponseInvalid)
+				return
+			}
+			chatroomDetail := chatroomDetailArray[0]
 			canAccessSecretChatroom := chatroomDetail.CanAccessSecretChatroom
 			if canAccessSecretChatroom != nil {
 				if *canAccessSecretChatroom == false {

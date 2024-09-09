@@ -63,7 +63,7 @@ type DeleteChatroomRequest struct {
 }
 
 type ChatroomDetailParentResponse struct {
-	ChatroomDetail ChatroomDetailResponse `json:"channel_details_data"`
+	ChatroomDetail []ChatroomDetailResponse `json:"channel_details_data"`
 }
 
 type ChatroomDetailResponse struct {
