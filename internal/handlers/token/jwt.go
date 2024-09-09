@@ -208,9 +208,9 @@ func ExtractOTM(bearerToken string) (*constants.OnboardingTokenMeta, error) {
 		apiKey, _ := claims[TokenAPIKey].(string)
 
 		if apiKey == "" {
-			platformType, ok := claims[TokenPlatformType].(string)
+			platformType, _ := claims[TokenPlatformType].(string)
 
-			if !ok && platformType != string(utils.PlatformDashboard) {
+			if platformType != string(utils.PlatformDashboard) {
 				return nil, errors.New("platform type should be present in headers")
 			}
 			
@@ -253,9 +253,9 @@ func ExtractVTM(bearerToken string) (*constants.VerifyTokenMeta, error) {
 		countryCode, _ := claims["country_code"].(string)
 
 		if apiKey == "" {
-			platformType, ok := claims[TokenPlatformType].(string)
+			platformType, _ := claims[TokenPlatformType].(string)
 
-			if !ok && platformType != string(utils.PlatformDashboard) {
+			if platformType != string(utils.PlatformDashboard) {
 				return nil, errors.New("platform type should be present in headers")
 			}
 
