@@ -25,12 +25,8 @@ func CreateOTM(apiKey string, platformType string) (*constants.OnboardingTokenMe
 	otmClaims := jwt.MapClaims{}
 	otmClaims[TokemAccessUUID] = otm.AccessUuid
 	otmClaims[TokenExp] = otm.AccessTokenExpires
-
-	if platformType == "" || platformType != string(utils.PlatformDashboard){
-		otmClaims[TokenAPIKey] = apiKey
-	} else {
-		otmClaims[TokenPlatformType] = platformType
-	}
+	otmClaims[TokenAPIKey] = apiKey
+	otmClaims[TokenPlatformType] = platformType
 
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, otmClaims)
 	otm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable(environment.EnvAccessSecret)))
@@ -51,12 +47,8 @@ func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode strin
 	vtmClaims := jwt.MapClaims{}
 	vtmClaims[TokemAccessUUID] = vtm.AccessUuid
 	vtmClaims[TokenExp] = vtm.AccessTokenExpires
-
-	if platformType != string(utils.PlatformDashboard){
-		vtmClaims[TokenAPIKey] = apiKey
-	} else {
-		vtmClaims[TokenPlatformType] = platformType
-	}
+	vtmClaims[TokenAPIKey] = apiKey
+	vtmClaims[TokenPlatformType] = platformType
 
 	if emailId != "" {
 		vtmClaims["email_id"] = emailId
