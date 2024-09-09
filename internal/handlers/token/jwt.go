@@ -14,7 +14,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
-func CreateOTM(apiKey string) (*constants.OnboardingTokenMeta, error) {
+func CreateOTM(apiKey string, platformType string) (*constants.OnboardingTokenMeta, error) {
 	otm := &constants.OnboardingTokenMeta{
 		AccessUuid:         uuid.NewV4().String(),
 		AccessTokenExpires: time.Now().Add(time.Minute * 15).Unix(),
@@ -26,6 +26,8 @@ func CreateOTM(apiKey string) (*constants.OnboardingTokenMeta, error) {
 	otmClaims[TokemAccessUUID] = otm.AccessUuid
 	otmClaims[TokenExp] = otm.AccessTokenExpires
 	otmClaims[TokenAPIKey] = apiKey
+	otmClaims[TokenPlatformType] = platformType
+
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, otmClaims)
 	otm.AccessToken, err = at.SignedString([]byte(environment.GoDotEnvVariable(environment.EnvAccessSecret)))
 	if err != nil {
@@ -34,7 +36,7 @@ func CreateOTM(apiKey string) (*constants.OnboardingTokenMeta, error) {
 	return otm, nil
 }
 
-func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode string) (*constants.VerifyTokenMeta, error) {
+func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode string, platformType string) (*constants.VerifyTokenMeta, error) {
 	vtm := &constants.VerifyTokenMeta{
 		AccessUuid:         uuid.NewV4().String(),
 		AccessTokenExpires: time.Now().Add(time.Hour * 24 * 30).Unix(),
@@ -46,6 +48,7 @@ func CreateVTM(apiKey string, emailId string, mobileNo string, countryCode strin
 	vtmClaims[TokemAccessUUID] = vtm.AccessUuid
 	vtmClaims[TokenExp] = vtm.AccessTokenExpires
 	vtmClaims[TokenAPIKey] = apiKey
+	vtmClaims[TokenPlatformType] = platformType
 
 	if emailId != "" {
 		vtmClaims["email_id"] = emailId
@@ -204,6 +207,19 @@ func ExtractOTM(bearerToken string) (*constants.OnboardingTokenMeta, error) {
 
 		apiKey, _ := claims[TokenAPIKey].(string)
 
+		if apiKey == "" {
+			platformType, _ := claims[TokenPlatformType].(string)
+
+			if platformType != string(utils.PlatformDashboard) {
+				return nil, errors.New("platform type should be present in headers")
+			}
+			
+			return &constants.OnboardingTokenMeta{
+				AccessUuid: accessUuid,
+				PlatformType: platformType,
+			}, nil
+		}
+
 		return &constants.OnboardingTokenMeta{
 			AccessUuid: accessUuid,
 			ApiKey:     apiKey,
@@ -236,6 +252,22 @@ func ExtractVTM(bearerToken string) (*constants.VerifyTokenMeta, error) {
 		mobileNo, _ := claims["mobile_no"].(string)
 		countryCode, _ := claims["country_code"].(string)
 
+		if apiKey == "" {
+			platformType, _ := claims[TokenPlatformType].(string)
+
+			if platformType != string(utils.PlatformDashboard) {
+				return nil, errors.New("platform type should be present in headers")
+			}
+
+			return &constants.VerifyTokenMeta{
+				AccessUuid:  accessUuid,
+				EmailID:     emailId,
+				MobileNo:    mobileNo,
+				CountryCode: countryCode,
+				PlatformType: platformType,
+			}, nil
+		}
+
 		return &constants.VerifyTokenMeta{
 			AccessUuid:  accessUuid,
 			ApiKey:      apiKey,
@@ -243,7 +275,6 @@ func ExtractVTM(bearerToken string) (*constants.VerifyTokenMeta, error) {
 			MobileNo:    mobileNo,
 			CountryCode: countryCode,
 		}, nil
-
 	}
 
 	return nil, err
