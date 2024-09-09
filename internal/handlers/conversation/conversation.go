@@ -245,9 +245,9 @@ func createConversationInternal(c *gin.Context, userId string, deviceID string) 
 	}
 }
 
-// publishConversationOnTopicTypeChatroom to publish Conversation on TopicTypeChatroom
+// publishConversationOnTopicTypeChatroom to publish Conversation on TopicTypeChatroomDynamic
 func publishConversationOnTopicTypeChatroom(c *gin.Context, createConversationRequest *CreateConversationRequest, userId string, deviceID string, response map[string]interface{}) {
-	topicChatroom := fmt.Sprintf(pubsub.TopicTypeChatroom, createConversationRequest.ChatroomID)
+	topicChatroom := fmt.Sprintf(pubsub.TopicTypeChatroomDynamic, createConversationRequest.ChatroomID)
 	params := map[string]string{
 		pubsub.ParamTopicMessageType: pubsub.TopicMessageTypeConversation,
 	}
@@ -255,10 +255,10 @@ func publishConversationOnTopicTypeChatroom(c *gin.Context, createConversationRe
 	publishDataOnPandemonium(topicChatroom, headers, params, response)
 }
 
-// publishConversationOnTopicTypeChatroom to publish Conversation on TopicTypeCommunity
+// publishConversationOnTopicTypeChatroom to publish Conversation on TopicTypeCommunityDynamic
 func publishConversationOnTopicTypeCommunity(c *gin.Context, userId string, deviceID string, response map[string]interface{}) {
 	var communityID = response["conversation"].(map[string]interface{})["member"].(map[string]interface{})["sdk_client_info"].(map[string]interface{})["community"]
-	topicCommunity := fmt.Sprintf(pubsub.TopicTypeCommunity, communityID)
+	topicCommunity := fmt.Sprintf(pubsub.TopicTypeCommunityDynamic, communityID)
 	params := map[string]string{
 		pubsub.ParamTopicMessageType: pubsub.TopicMessageTypeConversation,
 	}

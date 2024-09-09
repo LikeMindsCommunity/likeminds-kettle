@@ -1,15 +1,20 @@
 package pubsub
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/channel"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/chatroom"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -25,6 +30,52 @@ func newUpgrader() websocket.Upgrader {
 
 // Subscribe to open WS against a topic
 func Subscribe(c *gin.Context) {
+	topic := c.Param(ParamTopic)
+	topicSplit, err := GetTopicSplit(topic)
+	if err != nil {
+		utils.GeneralBadRequestError(c, err.Error())
+		return
+	}
+
+	switch topicSplit[0] {
+	case TopicTypeChatroom:
+		userId := user.GetRequestingUserId(c)
+		if userId == "" || userId == "null" {
+			utils.GeneralBadRequestError(c, ErrorUserUUIDMissing)
+			return
+		}
+		params := map[string]string{
+			channel.ParamChannelId:          c.Param(channel.ParamChannelId),
+			channel.ParamChannelActionTypes: c.Query(channel.ParamChannelActionTypes),
+		}
+		//Get chatroom details to verify if user has access to any chatroom / cohort based chatroom / secret chatroom
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, channel.SyncChannelDetailEndppoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		if respBytes == nil || statusCode != 200 {
+			utils.GeneralBadRequestError(c, ErrorUserChatroomAccess)
+			return
+		} else {
+			var chatroomDetailParentResponse chatroom.ChatroomDetailParentResponse
+			if err := json.Unmarshal(respBytes, &chatroomDetailParentResponse); err != nil {
+				utils.GeneralAPIError(c, fmt.Sprintf(ErrorUnmarshalErrorJson, err))
+				return
+			}
+			chatroomDetail := chatroomDetailParentResponse.ChatroomDetail
+			canAccessSecretChatroom := chatroomDetail.CanAccessSecretChatroom
+			if canAccessSecretChatroom != nil {
+				if *canAccessSecretChatroom == false {
+					utils.GeneralBadRequestError(c, ErrorUserChatroomAccess)
+					return
+				}
+			}
+			cohortAccess := chatroomDetail.CohortAccess
+			if cohortAccess != nil {
+				if *cohortAccess != 200 {
+					utils.GeneralBadRequestError(c, ErrorUserChatroomAccess)
+					return
+				}
+			}
+		}
+	}
 	// Upgrade HTTP request
 	conn, err := upgraderHTTPToWs(c)
 	if err != nil {
@@ -166,4 +217,16 @@ func startPingMessageToServer(conn *websocket.Conn) {
 		}
 		log.Println(PingSendWs)
 	}
+}
+
+// GetTopicSplit will decode topic and return split
+func GetTopicSplit(topic string) ([]string, error) {
+	if topic == "" || topic == "null" {
+		return nil, errors.New(ErrorTopicMissing)
+	}
+	topicSplit := strings.Split(topic, ":")
+	if len(topicSplit) <= 1 {
+		return nil, errors.New(ErrorTopicInvalid)
+	}
+	return topicSplit, nil
 }
