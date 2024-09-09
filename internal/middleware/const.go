@@ -27,5 +27,4 @@ const (
 // Context Headers
 const (
 	ContextApiKeyHeader = "X-Api-Key"
-	ContextPlatformTypeHeader = "x-platform-type"
 )

@@ -38,7 +38,7 @@ func OTMValidationMiddleware() gin.HandlerFunc {
 
 			// Set platform type in request header
 			if otm.PlatformType != "" {
-				c.Request.Header[ContextPlatformTypeHeader] = []string{otm.PlatformType}
+				c.Request.Header[utils.HeadersPlatformType] = []string{otm.PlatformType}
 			}
 
 			// Set API key in request header
@@ -73,7 +73,7 @@ func VTMValidationMiddleware(isMandatory bool) gin.HandlerFunc {
 
 			// Set platform type in request header
 			if vtm.PlatformType != "" {
-				c.Request.Header[ContextPlatformTypeHeader] = []string{vtm.PlatformType}
+				c.Request.Header[utils.HeadersPlatformType] = []string{vtm.PlatformType}
 			}
 
 			// // Set API key in request header
