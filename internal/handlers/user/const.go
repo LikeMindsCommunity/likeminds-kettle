@@ -42,6 +42,8 @@ const ParamUserUUID = "user_uuid"
 const ParamBlockUserType = "block_user_type"
 const ParamPage = "page"
 const ParamPageSize = "page_size"
+const ParamPlatformtype = "platform_type"
+const ResponseUserExists = "existing_user"
 
 const (
 	VTM = "vtm"

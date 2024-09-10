@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/koding/websocketproxy"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -37,6 +36,11 @@ func OTMValidationMiddleware() gin.HandlerFunc {
 			// If valid, set "otm" in context, to be used in later APIs
 			c.Set(constants.ParamOTM, otm)
 
+			// Set platform type in request header
+			if otm.PlatformType != "" {
+				c.Request.Header[ContextPlatformTypeheader] = []string{otm.PlatformType}
+			}
+
 			// Set API key in request header
 			if otm.ApiKey != "" {
 				c.Request.Header[ContextApiKeyHeader] = []string{otm.ApiKey}
@@ -66,6 +70,11 @@ func VTMValidationMiddleware(isMandatory bool) gin.HandlerFunc {
 		} else {
 			// If valid, set "vtm" in context, to be used in later APIs
 			c.Set(constants.ParamVTM, vtm)
+
+			// Set platform type in request header
+			if vtm.PlatformType != "" {
+				c.Request.Header[ContextPlatformTypeheader] = []string{vtm.PlatformType}
+			}
 
 			// // Set API key in request header
 			if vtm.ApiKey != "" {
@@ -472,25 +481,6 @@ func LoggingMiddleware() gin.HandlerFunc {
 			}
 
 			c.Next()
-		}
-	}
-}
-
-func WSProxyMiddleware(psWSProxy *websocketproxy.WebsocketProxy) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		psWSProxy.Director = func(incoming *http.Request, out http.Header) {
-			// Authorize User
-			userId := user.GetRequestingUserId(c)
-			if userId == "" {
-				return
-			}
-
-			// Authorize User
-			deviceID := user.GetRequestingUserDeviceId(c)
-			headersMap := utils.CreateHeadersFromToken(c, userId, deviceID)
-			for key, value := range headersMap {
-				out.Add(key, value.(string))
-			}
 		}
 	}
 }

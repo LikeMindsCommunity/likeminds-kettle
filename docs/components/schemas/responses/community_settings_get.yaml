@@ -1,22 +1,23 @@
 type: object
 properties:
-  success:
-    type: boolean
-  data:
-    type: object
-    properties:
-      community_settings:
-        type: array
-        items:
-          type: object
-          properties:
-            enabled:
-              type: boolean
-            enabled_by:
-              type: integer
-            setting_sub_title:
-              type: string
-            setting_title:
-              type: string
-            setting_type:
-              type: string
+  community_settings:
+    type: array
+    items:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Indicates if the setting is enabled
+        enabled_by:
+          type: integer
+          description: ID of the user who enabled the setting
+          nullable: true
+        setting_sub_title:
+          type: string
+          description: Subtitle of the setting
+        setting_title:
+          type: string
+          description: Title of the setting
+        setting_type:
+          type: string
+          description: Type of the setting
