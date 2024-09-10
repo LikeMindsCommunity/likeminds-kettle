@@ -28,6 +28,12 @@ func newUpgrader() websocket.Upgrader {
 	}
 }
 
+// upgraderHTTPToWs to upgrade the incoming HTTP request to a WebSocket connection
+func upgraderHTTPToWs(c *gin.Context) (*websocket.Conn, error) {
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	return conn, err
+}
+
 // Subscribe to open WS against a topic
 func Subscribe(c *gin.Context) {
 	topic := c.Param(ParamTopic)
@@ -59,9 +65,9 @@ func Subscribe(c *gin.Context) {
 			channel.ParamChannelActionTypes: c.Query(channel.ParamChannelActionTypes),
 		}
 		//Get chatroom details to verify if user has access to any chatroom / cohort based chatroom / secret chatroom
-		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, channel.SyncChannelDetailEndppoint, utils.GETRequest, utils.CreateHeaders(c, UUID), params, nil)
-		if respBytes == nil || statusCode != 200 {
-			utils.GeneralBadRequestError(c, ErrorUserChatroomAccess)
+		respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, channel.SyncChannelDetailEndppoint, utils.GETRequest, utils.CreateHeaders(c, UUID), params, nil)
+		if err != nil || statusCode != 200 {
+			utils.GeneralBadRequestError(c, fmt.Sprintf(ErrorUserChatroomAccess, err))
 			return
 		} else {
 			var chatroomDetailParentResponse chatroom.ChatroomDetailParentResponse
@@ -116,10 +122,16 @@ func Subscribe(c *gin.Context) {
 	go readFromServerAndWriteToClient(conn, serverConn)
 }
 
-// upgraderHTTPToWs to upgrade the incoming HTTP request to a WebSocket connection
-func upgraderHTTPToWs(c *gin.Context) (*websocket.Conn, error) {
-	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-	return conn, err
+// GetTopicSplit will decode topic and return split
+func GetTopicSplit(topic string) ([]string, error) {
+	if topic == "" || topic == "null" {
+		return nil, errors.New(ErrorTopicMissing)
+	}
+	topicSplit := strings.Split(topic, ":")
+	if len(topicSplit) <= 1 {
+		return nil, errors.New(ErrorTopicInvalid)
+	}
+	return topicSplit, nil
 }
 
 // createHeaders to createHeaders required for connecting with websocket server
@@ -232,16 +244,4 @@ func startPingMessageToServer(conn *websocket.Conn) {
 		}
 		log.Println(PingSendWs)
 	}
-}
-
-// GetTopicSplit will decode topic and return split
-func GetTopicSplit(topic string) ([]string, error) {
-	if topic == "" || topic == "null" {
-		return nil, errors.New(ErrorTopicMissing)
-	}
-	topicSplit := strings.Split(topic, ":")
-	if len(topicSplit) <= 1 {
-		return nil, errors.New(ErrorTopicInvalid)
-	}
-	return topicSplit, nil
 }

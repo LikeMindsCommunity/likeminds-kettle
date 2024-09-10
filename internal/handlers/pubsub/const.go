@@ -43,7 +43,7 @@ const (
 	ErrorTopicMissing            = "Topic is missing from request"
 	ErrorTopicInvalid            = "Invalid format of topic"
 	ErrorUserUUIDMissing         = "User UUID is missing in headers"
-	ErrorUserChatroomAccess      = "User doesn't have access to chatroom"
+	ErrorUserChatroomAccess      = "Unable to subscribe to chatroom - %s"
 	ErrorUnmarshalErrorJson      = "Unmarshal error: %v"
 	ErrorChatroomIDMissing       = "Chatroom ID is missing in request"
 	ErrorChatroomResponseInvalid = "Invalid channel_details_data key in response"
