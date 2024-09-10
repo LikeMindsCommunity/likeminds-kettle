@@ -1,0 +1,6 @@
+name: should_recompute
+in: query
+description: To recompute Personalised feed (happens in background)
+schema:
+  type: boolean
+  default: false

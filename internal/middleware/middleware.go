@@ -36,6 +36,11 @@ func OTMValidationMiddleware() gin.HandlerFunc {
 			// If valid, set "otm" in context, to be used in later APIs
 			c.Set(constants.ParamOTM, otm)
 
+			// Set platform type in request header
+			if otm.PlatformType != "" {
+				c.Request.Header[ContextPlatformTypeheader] = []string{otm.PlatformType}
+			}
+
 			// Set API key in request header
 			if otm.ApiKey != "" {
 				c.Request.Header[ContextApiKeyHeader] = []string{otm.ApiKey}
@@ -65,6 +70,11 @@ func VTMValidationMiddleware(isMandatory bool) gin.HandlerFunc {
 		} else {
 			// If valid, set "vtm" in context, to be used in later APIs
 			c.Set(constants.ParamVTM, vtm)
+
+			// Set platform type in request header
+			if vtm.PlatformType != "" {
+				c.Request.Header[ContextPlatformTypeheader] = []string{vtm.PlatformType}
+			}
 
 			// // Set API key in request header
 			if vtm.ApiKey != "" {

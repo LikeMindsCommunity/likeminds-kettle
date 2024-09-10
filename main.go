@@ -45,7 +45,7 @@ var (
 )
 
 func main() {
-	var AppVersion = "2.40.0"
+	var AppVersion = "2.40.1"
 
 	redisClient = cache.InitRedis()
 
@@ -98,7 +98,7 @@ func setRouterA() {
 	routerA.GET(constants.UserTokenRoute, user.CreateToken)
 
 	// User Apis
-	routerA.POST(constants.UserLoginRoute, middleware.OTMValidationMiddleware(), user.Login)
+	routerA.POST(constants.UserLoginRoute, middleware.VTMValidationMiddleware(false), user.Login)
 	routerA.POST(constants.UserRefreshRoute, middleware.RTMValidationMiddleware(redisClient), user.Refresh)
 	routerA.POST(constants.UserLogoutRoute, middleware.LogoutValidationMiddleware(redisClient), user.Logout)
 	routerA.POST(constants.UserMergeAccountRoute, middleware.LTMValidationMiddleware(redisClient, true), user.MergeAccount)
