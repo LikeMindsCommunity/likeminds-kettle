@@ -38,7 +38,7 @@ func OTMValidationMiddleware() gin.HandlerFunc {
 
 			// Set platform type in request header
 			if otm.PlatformType != "" {
-				c.Request.Header[utils.HeadersPlatformType] = []string{otm.PlatformType}
+				c.Request.Header[ContextPlatformTypeheader] = []string{otm.PlatformType}
 			}
 
 			// Set API key in request header
