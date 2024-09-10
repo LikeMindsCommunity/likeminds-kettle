@@ -1,6 +1,10 @@
 package utils
 
-import "github.com/go-redis/redis/v7"
+import (
+	"fmt"
+
+	"github.com/go-redis/redis/v7"
+)
 
 // AppendRepostPostUsersFromFeedDataResponse | adds uuids from reposted_posts container to API response user uuid list
 func AppendRepostPostUsersFromFeedDataResponse(dataResponse map[string]interface{}, userIDs []string) []string {
@@ -56,6 +60,50 @@ func appendOptionCreatorFromOption(option interface{}, userIDs []string) []strin
 	return userIDs
 }
 
+// Add block user name in title of post menu
+func addUserNameInBlockMenuTitle(dataResponse map[string]interface{}) map[string]interface{} {
+	if value, ok := dataResponse["posts"]; ok {
+		if userData, ok := dataResponse["users"].(map[string]MemberMeta); ok {
+			posts := value.([]interface{})
+			var updatedPostsData []interface{}
+
+			// Fetch menu items from array
+			for _, data := range posts {
+				var userMemberMetaData MemberMeta
+				var dataMap map[string]interface{} = data.(map[string]interface{})
+
+				if userUniqueId, ok := dataMap["uuid"]; ok {
+					userMemberMetaData = userData[userUniqueId.(string)]
+				}
+
+				userFirstName := GetFirstNameFromName(userMemberMetaData.Name)
+
+				if menuItems, ok := dataMap["menu_items"]; ok && userFirstName != "" {
+					updatedMenuItems := []map[string]interface{}{}
+
+					for _, menuItem := range menuItems.([]interface{}) {
+						menuItemMap := menuItem.(map[string]interface{})
+						menuItemId, ok := menuItemMap["id"].(float64)
+						if ok && menuItemId == BlockUserMenuItemID {
+							menuItemMap["title"] = fmt.Sprintf(BlockUserMenuItemTitle, userFirstName)
+						}
+
+						updatedMenuItems = append(updatedMenuItems, menuItemMap)
+					}
+
+					dataMap["menu_items"] = updatedMenuItems
+				}
+
+				updatedPostsData = append(updatedPostsData, dataMap)
+			}
+
+			dataResponse["posts"] = updatedPostsData
+		}
+	}
+
+	return dataResponse
+}
+
 func PopulateDataResponseForFeed(headers map[string]interface{}, redisClient *redis.Client, dataResponse map[string]interface{},
 ) (map[string]interface{}, error) {
 
@@ -78,6 +126,8 @@ func PopulateDataResponseForFeed(headers map[string]interface{}, redisClient *re
 
 		//Update user data in dataResponse
 		dataResponse["users"] = userData
+
+		dataResponse = addUserNameInBlockMenuTitle(dataResponse)
 
 		// Update user topics data in dataResponse
 		dataResponse = FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
