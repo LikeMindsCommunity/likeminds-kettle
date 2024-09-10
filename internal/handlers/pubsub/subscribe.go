@@ -36,67 +36,25 @@ func upgraderHTTPToWs(c *gin.Context) (*websocket.Conn, error) {
 
 // Subscribe to open WS against a topic
 func Subscribe(c *gin.Context) {
-	topic := c.Param(ParamTopic)
-	topicSplit, err := GetTopicSplit(topic)
+	// Validate params and headers before subscribing to a topic
+	topicSplit, userID, topicID, err := validateParamsAndHeaders(c)
 	if err != nil {
 		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
-	switch topicSplit[0] {
-	case TopicTypeChatroom:
-		UUID := user.GetRequestingUserId(c)
-		var chatroomID string
-		if len(topicSplit) > 1 {
-			chatroomID = topicSplit[1]
+	// Check if user has access to chatroom
+	statusCode, err := hasAccessToChatroom(c, topicSplit, userID, topicID)
+	if err != nil {
+		switch statusCode {
+		case http.StatusBadRequest:
+			utils.GeneralBadRequestError(c, err.Error())
+		default:
+			utils.GeneralAPIError(c, err.Error())
 		}
-		//If UUID is missing, return error
-		if UUID == "" || UUID == "null" {
-			utils.GeneralBadRequestError(c, ErrorUserUUIDMissing)
-			return
-		}
-		//If chatroomID is missing, return error
-		if chatroomID == "" || chatroomID == "null" {
-			utils.GeneralBadRequestError(c, ErrorChatroomIDMissing)
-			return
-		}
-		params := map[string]string{
-			channel.ParamChannelId:          chatroomID,
-			channel.ParamChannelActionTypes: c.Query(channel.ParamChannelActionTypes),
-		}
-		//Get chatroom details to verify if user has access to any chatroom / cohort based chatroom / secret chatroom
-		respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, channel.SyncChannelDetailEndppoint, utils.GETRequest, utils.CreateHeaders(c, UUID), params, nil)
-		if err != nil || statusCode != 200 {
-			utils.GeneralBadRequestError(c, fmt.Sprintf(ErrorUserChatroomAccess, err))
-			return
-		} else {
-			var chatroomDetailParentResponse chatroom.ChatroomDetailParentResponse
-			if err := json.Unmarshal(respBytes, &chatroomDetailParentResponse); err != nil {
-				utils.GeneralAPIError(c, fmt.Sprintf(ErrorUnmarshalErrorJson, err))
-				return
-			}
-			chatroomDetailArray := chatroomDetailParentResponse.ChatroomDetail
-			if len(chatroomDetailArray) < 1 {
-				utils.GeneralAPIError(c, ErrorChatroomResponseInvalid)
-				return
-			}
-			chatroomDetail := chatroomDetailArray[0]
-			canAccessSecretChatroom := chatroomDetail.CanAccessSecretChatroom
-			if canAccessSecretChatroom != nil {
-				if *canAccessSecretChatroom == false {
-					utils.GeneralBadRequestError(c, ErrorUserChatroomAccess)
-					return
-				}
-			}
-			cohortAccess := chatroomDetail.CohortAccess
-			if cohortAccess != nil {
-				if *cohortAccess != 200 {
-					utils.GeneralBadRequestError(c, ErrorUserChatroomAccess)
-					return
-				}
-			}
-		}
+		return
 	}
+
 	// Upgrade HTTP request
 	conn, err := upgraderHTTPToWs(c)
 	if err != nil {
@@ -122,8 +80,73 @@ func Subscribe(c *gin.Context) {
 	go readFromServerAndWriteToClient(conn, serverConn)
 }
 
-// GetTopicSplit will decode topic and return split
-func GetTopicSplit(topic string) ([]string, error) {
+// validateParamsAndHeaders to validate params and headers sent while subscribing to topic
+func validateParamsAndHeaders(c *gin.Context) ([]string, string, string, error) {
+	//Validate topic
+	topic := c.Param(ParamTopic)
+	topicSplit, err := getTopicSplit(topic)
+	if err != nil {
+		return nil, "", "", err
+	}
+	userID := user.GetRequestingUserId(c)
+	var topicID string
+	if len(topicSplit) > 1 {
+		topicID = topicSplit[1]
+	}
+	//If userID is missing, return error
+	if userID == "" || userID == "null" {
+		return nil, "", "", errors.New(ErrorUserUUIDMissing)
+	}
+	//If topicID is missing, return error
+	if topicID == "" || topicID == "null" {
+		return nil, "", "", errors.New(ErrorTopicIDMissing)
+	}
+	return topicSplit, userID, topicID, nil
+}
+
+// hasAccessToChatroom to check if userID has access to topicID while subscribing to chatroom topic
+func hasAccessToChatroom(c *gin.Context, topicSplit []string, userID string, topicID string) (int, error) {
+	switch topicSplit[0] {
+	case TopicTypeChatroom:
+		params := map[string]string{
+			channel.ParamChannelId:          topicID,
+			channel.ParamChannelActionTypes: c.Query(channel.ParamChannelActionTypes),
+		}
+		//Get chatroom details to verify if user has access to any chatroom / cohort based chatroom / secret chatroom
+		respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, channel.SyncChannelDetailEndppoint, utils.GETRequest, utils.CreateHeaders(c, userID), params, nil)
+		if err != nil || statusCode != 200 {
+			return statusCode, errors.New(fmt.Sprintf(ErrorUserChatroomAccess, err))
+		} else {
+			var chatroomDetailParentResponse chatroom.ChatroomDetailParentResponse
+			if err := json.Unmarshal(respBytes, &chatroomDetailParentResponse); err != nil {
+				return statusCode, errors.New(fmt.Sprintf(ErrorUnmarshalErrorJson, err))
+			}
+			chatroomDetailArray := chatroomDetailParentResponse.ChatroomDetail
+			if len(chatroomDetailArray) < 1 {
+				return statusCode, errors.New(ErrorChatroomResponseInvalid)
+			}
+			//If user has access to secret chatroom
+			chatroomDetail := chatroomDetailArray[0]
+			canAccessSecretChatroom := chatroomDetail.CanAccessSecretChatroom
+			if canAccessSecretChatroom != nil {
+				if *canAccessSecretChatroom == false {
+					return statusCode, errors.New(ErrorUserChatroomAccess)
+				}
+			}
+			//If user has access to cohort based chatroom
+			cohortAccess := chatroomDetail.CohortAccess
+			if cohortAccess != nil {
+				if *cohortAccess != 200 {
+					return statusCode, errors.New(ErrorUserChatroomAccess)
+				}
+			}
+		}
+	}
+	return http.StatusOK, nil
+}
+
+// getTopicSplit will decode topic and return split
+func getTopicSplit(topic string) ([]string, error) {
 	if topic == "" || topic == "null" {
 		return nil, errors.New(ErrorTopicMissing)
 	}
