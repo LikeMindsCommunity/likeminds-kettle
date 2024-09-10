@@ -73,7 +73,7 @@ func VTMValidationMiddleware(isMandatory bool) gin.HandlerFunc {
 
 			// Set platform type in request header
 			if vtm.PlatformType != "" {
-				c.Request.Header[utils.HeadersPlatformType] = []string{vtm.PlatformType}
+				c.Request.Header[ContextPlatformTypeheader] = []string{vtm.PlatformType}
 			}
 
 			// // Set API key in request header
