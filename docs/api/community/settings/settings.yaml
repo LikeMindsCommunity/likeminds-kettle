@@ -1,14 +1,15 @@
 get:
-  summary: Get Community Settings
   operationId: getCommunitySettings
   tags:
     - Community
+
+  summary: Get Community Settings
+  description: This API fetches Community Settings.
+
   security:
     - bearerAuth: []
   parameters:
     - $ref: "../../../components/parameters/headers/apiKey.yaml"
-    - $ref: "../../../components/parameters/headers/platformCode.yaml"
-    - $ref: "../../../components/parameters/headers/versionCode.yaml"
   responses:
     "200":
       description: OK
@@ -20,10 +21,13 @@ get:
 
 
 put:
-  summary: Update Community Settings
   operationId: updateCommunitySettings
   tags:
     - Community
+
+  summary: Update Community Settings
+  description: This API updates Community Settings.
+
   security:
     - bearerAuth: []
   parameters:
