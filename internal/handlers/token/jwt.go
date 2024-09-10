@@ -211,7 +211,7 @@ func ExtractOTM(bearerToken string) (*constants.OnboardingTokenMeta, error) {
 			platformType, _ := claims[TokenPlatformType].(string)
 
 			if platformType != string(utils.PlatformDashboard) {
-				return nil, errors.New("platform type should be present in headers")
+				return nil, errors.New(utils.ErrorPlatformTypeInHeader)
 			}
 			
 			return &constants.OnboardingTokenMeta{
@@ -256,7 +256,7 @@ func ExtractVTM(bearerToken string) (*constants.VerifyTokenMeta, error) {
 			platformType, _ := claims[TokenPlatformType].(string)
 
 			if platformType != string(utils.PlatformDashboard) {
-				return nil, errors.New("platform type should be present in context headers")
+				return nil, errors.New(utils.ErrorPlatformTypeInHeader)
 			}
 
 			return &constants.VerifyTokenMeta{
