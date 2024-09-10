@@ -35,24 +35,31 @@ get:
                   type: "personalised_feed_weights"
                   value:
                     comments_metrics:
+                      description: "Weight and Max threshold (ceiling value for comments count) for comments metrics"
                       max_threshold: 1000
                       weight: 10
                     likes_metrics:
+                      description: "Weight and Max threshold (ceiling value for likes count) for likes metrics"
                       max_threshold: 1000
                       weight: 10
                     post_dampening_metrics:
+                      description: "Reduces the visibility of posts over time by applying a negative score to posts viewed within the past 24 hours."
                       max_threshold: 100
                       weight: 10
                     recency_metrics:
+                      description: "Weight and Max threshold (ceiling value in seconds) for recency metrics"
                       max_threshold: 180000
                       weight: 10
                     user_connection_metrics:
+                      description: "Weight and Max threshold for user connections metrics"
                       max_threshold: 10
                       weight: 10
                     user_groups_metrics:
+                      description: "Weight and Max threshold for user groups metrics"
                       max_threshold: 10
                       weight: 10
                     user_topics_metrics:
+                      description: "Weight and Max threshold for user topics metrics"
                       max_threshold: 10
                       weight: 10
                 - description: "Media size upload limit (in Kilobytes) for different file formats"
