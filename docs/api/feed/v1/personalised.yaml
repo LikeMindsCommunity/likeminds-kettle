@@ -1,0 +1,24 @@
+get:
+  operationId: fetchPersonalisedFeed
+  tags:
+    - Feed - V1
+
+  summary: Fetch Personalised Feed
+  description: This API fetches Personalised Feed.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../components/parameters/query/page.yaml"
+    - $ref: "../../../components/parameters/query/pageSize.yaml"
+    - $ref: "../../../components/parameters/query/shouldReorder.yaml"
+    - $ref: "../../../components/parameters/query/shouldRecompute.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/feed_universal.yaml"
