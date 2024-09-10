@@ -17,6 +17,96 @@ get:
         application/json:
           schema:
             $ref: "../../../components/schemas/responses/community_settings_get.yaml"
+          example:
+            success: true
+            data:
+              community_settings:
+                - enabled: true
+                  enabled_by: 12345
+                  setting_sub_title: "If enabled, the users will be able to send connection request to other members"
+                  setting_title: "User Connection"
+                  setting_type: "user_connection"
+                - enabled: true
+                  enabled_by: 12345
+                  setting_sub_title: "Enable User topics connection (follow/unfollow topics) in the community"
+                  setting_title: "User Topics Connection"
+                  setting_type: "user_topics_connection"
+                - enabled: true
+                  enabled_by: 12345
+                  setting_sub_title: "Enable personalised feed in community"
+                  setting_title: "Enable personalised feed"
+                  setting_type: "enable_personalised_feed"
+                - enabled: true
+                  enabled_by: 12345
+                  setting_sub_title: ""
+                  setting_title: "Feed"
+                  setting_type: "feed"
+                - enabled: false
+                  enabled_by: null
+                  setting_sub_title: "Member's posts would need admin's approval to appear publicly"
+                  setting_title: "Post Approval needed"
+                  setting_type: "post_approval_needed"
+                - enabled: true
+                  enabled_by: 12345
+                  setting_sub_title: "Receiver of DM request will have the option to approve or reject the request"
+                  setting_title: "DM requests need approval"
+                  setting_type: "enable_dm_without_connection_request"
+                - enabled: true
+                  enabled_by: 12345
+                  setting_sub_title: "Enable/Disable user notifications in the community"
+                  setting_title: "User Notifications"
+                  setting_type: "user_notifications"
+                - enabled: false
+                  enabled_by: null
+                  setting_sub_title: "If enabled, the guest flow will be enabled for the community"
+                  setting_title: "Enable guest flow"
+                  setting_type: "enable_guest_flow"
+                - enabled: false
+                  enabled_by: null
+                  setting_sub_title: "To enable NSFW filtering for feed posts in the community"
+                  setting_title: "NSFW Filtering for feed"
+                  setting_type: "nsfw_filtering"
+                - enabled: true
+                  enabled_by: 12345
+                  setting_sub_title: "If enabled, members can repost other other member posts"
+                  setting_title: "Feed Repost"
+                  setting_type: "feed_repost"
+                - enabled: true
+                  enabled_by: 12345
+                  setting_sub_title: ""
+                  setting_title: "Create Poll"
+                  setting_type: "create_poll"
+                - enabled: false
+                  enabled_by: null
+                  setting_sub_title: "If disabled, DMs would appear in a separate tab"
+                  setting_title: "DMs appear with group messages"
+                  setting_type: "direct_messages_with_group_messages"
+                - enabled: true
+                  enabled_by: 12345
+                  setting_sub_title: ""
+                  setting_title: "Direct message"
+                  setting_type: "direct_messages_setting"
+                - enabled: false
+                  enabled_by: null
+                  setting_sub_title: "Members would have option to accept or reject another member’s DM request."
+                  setting_title: "Members can DM other members"
+                  setting_type: "members_can_dm"
+                - enabled: false
+                  enabled_by: null
+                  setting_sub_title: "If enabled, community managers will be able to message all  members and vice-versa."
+                  setting_title: "Enable direct messages"
+                  setting_type: "direct_messages"
+                - enabled: true
+                  enabled_by: 12345
+                  setting_sub_title: "If disabled, members will need approval from the community manager to join the community."
+                  setting_title: "Members auto-join"
+                  setting_type: "members_auto_join"
+                - enabled: true
+                  enabled_by: 12345
+                  setting_sub_title: "Introduction rooms are used to welcome new members in your communities. If the feature is turned off, Introduction rooms and intro rooms would be hidden."
+                  setting_title: "Introductions Room"
+                  setting_type: "intro_room"
+
 
 
 
