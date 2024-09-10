@@ -4,11 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/internal/cache"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/chatroom"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/community"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsub"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
+	"strconv"
+	"time"
 )
 
 type PollObject struct {
@@ -247,23 +251,43 @@ func createConversationInternal(c *gin.Context, userId string, deviceID string) 
 
 // publishConversationOnTopicTypeChatroom to publish Conversation on TopicTypeChatroom
 func publishConversationOnTopicTypeChatroom(c *gin.Context, createConversationRequest *CreateConversationRequest, userId string, deviceID string, response map[string]interface{}) {
+	headers := utils.CreateHeadersFromToken(c, userId, deviceID)
 	topicChatroom := fmt.Sprintf(pubsub.TopicTypeChatroom, createConversationRequest.ChatroomID)
 	params := map[string]string{
 		pubsub.ParamTopicMessageType: pubsub.TopicMessageTypeConversation,
 	}
-	headers := utils.CreateHeadersFromToken(c, userId, deviceID)
+
 	publishDataOnPandemonium(topicChatroom, headers, params, response)
 }
 
 // publishConversationOnTopicTypeChatroom to publish Conversation on TopicTypeCommunity
 func publishConversationOnTopicTypeCommunity(c *gin.Context, userId string, deviceID string, response map[string]interface{}) {
+	headers := utils.CreateHeadersFromToken(c, userId, deviceID)
 	var communityID = response["conversation"].(map[string]interface{})["member"].(map[string]interface{})["sdk_client_info"].(map[string]interface{})["community"]
 	topicCommunity := fmt.Sprintf(pubsub.TopicTypeCommunity, communityID)
-	params := map[string]string{
+	publishParams := map[string]string{
 		pubsub.ParamTopicMessageType: pubsub.TopicMessageTypeConversation,
 	}
-	headers := utils.CreateHeadersFromToken(c, userId, deviceID)
-	publishDataOnPandemonium(topicCommunity, headers, params, response)
+
+	chatroomID := response["conversation"].(map[string]interface{})["chatroom_id"].(string)
+	apiCR, _, err := getChatroom(c, userId, chatroomID)
+	if apiCR != nil {
+		isSecret := apiCR["chatroom"].(map[string]interface{})["is_secret"].(bool)
+		chatroomType := apiCR["chatroom"].(map[string]interface{})["type"].(int)
+
+		if isSecret == true || chatroomType == 10 {
+			allParticipantIDs, err := getParticipants(c, userId, chatroomID, isSecret)
+			if err != nil {
+				response["participants"] = allParticipantIDs
+				publishDataOnPandemonium(topicCommunity, headers, publishParams, response)
+			}
+		} else {
+			publishDataOnPandemonium(topicCommunity, headers, publishParams, response)
+		}
+
+	} else {
+		logging.Error(fmt.Sprintf("Error in getting chatroom data before publishing: %v", err))
+	}
 }
 
 func publishDataOnPandemonium(topicChatroom string, headers map[string]interface{}, params map[string]string, response map[string]interface{}) {
@@ -305,4 +329,110 @@ func deleteConversationInternal(c *gin.Context, userId string) {
 
 	//Send Request
 	utils.SendRequest(c, utils.CoreService, DeleteConversationEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, deleteConversationRequest)
+}
+
+func getChatroom(c *gin.Context, userID string, chatroomID string) (map[string]interface{}, int, error) {
+	// Params to be sent in the api/chatroom/fetch request
+	chatroomParams := map[string]string{
+		ParamChatroomId: chatroomID,
+	}
+
+	//Get Request response
+	respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, chatroom.FetchChatroomEndPoint, utils.GETRequest, utils.CreateHeaders(c, userID), chatroomParams, nil)
+	//Parse and generate response
+	apiCR := utils.ValidateClientResponseWithoutContext(respBytes, statusCode, err)
+	if apiCR != nil {
+		return apiCR, statusCode, err
+	}
+	return nil, statusCode, err
+}
+
+func getParticipants(c *gin.Context, userId string, chatroomID string, isSecret bool) ([]string, error) {
+	cacheKey := fmt.Sprintf(cache.ChatroomParticipantsKey, chatroomID)
+	// Check if the participants are already in the Redis cache
+	redisClient := utils.GetRedisClientFromContext(c)
+	cacheValue, exists, err := cache.Get(redisClient, cacheKey)
+	if err != nil {
+		return nil, err
+	}
+	if exists == true {
+		// Parse the cached data into a slice of strings (assuming JSON array format)
+		var cachedParticipantIDs []string
+		err = json.Unmarshal([]byte(cacheValue), &cachedParticipantIDs)
+		if err != nil {
+			return nil, fmt.Errorf("failed to unmarshal cached data: %v", err)
+		}
+
+		if cachedParticipantIDs != nil {
+			// If cache exists and is not nil, return the participants from cache
+			logging.Info("Returning participants from Redis cache")
+			return cachedParticipantIDs, nil
+		}
+	} else {
+		// Initialize parameters for pagination and collection of participants
+		params := map[string]string{
+			ParamChatroomId: chatroomID,
+			ParamPage:       "0",
+			ParamPageSize:   "100",
+		}
+		var allParticipantIDs []string
+
+		// Select the correct API endpoint based on whether the chatroom is secret
+		var endpoint string
+		if isSecret {
+			endpoint = chatroom.FetchSecretParticipantsMetaEndPoint
+		} else {
+			endpoint = chatroom.FetchParticipantsMetaEndPoint
+		}
+		// Loop to fetch participants until the response is empty
+		for {
+			// Make the API call to fetch participants
+			respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(
+				utils.CoreService,
+				endpoint,
+				utils.GETRequest,
+				utils.CreateHeaders(c, userId),
+				params,
+				nil,
+			)
+			// Check if the response is empty or if there was an error
+			if err != nil || respBytes == nil || statusCode != 200 {
+				break
+			}
+
+			// Parse the response to extract participant IDs
+			var response struct {
+				Participants []struct {
+					ID string `json:"id"`
+				} `json:"participants"`
+			}
+			if err := json.Unmarshal(respBytes, &response); err != nil {
+				break
+			}
+			// If no participants were found, exit the loop
+			if len(response.Participants) == 0 {
+				break
+			}
+
+			// Collect participant IDs
+			for _, participant := range response.Participants {
+				allParticipantIDs = append(allParticipantIDs, participant.ID)
+			}
+
+			// Increment page for the next request
+			currentPage, _ := strconv.Atoi(params[ParamPage])
+			params[ParamPage] = strconv.Itoa(currentPage + 1)
+		}
+
+		// Update Redis cache with the collected participant IDs if any participants were found
+		if len(allParticipantIDs) > 0 {
+			err = cache.Set(redisClient, cacheKey, allParticipantIDs, time.Hour*cache.ChatroomParticipantsTTL)
+			if err != nil {
+				return nil, fmt.Errorf("error updating Redis cache: %v", err)
+			} else {
+				return allParticipantIDs, nil
+			}
+		}
+	}
+	return nil, nil
 }
