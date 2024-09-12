@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/chatroom"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/community"
@@ -269,17 +270,19 @@ func publishConversationOnTopicTypeCommunity(c *gin.Context, userId string, devi
 		pubsub.ParamTopicMessageType: pubsub.TopicMessageTypeConversation,
 	}
 
-	chatroomID := response["conversation"].(map[string]interface{})["chatroom_id"].(string)
+	chatroomID := fmt.Sprintf("%.0f", response["conversation"].(map[string]interface{})["chatroom_id"].(float64))
 	apiCR, _, err := getChatroom(c, userId, chatroomID)
 	if apiCR != nil {
 		isSecret := apiCR["chatroom"].(map[string]interface{})["is_secret"].(bool)
-		chatroomType := apiCR["chatroom"].(map[string]interface{})["type"].(int)
+		chatroomType := apiCR["chatroom"].(map[string]interface{})["type"].(float64)
 
 		if isSecret == true || chatroomType == 10 {
 			allParticipantIDs, err := getParticipants(c, userId, chatroomID, isSecret)
-			if err != nil {
+			if allParticipantIDs != nil {
 				response["participants"] = allParticipantIDs
 				publishDataOnPandemonium(topicCommunity, headers, publishParams, response)
+			} else {
+				logging.Error(fmt.Sprintf("Error in getting participants data before publishing: %v", err))
 			}
 		} else {
 			publishDataOnPandemonium(topicCommunity, headers, publishParams, response)
@@ -337,8 +340,11 @@ func getChatroom(c *gin.Context, userID string, chatroomID string) (map[string]i
 		ParamChatroomId: chatroomID,
 	}
 
+	//Custom headers since this API will be called after conversation create and headers between these two APIs can have different x-api-version
+	headers := utils.CreateHeadersFromToken(c, userID, chatroomID)
+	headers[utils.HeadersApiVersion] = "1"
 	//Get Request response
-	respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, chatroom.FetchChatroomEndPoint, utils.GETRequest, utils.CreateHeaders(c, userID), chatroomParams, nil)
+	respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, chatroom.FetchChatroomEndPoint, utils.GETRequest, headers, chatroomParams, nil)
 	//Parse and generate response
 	apiCR := utils.ValidateClientResponseWithoutContext(respBytes, statusCode, err)
 	if apiCR != nil {
@@ -347,27 +353,19 @@ func getChatroom(c *gin.Context, userID string, chatroomID string) (map[string]i
 	return nil, statusCode, err
 }
 
-func getParticipants(c *gin.Context, userId string, chatroomID string, isSecret bool) ([]string, error) {
+func getParticipants(c *gin.Context, userID string, chatroomID string, isSecret bool) ([]string, error) {
 	cacheKey := fmt.Sprintf(cache.ChatroomParticipantsKey, chatroomID)
 	// Check if the participants are already in the Redis cache
 	redisClient := utils.GetRedisClientFromContext(c)
-	cacheValue, exists, err := cache.Get(redisClient, cacheKey)
+	cachedParticipantIDs, err := getParticipantsFromCache(redisClient, cacheKey)
 	if err != nil {
 		return nil, err
 	}
-	if exists == true {
-		// Parse the cached data into a slice of strings (assuming JSON array format)
-		var cachedParticipantIDs []string
-		err = json.Unmarshal([]byte(cacheValue), &cachedParticipantIDs)
-		if err != nil {
-			return nil, fmt.Errorf("failed to unmarshal cached data: %v", err)
-		}
+	if cachedParticipantIDs != nil && len(cachedParticipantIDs) > 0 {
+		// If cache exists and is not nil, return the participants from cache
+		logging.Info("Returning participants from Redis cache")
+		return cachedParticipantIDs, nil
 
-		if cachedParticipantIDs != nil {
-			// If cache exists and is not nil, return the participants from cache
-			logging.Info("Returning participants from Redis cache")
-			return cachedParticipantIDs, nil
-		}
 	} else {
 		// Initialize parameters for pagination and collection of participants
 		params := map[string]string{
@@ -386,12 +384,17 @@ func getParticipants(c *gin.Context, userId string, chatroomID string, isSecret 
 		}
 		// Loop to fetch participants until the response is empty
 		for {
+			//Custom headers since this API will be called after conversation create and headers between these two APIs can have different x-api-version
+			headers := utils.CreateHeadersFromToken(c, userID, chatroomID)
+			headers[utils.HeadersPlatformCode] = "an"
+			headers[utils.HeadersVersionCode] = "210"
+			headers[utils.HeadersApiVersion] = "1"
 			// Make the API call to fetch participants
 			respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(
 				utils.CoreService,
 				endpoint,
 				utils.GETRequest,
-				utils.CreateHeaders(c, userId),
+				headers,
 				params,
 				nil,
 			)
@@ -402,7 +405,8 @@ func getParticipants(c *gin.Context, userId string, chatroomID string, isSecret 
 
 			// Parse the response to extract participant IDs
 			var response struct {
-				Participants []struct {
+				TotalParticipantsCount int `json:"total_participants_count"`
+				Participants           []struct {
 					ID string `json:"uuid"`
 				} `json:"participants"`
 			}
@@ -418,6 +422,9 @@ func getParticipants(c *gin.Context, userId string, chatroomID string, isSecret 
 			for _, participant := range response.Participants {
 				allParticipantIDs = append(allParticipantIDs, participant.ID)
 			}
+			if len(allParticipantIDs) == response.TotalParticipantsCount {
+				break
+			}
 
 			// Increment page for the next request
 			currentPage, _ := strconv.Atoi(params[ParamPage])
@@ -426,13 +433,50 @@ func getParticipants(c *gin.Context, userId string, chatroomID string, isSecret 
 
 		// Update Redis cache with the collected participant IDs if any participants were found
 		if len(allParticipantIDs) > 0 {
-			err = cache.Set(redisClient, cacheKey, allParticipantIDs, time.Hour*cache.ChatroomParticipantsTTL)
+			err = setParticipantsInCache(redisClient, cacheKey, allParticipantIDs)
 			if err != nil {
-				return nil, fmt.Errorf("error updating Redis cache: %v", err)
+				return nil, err
 			} else {
 				return allParticipantIDs, nil
 			}
 		}
 	}
 	return nil, nil
+}
+
+// getParticipantsFromCache fetches data from Redis by key and unmarshals it into a []string
+func getParticipantsFromCache(redisClient *redis.Client, cacheKey string) ([]string, error) {
+	// Get data from Redis
+	cacheValue, _, err := cache.Get(redisClient, cacheKey)
+	if err != nil {
+		return nil, err
+	}
+	if cacheValue == "" {
+		return []string{}, nil
+	}
+
+	// Parse the cached data into a slice of strings (assuming JSON array format)
+	var participantIDs []string
+	err = json.Unmarshal([]byte(cacheValue), &participantIDs)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal cached data: %v", err)
+	}
+
+	return participantIDs, nil
+}
+
+// setParticipantsInCache to marshal data and set in cache
+func setParticipantsInCache(redisClient *redis.Client, cacheKey string, allParticipantIDs []string) error {
+	// Serialize the value to JSON
+	data, err := json.Marshal(allParticipantIDs)
+	if err != nil {
+		return fmt.Errorf("failed to marshal data: %v", err)
+	}
+
+	// Store the data in Redis with an expiration time (e.g., 24 hour)
+	err = cache.Set(redisClient, cacheKey, data, time.Hour*cache.ChatroomParticipantsTTL)
+	if err != nil {
+		return fmt.Errorf("error updating Redis cache: %v", err)
+	}
+	return nil
 }
