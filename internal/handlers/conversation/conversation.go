@@ -403,7 +403,7 @@ func getParticipants(c *gin.Context, userId string, chatroomID string, isSecret 
 			// Parse the response to extract participant IDs
 			var response struct {
 				Participants []struct {
-					ID string `json:"id"`
+					ID string `json:"uuid"`
 				} `json:"participants"`
 			}
 			if err := json.Unmarshal(respBytes, &response); err != nil {
