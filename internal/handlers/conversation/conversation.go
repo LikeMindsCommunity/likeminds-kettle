@@ -12,6 +12,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
+	"net/http"
 	"strconv"
 	"time"
 )
@@ -276,7 +277,7 @@ func publishConversationOnTopicTypeCommunity(c *gin.Context, userId string, devi
 		isSecret := apiCR["chatroom"].(map[string]interface{})["is_secret"].(bool)
 		chatroomType := apiCR["chatroom"].(map[string]interface{})["type"].(float64)
 
-		if isSecret == true || chatroomType == 10 {
+		if isSecret == true || chatroomType == chatroom.DMChatroomType {
 			allParticipantIDs, err := getParticipants(c, userId, chatroomID, isSecret)
 			if allParticipantIDs != nil {
 				response["participants"] = allParticipantIDs
@@ -342,7 +343,7 @@ func getChatroom(c *gin.Context, userID string, chatroomID string) (map[string]i
 
 	//Custom headers since this API will be called after conversation create and headers between these two APIs can have different x-api-version
 	headers := utils.CreateHeadersFromToken(c, userID, chatroomID)
-	headers[utils.HeadersApiVersion] = "1"
+	headers[utils.HeadersApiVersion] = ChatroomAPIVersion
 	//Get Request response
 	respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, chatroom.FetchChatroomEndPoint, utils.GETRequest, headers, chatroomParams, nil)
 	//Parse and generate response
@@ -370,8 +371,8 @@ func getParticipants(c *gin.Context, userID string, chatroomID string, isSecret 
 		// Initialize parameters for pagination and collection of participants
 		params := map[string]string{
 			ParamChatroomId: chatroomID,
-			ParamPage:       "0",
-			ParamPageSize:   "100",
+			ParamPage:       ChatroomParticipantsPage,
+			ParamPageSize:   ChatroomParticipantsPageSize,
 		}
 		var allParticipantIDs []string
 
@@ -386,9 +387,9 @@ func getParticipants(c *gin.Context, userID string, chatroomID string, isSecret 
 		for {
 			//Custom headers since this API will be called after conversation create and headers between these two APIs can have different x-api-version
 			headers := utils.CreateHeadersFromToken(c, userID, chatroomID)
-			headers[utils.HeadersPlatformCode] = "an"
-			headers[utils.HeadersVersionCode] = "210"
-			headers[utils.HeadersApiVersion] = "1"
+			headers[utils.HeadersPlatformCode] = ChatroomPlatformCode
+			headers[utils.HeadersVersionCode] = ChatroomVersionCode
+			headers[utils.HeadersApiVersion] = ChatroomParticipantsAPIVersion
 			// Make the API call to fetch participants
 			respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(
 				utils.CoreService,
@@ -399,7 +400,7 @@ func getParticipants(c *gin.Context, userID string, chatroomID string, isSecret 
 				nil,
 			)
 			// Check if the response is empty or if there was an error
-			if err != nil || respBytes == nil || statusCode != 200 {
+			if err != nil || respBytes == nil || statusCode != http.StatusOK {
 				break
 			}
 
