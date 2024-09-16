@@ -6,24 +6,44 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
-type ChatbotMetaRequest struct {
-	DefaultText  string                 `json:"default_text"`
-	Provider     string                 `json:"provider" binding:"required"`
-	ProviderMeta map[string]interface{} `json:"provider_meta" binding:"required"`
+type CreateProviderMetaRequest struct {
+	AssistantId         string `json:"assistant_id" binding:"required"`
+	ThreadContext       int    `json:"thread_context"`
+	MaxPromptTokens     int    `json:"max_prompt_tokens"`
+	MaxCompletionTokens int    `json:"max_completion_tokens"`
+}
+
+type CreateChatbotMetaRequest struct {
+	DefaultText  string                    `json:"default_text"`
+	Provider     string                    `json:"provider" binding:"required"`
+	ProviderMeta CreateProviderMetaRequest `json:"provider_meta" binding:"required"`
 }
 
 type CreateChatbotRequest struct {
-	UUID        string             `json:"uuid"`
-	ImageUrl    string             `json:"imageUrl"`
-	Name        string             `json:"name" binding:"required"`
-	ChatbotMeta ChatbotMetaRequest `json:"chatbot_meta" binding:"required"`
+	UUID        string                   `json:"uuid"`
+	ImageUrl    string                   `json:"imageUrl"`
+	Name        string                   `json:"name" binding:"required"`
+	ChatbotMeta CreateChatbotMetaRequest `json:"chatbot_meta" binding:"required"`
 }
 
 type UpdateChatbotRequest struct {
-	ChatbotUUID string             `json:"chatbot_uuid"`
-	ImageUrl    string             `json:"imageUrl"`
-	Name        string             `json:"name"`
-	ChatbotMeta ChatbotMetaRequest `json:"chatbot_meta"`
+	ChatbotUUID string                   `json:"chatbot_uuid"`
+	ImageUrl    string                   `json:"imageUrl"`
+	Name        string                   `json:"name"`
+	ChatbotMeta UpdateChatbotMetaRequest `json:"chatbot_meta"`
+}
+
+type UpdateProviderMeta struct {
+	AssistantId         string `json:"assistant_id"`
+	ThreadContext       int    `json:"thread_context"`
+	MaxPromptTokens     int    `json:"max_prompt_tokens"`
+	MaxCompletionTokens int    `json:"max_completion_tokens"`
+}
+
+type UpdateChatbotMetaRequest struct {
+	DefaultText  string             `json:"default_text"`
+	Provider     string             `json:"provider"`
+	ProviderMeta UpdateProviderMeta `json:"provider_meta"`
 }
 
 func parseChatbotRequest(c *gin.Context) (*CreateChatbotRequest, error) {

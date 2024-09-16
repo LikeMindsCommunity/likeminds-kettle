@@ -250,7 +250,7 @@ func setRouterA() {
 	routerA.GET(constants.CommunityMemberConnectionMetaRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.GetMemberConnectionMeta)
 	routerA.GET(constants.CommunityChatbotRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.FetchChatbots)
 	routerA.POST(constants.CommunityChatbotRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.CreateChatbot)
-	routerA.POST(constants.CommunityChatbotIdRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.UpdateChatbot)
+	routerA.PATCH(constants.CommunityChatbotIdRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.UpdateChatbot)
 
 	// Moderation Apis
 	routerA.GET(constants.ModerationRightsRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), moderation.GetRights)
