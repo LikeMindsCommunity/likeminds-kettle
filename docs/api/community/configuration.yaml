@@ -18,7 +18,7 @@ get:
         type: array
         items:
           type: string
-          enum: [media_limits, feed_metadata, profile_metadata, nsfw_filtering, guest_flow_metadata]
+          enum: [media_limits, feed_metadata, profile_metadata, nsfw_filtering, guest_flow_metadata, personalised_feed_weights, widgets_metadata]
 
   responses:
     "200":
@@ -31,14 +31,58 @@ get:
             success: true
             data:
               community_configurations:
+                - description: "Personalised feed weights metadata for the community"
+                  type: "personalised_feed_weights"
+                  value:
+                    comments_metrics:
+                      description: "Weight and Max threshold (ceiling value for comments count) for comments metrics"
+                      max_threshold: 1000
+                      weight: 10
+                    likes_metrics:
+                      description: "Weight and Max threshold (ceiling value for likes count) for likes metrics"
+                      max_threshold: 1000
+                      weight: 10
+                    post_dampening_metrics:
+                      description: "Reduces the visibility of posts over time by applying a negative score to posts viewed within the past 24 hours."
+                      max_threshold: 100
+                      weight: 10
+                    recency_metrics:
+                      description: "Weight and Max threshold (ceiling value in seconds) for recency metrics"
+                      max_threshold: 180000
+                      weight: 10
+                    user_connection_metrics:
+                      description: "Weight and Max threshold for user connections metrics"
+                      max_threshold: 10
+                      weight: 10
+                    user_groups_metrics:
+                      description: "Weight and Max threshold for user groups metrics"
+                      max_threshold: 10
+                      weight: 10
+                    user_topics_metrics:
+                      description: "Weight and Max threshold for user topics metrics"
+                      max_threshold: 10
+                      weight: 10
+                - description: "Media size upload limit (in Kilobytes) for different file formats"
+                  type: "media_limits"
+                  value:
+                    max_image_size: 5124
+                    max_video_size: 102400
                 - description: "Metadata related to feed and its entity"
                   type: "feed_metadata"
                   value:
-                    post: "post"
                     comment: "comment"
                     like_entity_variable:
                       entity_name: "like"
                       past_tense_verb: "liked"
+                    post: "post"
+                    universal_feed:
+                      comment_count: 1
+                      comment_sort_order: ""
+                      comment_sort_order_key: ""
+                - description: "User profiles metadata for the community"
+                  type: "profile_metadata"
+                  value:
+                    widgets_enabled: false
                 - description: "NSFW filtering metadata for the community"
                   type: "nsfw_filtering"
                   value:
@@ -46,15 +90,6 @@ get:
                     enabled: false
                     error_status: ""
                     inferdo_api_key: ""
-                - description: "User Profile metadata for community"
-                  type: "profile_metadata"
-                  value:
-                    widgets_enabled: false
-                - description: "Media size upload limit (in Kilobytes) for different file formats"
-                  type: "media_limits"
-                  value:
-                    max_image_size: 5124
-                    max_video_size: 102400
                 - description: "Widgets metadata for the community"
                   type: "widgets_metadata"
                   value:
@@ -66,10 +101,11 @@ get:
 
 patch:
   operationId: updateCommunityConfigurations
-  description: This API is used to update community configurations set for the community.
-  
   tags:
     - Community
+
+  description: This API is used to update community configurations set for the community.
+  summary: Update Community Configurations
 
   security:
     - bearerAuth: []
@@ -93,43 +129,68 @@ patch:
 
         example:
           media_limits:
+            type: "media_limits"
             value:
-              type: "media_limits"
-              value:
-                max_image_size: 5124
-                max_video_size: 102400
+              max_image_size: 5124
+              max_video_size: 102400
           feed_metadata:
+            type: "feed_metadata"
             value:
-              type: "feed_metadata"
-              value:
-                post: "post"
-                comment: "comment"
-                like_entity_variable:
-                  entity_name: "like"
-                  past_tense_verb: "liked"
+              post: "post"
+              comment: "comment"
+              like_entity_variable:
+                entity_name: "like"
+                past_tense_verb: "liked"
           profile_metadata:
+            type: "profile_metadata"
             value:
-              type: "profile_metadata"
-              value:
-                widgets_enabled: false
+              widgets_enabled: false
           nsfw_filtering:
+            type: "nsfw_filtering"
             value:
-              type: "nsfw_filtering"
-              value:
-                enabled: false
-                inferdo_api_key: ""
-                cutoff_score: 0.8
-                error_status: ""
+              enabled: false
+              inferdo_api_key: ""
+              cutoff_score: 0.8
+              error_status: ""
           widgets_metadata:
+            type: "widgets_metadata"
             value:
-              type: "widgets_metadata"
-              value:
-                message: false
+              message: false
           guest_flow_metadata:
+            type: "guest_flow_metadata"
             value:
-              type: "guest_flow_metadata"
-              value:
-                guest_users: "SINGLE"
+              guest_users: "SINGLE"
+          personalised_feed_weights:
+            type: "personalised_feed_weights"
+            value:
+              comments_metrics:
+                description: "Weight and Max threshold (ceiling value for comments count) for comments metrics"
+                max_threshold: 1000
+                weight: 10
+              likes_metrics:
+                description: "Weight and Max threshold (ceiling value for likes count) for likes metrics"
+                max_threshold: 1000
+                weight: 10
+              post_dampening_metrics:
+                description: "Reduces the visibility of posts over time by applying a negative score to posts viewed within the past 24 hours."
+                max_threshold: 100
+                weight: 10
+              recency_metrics:
+                description: "Weight and Max threshold (ceiling value in seconds) for recency metrics"
+                max_threshold: 180000
+                weight: 10
+              user_connection_metrics:
+                description: "Weight and Max threshold for user connections metrics"
+                max_threshold: 10
+                weight: 10
+              user_groups_metrics:
+                description: "Weight and Max threshold for user groups metrics"
+                max_threshold: 10
+                weight: 10
+              user_topics_metrics:
+                description: "Weight and Max threshold for user topics metrics"
+                max_threshold: 10
+                weight: 10
 
   responses:
     '200':

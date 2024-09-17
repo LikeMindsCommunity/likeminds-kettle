@@ -25,6 +25,8 @@ const (
 )
 
 // Context Headers
+// Go standard library expects you to always use canonicalized (standardized) case for setting headers
 const (
 	ContextApiKeyHeader = "X-Api-Key"
+	ContextPlatformTypeheader = "X-Platform-Type"
 )
