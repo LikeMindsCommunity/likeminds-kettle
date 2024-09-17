@@ -3,6 +3,7 @@ package conversation
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/community"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsub"
@@ -61,6 +62,7 @@ type CreateConversationRequest struct {
 	ShareLink             string                   `json:"share_link,omitempty"`
 	Attachments           []ConversationAttachment `json:"attachments,omitempty"`
 	Metadata              interface{}              `json:"metadata,omitempty"`
+	TriggerBot            bool                     `json:"trigger_bot,omitempty"`
 }
 
 type EditConversationRequest struct {
