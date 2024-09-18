@@ -60,6 +60,34 @@ func appendOptionCreatorFromOption(option interface{}, userIDs []string) []strin
 	return userIDs
 }
 
+// Internal method to add user name in post menu title
+func addUserNameInPostMenuTitle(postData map[string]interface{}, userData map[string]MemberMeta) map[string]interface{} {
+	var userMemberMetaData MemberMeta
+	if userUniqueId, ok := postData["uuid"]; ok {
+		userMemberMetaData = userData[userUniqueId.(string)]
+	}
+
+	userFirstName := GetFirstNameFromName(userMemberMetaData.Name)
+
+	if menuItems, ok := postData["menu_items"]; ok && userFirstName != "" {
+		updatedMenuItems := []map[string]interface{}{}
+
+		for _, menuItem := range menuItems.([]interface{}) {
+			menuItemMap := menuItem.(map[string]interface{})
+			menuItemId, ok := menuItemMap["id"].(float64)
+			if ok && menuItemId == BlockUserMenuItemID {
+				menuItemMap["title"] = fmt.Sprintf(BlockUserMenuItemTitle, userFirstName)
+			}
+
+			updatedMenuItems = append(updatedMenuItems, menuItemMap)
+		}
+
+		postData["menu_items"] = updatedMenuItems
+	}
+
+	return postData
+}
+
 // Add block user name in title of post menu
 func AddUserNameInBlockMenuTitle(dataResponse map[string]interface{}) map[string]interface{} {
 	if value, ok := dataResponse["posts"]; ok {
@@ -69,31 +97,7 @@ func AddUserNameInBlockMenuTitle(dataResponse map[string]interface{}) map[string
 
 			// Fetch menu items from array
 			for _, data := range posts {
-				var userMemberMetaData MemberMeta
-				var dataMap map[string]interface{} = data.(map[string]interface{})
-
-				if userUniqueId, ok := dataMap["uuid"]; ok {
-					userMemberMetaData = userData[userUniqueId.(string)]
-				}
-
-				userFirstName := GetFirstNameFromName(userMemberMetaData.Name)
-
-				if menuItems, ok := dataMap["menu_items"]; ok && userFirstName != "" {
-					updatedMenuItems := []map[string]interface{}{}
-
-					for _, menuItem := range menuItems.([]interface{}) {
-						menuItemMap := menuItem.(map[string]interface{})
-						menuItemId, ok := menuItemMap["id"].(float64)
-						if ok && menuItemId == BlockUserMenuItemID {
-							menuItemMap["title"] = fmt.Sprintf(BlockUserMenuItemTitle, userFirstName)
-						}
-
-						updatedMenuItems = append(updatedMenuItems, menuItemMap)
-					}
-
-					dataMap["menu_items"] = updatedMenuItems
-				}
-
+				dataMap := addUserNameInPostMenuTitle(data.(map[string]interface{}), userData)
 				updatedPostsData = append(updatedPostsData, dataMap)
 			}
 
@@ -102,32 +106,7 @@ func AddUserNameInBlockMenuTitle(dataResponse map[string]interface{}) map[string
 	} else if value, ok := dataResponse["post"]; ok {
 		if userData, ok := dataResponse["users"].(map[string]MemberMeta); ok {
 			post := value.(interface{})
-
-			// Fetch menu items from array
-			var userMemberMetaData MemberMeta
-			var dataMap map[string]interface{} = post.(map[string]interface{})
-
-			if userUniqueId, ok := dataMap["uuid"]; ok {
-				userMemberMetaData = userData[userUniqueId.(string)]
-			}
-
-			userFirstName := GetFirstNameFromName(userMemberMetaData.Name)
-
-			if menuItems, ok := dataMap["menu_items"]; ok && userFirstName != "" {
-				updatedMenuItems := []map[string]interface{}{}
-
-				for _, menuItem := range menuItems.([]interface{}) {
-					menuItemMap := menuItem.(map[string]interface{})
-					menuItemId, ok := menuItemMap["id"].(float64)
-					if ok && menuItemId == BlockUserMenuItemID {
-						menuItemMap["title"] = fmt.Sprintf(BlockUserMenuItemTitle, userFirstName)
-					}
-
-					updatedMenuItems = append(updatedMenuItems, menuItemMap)
-				}
-
-				dataMap["menu_items"] = updatedMenuItems
-			}
+			post = addUserNameInPostMenuTitle(post.(map[string]interface{}), userData)
 
 			dataResponse["post"] = post
 		}
