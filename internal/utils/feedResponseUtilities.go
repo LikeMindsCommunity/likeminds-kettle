@@ -61,7 +61,7 @@ func appendOptionCreatorFromOption(option interface{}, userIDs []string) []strin
 }
 
 // Add block user name in title of post menu
-func addUserNameInBlockMenuTitle(dataResponse map[string]interface{}) map[string]interface{} {
+func AddUserNameInBlockMenuTitle(dataResponse map[string]interface{}) map[string]interface{} {
 	if value, ok := dataResponse["posts"]; ok {
 		if userData, ok := dataResponse["users"].(map[string]MemberMeta); ok {
 			posts := value.([]interface{})
@@ -99,6 +99,38 @@ func addUserNameInBlockMenuTitle(dataResponse map[string]interface{}) map[string
 
 			dataResponse["posts"] = updatedPostsData
 		}
+	} else if value, ok := dataResponse["post"]; ok {
+		if userData, ok := dataResponse["users"].(map[string]MemberMeta); ok {
+			post := value.(interface{})
+
+			// Fetch menu items from array
+			var userMemberMetaData MemberMeta
+			var dataMap map[string]interface{} = post.(map[string]interface{})
+
+			if userUniqueId, ok := dataMap["uuid"]; ok {
+				userMemberMetaData = userData[userUniqueId.(string)]
+			}
+
+			userFirstName := GetFirstNameFromName(userMemberMetaData.Name)
+
+			if menuItems, ok := dataMap["menu_items"]; ok && userFirstName != "" {
+				updatedMenuItems := []map[string]interface{}{}
+
+				for _, menuItem := range menuItems.([]interface{}) {
+					menuItemMap := menuItem.(map[string]interface{})
+					menuItemId, ok := menuItemMap["id"].(float64)
+					if ok && menuItemId == BlockUserMenuItemID {
+						menuItemMap["title"] = fmt.Sprintf(BlockUserMenuItemTitle, userFirstName)
+					}
+
+					updatedMenuItems = append(updatedMenuItems, menuItemMap)
+				}
+
+				dataMap["menu_items"] = updatedMenuItems
+			}
+
+			dataResponse["post"] = post
+		}
 	}
 
 	return dataResponse
@@ -127,7 +159,7 @@ func PopulateDataResponseForFeed(headers map[string]interface{}, redisClient *re
 		//Update user data in dataResponse
 		dataResponse["users"] = userData
 
-		dataResponse = addUserNameInBlockMenuTitle(dataResponse)
+		dataResponse = AddUserNameInBlockMenuTitle(dataResponse)
 
 		// Update user topics data in dataResponse
 		dataResponse = FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
