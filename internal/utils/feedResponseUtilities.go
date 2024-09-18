@@ -65,7 +65,7 @@ func addUserNameInBlockMenuTitle(dataResponse map[string]interface{}) map[string
 	if value, ok := dataResponse["posts"]; ok {
 		if userData, ok := dataResponse["users"].(map[string]MemberMeta); ok {
 			posts := value.([]interface{})
-			var updatedPostsData []interface{}
+			updatedPostsData := []interface{}{}
 
 			// Fetch menu items from array
 			for _, data := range posts {
