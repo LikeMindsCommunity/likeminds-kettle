@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -110,6 +111,8 @@ func setRouterA() {
 	routerA.POST(constants.UserOTPRoute, middleware.OTMValidationMiddleware(), user.GenerateUserOTP)
 	routerA.GET(constants.UserOTPVerifyRoute, middleware.OTMValidationMiddleware(), user.VerifyUserOTP)
 	routerA.GET(constants.UserSocialLoginRoute, middleware.OTMValidationMiddleware(), user.UserSocialLogin)
+	routerA.PUT(constants.UserBlockRoute, middleware.LTMValidationMiddleware(redisClient, true), user.BlockUnblockUser)
+	routerA.GET(constants.UserBlockRoute, middleware.LTMValidationMiddleware(redisClient, true), user.GetBlockUser)
 
 	// Home Apis
 	routerA.POST(constants.HomeFetchCommunitiesRoute, middleware.LTMValidationMiddleware(redisClient, true), home.FetchCommunities)
