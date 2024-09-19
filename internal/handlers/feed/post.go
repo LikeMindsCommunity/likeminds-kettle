@@ -157,7 +157,7 @@ func populatePostDataResponse(c *gin.Context, dataResponse map[string]interface{
 		//Update user data in dataResponse
 		dataResponse["users"] = user_data
 
-		dataResponse = utils.AddUserNameInBlockMenuTitle(dataResponse)
+		// dataResponse = utils.AddUserNameInBlockMenuTitle(dataResponse)
 
 		// Update user topics data in dataResponse
 		dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userIds)
