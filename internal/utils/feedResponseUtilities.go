@@ -138,7 +138,7 @@ func PopulateDataResponseForFeed(headers map[string]interface{}, redisClient *re
 		//Update user data in dataResponse
 		dataResponse["users"] = userData
 
-		dataResponse = AddUserNameInBlockMenuTitle(dataResponse)
+		// dataResponse = AddUserNameInBlockMenuTitle(dataResponse)
 
 		// Update user topics data in dataResponse
 		dataResponse = FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
