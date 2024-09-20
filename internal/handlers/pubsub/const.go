@@ -19,21 +19,32 @@ const (
 )
 
 const (
-	TopicTypeChatroom            = "chatroom:%s"
-	TopicTypeCommunity           = "community:%v"
+	TopicTypeChatroomDynamic     = "chatroom:%s"
+	TopicTypeCommunityDynamic    = "community:%v"
 	TopicMessageTypeConversation = "conversation"
+	TopicTypeChatroom            = "chatroom"
 )
 
-const ParamTopicMessageType = "topic_message_type"
+const (
+	ParamTopicMessageType = "topic_message_type"
+	ParamTopic            = "topic"
+)
 
 const (
-	ErrorUnableToCloseWs = "Unable to close ws error:"
-	ErrorFailedUpgrader  = "Failed to upgrade connection: %v"
-	ErrorFailedDial      = "Failed to dial connection: %v"
-	ErrorPingSendClient  = "Error sending ping to client: %v"
-	ErrorPingSendWs      = "Error sending ping to websocket server: %v"
-	ErrorReadClientWs    = "Error reading message from client: %v"
-	ErrorWriteClientWs   = "Error writing message to client: %v"
-	ErrorReadServerWs    = "Error reading message from server: %v"
-	ErrorWriteServerWs   = "Error writing message to server: %v"
+	ErrorUnableToCloseWs         = "unable to close ws error:"
+	ErrorFailedUpgrader          = "failed to upgrade connection: %v"
+	ErrorFailedDial              = "failed to dial connection: %v"
+	ErrorPingSendClient          = "error sending ping to client: %v"
+	ErrorPingSendWs              = "error sending ping to websocket server: %v"
+	ErrorReadClientWs            = "error reading message from client: %v"
+	ErrorWriteClientWs           = "error writing message to client: %v"
+	ErrorReadServerWs            = "error reading message from server: %v"
+	ErrorWriteServerWs           = "error writing message to server: %v"
+	ErrorTopicMissing            = "topic is missing from request"
+	ErrorTopicInvalid            = "invalid format of topic"
+	ErrorUserUUIDMissing         = "user UUID is missing in header"
+	ErrorUserChatroomAccess      = "unable to subscribe to chatroom - %s"
+	ErrorUnmarshalErrorJson      = "unmarshal error: %v"
+	ErrorTopicIDMissing          = "topic ID is missing in request"
+	ErrorChatroomResponseInvalid = "invalid channel_details_data key in response"
 )

@@ -117,6 +117,7 @@ const (
 	NormalChatroomType       = 0
 	AnnouncementChatroomType = 7
 	FeedChatroomType         = 11
+	DMChatroomType           = 10
 )
 
 // Edit Event Types

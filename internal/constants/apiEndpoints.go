@@ -21,6 +21,7 @@ const (
 	UserOTPRoute                  = "/user/otp"
 	UserOTPVerifyRoute            = "/user/otp/verify"
 	UserSocialLoginRoute          = "/user/social/login"
+	UserBlockRoute                = "/user/:user_uuid/block"
 )
 
 // Home Endpoints
@@ -31,10 +32,10 @@ const (
 
 // SDK Endpoints
 const (
-	SDKInitiateRoute   	= "/sdk/initiate"
-	SDKProjectRoute    	= "/sdk/project"
-	SDKOnboardingRoute 	= "/sdk/onboarding"
-	SDKMauOverviewRoute	= "/sdk/mau_overview"
+	SDKInitiateRoute    = "/sdk/initiate"
+	SDKProjectRoute     = "/sdk/project"
+	SDKOnboardingRoute  = "/sdk/onboarding"
+	SDKMauOverviewRoute = "/sdk/mau_overview"
 )
 
 // Chatroom Endpoints
@@ -124,6 +125,8 @@ const (
 	CommunityRemovalReportsRoute                   = "/community/removal_reports"
 	CommunityMemberConnectionRoute                 = "/community/member/:user_id/connection"
 	CommunityMemberConnectionMetaRoute             = "/community/member/:user_id/connection_meta"
+	CommunityChatbotRoute                          = "/community/chatbot"
+	CommunityChatbotIdRoute                        = "/community/chatbot/:chatbot_uuid"
 )
 
 // Moderation Endpoints

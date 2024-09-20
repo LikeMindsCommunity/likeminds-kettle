@@ -62,6 +62,15 @@ type DeleteChatroomRequest struct {
 	Reason     string      `json:"reason"`
 }
 
+type ChatroomDetailParentResponse struct {
+	ChatroomDetail []ChatroomDetailResponse `json:"channel_details_data"`
+}
+
+type ChatroomDetailResponse struct {
+	CanAccessSecretChatroom *bool  `json:"can_access_secret_chatroom"`
+	CohortAccess            *int32 `json:"cohort_access"`
+}
+
 // CreateChatroom is used to create a new chatroom
 func CreateChatroom(c *gin.Context) {
 	Chatroom(c, utils.POSTMethod)
@@ -179,7 +188,7 @@ func getChatroomInternal(c *gin.Context, userId string) {
 		//else, call api/chatroom/fetch api internally
 
 		version := c.GetHeader(utils.HeadersVersionCode)
-		acceptVersion := c.GetHeader((utils.HeadersAcceptVersion))
+		acceptVersion := c.GetHeader(utils.HeadersAcceptVersion)
 
 		if version == "v2" || acceptVersion == "v2" {
 			// Params to be sent in the /api/v2/fetch_chatroom request
