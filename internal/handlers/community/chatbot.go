@@ -11,6 +11,7 @@ type CreateProviderMetaRequest struct {
 	ThreadContext       int    `json:"thread_context"`
 	MaxPromptTokens     int    `json:"max_prompt_tokens"`
 	MaxCompletionTokens int    `json:"max_completion_tokens"`
+	VisionModel         string `json:"vision_model"`
 }
 
 type CreateChatbotMetaRequest struct {
@@ -38,6 +39,7 @@ type UpdateProviderMeta struct {
 	ThreadContext       int    `json:"thread_context"`
 	MaxPromptTokens     int    `json:"max_prompt_tokens"`
 	MaxCompletionTokens int    `json:"max_completion_tokens"`
+	VisionModel         string `json:"vision_model"`
 }
 
 type UpdateChatbotMetaRequest struct {
