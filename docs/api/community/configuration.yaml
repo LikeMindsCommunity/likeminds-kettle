@@ -18,7 +18,7 @@ get:
         type: array
         items:
           type: string
-          enum: [media_limits, feed_metadata, profile_metadata, nsfw_filtering, guest_flow_metadata, personalised_feed_weights, widgets_metadata]
+          enum: [media_limits, feed_metadata, profile_metadata, nsfw_filtering, guest_flow_metadata, personalised_feed_weights, widgets_metadata, chatbot]
 
   responses:
     "200":
@@ -98,6 +98,14 @@ get:
                   type: "guest_flow_metadata"
                   value:
                     guest_users: "SINGLE"
+                - description: "Chatbot configurations for the community"
+                  type: "chatbot"
+                  value:
+                    enabled: true
+                    provider: "open_ai_assistant"
+                    api_key: "open_ai_api_key"
+                    error_message: ""
+
 
 patch:
   operationId: updateCommunityConfigurations
@@ -191,6 +199,13 @@ patch:
                 description: "Weight and Max threshold for user topics metrics"
                 max_threshold: 10
                 weight: 10
+          chatbot:
+            type: "chatbot"
+            value:
+              enabled: true
+              provider: "open_ai_assistant"
+              api_key: "open_ai_api_key"
+              error_message: ""
 
   responses:
     '200':
