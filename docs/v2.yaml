@@ -13,6 +13,8 @@ tags:
     description: APIs for Fetching Bot details for a SDK Project
   - name: Login
     description: APIs to make User Login on SDK Dashboard, SDK Apps
+  - name: Overview
+    description: APIs to fetch mau data
   - name: Chatroom
     description: APIs for chatroom and related.
   - name: Feedroom
@@ -259,6 +261,8 @@ paths:
 
   /sdk/onboarding:
     $ref: "./api/sdk/onboarding.yaml"
+  /sdk/mau_overview:
+    $ref: "./api/sdk/overview.yaml"
 
   /feed/post:
     $ref: "./api/feed/v1/post/post.yaml"
