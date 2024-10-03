@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/constants"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
+	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 )
 
 // GetRequestingUserId returns the User Unique ID of user based on request
@@ -52,11 +53,39 @@ func GetBotId(c *gin.Context) string {
 
 	if platform_type == string(utils.PlatformDashboard) && api_key != "" {
 		//Call GET api/bot to get bot
-		response := GetBotResponse(c, utils.GETMethod)
+		response := GetUserBot(c, utils.CoreService, BotEndpoint, utils.GETRequest, utils.CreateHeaders(c, ""), nil, nil)
 		if response != nil && response.Success {
 			userUniqueId = GetUserUniqueIDFromResponse(response)
 		}
 	}
 
 	return userUniqueId
+}
+
+func GetUserBot(c *gin.Context, serviceType utils.ServiceType, url string, requestType utils.RequestType, headers map[string]interface{}, params map[string]string, body interface{}) *utils.Response {
+	
+	respBytes, _, err := utils.GetRequestResponseWithoutContext(serviceType, url, requestType, headers, params, body)
+	if err != nil {
+		//If API fails or any other error
+		return nil
+	}
+
+	var apiCR api_client.APIClientResponse
+	apiCRerr := api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
+	if apiCRerr != nil {
+		//Internal unmarshal error
+		return nil
+	}
+
+	if !apiCR.Success {
+		//If internal api returns success as false
+		return nil
+	}
+
+	//If flow succeeds
+	dataResponse := apiCR.Response
+	return &utils.Response{
+		Success: true,
+		Data:    dataResponse,
+	}
 }
