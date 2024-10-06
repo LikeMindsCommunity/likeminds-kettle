@@ -6,3 +6,4 @@ properties:
   share_number:
     type: integer
     description: Number by which post share count should be updated
+  
