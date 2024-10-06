@@ -1,0 +1,62 @@
+get:
+  operationId: getCommunityIntegration
+  tags:
+    - Community
+  summary: Fetch community integration status
+  description: |-
+    This API fetches community integration status
+  parameters:
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/get_community_integration_status.yaml"
+    
+            
+put:
+    operationId: createCommunityIntegration
+    tags:
+        - Community
+    summary: Update community integration status
+    description: |-
+      This API updates community integration status
+    parameters:
+      - $ref: "../../components/parameters/headers/platformCode.yaml"
+      - $ref: "../../components/parameters/headers/versionCode.yaml"
+      - $ref: "../../components/parameters/headers/platformType.yaml"
+      - $ref: "../../components/parameters/headers/apiKey.yaml"
+    requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "../../components/schemas/requests/update_community_integration_status.yaml"
+    responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "../../components/schemas/responses/update_community_integration_status.yaml"
+              example:
+                success: true
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error_message:
+                    type: string
+              example:
+                success: false
+                error_message: "Invalid status_type."

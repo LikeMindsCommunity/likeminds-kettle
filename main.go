@@ -253,6 +253,8 @@ func setRouterA() {
 	routerA.GET(constants.CommunityChatbotRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.FetchChatbots)
 	routerA.POST(constants.CommunityChatbotRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.CreateChatbot)
 	routerA.PATCH(constants.CommunityChatbotIdRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.UpdateChatbot)
+	routerA.GET(constants.CommunityIntegrationRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.GetCommumityIntegrations)
+	routerA.PUT(constants.CommunityIntegrationRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.UpdateCommunityIntegrations)
 
 	// Moderation Apis
 	routerA.GET(constants.ModerationRightsRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), moderation.GetRights)
