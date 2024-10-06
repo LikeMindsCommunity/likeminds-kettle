@@ -1,0 +1,29 @@
+post:
+  operationId: updatePostShareCount
+  tags:
+    - Feed - V1
+
+  summary: Upadte the post share count
+  description: This API updates the post share count.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../../components/parameters/headers/acceptVersion.yaml"
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../components/schemas/requests/feed_post_share_count.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../components/schemas/responses/feed_post_share_count.yaml"
