@@ -1,8 +1,11 @@
 package user
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/constants"
+	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 )
@@ -53,7 +56,7 @@ func GetBotId(c *gin.Context) string {
 
 	if platform_type == string(utils.PlatformDashboard) && api_key != "" {
 		//Call GET api/bot to get bot
-		response := GetUserBot(c, utils.CoreService, BotEndpoint, utils.GETRequest, utils.CreateHeaders(c, ""), nil, nil)
+		response := GetUserBot(c)
 		if response != nil && response.Success {
 			userUniqueId = GetUserUniqueIDFromResponse(response)
 		}
@@ -62,11 +65,12 @@ func GetBotId(c *gin.Context) string {
 	return userUniqueId
 }
 
-func GetUserBot(c *gin.Context, serviceType utils.ServiceType, url string, requestType utils.RequestType, headers map[string]interface{}, params map[string]string, body interface{}) *utils.Response {
+func GetUserBot(c *gin.Context) *utils.Response {
 	
-	respBytes, _, err := utils.GetRequestResponseWithoutContext(serviceType, url, requestType, headers, params, body)
+	respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.CoreService, BotEndpoint, utils.GETRequest,  utils.CreateHeaders(c, ""), nil, nil)
 	if err != nil {
 		//If API fails or any other error
+		logging.Error(fmt.Sprintf("Error in getting bot data : %v", err))
 		return nil
 	}
 
@@ -74,11 +78,13 @@ func GetUserBot(c *gin.Context, serviceType utils.ServiceType, url string, reque
 	apiCRerr := api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
 	if apiCRerr != nil {
 		//Internal unmarshal error
+		logging.Error(fmt.Sprintf("Error in unmarshalling bot data : %v", apiCRerr))
 		return nil
 	}
 
 	if !apiCR.Success {
 		//If internal api returns success as false
+		logging.Error("Error in getting bot data.")
 		return nil
 	}
 
