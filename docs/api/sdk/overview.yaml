@@ -2,7 +2,7 @@ get:
   summary: Get MAU Overview
   operationId: getMauOverview
   tags:
-    - Overview
+    - MAU Overview
 
   description: |
     This API retrieves the Monthly Active Users (MAU) overview for a specified number of months.

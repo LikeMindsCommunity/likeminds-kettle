@@ -13,7 +13,7 @@ tags:
     description: APIs for Fetching Bot details for a SDK Project
   - name: Login
     description: APIs to make User Login on SDK Dashboard, SDK Apps
-  - name: Overview
+  - name: MAU Overview
     description: APIs to fetch mau data
   - name: Chatroom
     description: APIs for chatroom and related.
