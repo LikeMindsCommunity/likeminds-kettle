@@ -1,0 +1,16 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+      community_integration_data:
+        type: array
+        properties:
+          status:
+            type: boolean
+            description: Status of the integration
+          status_type:
+            type: string
+            description: Status type of the integration

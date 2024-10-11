@@ -127,6 +127,7 @@ const (
 	CommunityMemberConnectionMetaRoute             = "/community/member/:user_id/connection_meta"
 	CommunityChatbotRoute                          = "/community/chatbot"
 	CommunityChatbotIdRoute                        = "/community/chatbot/:chatbot_uuid"
+	CommunityIntegrationRoute                      = "/community/integration"
 )
 
 // Moderation Endpoints
