@@ -53,7 +53,7 @@ func FetchUniversalFeed(c *gin.Context) {
 
 	dataResponse, err := utils.PopulateDataResponseForFeed(headers, utils.GetRedisClientFromContext(c), apiCR.Response)
 	if err != nil {
-		utils.GenerateResponse(c, nil, false)
+		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 

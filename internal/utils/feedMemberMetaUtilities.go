@@ -173,7 +173,8 @@ func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[s
 	for _, memberId := range userUniqueIds {
 		if _, ok := memberMetaMap[memberId]; !ok {
 			memberMetaMap[memberId] = MemberMeta{
-				IsDeleted: true,
+				IsDeleted:     true,
+				SdkClientInfo: &SdkClientInfo{}, // to avoid nil pointer exception
 			}
 		}
 	}
