@@ -42,6 +42,15 @@ func FetchUniversalFeed(c *gin.Context) {
 	//Param updation
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
+	//add CM role in headers if user is cm
+	if response.IsCm {
+		headers := map[string]string{
+			utils.HeaderMemberRole: utils.CMRole,
+		}
+
+		utils.AddHeaders(c, headers)
+	}
+
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchUniversalFeedEndPoint, utils.GETRequest, headers, params, nil)
 

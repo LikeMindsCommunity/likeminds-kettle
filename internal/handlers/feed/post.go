@@ -24,6 +24,7 @@ type CreatePostRequest struct {
 	UUIDs          []string                  `json:"uuids"`
 	OnBehalfOfUUID string                    `json:"on_behalf_of_uuid,omitempty"`
 	IsRepost       bool                      `json:"is_repost"`
+	IsAnonymous    bool                      `json:"is_anonymous"`
 	Visibility     string                    `json:"visibility,omitempty"`
 	UserIsCm       bool                      `json:"user_is_cm,omitempty"`
 	CreatedAt      int                       `json:"created_at"`
