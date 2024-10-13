@@ -45,9 +45,12 @@ func fetchMembersMetaFromCache(redisClient *redis.Client, communityId int, userU
 	remainingMemberIds := []string{}
 
 	// fetch member meta from cache
-	cachKeys := []string{}
+	cachKeys, userIdsMap := []string{}, map[string]bool{}
 	for _, userUniqueId := range userUniqueIds {
-		cachKeys = append(cachKeys, fmt.Sprintf(cache.UserMetaCacheKey, communityId, userUniqueId))
+		if _, ok := userIdsMap[userUniqueId]; !ok {
+			cachKeys = append(cachKeys, fmt.Sprintf(cache.UserMetaCacheKey, communityId, userUniqueId))
+			userIdsMap[userUniqueId] = true
+		}
 	}
 
 	// Fetch keys from cache
