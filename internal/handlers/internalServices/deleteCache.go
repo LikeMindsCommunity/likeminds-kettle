@@ -2,6 +2,7 @@ package internalServices
 
 import (
 	"fmt"
+	"github.com/go-redis/redis/v7"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
@@ -23,7 +24,7 @@ func parseDeleteCacheRequest(c *gin.Context) (*deleteCacheRequest, error) {
 	return &dcr, nil
 }
 
-// External method for API to delete cache from key patterns
+// DeleteCache External method for API to delete cache from key patterns
 func DeleteCache(c *gin.Context) {
 
 	// Parse request
@@ -40,18 +41,28 @@ func DeleteCache(c *gin.Context) {
 		return
 	}
 
-	// Delete all keys matching the pattern
-	for _, keyPattern := range dcr.KeyPatterns {
+	// Call the abstracted function to delete cache keys based on patterns
+	err = DeleteCacheByKeyPatterns(redisClient, dcr.KeyPatterns)
+	if err != nil {
+		utils.GeneralAPIError(c, err.Error())
+		return
+	}
 
+	utils.GenerateResponse(c, nil, false)
+}
+
+// DeleteCacheByKeyPatterns Abstracted function to delete keys from Redis based on key patterns
+func DeleteCacheByKeyPatterns(redisClient *redis.Client, keyPatterns []string) error {
+	for _, keyPattern := range keyPatterns {
 		// Get all keys matching the pattern
 		keys, err := cache.GetKeys(redisClient, keyPattern)
 		if err != nil {
-			utils.GeneralAPIError(c, err.Error())
-			return
+			logging.Error(fmt.Sprintf("Error fetching keys for pattern %s: %v", keyPattern, err))
+			return err
 		}
 
 		if len(keys) == 0 {
-			logging.Info(fmt.Sprint("No Cache keys found for pattern: ", keyPattern))
+			logging.Info(fmt.Sprintf("No cache keys found for pattern: %s", keyPattern))
 			continue
 		}
 
@@ -59,12 +70,32 @@ func DeleteCache(c *gin.Context) {
 		for _, key := range keys {
 			err = cache.Delete(redisClient, key)
 			if err != nil {
-				utils.GeneralAPIError(c, err.Error())
-				return
+				logging.Error(fmt.Sprintf("Error deleting key %s: %v", key, err))
+				return err
 			}
-			logging.Info(fmt.Sprint("Successfully deleted cache for key: ", key))
+			logging.Info(fmt.Sprintf("Successfully deleted cache for key: %s", key))
 		}
 	}
+	return nil
+}
 
-	utils.GenerateResponse(c, nil, false)
+func DeleteChatroomCache(c *gin.Context, chatroomID interface{}) {
+	// get redis client from context
+	redisClient := utils.GetRedisClientFromContext(c)
+	if redisClient == nil {
+		utils.GeneralAPIError(c, "Redis client not found")
+		return
+	}
+
+	// Cache key for the chatroom data
+	cacheKey := fmt.Sprintf(cache.ChatroomKey, chatroomID)
+	// Convert the single cacheKey into a slice of strings
+	cacheKeys := []string{cacheKey}
+
+	// Call the abstracted function to delete cache keys based on patterns
+	err := DeleteCacheByKeyPatterns(redisClient, cacheKeys)
+	if err != nil {
+		logging.Error(fmt.Sprintf("Error deleting key %s: %v", cacheKey, err))
+		return
+	}
 }
