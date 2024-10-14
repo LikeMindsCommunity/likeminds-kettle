@@ -37,5 +37,12 @@ func SyncConversation(c *gin.Context) {
 	//Parse and generate response
 	utils.ParseResponse(c, respBytes, statusCode, true)
 
-	go pubsub_publish.PublishDROnTopicTypeChatroom(c, userId)
+	go parseAndPublishDROnTopicTypeChatroom(c, userId)
+
+}
+
+// parseAndPublishDROnTopicTypeChatroom to publish DR on TopicTypeChatroom
+func parseAndPublishDROnTopicTypeChatroom(c *gin.Context, userId string) {
+	deviceID := user.GetRequestingUserDeviceId(c)
+	pubsub_publish.PublishDROnTopicTypeChatroom(c, userId, deviceID, c.Query(ParamChatroomId))
 }

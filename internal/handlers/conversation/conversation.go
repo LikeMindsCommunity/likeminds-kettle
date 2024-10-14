@@ -246,14 +246,19 @@ func createConversationInternal(c *gin.Context, userId string, deviceID string) 
 	if apiCR != nil {
 		utils.GenerateResponse(c, apiCR.Response, true)
 		if apiCR.Success == true {
-			go pubsub_publish.PublishConversationOnTopicTypeChatroom(c, createConversationRequest.ChatroomID, userId, deviceID, apiCR.Response)
-			go validateChatroomAndPublishConversationOnTopicTypeCommunity(c, userId, deviceID, apiCR.Response)
+			go parseAndPublishConversationOnTopicTypeChatroom(c, userId, deviceID, createConversationRequest.ChatroomID, apiCR.Response)
+			go parseAndPublishConversationOnTopicTypeCommunity(c, userId, deviceID, apiCR.Response)
 		}
 	}
 }
 
-// validateChatroomAndPublishConversationOnTopicTypeCommunity to publish Conversation on TopicTypeCommunityDynamic
-func validateChatroomAndPublishConversationOnTopicTypeCommunity(c *gin.Context, userId string, deviceID string, response map[string]interface{}) {
+// parseAndPublishConversationOnTopicTypeCommunity to publish Conversation on TopicTypeCommunityDynamic
+func parseAndPublishConversationOnTopicTypeChatroom(c *gin.Context, userId string, deviceID string, chatroomID interface{}, response map[string]interface{}) {
+	pubsub_publish.PublishConversationOnTopicTypeChatroom(c, chatroomID, userId, deviceID, response)
+}
+
+// parseAndPublishConversationOnTopicTypeCommunity to publish Conversation on TopicTypeCommunityDynamic
+func parseAndPublishConversationOnTopicTypeCommunity(c *gin.Context, userId string, deviceID string, response map[string]interface{}) {
 	chatroomID := fmt.Sprintf("%.0f", response["conversation"].(map[string]interface{})["chatroom_id"].(float64))
 	apiCR, _, err := GetChatroom(c, userId, chatroomID)
 	if apiCR != nil {

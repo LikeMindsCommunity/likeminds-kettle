@@ -3,7 +3,6 @@ package pubsub_publish
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
@@ -32,10 +31,9 @@ func PublishConversationOnTopicTypeCommunity(c *gin.Context, userId string, devi
 }
 
 // PublishDROnTopicTypeChatroom handles calling the Pandemonium publish API for inactive user flow in delivered report
-func PublishDROnTopicTypeChatroom(c *gin.Context, userId string) {
-	deviceID := user.GetRequestingUserDeviceId(c)
+func PublishDROnTopicTypeChatroom(c *gin.Context, userId, deviceID string, chatroomID interface{}) {
 	headers := utils.CreateHeadersFromToken(c, userId, deviceID)
-	topicChatroom := fmt.Sprintf(TopicTypeChatroomDynamic, c.Query(ParamChatroomId))
+	topicChatroom := fmt.Sprintf(TopicTypeChatroomDynamic, chatroomID)
 	params := map[string]string{
 		ParamTopicMessageType: TopicMessageDR,
 	}
