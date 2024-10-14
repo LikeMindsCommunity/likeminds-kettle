@@ -254,6 +254,29 @@ func createConversationInternal(c *gin.Context, userId string, deviceID string) 
 
 // parseAndPublishConversationOnTopicTypeCommunity to publish Conversation on TopicTypeCommunityDynamic
 func parseAndPublishConversationOnTopicTypeChatroom(c *gin.Context, userId string, deviceID string, chatroomID interface{}, response map[string]interface{}) {
+	chatroomIDStr := fmt.Sprintf("%v", chatroomID)
+
+	// Get the chatroom data
+	chatroomData, _, err := GetChatroom(c, userId, chatroomIDStr)
+	if err != nil {
+		logging.Error(fmt.Sprintf("Error fetching chatroom data for chatroomID %v: %v", chatroomIDStr, err))
+		return
+	}
+
+	// Check if the chatroom is secret or not
+	isSecret := chatroomData["is_secret"].(bool)
+
+	// Get total participants count
+	totalParticipantsCount, err := GetTotalParticipants(c, userId, chatroomIDStr, isSecret)
+	if err != nil {
+		logging.Error(fmt.Sprintf("Error fetching total participants count for chatroomID %v: %v", chatroomIDStr, err))
+		return
+	}
+
+	// Add total_participants_count to the response
+	response["total_participants_count"] = totalParticipantsCount
+
+	// Publish the conversation with updated response
 	pubsub_publish.PublishConversationOnTopicTypeChatroom(c, chatroomID, userId, deviceID, response)
 }
 
@@ -520,4 +543,100 @@ func getChatroomFromCache(redisClient *redis.Client, chatroomID string) (map[str
 	}
 
 	return chatroomData, nil
+}
+
+// GetTotalParticipants returns the total participants count, fetching the first page if not present in cache.
+func GetTotalParticipants(c *gin.Context, userID string, chatroomID string, isSecret bool) (int, error) {
+	redisClient := utils.GetRedisClientFromContext(c)
+
+	// Try to get total participants count from the cache
+	totalCount, err := getTotalParticipantsCountFromCache(redisClient, chatroomID)
+	if err == nil {
+		return totalCount, nil
+	}
+
+	// Initialize parameters for pagination to fetch the first page
+	params := map[string]string{
+		ParamChatroomId: chatroomID,
+		ParamPage:       ChatroomParticipantsPage,
+		ParamPageSize:   ChatroomParticipantsPageSize,
+	}
+
+	// Select the correct API endpoint based on whether the chatroom is secret
+	var endpoint string
+	if isSecret {
+		endpoint = chatroom.FetchSecretParticipantsMetaEndPoint
+	} else {
+		endpoint = chatroom.FetchParticipantsMetaEndPoint
+	}
+
+	// Custom headers for API call
+	headers := utils.CreateHeadersFromToken(c, userID, chatroomID)
+	headers[utils.HeadersPlatformCode] = ChatroomPlatformCode
+	headers[utils.HeadersVersionCode] = ChatroomVersionCode
+	headers[utils.HeadersApiVersion] = ChatroomParticipantsAPIVersion
+
+	// Make the API call to fetch the first page of participants
+	respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(
+		utils.CoreService,
+		endpoint,
+		utils.GETRequest,
+		headers,
+		params,
+		nil,
+	)
+	if err != nil || respBytes == nil || statusCode != http.StatusOK {
+		return 0, fmt.Errorf("failed to fetch participants data: %v", err)
+	}
+
+	// Parse the response to get the total participants count
+	var response struct {
+		TotalParticipantsCount int `json:"total_participants_count"`
+		Participants           []struct {
+			ID string `json:"uuid"`
+		} `json:"participants"`
+	}
+	if err := json.Unmarshal(respBytes, &response); err != nil {
+		return 0, fmt.Errorf("failed to unmarshal participants data: %v", err)
+	}
+
+	// Save total participants count in cache
+	if err := saveTotalParticipantsCountInCache(redisClient, chatroomID, response.TotalParticipantsCount); err != nil {
+		return 0, fmt.Errorf("error saving total participants count to cache: %v", err)
+	}
+
+	// Return the total participants count
+	return response.TotalParticipantsCount, nil
+}
+
+// getTotalParticipantsCountFromCache fetches the total participants count from Redis cache
+func getTotalParticipantsCountFromCache(redisClient *redis.Client, chatroomID string) (int, error) {
+	// Cache key for storing total participants count
+	totalParticipantsCacheKey := fmt.Sprintf(cache.ChatroomTotalParticipantsKey, chatroomID)
+
+	// Try to get the total count from the cache
+	cachedTotalCount, _, err := cache.Get(redisClient, totalParticipantsCacheKey)
+	if err != nil || cachedTotalCount == "" {
+		return 0, fmt.Errorf("total participants count not found in cache")
+	}
+
+	// Convert the cached value to an integer and return it
+	totalCount, err := strconv.Atoi(cachedTotalCount)
+	if err != nil {
+		return 0, fmt.Errorf("failed to convert cached total participants count: %v", err)
+	}
+	return totalCount, nil
+}
+
+// saveTotalParticipantsCountInCache saves the total participants count to Redis cache
+func saveTotalParticipantsCountInCache(redisClient *redis.Client, chatroomID string, totalCount int) error {
+	// Cache key for storing total participants count
+	totalParticipantsCacheKey := fmt.Sprintf(cache.ChatroomTotalParticipantsKey, chatroomID)
+
+	// Save the total count to Redis with an expiration time (e.g., 24 hours)
+	err := cache.Set(redisClient, totalParticipantsCacheKey, strconv.Itoa(totalCount), time.Hour*cache.ChatroomParticipantsTTL)
+	if err != nil {
+		return fmt.Errorf("error saving total participants count to cache: %v", err)
+	}
+	return nil
 }
