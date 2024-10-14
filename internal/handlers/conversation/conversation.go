@@ -3,13 +3,12 @@ package conversation
 import (
 	"encoding/json"
 	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/chatroom"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/community"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsub"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsub_publish"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
@@ -247,59 +246,34 @@ func createConversationInternal(c *gin.Context, userId string, deviceID string) 
 	if apiCR != nil {
 		utils.GenerateResponse(c, apiCR.Response, true)
 		if apiCR.Success == true {
-			go publishConversationOnTopicTypeChatroom(c, createConversationRequest, userId, deviceID, apiCR.Response)
-			go publishConversationOnTopicTypeCommunity(c, userId, deviceID, apiCR.Response)
+			go pubsub_publish.PublishConversationOnTopicTypeChatroom(c, createConversationRequest.ChatroomID, userId, deviceID, apiCR.Response)
+			go validateChatroomAndPublishConversationOnTopicTypeCommunity(c, userId, deviceID, apiCR.Response)
 		}
 	}
 }
 
-// publishConversationOnTopicTypeChatroom to publish Conversation on TopicTypeChatroomDynamic
-func publishConversationOnTopicTypeChatroom(c *gin.Context, createConversationRequest *CreateConversationRequest, userId string, deviceID string, response map[string]interface{}) {
-	headers := utils.CreateHeadersFromToken(c, userId, deviceID)
-	topicChatroom := fmt.Sprintf(pubsub.TopicTypeChatroomDynamic, createConversationRequest.ChatroomID)
-	params := map[string]string{
-		pubsub.ParamTopicMessageType: pubsub.TopicMessageTypeConversation,
-	}
-
-	publishDataOnPandemonium(topicChatroom, headers, params, response)
-}
-
-// publishConversationOnTopicTypeChatroom to publish Conversation on TopicTypeCommunityDynamic
-func publishConversationOnTopicTypeCommunity(c *gin.Context, userId string, deviceID string, response map[string]interface{}) {
-	headers := utils.CreateHeadersFromToken(c, userId, deviceID)
-	var communityID = response["conversation"].(map[string]interface{})["member"].(map[string]interface{})["sdk_client_info"].(map[string]interface{})["community"]
-	topicCommunity := fmt.Sprintf(pubsub.TopicTypeCommunityDynamic, communityID)
-	publishParams := map[string]string{
-		pubsub.ParamTopicMessageType: pubsub.TopicMessageTypeConversation,
-	}
-
+// validateChatroomAndPublishConversationOnTopicTypeCommunity to publish Conversation on TopicTypeCommunityDynamic
+func validateChatroomAndPublishConversationOnTopicTypeCommunity(c *gin.Context, userId string, deviceID string, response map[string]interface{}) {
 	chatroomID := fmt.Sprintf("%.0f", response["conversation"].(map[string]interface{})["chatroom_id"].(float64))
-	apiCR, _, err := getChatroom(c, userId, chatroomID)
+	apiCR, _, err := GetChatroom(c, userId, chatroomID)
 	if apiCR != nil {
 		isSecret := apiCR["chatroom"].(map[string]interface{})["is_secret"].(bool)
 		chatroomType := apiCR["chatroom"].(map[string]interface{})["type"].(float64)
 
 		if isSecret == true || chatroomType == chatroom.DMChatroomType {
-			allParticipantIDs, err := getParticipants(c, userId, chatroomID, isSecret)
+			allParticipantIDs, err := GetParticipants(c, userId, chatroomID, isSecret)
 			if allParticipantIDs != nil {
 				response["participants"] = allParticipantIDs
-				publishDataOnPandemonium(topicCommunity, headers, publishParams, response)
+				pubsub_publish.PublishConversationOnTopicTypeCommunity(c, userId, deviceID, response)
 			} else {
 				logging.Error(fmt.Sprintf("Error in getting participants data before publishing: %v", err))
 			}
 		} else {
-			publishDataOnPandemonium(topicCommunity, headers, publishParams, response)
+			pubsub_publish.PublishConversationOnTopicTypeCommunity(c, userId, deviceID, response)
 		}
 
 	} else {
 		logging.Error(fmt.Sprintf("Error in getting chatroom data before publishing: %v", err))
-	}
-}
-
-func publishDataOnPandemonium(topicChatroom string, headers map[string]interface{}, params map[string]string, response map[string]interface{}) {
-	respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, topicChatroom), utils.POSTRequestRawBody, headers, params, response)
-	if err != nil || statusCode != 200 {
-		logging.Error(fmt.Sprintf("Error in publishing data on pandemonium: %v | response %v", err, string(respBytes)))
 	}
 }
 
@@ -337,7 +311,7 @@ func deleteConversationInternal(c *gin.Context, userId string) {
 	utils.SendRequest(c, utils.CoreService, DeleteConversationEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, deleteConversationRequest)
 }
 
-func getChatroom(c *gin.Context, userID string, chatroomID string) (map[string]interface{}, int, error) {
+func GetChatroom(c *gin.Context, userID string, chatroomID string) (map[string]interface{}, int, error) {
 	// Params to be sent in the api/chatroom/fetch request
 	chatroomParams := map[string]string{
 		ParamChatroomId: chatroomID,
@@ -356,7 +330,7 @@ func getChatroom(c *gin.Context, userID string, chatroomID string) (map[string]i
 	return nil, statusCode, err
 }
 
-func getParticipants(c *gin.Context, userID string, chatroomID string, isSecret bool) ([]string, error) {
+func GetParticipants(c *gin.Context, userID string, chatroomID string, isSecret bool) ([]string, error) {
 	cacheKey := fmt.Sprintf(cache.ChatroomParticipantsKey, chatroomID)
 	// Check if the participants are already in the Redis cache
 	redisClient := utils.GetRedisClientFromContext(c)

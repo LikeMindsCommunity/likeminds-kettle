@@ -2,6 +2,7 @@ package chatroom
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsub_publish"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
@@ -35,4 +36,6 @@ func SyncChatrooms(c *gin.Context) {
 
 	//Parse and generate response
 	utils.ParseResponse(c, respBytes, statusCode, true)
+
+	go pubsub_publish.PublishDROnTopicTypeChatroom(c, userId)
 }
