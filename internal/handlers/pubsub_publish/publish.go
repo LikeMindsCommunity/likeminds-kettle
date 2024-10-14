@@ -42,10 +42,8 @@ func PublishDROnTopicTypeChatroom(c *gin.Context, userId string) {
 
 	// Prepare the response (body) for the inactive user case
 	response := map[string]interface{}{
-		"delivered_report": map[string]interface{}{
-			"min_timestamp": c.Query(ParamMinTimeStamp),
-			"max_timestamp": c.Query(ParamMaxTimeStamp),
-		},
+		"min_timestamp": c.Query(ParamMinTimeStamp),
+		"max_timestamp": c.Query(ParamMaxTimeStamp),
 	}
 
 	// Call the Pandemonium Publish API using your pre-defined function
