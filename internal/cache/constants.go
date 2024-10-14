@@ -19,6 +19,7 @@ const (
 	CommunityBillingDataKey            = "%d_community_billing_data"       // communityId
 	TierDataKey                        = "%d_tier_data"
 	ChatroomParticipantsKey            = "chatroom_participants_%s" // chatroom participants
+	ChatroomKey                        = "chatroom_%s"
 )
 
 // Cache TTLs in hours
@@ -33,4 +34,5 @@ const (
 	CommunityBillingDataTTL           = 7 * 24
 	TierDataTTL                       = 30 * 24
 	ChatroomParticipantsTTL           = 7 * 24
+	ChatroomTTL                       = 30 * 24
 )

@@ -262,8 +262,8 @@ func parseAndPublishConversationOnTopicTypeCommunity(c *gin.Context, userId stri
 	chatroomID := fmt.Sprintf("%.0f", response["conversation"].(map[string]interface{})["chatroom_id"].(float64))
 	apiCR, _, err := GetChatroom(c, userId, chatroomID)
 	if apiCR != nil {
-		isSecret := apiCR["chatroom"].(map[string]interface{})["is_secret"].(bool)
-		chatroomType := apiCR["chatroom"].(map[string]interface{})["type"].(float64)
+		isSecret := apiCR["is_secret"].(bool)
+		chatroomType := apiCR["type"].(float64)
 
 		if isSecret == true || chatroomType == chatroom.DMChatroomType {
 			allParticipantIDs, err := GetParticipants(c, userId, chatroomID, isSecret)
@@ -325,12 +325,27 @@ func GetChatroom(c *gin.Context, userID string, chatroomID string) (map[string]i
 	//Custom headers since this API will be called after conversation create and headers between these two APIs can have different x-api-version
 	headers := utils.CreateHeadersFromToken(c, userID, chatroomID)
 	headers[utils.HeadersApiVersion] = ChatroomAPIVersion
+
+	// Check if the chatroom is present in the cache first
+	cachedChatroom, err := getChatroomFromCache(utils.GetRedisClientFromContext(c), chatroomID)
+	if err == nil && cachedChatroom != nil {
+		// Return the cached chatroom data
+		return cachedChatroom, http.StatusOK, nil
+	}
+
 	//Get Request response
 	respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, chatroom.FetchChatroomEndPoint, utils.GETRequest, headers, chatroomParams, nil)
 	//Parse and generate response
 	apiCR := utils.ValidateClientResponseWithoutContext(respBytes, statusCode, err)
 	if apiCR != nil {
-		return apiCR, statusCode, err
+		chatroomAPICR := apiCR["chatroom"].(map[string]interface{})
+		// Save the fetched chatroom data in the cache
+		redisClient := utils.GetRedisClientFromContext(c)
+		if err := saveChatroomInCache(redisClient, chatroomID, chatroomAPICR); err != nil {
+			logging.Error(fmt.Sprintf("Error saving chatroom data to cache: %v", err))
+		}
+
+		return chatroomAPICR, statusCode, err
 	}
 	return nil, statusCode, err
 }
@@ -461,4 +476,48 @@ func setParticipantsInCache(redisClient *redis.Client, cacheKey string, allParti
 		return fmt.Errorf("error updating Redis cache: %v", err)
 	}
 	return nil
+}
+
+// SaveChatroomInCache saves the chatroom data in Redis with a specified TTL.
+func saveChatroomInCache(redisClient *redis.Client, chatroomID string, chatroomData map[string]interface{}) error {
+	// Serialize the chatroom data to JSON
+	data, err := json.Marshal(chatroomData)
+	if err != nil {
+		return fmt.Errorf("failed to marshal chatroom data: %v", err)
+	}
+
+	// Cache key for the chatroom data
+	cacheKey := fmt.Sprintf(cache.ChatroomKey, chatroomID)
+
+	// Save to Redis with a TTL of 24 hours (can be adjusted as needed)
+	err = cache.Set(redisClient, cacheKey, data, time.Hour*cache.ChatroomTTL)
+	if err != nil {
+		return fmt.Errorf("error saving chatroom data to cache: %v", err)
+	}
+
+	return nil
+}
+
+// GetChatroomFromCache fetches the chatroom data from the cache.
+func getChatroomFromCache(redisClient *redis.Client, chatroomID string) (map[string]interface{}, error) {
+	// Cache key for the chatroom data
+	cacheKey := fmt.Sprintf(cache.ChatroomKey, chatroomID)
+
+	// Get data from Redis
+	cacheValue, _, err := cache.Get(redisClient, cacheKey)
+	if err != nil {
+		return nil, err
+	}
+	if cacheValue == "" {
+		return nil, fmt.Errorf("no data found in cache for chatroom: %s", chatroomID)
+	}
+
+	// Parse the cached data into a map[string]interface{}
+	var chatroomData map[string]interface{}
+	err = json.Unmarshal([]byte(cacheValue), &chatroomData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal chatroom data: %v", err)
+	}
+
+	return chatroomData, nil
 }
