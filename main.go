@@ -21,7 +21,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/handlers/moderation"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/otp"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/poll"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsub_subscribe"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsubSubscribe"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/sdk"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/search"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
@@ -429,7 +429,7 @@ func setRouterB() {
 	routerB.GET("", web.Home)
 
 	// Pandemonium APIs
-	routerB.GET(constants.SubscribeRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), pubsub_subscribe.Subscribe)
+	routerB.GET(constants.SubscribeRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), pubsubSubscribe.Subscribe)
 }
 
 func routerAServer() *http.Server {

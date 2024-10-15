@@ -8,7 +8,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/cache"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/chatroom"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/community"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsub_publish"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsubPublish"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
@@ -257,7 +257,7 @@ func parseAndPublishConversationOnTopicTypeChatroom(c *gin.Context, userId strin
 	chatroomIDStr := fmt.Sprintf("%v", chatroomID)
 
 	// Get the chatroom data
-	chatroomData, _, err := GetChatroom(c, userId, chatroomIDStr)
+	chatroomData, _, err := getChatroomInternal(c, userId, chatroomIDStr)
 	if err != nil {
 		logging.Error(fmt.Sprintf("Error fetching chatroom data for chatroomID %v: %v", chatroomIDStr, err))
 		return
@@ -267,7 +267,7 @@ func parseAndPublishConversationOnTopicTypeChatroom(c *gin.Context, userId strin
 	isSecret := chatroomData["is_secret"].(bool)
 
 	// Get total participants count
-	totalParticipantsCount, err := GetTotalParticipants(c, userId, chatroomIDStr, isSecret)
+	totalParticipantsCount, err := getTotalParticipantsInternal(c, userId, chatroomIDStr, isSecret)
 	if err != nil {
 		logging.Error(fmt.Sprintf("Error fetching total participants count for chatroomID %v: %v", chatroomIDStr, err))
 		return
@@ -277,27 +277,27 @@ func parseAndPublishConversationOnTopicTypeChatroom(c *gin.Context, userId strin
 	response["total_participants_count"] = totalParticipantsCount
 
 	// Publish the conversation with updated response
-	pubsub_publish.PublishConversationOnTopicTypeChatroom(c, chatroomID, userId, deviceID, response)
+	pubsubPublish.PublishConversationOnTopicTypeChatroom(c, chatroomID, userId, deviceID, response)
 }
 
 // parseAndPublishConversationOnTopicTypeCommunity to publish Conversation on TopicTypeCommunityDynamic
 func parseAndPublishConversationOnTopicTypeCommunity(c *gin.Context, userId string, deviceID string, response map[string]interface{}) {
 	chatroomID := fmt.Sprintf("%.0f", response["conversation"].(map[string]interface{})["chatroom_id"].(float64))
-	apiCR, _, err := GetChatroom(c, userId, chatroomID)
+	apiCR, _, err := getChatroomInternal(c, userId, chatroomID)
 	if apiCR != nil {
 		isSecret := apiCR["is_secret"].(bool)
 		chatroomType := apiCR["type"].(float64)
 
 		if isSecret == true || chatroomType == chatroom.DMChatroomType {
-			allParticipantIDs, err := GetParticipants(c, userId, chatroomID, isSecret)
+			allParticipantIDs, err := getParticipantsInternal(c, userId, chatroomID, isSecret)
 			if allParticipantIDs != nil {
 				response["participants"] = allParticipantIDs
-				pubsub_publish.PublishConversationOnTopicTypeCommunity(c, userId, deviceID, response)
+				pubsubPublish.PublishConversationOnTopicTypeCommunity(c, userId, deviceID, response)
 			} else {
 				logging.Error(fmt.Sprintf("Error in getting participants data before publishing: %v", err))
 			}
 		} else {
-			pubsub_publish.PublishConversationOnTopicTypeCommunity(c, userId, deviceID, response)
+			pubsubPublish.PublishConversationOnTopicTypeCommunity(c, userId, deviceID, response)
 		}
 
 	} else {
@@ -339,7 +339,7 @@ func deleteConversationInternal(c *gin.Context, userId string) {
 	utils.SendRequest(c, utils.CoreService, DeleteConversationEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, deleteConversationRequest)
 }
 
-func GetChatroom(c *gin.Context, userID string, chatroomID string) (map[string]interface{}, int, error) {
+func getChatroomInternal(c *gin.Context, userID string, chatroomID string) (map[string]interface{}, int, error) {
 	// Params to be sent in the api/chatroom/fetch request
 	chatroomParams := map[string]string{
 		ParamChatroomId: chatroomID,
@@ -373,7 +373,51 @@ func GetChatroom(c *gin.Context, userID string, chatroomID string) (map[string]i
 	return nil, statusCode, err
 }
 
-func GetParticipants(c *gin.Context, userID string, chatroomID string, isSecret bool) ([]string, error) {
+// SaveChatroomInCache saves the chatroom data in Redis with a specified TTL.
+func saveChatroomInCache(redisClient *redis.Client, chatroomID string, chatroomData map[string]interface{}) error {
+	// Serialize the chatroom data to JSON
+	data, err := json.Marshal(chatroomData)
+	if err != nil {
+		return fmt.Errorf("failed to marshal chatroom data: %v", err)
+	}
+
+	// Cache key for the chatroom data
+	cacheKey := fmt.Sprintf(cache.ChatroomKey, chatroomID)
+
+	// Save to Redis with a TTL of 24 hours (can be adjusted as needed)
+	err = cache.Set(redisClient, cacheKey, data, time.Hour*cache.ChatroomTTL)
+	if err != nil {
+		return fmt.Errorf("error saving chatroom data to cache: %v", err)
+	}
+
+	return nil
+}
+
+// GetChatroomFromCache fetches the chatroom data from the cache.
+func getChatroomFromCache(redisClient *redis.Client, chatroomID string) (map[string]interface{}, error) {
+	// Cache key for the chatroom data
+	cacheKey := fmt.Sprintf(cache.ChatroomKey, chatroomID)
+
+	// Get data from Redis
+	cacheValue, _, err := cache.Get(redisClient, cacheKey)
+	if err != nil {
+		return nil, err
+	}
+	if cacheValue == "" {
+		return nil, fmt.Errorf("no data found in cache for chatroom: %s", chatroomID)
+	}
+
+	// Parse the cached data into a map[string]interface{}
+	var chatroomData map[string]interface{}
+	err = json.Unmarshal([]byte(cacheValue), &chatroomData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal chatroom data: %v", err)
+	}
+
+	return chatroomData, nil
+}
+
+func getParticipantsInternal(c *gin.Context, userID string, chatroomID string, isSecret bool) ([]string, error) {
 	cacheKey := fmt.Sprintf(cache.ChatroomParticipantsKey, chatroomID)
 	// Check if the participants are already in the Redis cache
 	redisClient := utils.GetRedisClientFromContext(c)
@@ -501,52 +545,8 @@ func setParticipantsInCache(redisClient *redis.Client, cacheKey string, allParti
 	return nil
 }
 
-// SaveChatroomInCache saves the chatroom data in Redis with a specified TTL.
-func saveChatroomInCache(redisClient *redis.Client, chatroomID string, chatroomData map[string]interface{}) error {
-	// Serialize the chatroom data to JSON
-	data, err := json.Marshal(chatroomData)
-	if err != nil {
-		return fmt.Errorf("failed to marshal chatroom data: %v", err)
-	}
-
-	// Cache key for the chatroom data
-	cacheKey := fmt.Sprintf(cache.ChatroomKey, chatroomID)
-
-	// Save to Redis with a TTL of 24 hours (can be adjusted as needed)
-	err = cache.Set(redisClient, cacheKey, data, time.Hour*cache.ChatroomTTL)
-	if err != nil {
-		return fmt.Errorf("error saving chatroom data to cache: %v", err)
-	}
-
-	return nil
-}
-
-// GetChatroomFromCache fetches the chatroom data from the cache.
-func getChatroomFromCache(redisClient *redis.Client, chatroomID string) (map[string]interface{}, error) {
-	// Cache key for the chatroom data
-	cacheKey := fmt.Sprintf(cache.ChatroomKey, chatroomID)
-
-	// Get data from Redis
-	cacheValue, _, err := cache.Get(redisClient, cacheKey)
-	if err != nil {
-		return nil, err
-	}
-	if cacheValue == "" {
-		return nil, fmt.Errorf("no data found in cache for chatroom: %s", chatroomID)
-	}
-
-	// Parse the cached data into a map[string]interface{}
-	var chatroomData map[string]interface{}
-	err = json.Unmarshal([]byte(cacheValue), &chatroomData)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal chatroom data: %v", err)
-	}
-
-	return chatroomData, nil
-}
-
-// GetTotalParticipants returns the total participants count, fetching the first page if not present in cache.
-func GetTotalParticipants(c *gin.Context, userID string, chatroomID string, isSecret bool) (int, error) {
+// getTotalParticipantsInternal returns the total participants count, fetching the first page if not present in cache.
+func getTotalParticipantsInternal(c *gin.Context, userID string, chatroomID string, isSecret bool) (int, error) {
 	redisClient := utils.GetRedisClientFromContext(c)
 
 	// Try to get total participants count from the cache

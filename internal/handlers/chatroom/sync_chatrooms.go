@@ -2,7 +2,7 @@ package chatroom
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsub_publish"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsubPublish"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
@@ -54,7 +54,7 @@ func parseAndPublishDROnTopicTypeChatroom(c *gin.Context, userId string, respons
 		chatroomID := chatroomMap["id"]
 
 		// Call PublishDROnTopicTypeChatroom for each "chatroomID"
-		pubsub_publish.PublishDROnTopicTypeChatroom(c, userId, deviceID, chatroomID)
+		pubsubPublish.PublishDROnTopicTypeChatroom(c, userId, deviceID, chatroomID)
 	}
 
 }

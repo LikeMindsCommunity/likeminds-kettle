@@ -1,4 +1,4 @@
-package pubsub_publish
+package pubsubPublish
 
 const (
 	TopicTypeChatroomDynamic     = "chatroom:%v"

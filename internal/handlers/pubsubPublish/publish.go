@@ -1,4 +1,4 @@
-package pubsub_publish
+package pubsubPublish
 
 import (
 	"fmt"
@@ -40,8 +40,8 @@ func PublishDROnTopicTypeChatroom(c *gin.Context, userId, deviceID string, chatr
 
 	// Prepare the response (body) for the inactive user case
 	response := map[string]interface{}{
-		"min_timestamp": c.Query(ParamMinTimeStamp),
-		"max_timestamp": c.Query(ParamMaxTimeStamp),
+		ParamMinTimeStamp: c.Query(ParamMinTimeStamp),
+		ParamMaxTimeStamp: c.Query(ParamMaxTimeStamp),
 	}
 
 	// Call the Pandemonium Publish API using your pre-defined function
