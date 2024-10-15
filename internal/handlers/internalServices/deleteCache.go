@@ -75,6 +75,18 @@ func DeleteCacheByKeyPatterns(redisClient *redis.Client, keyPatterns []string) e
 			}
 			logging.Info(fmt.Sprintf("Successfully deleted cache for key: %s", key))
 		}
+
+		// If deleting participants key, also delete the total participants key
+		if keyPattern == fmt.Sprintf(cache.ChatroomParticipantsKey, "%s") {
+			for _, key := range keys {
+				chatroomID := extractChatroomIDFromKey(key) // function to extract chatroomID
+				err = deleteChatroomTotalParticipantsCache(redisClient, chatroomID)
+				if err != nil {
+					logging.Error(fmt.Sprintf("Error deleting total participants key for chatroom %s: %v", chatroomID, err))
+					return err
+				}
+			}
+		}
 	}
 	return nil
 }
@@ -83,7 +95,7 @@ func DeleteChatroomCache(c *gin.Context, chatroomID interface{}) {
 	// get redis client from context
 	redisClient := utils.GetRedisClientFromContext(c)
 	if redisClient == nil {
-		utils.GeneralAPIError(c, "Redis client not found")
+		logging.Error("Redis client not found")
 		return
 	}
 
@@ -98,4 +110,30 @@ func DeleteChatroomCache(c *gin.Context, chatroomID interface{}) {
 		logging.Error(fmt.Sprintf("Error deleting key %s: %v", cacheKey, err))
 		return
 	}
+}
+
+// deleteChatroomTotalParticipantsCache deletes the chatroom_total_participants_%s key from Redis
+func deleteChatroomTotalParticipantsCache(redisClient *redis.Client, chatroomID interface{}) error {
+	// Cache key for the total participants data
+	totalParticipantsCacheKey := fmt.Sprintf(cache.ChatroomTotalParticipantsKey, chatroomID)
+
+	// Delete the cache key
+	err := cache.Delete(redisClient, totalParticipantsCacheKey)
+	if err != nil {
+		logging.Error(fmt.Sprintf("Error deleting chatroom total participants cache for key %s: %v", totalParticipantsCacheKey, err))
+		return err
+	}
+	logging.Info(fmt.Sprintf("Successfully deleted chatroom total participants cache for key: %s", totalParticipantsCacheKey))
+	return nil
+}
+
+// Helper function to extract chatroomID from cache key
+func extractChatroomIDFromKey(key string) string {
+	// Assuming the key format is "chatroom_participants_<chatroom_id>"
+	var chatroomID string
+	_, err := fmt.Sscanf(key, cache.ChatroomParticipantsKey, &chatroomID)
+	if err != nil {
+		return ""
+	}
+	return chatroomID
 }
