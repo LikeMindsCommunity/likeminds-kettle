@@ -8,13 +8,14 @@ import (
 )
 
 type User struct {
-	MobileNo         string `json:"mobile_no,omitempty"`
-	CountryCode      string `json:"country_code,omitempty"`
-	Name             string `json:"name,omitempty"`
-	Email            string `json:"email,omitempty"`
-	ImageUrl         string `json:"image_url,omitempty"`
-	OrganisationName string `json:"organisation_name,omitempty"`
-	UserUniqueId     string `json:"user_unique_id,omitempty"`
+	MobileNo         string                 `json:"mobile_no,omitempty"`
+	CountryCode      string                 `json:"country_code,omitempty"`
+	Name             string                 `json:"name,omitempty"`
+	Email            string                 `json:"email,omitempty"`
+	ImageUrl         string                 `json:"image_url,omitempty"`
+	OrganisationName string                 `json:"organisation_name,omitempty"`
+	UserUniqueId     string                 `json:"user_unique_id,omitempty"`
+	MetaInfo         map[string]interface{} `json:"meta_info,omitempty"`
 }
 
 type LoginRequest struct {
