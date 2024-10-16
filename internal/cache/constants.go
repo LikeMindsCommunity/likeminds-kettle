@@ -18,7 +18,9 @@ const (
 	WidgetMetaCacheKey                 = "%d_%s_widget_meta"               // communityId widgetId
 	CommunityBillingDataKey            = "%d_community_billing_data"       // communityId
 	TierDataKey                        = "%d_tier_data"
-	ChatroomParticipantsKey            = "chatroom_participants_%s" // chatroom participants
+	ChatroomParticipantsKey            = "chatroom_participants_%s"       // chatroom participants
+	ChatroomKey                        = "chatroom_%s"                    // chatroom
+	ChatroomTotalParticipantsKey       = "chatroom_total_participants_%s" // chatroom total participants
 )
 
 // Cache TTLs in hours
