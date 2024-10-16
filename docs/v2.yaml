@@ -292,6 +292,8 @@ paths:
     $ref: "./api/feed/v1/user/activity/unread_count.yaml"
   /feed/universal:
     $ref: "./api/feed/v1/universal.yaml"
+  /feed/personalised:
+    $ref: "./api/feed/v1/personalised.yaml"
   /feed/group:
     $ref: "./api/feed/v1/group.yaml"
   /feed/topic:

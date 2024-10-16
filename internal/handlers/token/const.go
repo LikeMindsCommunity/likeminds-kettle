@@ -13,6 +13,7 @@ const (
 const (
 	TokemAccessUUID   = "access_uuid"
 	TokenAPIKey       = "api_key"
+	TokenPlatformType = "platform_type"
 	TokenUserUniqueId = "user_unique_id"
 	TokenIsGuest      = "is_guest"
 	TokenExp          = "exp"

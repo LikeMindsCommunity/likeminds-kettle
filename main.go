@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/nateshr/likeminds-authentication/internal/handlers/deliveryReport"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
@@ -21,7 +23,7 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/handlers/moderation"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/otp"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/poll"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsub"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsubSubscribe"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/sdk"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/search"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
@@ -98,7 +100,7 @@ func setRouterA() {
 	routerA.GET(constants.UserTokenRoute, user.CreateToken)
 
 	// User Apis
-	routerA.POST(constants.UserLoginRoute, middleware.OTMValidationMiddleware(), user.Login)
+	routerA.POST(constants.UserLoginRoute, middleware.VTMValidationMiddleware(false), user.Login)
 	routerA.POST(constants.UserRefreshRoute, middleware.RTMValidationMiddleware(redisClient), user.Refresh)
 	routerA.POST(constants.UserLogoutRoute, middleware.LogoutValidationMiddleware(redisClient), user.Logout)
 	routerA.POST(constants.UserMergeAccountRoute, middleware.LTMValidationMiddleware(redisClient, true), user.MergeAccount)
@@ -110,6 +112,8 @@ func setRouterA() {
 	routerA.POST(constants.UserOTPRoute, middleware.OTMValidationMiddleware(), user.GenerateUserOTP)
 	routerA.GET(constants.UserOTPVerifyRoute, middleware.OTMValidationMiddleware(), user.VerifyUserOTP)
 	routerA.GET(constants.UserSocialLoginRoute, middleware.OTMValidationMiddleware(), user.UserSocialLogin)
+	routerA.PUT(constants.UserBlockRoute, middleware.LTMValidationMiddleware(redisClient, true), user.BlockUnblockUser)
+	routerA.GET(constants.UserBlockRoute, middleware.LTMValidationMiddleware(redisClient, true), user.GetBlockUser)
 
 	// Home Apis
 	routerA.POST(constants.HomeFetchCommunitiesRoute, middleware.LTMValidationMiddleware(redisClient, true), home.FetchCommunities)
@@ -248,6 +252,11 @@ func setRouterA() {
 	routerA.PATCH(constants.CommunityMemberConnectionRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.AcceptRejectMemberConnection)
 	routerA.GET(constants.CommunityMemberConnectionRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.GetMemberConnection)
 	routerA.GET(constants.CommunityMemberConnectionMetaRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.GetMemberConnectionMeta)
+	routerA.GET(constants.CommunityChatbotRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.FetchChatbots)
+	routerA.POST(constants.CommunityChatbotRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.CreateChatbot)
+	routerA.PATCH(constants.CommunityChatbotIdRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.UpdateChatbot)
+	routerA.GET(constants.CommunityIntegrationRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.GetCommumityIntegrations)
+	routerA.PUT(constants.CommunityIntegrationRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), community.UpdateCommunityIntegrations)
 
 	// Moderation Apis
 	routerA.GET(constants.ModerationRightsRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), moderation.GetRights)
@@ -320,6 +329,7 @@ func setRouterA() {
 	routerA.POST(constants.FeedPersonalisedRecomputeRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.RecomputePersonalisedFeed)
 	routerA.POST(constants.FeedPersonalisedReorderRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.ReorderPersonalisedFeed)
 	routerA.POST(constants.FeedPostSeenRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.SeenPost)
+	routerA.PUT(constants.FeedPostIDHideRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.HidePost)
 
 	// Utility Apis
 	routerA.GET(constants.HelperUrlRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), utility.DecodeUrl)
@@ -385,6 +395,9 @@ func setRouterA() {
 	// Internal Apis
 	routerA.DELETE(constants.CacheRoute, middleware.InternalServiceValidationMiddleware(), internalServices.DeleteCache)
 
+	// Pandemonium APIs
+	routerA.GET(constants.DeliveryReportRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), deliveryReport.GetDR)
+
 	routerA.GET("/metrics", gin.WrapH(promhttp.Handler()))
 }
 
@@ -418,8 +431,11 @@ func getPrometheusMetricService() *monitoring.PrometheusService {
 }
 
 func setRouterB() {
+	// health check path '/' on ws router
+	routerB.GET("", web.Home)
+
 	// Pandemonium APIs
-	routerB.GET(constants.SubscribeRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), pubsub.Subscribe)
+	routerB.GET(constants.SubscribeRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), pubsubSubscribe.Subscribe)
 }
 
 func routerAServer() *http.Server {

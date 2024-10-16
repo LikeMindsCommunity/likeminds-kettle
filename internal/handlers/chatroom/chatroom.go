@@ -2,6 +2,7 @@ package chatroom
 
 import (
 	"fmt"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/internalServices"
 	"reflect"
 	"strconv"
 
@@ -60,6 +61,15 @@ type DeleteChatroomRequest struct {
 	ChatroomID interface{} `json:"chatroom_id" binding:"required"`
 	TagID      int32       `json:"tag_id"`
 	Reason     string      `json:"reason"`
+}
+
+type ChatroomDetailParentResponse struct {
+	ChatroomDetail []ChatroomDetailResponse `json:"channel_details_data"`
+}
+
+type ChatroomDetailResponse struct {
+	CanAccessSecretChatroom *bool  `json:"can_access_secret_chatroom"`
+	CohortAccess            *int32 `json:"cohort_access"`
 }
 
 // CreateChatroom is used to create a new chatroom
@@ -179,7 +189,7 @@ func getChatroomInternal(c *gin.Context, userId string) {
 		//else, call api/chatroom/fetch api internally
 
 		version := c.GetHeader(utils.HeadersVersionCode)
-		acceptVersion := c.GetHeader((utils.HeadersAcceptVersion))
+		acceptVersion := c.GetHeader(utils.HeadersAcceptVersion)
 
 		if version == "v2" || acceptVersion == "v2" {
 			// Params to be sent in the /api/v2/fetch_chatroom request
@@ -250,8 +260,15 @@ func editChatroomInternal(c *gin.Context, userId string) {
 	}
 
 	//Send Request
-	utils.SendRequest(c, utils.CoreService, EditChatroomEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, editChatroomRequest)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, EditChatroomEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, editChatroomRequest)
+	if respBytes == nil {
+		return
+	}
 
+	//Parse response
+	utils.ParseResponse(c, respBytes, statusCode, false)
+
+	go internalServices.DeleteChatroomCache(c, editChatroomRequest.ChatroomID)
 }
 
 func deleteChatroomInternal(c *gin.Context, userId string) {
@@ -269,6 +286,13 @@ func deleteChatroomInternal(c *gin.Context, userId string) {
 	}
 
 	//Send Request
-	utils.SendRequest(c, utils.CoreService, DeleteChatroomEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, deleteChatroomRequest)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, DeleteChatroomEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, deleteChatroomRequest)
+	if respBytes == nil {
+		return
+	}
 
+	//Parse response
+	utils.ParseResponse(c, respBytes, statusCode, false)
+
+	go internalServices.DeleteChatroomCache(c, deleteChatroomRequest.ChatroomID)
 }

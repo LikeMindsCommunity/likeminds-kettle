@@ -21,6 +21,7 @@ const (
 	UserOTPRoute                  = "/user/otp"
 	UserOTPVerifyRoute            = "/user/otp/verify"
 	UserSocialLoginRoute          = "/user/social/login"
+	UserBlockRoute                = "/user/:user_uuid/block"
 )
 
 // Home Endpoints
@@ -31,10 +32,10 @@ const (
 
 // SDK Endpoints
 const (
-	SDKInitiateRoute   	= "/sdk/initiate"
-	SDKProjectRoute    	= "/sdk/project"
-	SDKOnboardingRoute 	= "/sdk/onboarding"
-	SDKMauOverviewRoute	= "/sdk/mau_overview"
+	SDKInitiateRoute    = "/sdk/initiate"
+	SDKProjectRoute     = "/sdk/project"
+	SDKOnboardingRoute  = "/sdk/onboarding"
+	SDKMauOverviewRoute = "/sdk/mau_overview"
 )
 
 // Chatroom Endpoints
@@ -124,6 +125,9 @@ const (
 	CommunityRemovalReportsRoute                   = "/community/removal_reports"
 	CommunityMemberConnectionRoute                 = "/community/member/:user_id/connection"
 	CommunityMemberConnectionMetaRoute             = "/community/member/:user_id/connection_meta"
+	CommunityChatbotRoute                          = "/community/chatbot"
+	CommunityChatbotIdRoute                        = "/community/chatbot/:chatbot_uuid"
+	CommunityIntegrationRoute                      = "/community/integration"
 )
 
 // Moderation Endpoints
@@ -158,6 +162,7 @@ const (
 	FeedPostIDRoute                 = "/feed/post/:post_id"
 	FeedPostIDLikeRoute             = "/feed/post/:post_id/like"
 	FeedPostIDPinRoute              = "/feed/post/:post_id/pin"
+	FeedPostIDHideRoute             = "/feed/post/:post_id/hide"
 	FeedPostIDSaveRoute             = "/feed/post/:post_id/save"
 	FeedPostIDCommentRoute          = "/feed/post/:post_id/comment"
 	FeedPostIDCommentIDRoute        = "/feed/post/:post_id/comment/:comment_id"
@@ -258,5 +263,6 @@ const (
 
 // Pandemonium Endpoints
 const (
-	SubscribeRoute = "/subscribe/:topic"
+	SubscribeRoute      = "/subscribe/:topic"
+	DeliveryReportRoute = "/delivery_report"
 )

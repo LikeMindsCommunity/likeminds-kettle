@@ -150,3 +150,13 @@ const (
 	ProTierType        int = 1
 	EnterpriseTierType int = 2
 )
+
+// Post Menu Item IDs
+const (
+	BlockUserMenuItemID float64 = 11
+)
+
+// Post Menu Item Titles
+const (
+	BlockUserMenuItemTitle string = "Block %s"
+)

@@ -2,6 +2,7 @@ package chatroom
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/internalServices"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
@@ -65,7 +66,15 @@ func ChatroomType(c *gin.Context, method int) {
 		}
 
 		//Send Request
-		utils.SendRequest(c, utils.CoreService, ChatroomTypeEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, chatroomTypeRequest)
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, ChatroomTypeEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, chatroomTypeRequest)
+		if respBytes == nil {
+			return
+		}
+
+		//Parse response
+		utils.ParseResponse(c, respBytes, statusCode, false)
+
+		go internalServices.DeleteChatroomCache(c, chatroomTypeRequest.ChatroomID)
 	}
 }
 

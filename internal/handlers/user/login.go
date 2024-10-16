@@ -8,18 +8,40 @@ import (
 )
 
 type User struct {
-	MobileNo         string `json:"mobile_no,omitempty"`
-	CountryCode      string `json:"country_code,omitempty"`
-	Name             string `json:"name,omitempty"`
-	Email            string `json:"email,omitempty"`
-	ImageUrl         string `json:"image_url,omitempty"`
-	OrganisationName string `json:"organisation_name,omitempty"`
-	UserUniqueId     string `json:"user_unique_id,omitempty"`
+	MobileNo         string                 `json:"mobile_no,omitempty"`
+	CountryCode      string                 `json:"country_code,omitempty"`
+	Name             string                 `json:"name,omitempty"`
+	Email            string                 `json:"email,omitempty"`
+	ImageUrl         string                 `json:"image_url,omitempty"`
+	OrganisationName string                 `json:"organisation_name,omitempty"`
+	UserUniqueId     string                 `json:"user_unique_id,omitempty"`
+	MetaInfo         map[string]interface{} `json:"meta_info,omitempty"`
 }
 
 type LoginRequest struct {
 	LoginType string `json:"type" binding:"required"`
 	User      User   `json:"user"`
+}
+
+func extractLoginDetailsFromVTM(vtm *constants.VerifyTokenMeta, lr *LoginRequest) *LoginRequest {
+
+	if vtm.EmailID != "" {
+		lr.User.Email = vtm.EmailID
+	}
+
+	if vtm.MobileNo != "" {
+		lr.User.MobileNo = vtm.MobileNo
+	}
+
+	if vtm.CountryCode != "" {
+		lr.User.CountryCode = vtm.CountryCode
+	}
+
+	if vtm.PlatformType == string(utils.PlatformDashboard) {
+		lr.LoginType = string(utils.PlatformDashboard)
+	}
+
+	return lr
 }
 
 // Login used when user is signing up and generate login and refresh tokens
@@ -31,6 +53,11 @@ func Login(c *gin.Context) {
 		//If POST body params are missing
 		utils.GeneralBadRequestError(c, err.Error())
 		return
+	}
+
+	verifyTokenMeta, ok := c.Get(constants.ParamVTM)
+	if ok {
+		loginRequest = extractLoginDetailsFromVTM(verifyTokenMeta.(*constants.VerifyTokenMeta), loginRequest)
 	}
 
 	//Send Request
@@ -91,6 +118,7 @@ func updateLoginRequest(lr *LoginRequest) interface{} {
 	user[UserImageUrl] = lr.User.ImageUrl
 	user[UserOrganisationName] = lr.User.OrganisationName
 	user[ResponseUserUniqueId] = lr.User.UserUniqueId
+	user[ParamMetaInfo] = lr.User.MetaInfo
 
 	updatedLr[UserMobileNo] = lr.User.MobileNo
 	updatedLr[UserCountryCode] = lr.User.CountryCode

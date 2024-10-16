@@ -1,0 +1,6 @@
+name: should_reorder
+in: query
+description: To reorder Personalised feed (happens in sync)
+schema:
+  type: boolean
+  default: false

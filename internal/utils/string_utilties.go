@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
 func ParseStringArrayToString(array []string) string {
@@ -34,4 +35,17 @@ func CheckIfStringExistsInArray(array []string, str string) bool {
 // GetBooleanFromString is used to get boolean from string | returns false by default
 func GetBooleanFromString(str string) bool {
 	return str == "true"
+}
+
+// Get first name from string
+func GetFirstNameFromName(name string) string {
+	var firstName string
+
+	nameList := strings.Split(name, " ")
+
+	if len(nameList) > 0 {
+		firstName = nameList[0]
+	}
+
+	return firstName
 }

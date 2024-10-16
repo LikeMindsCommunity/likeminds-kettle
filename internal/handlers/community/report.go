@@ -223,6 +223,25 @@ func pushReportsInternalOld(c *gin.Context, userId string) {
 		return
 	}
 
+	if pushReportRequest.EntityType == feed.POST_REPORT_TYPE && pushReportRequest.UUID == constants.AnonymousUserUUID {
+
+		posts, _, _, _ := fetchPostsData(utils.CreateHeaders(c, userId), []string{pushReportRequest.EntityId}, nil)
+		if len(posts) > 0 {
+			postData := posts[pushReportRequest.EntityId].(map[string]interface{})
+
+			if postData == nil {
+				utils.GeneralBadRequestError(c, "Invalid post id")
+				return
+			}
+
+			pushReportRequest.UUID = postData["uuid"].(string)
+		} else {
+			utils.GeneralBadRequestError(c, "Invalid post id")
+			return
+		}
+
+	}
+
 	//Send Request
 	utils.SendRequest(c, utils.CoreService, PushReportEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, pushReportRequest)
 }
