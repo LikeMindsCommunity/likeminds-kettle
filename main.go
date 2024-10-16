@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/deliveryReport"
 	"log"
 	"net/http"
 
@@ -391,6 +392,9 @@ func setRouterA() {
 
 	// Internal Apis
 	routerA.DELETE(constants.CacheRoute, middleware.InternalServiceValidationMiddleware(), internalServices.DeleteCache)
+
+	// Pandemonium APIs
+	routerB.GET(constants.DeliveryReportRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), deliveryReport.GetDR)
 
 	routerA.GET("/metrics", gin.WrapH(promhttp.Handler()))
 }
