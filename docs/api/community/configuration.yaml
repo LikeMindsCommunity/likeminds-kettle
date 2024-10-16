@@ -79,6 +79,9 @@ get:
                       comment_count: 1
                       comment_sort_order: ""
                       comment_sort_order_key: ""
+                    anonymous_user_meta:
+                      name: Anonymous User
+                      image_url: ""
                 - description: "User profiles metadata for the community"
                   type: "profile_metadata"
                   value:
@@ -141,6 +144,9 @@ patch:
               like_entity_variable:
                 entity_name: "like"
                 past_tense_verb: "liked"
+              anonymous_user_meta:
+                name: Anonymous User
+                image_url: ""
           profile_metadata:
             type: "profile_metadata"
             value:
@@ -225,6 +231,12 @@ patch:
                 description: "Metadata related to feed and its entity"
                 type: "feed_metadata"
                 value:
+                  post: "post"
                   comment: "comment"
-                  post: "resource"
+                  like_entity_variable:
+                    entity_name: "like"
+                    past_tense_verb: "liked"
+                  anonymous_user_meta:
+                    name: Anonymous User
+                    image_url: ""
               record_updated: true
