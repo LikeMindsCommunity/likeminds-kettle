@@ -54,6 +54,7 @@ func DeleteCache(c *gin.Context) {
 
 // DeleteCacheByKeyPatterns Abstracted function to delete keys from Redis based on key patterns
 func DeleteCacheByKeyPatterns(redisClient *redis.Client, keyPatterns []string) error {
+	//todo move it to redis.go
 	for _, keyPattern := range keyPatterns {
 		// Get all keys matching the pattern
 		keys, err := cache.GetKeys(redisClient, keyPattern)
