@@ -63,17 +63,16 @@ func DeleteCacheByKeyPatterns(redisClient *redis.Client, keyPatterns []string) e
 
 		if len(keys) == 0 {
 			logging.Info(fmt.Sprintf("No cache keys found for pattern: %s", keyPattern))
-			continue
-		}
-
-		// Delete all keys
-		for _, key := range keys {
-			err = cache.Delete(redisClient, key)
-			if err != nil {
-				logging.Error(fmt.Sprintf("Error deleting key %s: %v", key, err))
-				return err
+		} else {
+			// Delete all keys
+			for _, key := range keys {
+				err = cache.Delete(redisClient, key)
+				if err != nil {
+					logging.Error(fmt.Sprintf("Error deleting key %s: %v", key, err))
+					return err
+				}
+				logging.Info(fmt.Sprintf("Successfully deleted cache for key: %s", key))
 			}
-			logging.Info(fmt.Sprintf("Successfully deleted cache for key: %s", key))
 		}
 
 		// If deleting participants key, also delete the total participants key
