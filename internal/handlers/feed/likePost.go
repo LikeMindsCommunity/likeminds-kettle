@@ -59,8 +59,6 @@ func PostLike(c *gin.Context, method int) {
 
 func getPostLikesInternal(c *gin.Context, userId string, endPoint string) {
 
-	headers := utils.CreateHeaders(c, userId)
-
 	// Params to be sent in the /post/<post_id>/like request
 	params := map[string]string{
 		ParamPage:     c.Query(ParamPage),
@@ -81,6 +79,8 @@ func getPostLikesInternal(c *gin.Context, userId string, endPoint string) {
 
 	// Add member Role in headers
 	utils.AddMemberRoleToHeaders(c, response.IsCm)
+
+	headers := utils.CreateHeaders(c, userId)
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endPoint, utils.GETRequest, headers, params, nil)
