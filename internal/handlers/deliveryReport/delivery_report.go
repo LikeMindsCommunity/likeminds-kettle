@@ -14,7 +14,7 @@ func GetDR(c *gin.Context) {
 	if userId == "" {
 		return
 	}
-
+	
 	conversationIDs := c.QueryArray(ParamConversationIDs) // Use QueryArray for list of strings
 	// Join conversation IDs into a comma-separated string
 	conversationIDsStr := strings.Join(conversationIDs, ",")
