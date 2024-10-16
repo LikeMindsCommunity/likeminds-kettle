@@ -33,4 +33,5 @@ const (
 	CommunityBillingDataTTL           = 7 * 24
 	TierDataTTL                       = 30 * 24
 	ChatroomParticipantsTTL           = 7 * 24
+	ChatroomTTL                       = 30 * 24
 )
