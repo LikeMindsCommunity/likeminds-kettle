@@ -1,4 +1,4 @@
-package pubsub
+package pubsubSubscribe
 
 import "time"
 
@@ -19,15 +19,8 @@ const (
 )
 
 const (
-	TopicTypeChatroomDynamic     = "chatroom:%s"
-	TopicTypeCommunityDynamic    = "community:%v"
-	TopicMessageTypeConversation = "conversation"
-	TopicTypeChatroom            = "chatroom"
-)
-
-const (
-	ParamTopicMessageType = "topic_message_type"
-	ParamTopic            = "topic"
+	TopicTypeChatroom = "chatroom"
+	ParamTopic        = "topic"
 )
 
 const (
