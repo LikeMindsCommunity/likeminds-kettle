@@ -3,6 +3,7 @@ package internalServices
 import (
 	"fmt"
 	"github.com/go-redis/redis/v7"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
@@ -53,6 +54,7 @@ func DeleteCache(c *gin.Context) {
 
 // DeleteCacheByKeyPatterns Abstracted function to delete keys from Redis based on key patterns
 func DeleteCacheByKeyPatterns(redisClient *redis.Client, keyPatterns []string) error {
+	//todo move it to redis.go
 	for _, keyPattern := range keyPatterns {
 		// Get all keys matching the pattern
 		keys, err := cache.GetKeys(redisClient, keyPattern)
@@ -76,7 +78,11 @@ func DeleteCacheByKeyPatterns(redisClient *redis.Client, keyPatterns []string) e
 		}
 
 		// If deleting participants key, also delete the total participants key
-		if keyPattern == fmt.Sprintf(cache.ChatroomParticipantsKey, "%s") {
+		if isChatroomParticipantKey(keyPattern) {
+			//If not keys found against ChatroomParticipantsKey. This can happen since we are saving in ChatroomParticipantsKey only in case of secret chatroom / DM
+			if len(keys) == 0 {
+				keys = append(keys, keyPattern)
+			}
 			for _, key := range keys {
 				chatroomID := extractChatroomIDFromKey(key) // function to extract chatroomID
 				err = deleteChatroomTotalParticipantsCache(redisClient, chatroomID)
@@ -135,4 +141,9 @@ func extractChatroomIDFromKey(key string) string {
 		return ""
 	}
 	return chatroomID
+}
+
+// Check if the key matches the expected prefix
+func isChatroomParticipantKey(key string) bool {
+	return strings.HasPrefix(key, cache.ChatroomParticipantsPrefix)
 }
