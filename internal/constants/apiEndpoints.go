@@ -162,6 +162,7 @@ const (
 	FeedPostIDRoute                 = "/feed/post/:post_id"
 	FeedPostIDLikeRoute             = "/feed/post/:post_id/like"
 	FeedPostIDPinRoute              = "/feed/post/:post_id/pin"
+	FeedPostIDHideRoute             = "/feed/post/:post_id/hide"
 	FeedPostIDSaveRoute             = "/feed/post/:post_id/save"
 	FeedPostIDCommentRoute          = "/feed/post/:post_id/comment"
 	FeedPostIDCommentIDRoute        = "/feed/post/:post_id/comment/:comment_id"

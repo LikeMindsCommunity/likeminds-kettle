@@ -34,6 +34,15 @@ func PostSearch(c *gin.Context) {
 		return
 	}
 
+	// add CM role in headers if user is cm
+	if response.IsCm {
+		headers := map[string]string{
+			utils.HeaderMemberRole: utils.CMRole,
+		}
+
+		utils.AddHeaders(c, headers)
+	}
+
 	//Send Request to get excluded chatrooms list on Caravan Service
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, community.CommunityExcludedChatroomsEndPoint, utils.GETRequest, headers, nil, nil)
 

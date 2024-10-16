@@ -197,6 +197,9 @@ func FetchCommentByIdInternal(c *gin.Context, userId string, commentId string) m
 		return nil
 	}
 
+	// add member role in headers
+	utils.AddMemberRoleToHeaders(c, response.IsCm)
+
 	//Param updation
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
@@ -241,6 +244,9 @@ func createCommentInternal(c *gin.Context, userId string) {
 		utils.MemberAccessFailError(c)
 		return
 	}
+
+	// add CM role in headers if user is cm
+	utils.AddMemberRoleToHeaders(c, response.IsCm)
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, CreateCommentEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createCommentReplyRequest)
