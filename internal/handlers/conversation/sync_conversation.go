@@ -35,14 +35,21 @@ func SyncConversation(c *gin.Context) {
 	}
 
 	//Parse and generate response
-	utils.ParseResponse(c, respBytes, statusCode, true)
-
-	go parseAndPublishDROnTopicTypeChatroom(c, userId)
-
+	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+	if apiCR != nil {
+		utils.GenerateResponse(c, apiCR.Response, true)
+		if apiCR.Success == true {
+			go parseAndPublishDROnTopicTypeChatroom(c, userId, apiCR.Response)
+		}
+	}
 }
 
 // parseAndPublishDROnTopicTypeChatroom to publish DR on TopicTypeChatroom
-func parseAndPublishDROnTopicTypeChatroom(c *gin.Context, userId string) {
+func parseAndPublishDROnTopicTypeChatroom(c *gin.Context, userId string, response map[string]interface{}) {
 	deviceID := user.GetRequestingUserDeviceId(c)
-	pubsubPublish.PublishDROnTopicTypeChatroom(c, userId, deviceID, c.Query(ParamChatroomId))
+	
+	communityMeta := response["community_meta"].(map[string]interface{})
+	communityID := communityMeta["id"]
+
+	pubsubPublish.PublishDROnTopicTypeChatroom(c, userId, deviceID, c.Query(ParamChatroomId), communityID)
 }

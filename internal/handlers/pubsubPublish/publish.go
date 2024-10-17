@@ -31,7 +31,7 @@ func PublishConversationOnTopicTypeCommunity(c *gin.Context, userId string, devi
 }
 
 // PublishDROnTopicTypeChatroom handles calling the Pandemonium publish API for inactive user flow in delivered report
-func PublishDROnTopicTypeChatroom(c *gin.Context, userId, deviceID string, chatroomID interface{}) {
+func PublishDROnTopicTypeChatroom(c *gin.Context, userId, deviceID string, chatroomID, communityID interface{}) {
 	headers := utils.CreateHeadersFromToken(c, userId, deviceID)
 	topicChatroom := fmt.Sprintf(TopicTypeChatroomDynamic, chatroomID)
 	params := map[string]string{
@@ -42,6 +42,7 @@ func PublishDROnTopicTypeChatroom(c *gin.Context, userId, deviceID string, chatr
 	response := map[string]interface{}{
 		ParamMinTimeStamp: c.Query(ParamMinTimeStamp),
 		ParamMaxTimeStamp: c.Query(ParamMaxTimeStamp),
+		ParamCommunityID:  communityID,
 	}
 
 	// Call the Pandemonium Publish API using your pre-defined function

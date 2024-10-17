@@ -47,14 +47,17 @@ func SyncChatrooms(c *gin.Context) {
 // parseAndPublishDROnTopicTypeChatroom to publish DR on TopicTypeChatroom
 func parseAndPublishDROnTopicTypeChatroom(c *gin.Context, userId string, response map[string]interface{}) {
 	deviceID := user.GetRequestingUserDeviceId(c)
+
 	// After returning the response, run a loop around "id" present in "chatrooms:[]"
 	chatrooms := response["chatrooms_data"].([]interface{})
+
 	for _, chatroom := range chatrooms {
 		chatroomMap := chatroom.(map[string]interface{})
 		chatroomID := chatroomMap["id"]
+		communityID := chatroomMap["community_id"]
 
 		// Call PublishDROnTopicTypeChatroom for each "chatroomID"
-		pubsubPublish.PublishDROnTopicTypeChatroom(c, userId, deviceID, chatroomID)
+		pubsubPublish.PublishDROnTopicTypeChatroom(c, userId, deviceID, chatroomID, communityID)
 	}
 
 }
