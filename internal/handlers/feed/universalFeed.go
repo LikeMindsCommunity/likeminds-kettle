@@ -17,8 +17,6 @@ func FetchUniversalFeed(c *gin.Context) {
 		return
 	}
 
-	headers := utils.CreateHeaders(c, userId)
-
 	//Params to be sent in the /feed/universal request
 	params := map[string]string{
 		ParamPage:      c.Query(ParamPage),
@@ -50,6 +48,8 @@ func FetchUniversalFeed(c *gin.Context) {
 
 		utils.AddHeaders(c, headers)
 	}
+
+	headers := utils.CreateHeaders(c, userId)
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchUniversalFeedEndPoint, utils.GETRequest, headers, params, nil)

@@ -105,6 +105,8 @@ func fetchUserProfileActivityInternal(c *gin.Context, userId string, EndPoint st
 		return
 	}
 
+	utils.AddMemberRoleToHeaders(c, response.IsCm)
+
 	params := map[string]string{
 		ParamPage:     c.Query(ParamPage),
 		ParamPageSize: c.Query(ParamPageSize),
@@ -125,6 +127,18 @@ func GetUserActivity(c *gin.Context) {
 		ParamPage:     c.Query(ParamPage),
 		ParamPageSize: c.Query(ParamPageSize),
 	}
+
+	success, response := user.FetchMemberAccess(c, VIEW_USER_ACTIVITY, userID)
+	if !success {
+		return
+	}
+
+	if !response.Access {
+		utils.MemberAccessFailError(c)
+		return
+	}
+
+	utils.AddMemberRoleToHeaders(c, response.IsCm)
 
 	//Get Request response
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, GetUserActivityEndPoint, utils.GETRequest, utils.CreateHeaders(c, userID), params, gin.H{})
