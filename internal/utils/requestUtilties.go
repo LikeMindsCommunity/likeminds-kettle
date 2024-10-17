@@ -88,3 +88,12 @@ func ParseStringArrayFromParam(param string) []string {
 
 	return response
 }
+
+func AddMemberRoleToHeaders(c *gin.Context, isCm bool) {
+	if isCm {
+		headers := map[string]string{
+			HeaderMemberRole: CMRole,
+		}
+		AddHeaders(c, headers)
+	}
+}

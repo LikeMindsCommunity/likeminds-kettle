@@ -87,6 +87,9 @@ func CommentPost(c *gin.Context) {
 		return
 	}
 
+	// Add member role to headers
+	utils.AddMemberRoleToHeaders(c, response.IsCm)
+
 	//Get tagged users from text
 	taggedUsers := getTaggedUsersFromText(utils.CreateHeaders(c, userId), createPostCommentRequest.Text)
 	createPostCommentRequest.UUIDs = taggedUsers

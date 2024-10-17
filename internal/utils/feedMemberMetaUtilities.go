@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
+	"github.com/nateshr/likeminds-authentication/internal/constants"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
 )
 
@@ -44,9 +45,12 @@ func fetchMembersMetaFromCache(redisClient *redis.Client, communityId int, userU
 	remainingMemberIds := []string{}
 
 	// fetch member meta from cache
-	cachKeys := []string{}
+	cachKeys, userIdsMap := []string{}, map[string]bool{}
 	for _, userUniqueId := range userUniqueIds {
-		cachKeys = append(cachKeys, fmt.Sprintf(cache.UserMetaCacheKey, communityId, userUniqueId))
+		if _, ok := userIdsMap[userUniqueId]; !ok {
+			cachKeys = append(cachKeys, fmt.Sprintf(cache.UserMetaCacheKey, communityId, userUniqueId))
+			userIdsMap[userUniqueId] = true
+		}
 	}
 
 	// Fetch keys from cache
@@ -123,6 +127,44 @@ func saveMembersMetaInCache(redisClient *redis.Client, communityId int, membersM
 	}
 }
 
+// Utility method to fetch Anonymous user meta for feed
+func getAnonymousUserMetaForFeed(redisClient *redis.Client, headers map[string]interface{}, communityId int) MemberMeta {
+
+	// Fetch feed_metadata configurations
+	feedMetadata, err := getFeedMetaConfig(redisClient, headers, communityId)
+	if err != nil {
+		logging.Error(fmt.Sprintf("error fetching feed metadata: %s", err))
+	}
+
+	name, imageUrl := constants.AnonymousUserName, ""
+
+	anonUserMetaConfig, ok := feedMetadata.Value[constants.AnonymousUserMetaConfigKey].(map[string]interface{})
+	if ok {
+		_, ok := anonUserMetaConfig["name"]
+		if ok {
+			name = anonUserMetaConfig["name"].(string)
+		}
+
+		_, ok = anonUserMetaConfig["image_url"]
+		if ok {
+			imageUrl = anonUserMetaConfig["image_url"].(string)
+		}
+	}
+
+	anonymousUserMeta := MemberMeta{
+		UserUniqueId: constants.AnonymousUserUUID,
+		UUID:         constants.AnonymousUserUUID,
+		Name:         name,
+		ImageUrl:     imageUrl,
+		SdkClientInfo: &SdkClientInfo{
+			UserUniqueId: constants.AnonymousUserUUID,
+			UUID:         constants.AnonymousUserUUID,
+		},
+	}
+
+	return anonymousUserMeta
+}
+
 // Exposed method to fetch members meta map for user_unique_ids from cache if present else from api
 func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[string]interface{}, userUniqueIds []string,
 ) (map[string]MemberMeta, error) {
@@ -158,6 +200,16 @@ func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[s
 	// fetch remaining members meta from api
 	if len(userUniqueIds) > 0 {
 
+		// Generate anonymous user data if userUniqueIds contains anonymous-user
+		for _, userUniqueId := range userUniqueIds {
+			if userUniqueId == constants.AnonymousUserUUID {
+				memberMetaMap[userUniqueId] = getAnonymousUserMetaForFeed(redisClient, headers, communityId)
+
+				// save in cache
+				go saveMembersMetaInCache(redisClient, communityId, []MemberMeta{memberMetaMap[userUniqueId]})
+			}
+		}
+
 		membersMeta, err := fetchMembersMetaFromAPI(redisClient, communityId, headers, userUniqueIds)
 		if err != nil {
 			return nil, err
@@ -169,11 +221,12 @@ func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[s
 		}
 	}
 
-	//Generate user data for remaining userUniqueIds
+	// Generate user data for remaining userUniqueIds
 	for _, memberId := range userUniqueIds {
 		if _, ok := memberMetaMap[memberId]; !ok {
 			memberMetaMap[memberId] = MemberMeta{
-				IsDeleted: true,
+				IsDeleted:     true,
+				SdkClientInfo: &SdkClientInfo{}, // to avoid nil pointer exception
 			}
 		}
 	}

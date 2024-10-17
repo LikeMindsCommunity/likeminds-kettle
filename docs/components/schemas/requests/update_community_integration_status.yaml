@@ -1,0 +1,10 @@
+type: object
+properties:
+  status_type:
+    type: string
+    description: Status type
+    example: "COPY_API_KEY"
+  status:
+    type: boolean
+    description: Status of the integration
+    example: true
