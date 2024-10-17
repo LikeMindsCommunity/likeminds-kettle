@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/deliveryReport"
 	"log"
 	"net/http"
+
+	"github.com/nateshr/likeminds-authentication/internal/handlers/deliveryReport"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -46,7 +47,7 @@ var (
 )
 
 func main() {
-	var AppVersion = "2.44.0"
+	var AppVersion = "2.45.0"
 
 	redisClient = cache.InitRedis()
 

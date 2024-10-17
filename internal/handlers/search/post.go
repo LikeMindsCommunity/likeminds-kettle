@@ -20,8 +20,6 @@ func PostSearch(c *gin.Context) {
 		return
 	}
 
-	headers := utils.CreateHeaders(c, userId)
-
 	//Fetch member access to view post
 	success, response := user.FetchMemberAccess(c, feed.VIEW_POST_ACTION, userId)
 	if !success {
@@ -35,13 +33,9 @@ func PostSearch(c *gin.Context) {
 	}
 
 	// add CM role in headers if user is cm
-	if response.IsCm {
-		headers := map[string]string{
-			utils.HeaderMemberRole: utils.CMRole,
-		}
+	utils.AddMemberRoleToHeaders(c, response.IsCm)
 
-		utils.AddHeaders(c, headers)
-	}
+	headers := utils.CreateHeaders(c, userId)
 
 	//Send Request to get excluded chatrooms list on Caravan Service
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, community.CommunityExcludedChatroomsEndPoint, utils.GETRequest, headers, nil, nil)

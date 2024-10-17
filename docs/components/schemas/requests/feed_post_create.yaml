@@ -16,6 +16,9 @@ properties:
   is_repost:
     type: boolean
     description: Is the Post a repost
+  is_anonymous:
+    type: boolean
+    description: If post is created anonymously 
   feedroom_id:
     type: string
     description: Feedroom ID of the Post

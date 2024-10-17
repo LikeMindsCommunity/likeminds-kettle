@@ -18,7 +18,7 @@ get:
         type: array
         items:
           type: string
-          enum: [media_limits, feed_metadata, profile_metadata, nsfw_filtering, guest_flow_metadata, personalised_feed_weights, widgets_metadata]
+          enum: [media_limits, feed_metadata, profile_metadata, nsfw_filtering, guest_flow_metadata, personalised_feed_weights, widgets_metadata, feed_settings]
 
   responses:
     "200":
@@ -79,6 +79,9 @@ get:
                       comment_count: 1
                       comment_sort_order: ""
                       comment_sort_order_key: ""
+                    anonymous_user_meta:
+                      name: Anonymous User
+                      image_url: ""
                 - description: "User profiles metadata for the community"
                   type: "profile_metadata"
                   value:
@@ -98,7 +101,17 @@ get:
                   type: "guest_flow_metadata"
                   value:
                     guest_users: "SINGLE"
-
+                - description: "Additional feed settings for the community"
+                  type: "feed_settings"
+                  value:
+                    create_feed_poll:
+                      enum:
+                        - everyone
+                        - only_cm
+                        - no_one
+                    menu_items_config:
+                      - hide_post: true
+                      
 patch:
   operationId: updateCommunityConfigurations
   tags:
@@ -141,6 +154,9 @@ patch:
               like_entity_variable:
                 entity_name: "like"
                 past_tense_verb: "liked"
+              anonymous_user_meta:
+                name: Anonymous User
+                image_url: ""
           profile_metadata:
             type: "profile_metadata"
             value:
@@ -225,6 +241,12 @@ patch:
                 description: "Metadata related to feed and its entity"
                 type: "feed_metadata"
                 value:
+                  post: "post"
                   comment: "comment"
-                  post: "resource"
+                  like_entity_variable:
+                    entity_name: "like"
+                    past_tense_verb: "liked"
+                  anonymous_user_meta:
+                    name: Anonymous User
+                    image_url: ""
               record_updated: true
