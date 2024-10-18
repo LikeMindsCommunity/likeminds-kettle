@@ -39,14 +39,17 @@ func SyncChatrooms(c *gin.Context) {
 	if apiCR != nil {
 		utils.GenerateResponse(c, apiCR.Response, true)
 		if apiCR.Success == true {
-			go parseAndPublishDROnTopicTypeChatroom(c, userId, apiCR.Response)
+			headers := utils.CreateHeadersFromToken(c, userId, user.GetRequestingUserDeviceId(c))
+			minTimeStamp := c.Query(ParamMinTimeStamp)
+			maxTimeStamp := c.Query(ParamMaxTimeStamp)
+
+			go parseAndPublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, apiCR.Response)
 		}
 	}
 }
 
 // parseAndPublishDROnTopicTypeChatroom to publish DR on TopicTypeChatroom
-func parseAndPublishDROnTopicTypeChatroom(c *gin.Context, userId string, response map[string]interface{}) {
-	deviceID := user.GetRequestingUserDeviceId(c)
+func parseAndPublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, maxTimeStamp string, response map[string]interface{}) {
 
 	// After returning the response, run a loop around "id" present in "chatrooms:[]"
 	chatrooms := response["chatrooms_data"].([]interface{})
@@ -57,7 +60,7 @@ func parseAndPublishDROnTopicTypeChatroom(c *gin.Context, userId string, respons
 		communityID := chatroomMap["community_id"]
 
 		// Call PublishDROnTopicTypeChatroom for each "chatroomID"
-		pubsubPublish.PublishDROnTopicTypeChatroom(c, userId, deviceID, chatroomID, communityID)
+		pubsubPublish.PublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, chatroomID, communityID)
 	}
 
 }

@@ -39,17 +39,21 @@ func SyncConversation(c *gin.Context) {
 	if apiCR != nil {
 		utils.GenerateResponse(c, apiCR.Response, true)
 		if apiCR.Success == true {
-			go parseAndPublishDROnTopicTypeChatroom(c, userId, apiCR.Response)
+			headers := utils.CreateHeadersFromToken(c, userId, user.GetRequestingUserDeviceId(c))
+			minTimeStamp := c.Query(ParamMinTimeStamp)
+			maxTimeStamp := c.Query(ParamMaxTimeStamp)
+			chatroomID := c.Query(ParamChatroomId)
+
+			go parseAndPublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, chatroomID, apiCR.Response)
 		}
 	}
 }
 
 // parseAndPublishDROnTopicTypeChatroom to publish DR on TopicTypeChatroom
-func parseAndPublishDROnTopicTypeChatroom(c *gin.Context, userId string, response map[string]interface{}) {
-	deviceID := user.GetRequestingUserDeviceId(c)
-	
+func parseAndPublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, maxTimeStamp, chatroomID string, response map[string]interface{}) {
+
 	communityMeta := response["community_meta"].(map[string]interface{})
 	communityID := communityMeta["id"]
 
-	pubsubPublish.PublishDROnTopicTypeChatroom(c, userId, deviceID, c.Query(ParamChatroomId), communityID)
+	pubsubPublish.PublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, chatroomID, communityID)
 }
