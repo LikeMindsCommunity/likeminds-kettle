@@ -113,6 +113,9 @@ func createSavePostInternal(c *gin.Context, userId string) {
 		return
 	}
 
+	// Add member Role in headers
+	utils.AddMemberRoleToHeaders(c, response.IsCm)
+
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, SavePostEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, nil)
 }

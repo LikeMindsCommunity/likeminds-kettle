@@ -59,25 +59,28 @@ func PostLike(c *gin.Context, method int) {
 
 func getPostLikesInternal(c *gin.Context, userId string, endPoint string) {
 
-	headers := utils.CreateHeaders(c, userId)
-
-	//Params to be sent in the /post/<post_id>/like request
+	// Params to be sent in the /post/<post_id>/like request
 	params := map[string]string{
 		ParamPage:     c.Query(ParamPage),
 		ParamPageSize: c.Query(ParamPageSize),
 	}
 
-	//Fetch member access to view post likes
+	// Fetch member access to view post likes
 	success, response := user.FetchMemberAccess(c, VIEW_POST_ACTION, userId)
 	if !success {
 		return
 	}
 
-	//If not access
+	// If not access
 	if !response.Access {
 		utils.MemberAccessFailError(c)
 		return
 	}
+
+	// Add member Role in headers
+	utils.AddMemberRoleToHeaders(c, response.IsCm)
+
+	headers := utils.CreateHeaders(c, userId)
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endPoint, utils.GETRequest, headers, params, nil)
@@ -136,6 +139,9 @@ func createPostLikeInternal(c *gin.Context, userId string, endPoint string) {
 		utils.MemberAccessFailError(c)
 		return
 	}
+
+	// Add member Role in headers
+	utils.AddMemberRoleToHeaders(c, response.IsCm)
 
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, endPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, createPostLikeRequest)

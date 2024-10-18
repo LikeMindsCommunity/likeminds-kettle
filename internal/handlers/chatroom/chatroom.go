@@ -2,6 +2,7 @@ package chatroom
 
 import (
 	"fmt"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/internalServices"
 	"reflect"
 	"strconv"
 
@@ -259,8 +260,15 @@ func editChatroomInternal(c *gin.Context, userId string) {
 	}
 
 	//Send Request
-	utils.SendRequest(c, utils.CoreService, EditChatroomEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, editChatroomRequest)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, EditChatroomEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, editChatroomRequest)
+	if respBytes == nil {
+		return
+	}
 
+	//Parse response
+	utils.ParseResponse(c, respBytes, statusCode, false)
+
+	go internalServices.DeleteChatroomCache(c, editChatroomRequest.ChatroomID)
 }
 
 func deleteChatroomInternal(c *gin.Context, userId string) {
@@ -278,6 +286,13 @@ func deleteChatroomInternal(c *gin.Context, userId string) {
 	}
 
 	//Send Request
-	utils.SendRequest(c, utils.CoreService, DeleteChatroomEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, deleteChatroomRequest)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, DeleteChatroomEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, deleteChatroomRequest)
+	if respBytes == nil {
+		return
+	}
 
+	//Parse response
+	utils.ParseResponse(c, respBytes, statusCode, false)
+
+	go internalServices.DeleteChatroomCache(c, deleteChatroomRequest.ChatroomID)
 }

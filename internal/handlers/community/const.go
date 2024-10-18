@@ -55,6 +55,8 @@ const FetchCommunityRemovalReports = "/api/community/removal_reports"
 const MemberConnectionEndPoint = "/api/community_member/%s/connection"
 const MemberConnectionMetaEndPoint = "/api/community_member/%s/connection_meta"
 const CommunityChatbotEndpoint = "/api/community/chatbot"
+const FetchCommunityIntegrationsEndpoint = "/api/community/integration"
+const UpdateCommunityIntegrationsEndpoint = "/api/community/integration"
 
 const ParamCommunityID = "community_id"
 const ParamPage = "page"

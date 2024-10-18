@@ -266,6 +266,8 @@ paths:
     $ref: "./api/feed/v1/post/post_id.yaml"
   /feed/post/{post_id}/pin:
     $ref: "./api/feed/v1/post/pin.yaml"
+  /feed/post/{post_id}/hide:
+    $ref: "./api/feed/v1/post/hide.yaml"
   /feed/post/{post_id}/like:
     $ref: "./api/feed/v1/post/like.yaml"
   /feed/post/{post_id}/comment:
