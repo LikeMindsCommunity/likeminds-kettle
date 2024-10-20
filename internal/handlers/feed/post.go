@@ -24,6 +24,7 @@ type CreatePostRequest struct {
 	UUIDs          []string                  `json:"uuids"`
 	OnBehalfOfUUID string                    `json:"on_behalf_of_uuid,omitempty"`
 	IsRepost       bool                      `json:"is_repost"`
+	IsAnonymous    bool                      `json:"is_anonymous"`
 	Visibility     string                    `json:"visibility,omitempty"`
 	UserIsCm       bool                      `json:"user_is_cm,omitempty"`
 	CreatedAt      int                       `json:"created_at"`
@@ -491,27 +492,6 @@ func editPostInternal(c *gin.Context, userId string) {
 func deletePostInternal(c *gin.Context, userId string) {
 	postId := c.Param(ParamPostId)
 	DeletePostEndPoint := fmt.Sprintf(SinglePostEndPoint, postId)
-	GetPostEndPoint := fmt.Sprintf(SinglePostEndPoint, postId)
-
-	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, GetPostEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
-
-	//Validate response
-	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
-	if apiCR == nil {
-		return
-	}
-
-	//If flow succeeds
-	dataResponse := apiCR.Response
-	if _, ok := dataResponse["post"]; !ok {
-		utils.GeneralBadRequestError(c, utils.ErrorInvalidPostIdSent)
-		return
-	}
-
-	//Fetch post user id
-	postData := dataResponse["post"].(map[string]interface{})
-	postUserUniqueId := postData["uuid"]
 
 	//Body to be sent in the /post/<post_id> DELETE request
 	deletePostRequest, err := parseDeletePostRequest(c)
@@ -526,23 +506,21 @@ func deletePostInternal(c *gin.Context, userId string) {
 		}
 	}
 
-	//If the user is not the post creator
-	if postUserUniqueId != userId {
-		//Fetch member access to delete post
-		success, response := user.FetchMemberAccess(c, DELETE_POST_ACTION, userId)
-		if !success {
-			return
-		}
-
-		//If not access
-		if !response.Access {
-			utils.MemberAccessFailError(c)
-			return
-		}
-
-		//Update requests body
-		deletePostRequest.UserIsCm = response.IsCm
+	//Fetch member access to delete post
+	success, response := user.FetchMemberAccess(c, DELETE_POST_ACTION, userId)
+	if !success {
+		return
 	}
+
+	//If not access
+	if !response.Access {
+		utils.MemberAccessFailError(c)
+		return
+	}
+
+	deletePostRequest.UserIsCm = response.IsCm
+
+	utils.AddMemberRoleToHeaders(c, response.IsCm)
 
 	//Send Request
 	utils.SendRequest(c, utils.SwarmService, DeletePostEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, deletePostRequest)

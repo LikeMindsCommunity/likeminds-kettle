@@ -66,7 +66,7 @@ func IsProfileWidgetsEnabled(c *gin.Context, userId string) (bool, error) {
 	return false, nil
 }
 
-// utility method to fetch community configurations from Cache and if not, fetch from Core Service and updates cache
+// utility method to fetch "profile_metadata" configurations from Cache and if not, fetch from Core Service and updates cache
 func getProfileMetaConfig(redisClient *redis.Client, headers map[string]interface{}, communityId int) (*CommunityConfiguration, error) {
 
 	profileMetaConfig, exists, err := fetchProfileMetaConfigfromCache(redisClient, communityId)
@@ -74,7 +74,7 @@ func getProfileMetaConfig(redisClient *redis.Client, headers map[string]interfac
 		return nil, err
 	}
 
-	//If configurations are not present in cache, fetch from internal service and update cache
+	// If configurations are not present in cache, fetch from internal service and update cache
 	if !exists {
 
 		// Send request to internal service to fetch profile_metadata configurations
@@ -89,6 +89,30 @@ func getProfileMetaConfig(redisClient *redis.Client, headers map[string]interfac
 	}
 
 	return profileMetaConfig, nil
+}
+
+// utility method to fetch feed_metadata configurations from Cache and if not, fetch from Core Service and updates cache
+func getFeedMetaConfig(redisClient *redis.Client, headers map[string]interface{}, communityId int) (*CommunityConfiguration, error) {
+
+	feedMetaConfig, exists, err := fetchFeedMetaConfigfromCache(redisClient, communityId)
+	if err != nil {
+		return nil, err
+	}
+
+	// If configurations are not present in cache, fetch from internal service and update cache
+	if !exists {
+
+		// Send request to internal service to fetch feed_metadata configurations
+		feedMetaConfig, err = getCommunityConfigurationInternal(headers, CommunityConfigurationFeedMetadata)
+		if err != nil || feedMetaConfig == nil {
+			return nil, err
+		}
+
+		// Save data to cache
+		go setFeedMetaConfigInCache(redisClient, communityId, feedMetaConfig)
+	}
+
+	return feedMetaConfig, nil
 }
 
 // Internal method to fetch a community configuration without context
@@ -140,6 +164,27 @@ func fetchProfileMetaConfigfromCache(redisClient *redis.Client, communityId int)
 	return &profileMetaConfigurations, exists, nil
 }
 
+// utility method to fetch feed_metadata configurations from Cache
+func fetchFeedMetaConfigfromCache(redisClient *redis.Client, communityId int) (*CommunityConfiguration, bool, error) {
+
+	cacheKey := fmt.Sprintf(cache.FeedMetadataConfigurationsCacheKey, communityId)
+
+	//Fetch feed_metadata configurations from cache
+	feedMetaValue, exists, err := cache.Get(redisClient, cacheKey)
+	if !exists {
+		logging.Error(fmt.Sprintf("feed_metadata configurations not found in cache for community_id: %d", communityId))
+		return nil, exists, err
+	}
+
+	var feedMetaConfigurations CommunityConfiguration
+	err = json.Unmarshal([]byte(feedMetaValue), &feedMetaConfigurations)
+	if err != nil {
+		return nil, exists, err
+	}
+
+	return &feedMetaConfigurations, exists, nil
+}
+
 // utility method to save profile_meta configurations in Cache
 func setProfileMetaConfigInCache(redisClient *redis.Client, communityId int, profileMetaConfigurations *CommunityConfiguration) error {
 
@@ -157,6 +202,26 @@ func setProfileMetaConfigInCache(redisClient *redis.Client, communityId int, pro
 		return err
 	}
 	logging.Info(fmt.Sprintf("Saved profile_meta configurations in cache for community_id: %d", communityId))
+	return nil
+}
+
+// utility method to save feed_metadata configurations in Cache
+func setFeedMetaConfigInCache(redisClient *redis.Client, communityId int, feedMetaConfigurations *CommunityConfiguration) error {
+
+	cacheKey := fmt.Sprintf(cache.FeedMetadataConfigurationsCacheKey, communityId)
+
+	//Save feed_metadata configurations in cache
+	parsedFeedMeta, err := json.Marshal(feedMetaConfigurations)
+	if err != nil {
+		return err
+	}
+
+	err = cache.Set(redisClient, cacheKey, parsedFeedMeta, cache.ProfileMetaConfigurationsCacheTTL*time.Hour)
+	if err != nil {
+		logging.Error(fmt.Sprintf("Error while Saving feed_metadata configurations in cache for communityId: %d", communityId))
+		return err
+	}
+	logging.Info(fmt.Sprintf("Saved feed_metadata configurations in cache for community_id: %d", communityId))
 	return nil
 }
 

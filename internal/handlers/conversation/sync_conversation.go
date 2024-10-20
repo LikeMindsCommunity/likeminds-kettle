@@ -2,6 +2,7 @@ package conversation
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsubPublish"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
@@ -36,4 +37,12 @@ func SyncConversation(c *gin.Context) {
 	//Parse and generate response
 	utils.ParseResponse(c, respBytes, statusCode, true)
 
+	go parseAndPublishDROnTopicTypeChatroom(c, userId)
+
+}
+
+// parseAndPublishDROnTopicTypeChatroom to publish DR on TopicTypeChatroom
+func parseAndPublishDROnTopicTypeChatroom(c *gin.Context, userId string) {
+	deviceID := user.GetRequestingUserDeviceId(c)
+	pubsubPublish.PublishDROnTopicTypeChatroom(c, userId, deviceID, c.Query(ParamChatroomId))
 }

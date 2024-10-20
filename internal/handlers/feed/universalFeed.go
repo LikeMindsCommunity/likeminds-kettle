@@ -17,8 +17,6 @@ func FetchUniversalFeed(c *gin.Context) {
 		return
 	}
 
-	headers := utils.CreateHeaders(c, userId)
-
 	//Params to be sent in the /feed/universal request
 	params := map[string]string{
 		ParamPage:      c.Query(ParamPage),
@@ -42,6 +40,17 @@ func FetchUniversalFeed(c *gin.Context) {
 	//Param updation
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
+	//add CM role in headers if user is cm
+	if response.IsCm {
+		headers := map[string]string{
+			utils.HeaderMemberRole: utils.CMRole,
+		}
+
+		utils.AddHeaders(c, headers)
+	}
+
+	headers := utils.CreateHeaders(c, userId)
+
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, FetchUniversalFeedEndPoint, utils.GETRequest, headers, params, nil)
 
@@ -53,7 +62,7 @@ func FetchUniversalFeed(c *gin.Context) {
 
 	dataResponse, err := utils.PopulateDataResponseForFeed(headers, utils.GetRedisClientFromContext(c), apiCR.Response)
 	if err != nil {
-		utils.GenerateResponse(c, nil, false)
+		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 
