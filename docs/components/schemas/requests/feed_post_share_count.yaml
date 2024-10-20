@@ -3,6 +3,9 @@ properties:
   count_number_type:
     type: string
     description: Type of the count number i.e. Whether to increase or decrease the count number
+    enum:
+      - INC
+      - DEC
   share_number:
     type: integer
     description: Number by which post share count should be updated
