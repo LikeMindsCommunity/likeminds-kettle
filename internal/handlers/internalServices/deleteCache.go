@@ -60,31 +60,26 @@ func deleteCacheByKeyPatternsInternal(redisClient *redis.Client, keyPatterns []s
 		return err
 	}
 
-	// Loop through the result map.
-	for keyPattern, keys := range result {
-		if len(keys) == 0 {
-			logging.Info(fmt.Sprintf("No cache keys found for pattern: %s", keyPattern))
-		} else {
-			logging.Info(fmt.Sprintf("Successfully deleted keys for pattern: %s", keyPattern))
-		}
+	go func() {
+		// Loop through the result map.
+		for keyPattern, keys := range result {
+			// If the key pattern matches chatroom participants, handle total participants cache deletion.
+			if isChatroomParticipantKey(keyPattern) {
+				if len(keys) == 0 {
+					// If no keys were found, treat the key pattern as a key.
+					keys = append(keys, keyPattern)
+				}
 
-		// If the key pattern matches chatroom participants, handle total participants cache deletion.
-		if isChatroomParticipantKey(keyPattern) {
-			if len(keys) == 0 {
-				// If no keys were found, treat the key pattern as a key.
-				keys = append(keys, keyPattern)
-			}
-
-			for _, key := range keys {
-				chatroomID := extractChatroomIDFromKey(key) // Extract the chatroom ID from the key.
-				err = deleteChatroomTotalParticipantsCache(redisClient, chatroomID)
-				if err != nil {
-					logging.Error(fmt.Sprintf("Error deleting total participants key for chatroom %s: %v", chatroomID, err))
-					return err
+				for _, key := range keys {
+					chatroomID := extractChatroomIDFromKey(key) // Extract the chatroom ID from the key.
+					err = deleteChatroomTotalParticipantsCache(redisClient, chatroomID)
+					if err != nil {
+						logging.Error(fmt.Sprintf("Error deleting total participants key for chatroom %s: %v", chatroomID, err))
+					}
 				}
 			}
 		}
-	}
+	}()
 	return nil
 }
 
