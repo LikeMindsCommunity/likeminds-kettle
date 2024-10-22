@@ -1,0 +1,79 @@
+get:
+  summary: Get MAU Overview
+  operationId: getMauOverview
+  tags:
+    - MAU Overview
+
+  description: |
+    This API retrieves the Monthly Active Users (MAU) overview for a specified number of months.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../components/parameters/headers/apiKey.yaml"
+    - name: no_of_months
+      in: query
+      description: Number of months for which data is required
+      schema:
+        type: integer
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  mau_data:
+                    type: array
+                    description: Monthly Active User data for the specified months
+                    items:
+                      type: object
+                      properties:
+                        year:
+                          type: string
+                          description: Year of the data
+                        chat:
+                          type: array
+                          description: MAU data for chat feature
+                          items:
+                            type: object
+                            properties:
+                              count:
+                                type: integer
+                                description: User count
+                              label:
+                                type: string
+                                description: Month label
+                        feed:
+                          type: array
+                          description: MAU data for feed feature
+                          items:
+                            type: object
+                            properties:
+                              count:
+                                type: integer
+                                description: User count
+                              label:
+                                type: string
+                                description: Month label
+                        total:
+                          type: array
+                          description: Total MAU data
+                          items:
+                            type: object
+                            properties:
+                              count:
+                                type: integer
+                                description: User count
+                              label:
+                                type: string
+                                description: Month label
