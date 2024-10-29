@@ -6,7 +6,10 @@ get:
     tags:
       - Login
     security:
-    - bearerAuth: []
+      - bearerAuth: []
+
+    parameters:
+      - $ref: "../../components/parameters/headers/platformType.yaml"
 
     responses:
       '200':
