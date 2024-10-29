@@ -2,14 +2,13 @@ package pubsubPublish
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 // PublishConversationOnTopicTypeChatroom to publish Conversation on TopicTypeChatroomDynamic
-func PublishConversationOnTopicTypeChatroom(c *gin.Context, chatroomID interface{}, userId string, deviceID string, response map[string]interface{}) {
-	headers := utils.CreateHeadersFromToken(c, userId, deviceID)
+func PublishConversationOnTopicTypeChatroom(headers map[string]interface{}, chatroomID interface{}, response map[string]interface{}) {
+
 	topicChatroom := fmt.Sprintf(TopicTypeChatroomDynamic, chatroomID)
 	params := map[string]string{
 		ParamTopicMessageType: TopicMessageTypeConversation,
@@ -19,8 +18,8 @@ func PublishConversationOnTopicTypeChatroom(c *gin.Context, chatroomID interface
 }
 
 // PublishConversationOnTopicTypeCommunity to publish Conversation on TopicTypeCommunityDynamic
-func PublishConversationOnTopicTypeCommunity(c *gin.Context, userId string, deviceID string, response map[string]interface{}) {
-	headers := utils.CreateHeadersFromToken(c, userId, deviceID)
+func PublishConversationOnTopicTypeCommunity(headers map[string]interface{}, response map[string]interface{}) {
+
 	var communityID = response["conversation"].(map[string]interface{})["member"].(map[string]interface{})["sdk_client_info"].(map[string]interface{})["community"]
 	topicCommunity := fmt.Sprintf(TopicTypeCommunityDynamic, communityID)
 	publishParams := map[string]string{
@@ -31,8 +30,8 @@ func PublishConversationOnTopicTypeCommunity(c *gin.Context, userId string, devi
 }
 
 // PublishDROnTopicTypeChatroom handles calling the Pandemonium publish API for inactive user flow in delivered report
-func PublishDROnTopicTypeChatroom(c *gin.Context, userId, deviceID string, chatroomID interface{}) {
-	headers := utils.CreateHeadersFromToken(c, userId, deviceID)
+func PublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, maxTimeStamp string, chatroomID, communityID interface{}) {
+
 	topicChatroom := fmt.Sprintf(TopicTypeChatroomDynamic, chatroomID)
 	params := map[string]string{
 		ParamTopicMessageType: TopicMessageDR,
@@ -40,8 +39,9 @@ func PublishDROnTopicTypeChatroom(c *gin.Context, userId, deviceID string, chatr
 
 	// Prepare the response (body) for the inactive user case
 	response := map[string]interface{}{
-		ParamMinTimeStamp: c.Query(ParamMinTimeStamp),
-		ParamMaxTimeStamp: c.Query(ParamMaxTimeStamp),
+		ParamMinTimeStamp: minTimeStamp,
+		ParamMaxTimeStamp: maxTimeStamp,
+		ParamCommunityID:  communityID,
 	}
 
 	// Call the Pandemonium Publish API using your pre-defined function
