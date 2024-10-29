@@ -60,13 +60,14 @@ func deleteCacheByKeyPatternsInternal(redisClient *redis.Client, keyPatterns []s
 		return err
 	}
 
+	//To delete chatroom_total_participants_<> key
 	go func() {
 		// Loop through the result map.
 		for keyPattern, keys := range result {
 			// If the key pattern matches chatroom participants, handle total participants cache deletion.
 			if isChatroomParticipantKey(keyPattern) {
 				if len(keys) == 0 {
-					// If no keys were found, treat the key pattern as a key.
+					// If no keys were found => chatroom_participants_<> doesn't exist then in that case also we need to delete chatroom_total_participants_<>
 					keys = append(keys, keyPattern)
 				}
 
