@@ -1,0 +1,7 @@
+name: must_have_rights
+in: query
+description: User rights included in the chatroom search
+required: false
+schema:
+  type: string
+  enum: ['RESPOND_IN_CHATROOM']
