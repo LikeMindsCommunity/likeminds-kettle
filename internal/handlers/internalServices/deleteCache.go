@@ -43,7 +43,7 @@ func DeleteCache(c *gin.Context) {
 	}
 
 	// Call the abstracted function to delete cache keys based on patterns
-	err = deleteCacheByKeyPatternsInternal(redisClient, dcr.KeyPatterns)
+	err = DeleteCacheByKeyPatterns(redisClient, dcr.KeyPatterns)
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
 		return
@@ -52,36 +52,69 @@ func DeleteCache(c *gin.Context) {
 	utils.GenerateResponse(c, nil, false)
 }
 
-// deleteCacheByKeyPatternsInternal Abstracted function to delete keys from Redis based on key patterns.
-func deleteCacheByKeyPatternsInternal(redisClient *redis.Client, keyPatterns []string) error {
-	// Use DeleteCacheByKeyPatterns to get the map of key patterns and matched keys.
-	result, err := cache.DeleteCacheByKeyPatterns(redisClient, keyPatterns)
-	if err != nil {
-		return err
-	}
+// DeleteCacheByKeyPatterns Abstracted function to delete keys from Redis based on key patterns
+func DeleteCacheByKeyPatterns(redisClient *redis.Client, keyPatterns []string) error {
+	//todo move it to redis.go
+	for _, keyPattern := range keyPatterns {
+		// Get all keys matching the pattern
+		keys, err := cache.GetKeys(redisClient, keyPattern)
+		if err != nil {
+			logging.Error(fmt.Sprintf("Error fetching keys for pattern %s: %v", keyPattern, err))
+			return err
+		}
 
-	//To delete chatroom_total_participants_<> key
-	go func() {
-		// Loop through the result map.
-		for keyPattern, keys := range result {
-			// If the key pattern matches chatroom participants, handle total participants cache deletion.
-			if isChatroomParticipantKey(keyPattern) {
-				if len(keys) == 0 {
-					// If no keys were found => chatroom_participants_<> doesn't exist then in that case also we need to delete chatroom_total_participants_<>
-					keys = append(keys, keyPattern)
+		if len(keys) == 0 {
+			logging.Info(fmt.Sprintf("No cache keys found for pattern: %s", keyPattern))
+		} else {
+			// Delete all keys
+			for _, key := range keys {
+				err = cache.Delete(redisClient, key)
+				if err != nil {
+					logging.Error(fmt.Sprintf("Error deleting key %s: %v", key, err))
+					return err
 				}
+				logging.Info(fmt.Sprintf("Successfully deleted cache for key: %s", key))
+			}
+		}
 
-				for _, key := range keys {
-					chatroomID := extractChatroomIDFromKey(key) // Extract the chatroom ID from the key.
-					err = deleteChatroomTotalParticipantsCache(redisClient, chatroomID)
-					if err != nil {
-						logging.Error(fmt.Sprintf("Error deleting total participants key for chatroom %s: %v", chatroomID, err))
-					}
+		// If deleting participants key, also delete the total participants key
+		if isChatroomParticipantKey(keyPattern) {
+			//If not keys found against ChatroomParticipantsKey. This can happen since we are saving in ChatroomParticipantsKey only in case of secret chatroom / DM
+			if len(keys) == 0 {
+				keys = append(keys, keyPattern)
+			}
+			for _, key := range keys {
+				chatroomID := extractChatroomIDFromKey(key) // function to extract chatroomID
+				err = deleteChatroomTotalParticipantsCache(redisClient, chatroomID)
+				if err != nil {
+					logging.Error(fmt.Sprintf("Error deleting total participants key for chatroom %s: %v", chatroomID, err))
+					return err
 				}
 			}
 		}
-	}()
+	}
 	return nil
+}
+
+func DeleteChatroomCache(c *gin.Context, chatroomID interface{}) {
+	// get redis client from context
+	redisClient := utils.GetRedisClientFromContext(c)
+	if redisClient == nil {
+		logging.Error("Redis client not found")
+		return
+	}
+
+	// Cache key for the chatroom data
+	cacheKey := fmt.Sprintf(cache.ChatroomKey, chatroomID)
+	// Convert the single cacheKey into a slice of strings
+	cacheKeys := []string{cacheKey}
+
+	// Call the abstracted function to delete cache keys based on patterns
+	err := DeleteCacheByKeyPatterns(redisClient, cacheKeys)
+	if err != nil {
+		logging.Error(fmt.Sprintf("Error deleting key %s: %v", cacheKey, err))
+		return
+	}
 }
 
 // deleteChatroomTotalParticipantsCache deletes the chatroom_total_participants_%s key from Redis
@@ -113,25 +146,4 @@ func extractChatroomIDFromKey(key string) string {
 // Check if the key matches the expected prefix
 func isChatroomParticipantKey(key string) bool {
 	return strings.HasPrefix(key, cache.ChatroomParticipantsPrefix)
-}
-
-func DeleteChatroomCache(c *gin.Context, chatroomID interface{}) {
-	// get redis client from context
-	redisClient := utils.GetRedisClientFromContext(c)
-	if redisClient == nil {
-		logging.Error("Redis client not found")
-		return
-	}
-
-	// Cache key for the chatroom data
-	cacheKey := fmt.Sprintf(cache.ChatroomKey, chatroomID)
-	// Convert the single cacheKey into a slice of strings
-	cacheKeys := []string{cacheKey}
-
-	// Call the abstracted function to delete cache keys based on patterns
-	err := deleteCacheByKeyPatternsInternal(redisClient, cacheKeys)
-	if err != nil {
-		logging.Error(fmt.Sprintf("Error deleting key %s: %v", cacheKey, err))
-		return
-	}
 }

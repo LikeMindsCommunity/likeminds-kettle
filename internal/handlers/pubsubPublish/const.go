@@ -12,5 +12,4 @@ const (
 	ParamTopicMessageType = "topic_message_type"
 	ParamMinTimeStamp     = "min_timestamp"
 	ParamMaxTimeStamp     = "max_timestamp"
-	ParamCommunityID      = "community_id"
 )
