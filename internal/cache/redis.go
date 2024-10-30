@@ -172,37 +172,3 @@ func BlacklistToken(client *redis.Client, ltm *constants.LoginTokenMeta, rtm *co
 	}
 	return nil
 }
-
-// DeleteCacheByKeyPatterns deletes keys from Redis based on key patterns.
-func DeleteCacheByKeyPatterns(redisClient *redis.Client, keyPatterns []string) (map[string][]string, error) {
-	// Initialize a map to store key patterns with their corresponding matched keys.
-	result := make(map[string][]string)
-
-	for _, keyPattern := range keyPatterns {
-		// Get all keys matching the pattern
-		keys, err := GetKeys(redisClient, keyPattern)
-		if err != nil {
-			logging.Error(fmt.Sprintf("Error fetching keys for pattern %s: %v", keyPattern, err))
-			return nil, err
-		}
-
-		// Store the keys in the result map, even if no keys are found.
-		result[keyPattern] = keys
-
-		if len(keys) == 0 {
-			logging.Info(fmt.Sprintf("No cache keys found for pattern: %s", keyPattern))
-			continue
-		}
-		// Delete all keys
-		for _, key := range keys {
-			err = Delete(redisClient, key)
-			if err != nil {
-				logging.Error(fmt.Sprintf("Error deleting key %s: %v", key, err))
-				return nil, err
-			}
-			logging.Info(fmt.Sprintf("Successfully deleted cache for key: %s", key))
-		}
-
-	}
-	return result, nil
-}

@@ -44,7 +44,6 @@ const SingleTopicEndPoint = "/topic/%s"
 const ConnectionFeedEndPoint = "/feed/connection"
 const FetchUserTopicsEndPoint = "/user/topics"
 const UpdateUserTopicsEndPoint = "/user/%s/topics"
-const UpdatePostShareCountEndPoint = "/post/%s/share/count"
 
 const ParamPage = "page"
 const ParamPageSize = "page_size"
