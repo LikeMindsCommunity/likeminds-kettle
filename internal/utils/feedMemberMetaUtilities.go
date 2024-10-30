@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/go-redis/redis/v7"
@@ -68,7 +69,8 @@ func fetchMembersMetaFromCache(redisClient *redis.Client, communityId int, userU
 			}
 			membersMeta = append(membersMeta, memberMeta)
 		} else {
-			remainingMemberIds = append(remainingMemberIds, userUniqueIds[i])
+			userUniqueId := strings.Split(cachKeys[i], "_")[1]
+			remainingMemberIds = append(remainingMemberIds, userUniqueId)
 		}
 	}
 
