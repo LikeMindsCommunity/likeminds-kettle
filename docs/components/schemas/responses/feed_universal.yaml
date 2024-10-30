@@ -37,8 +37,6 @@ properties:
               type: boolean
             is_saved:
               type: boolean
-            post_shared_count:
-              type: integer
             likes_count:
               type: integer
             menu_items:

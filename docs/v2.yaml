@@ -284,8 +284,6 @@ paths:
     $ref: "./api/feed/v1/post/comment/comment_id/comment.yaml"
   /feed/post/{post_id}/comment/{comment_id}/like:
     $ref: "./api/feed/v1/post/comment/comment_id/like.yaml"
-  /feed/post/{post_id}/share/count:
-    $ref: "./api/feed/v1/post/post_share_count.yaml"
   /feed/user/{user_id}/save:
     $ref: "./api/feed/v1/user/save.yaml"
   /feed/user/{user_id}/post:
