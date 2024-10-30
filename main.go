@@ -47,7 +47,7 @@ var (
 )
 
 func main() {
-	var AppVersion = "2.46.0"
+	var AppVersion = "2.47.0"
 
 	redisClient = cache.InitRedis()
 
@@ -330,6 +330,7 @@ func setRouterA() {
 	routerA.POST(constants.FeedPersonalisedReorderRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.ReorderPersonalisedFeed)
 	routerA.POST(constants.FeedPostSeenRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.SeenPost)
 	routerA.PUT(constants.FeedPostIDHideRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.HidePost)
+	routerA.PUT(constants.FeedPostShareCountRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.UpdatePostShareCount)
 
 	// Utility Apis
 	routerA.GET(constants.HelperUrlRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), utility.DecodeUrl)

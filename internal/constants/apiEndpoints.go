@@ -190,6 +190,7 @@ const (
 	FeedPersonalisedRecomputeRoute  = "/feed/personalised/recompute"
 	FeedPersonalisedReorderRoute    = "/feed/personalised/reorder"
 	FeedPostSeenRoute               = "/feed/post/seen"
+	FeedPostShareCountRoute         = "/feed/post/:post_id/share/count"
 )
 
 // Utility Endpoints
