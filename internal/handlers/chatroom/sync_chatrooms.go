@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsubPublish"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
+	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
@@ -50,12 +51,20 @@ func SyncChatrooms(c *gin.Context) {
 
 // parseAndPublishDROnTopicTypeChatroom to publish DR on TopicTypeChatroom
 func parseAndPublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, maxTimeStamp string, response map[string]interface{}) {
-
 	// After returning the response, run a loop around "id" present in "chatrooms:[]"
-	chatrooms := response["chatrooms_data"].([]interface{})
+	chatrooms, ok := response["chatrooms_data"].([]interface{})
+	if !ok {
+		logging.Error("chatrooms_data key is missing or is not a valid slice in the response")
+		return // Exit the function or handle the error as appropriate
+	}
 
 	for _, chatroom := range chatrooms {
-		chatroomMap := chatroom.(map[string]interface{})
+		chatroomMap, ok := chatroom.(map[string]interface{})
+		if !ok {
+			logging.Error("chatroom item is not a valid map in chatrooms_data")
+			continue // Skip this item and continue with the next
+		}
+
 		chatroomID := chatroomMap["id"]
 		communityID := chatroomMap["community_id"]
 

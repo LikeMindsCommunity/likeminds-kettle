@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsubPublish"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
+	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
@@ -51,9 +52,18 @@ func SyncConversation(c *gin.Context) {
 
 // parseAndPublishDROnTopicTypeChatroom to publish DR on TopicTypeChatroom
 func parseAndPublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, maxTimeStamp, chatroomID string, response map[string]interface{}) {
-
-	communityMeta := response["community_meta"].(map[string]interface{})
-	communityID := communityMeta["id"]
+	// Check if "community_meta" exists and is a map
+	communityMeta, ok := response["community_meta"].(map[string]interface{})
+	if !ok {
+		logging.Error("community_meta key is missing or is not a valid map in the response")
+		return // Exit the function or handle the error as appropriate
+	}
+	// Proceed to extract the community ID if community_meta is present
+	communityID, ok := communityMeta["id"]
+	if !ok {
+		logging.Error("community ID is missing in community_meta")
+		return // Handle missing community ID as appropriate
+	}
 
 	pubsubPublish.PublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, chatroomID, communityID)
 }
