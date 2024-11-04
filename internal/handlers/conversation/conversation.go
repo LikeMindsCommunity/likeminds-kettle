@@ -258,8 +258,16 @@ func createConversationInternal(c *gin.Context, userId string, deviceID string) 
 
 // parseAndPublishConversationOnTopicTypeCommunity to publish Conversation on TopicTypeCommunityDynamic
 func parseAndPublishConversationOnTopicTypeChatroom(redisClient *redis.Client, headers map[string]interface{}, chatroomID interface{}, response map[string]interface{}) {
-	chatroomIDStr := fmt.Sprintf("%v", chatroomID)
+	if chatroomID == nil {
+		logging.Error("parseAndPublishConversationOnTopicTypeChatroom: chatroom ID is missing")
+		return
+	}
+	if response == nil {
+		logging.Error("parseAndPublishConversationOnTopicTypeChatroom: response is missing")
+		return
+	}
 
+	chatroomIDStr := fmt.Sprintf("%v", chatroomID)
 	// Get the chatroom data
 	chatroomData, _, err := getChatroomInternal(redisClient, headers, chatroomIDStr)
 	if err != nil {
@@ -268,7 +276,11 @@ func parseAndPublishConversationOnTopicTypeChatroom(redisClient *redis.Client, h
 	}
 
 	// Check if the chatroom is secret or not
-	isSecret := chatroomData["is_secret"].(bool)
+	isSecret, ok := chatroomData["is_secret"].(bool)
+	if !ok {
+		logging.Error("parseAndPublishConversationOnTopicTypeChatroom: is_secret key is missing or is not a valid bool in chatroomData")
+		isSecret = false // Default to false if not specified, or handle as needed
+	}
 
 	// Get total participants count
 	totalParticipantsCount, err := getTotalParticipantsInternal(redisClient, headers, chatroomIDStr, isSecret)
@@ -286,13 +298,32 @@ func parseAndPublishConversationOnTopicTypeChatroom(redisClient *redis.Client, h
 
 // parseAndPublishConversationOnTopicTypeCommunity to publish Conversation on TopicTypeCommunityDynamic
 func parseAndPublishConversationOnTopicTypeCommunity(redisClient *redis.Client, headers map[string]interface{}, response map[string]interface{}) {
-	chatroomID := fmt.Sprintf("%.0f", response["conversation"].(map[string]interface{})["chatroom_id"].(float64))
+	if response == nil {
+		logging.Error("parseAndPublishConversationOnTopicTypeCommunity: response is missing")
+		return
+	}
+	// Check if "conversation" exists and is a map
+	conversation, ok := response["conversation"].(map[string]interface{})
+	if !ok || conversation == nil {
+		logging.Error("parseAndPublishConversationOnTopicTypeCommunity: conversation key is missing or is not a valid map in response")
+		return // Exit if "conversation" is missing or invalid
+	}
+
+	// Check if "chatroom_id" exists within "conversation"
+	chatroomIDFloat, ok := conversation["chatroom_id"].(float64)
+	if !ok || chatroomIDFloat == 0 {
+		logging.Error("parseAndPublishConversationOnTopicTypeCommunity: chatroom_id key is missing or is not a valid float in conversation")
+		return // Exit if "chatroom_id" is missing or invalid
+	}
+
+	// Convert chatroom_id to string format
+	chatroomID := fmt.Sprintf("%.0f", chatroomIDFloat)
 	apiCR, _, err := getChatroomInternal(redisClient, headers, chatroomID)
 	if apiCR != nil {
-		isSecret := apiCR["is_secret"].(bool)
-		chatroomType := apiCR["type"].(float64)
+		isSecret, okSecret := apiCR["is_secret"].(bool)
+		chatroomType, okChatroomType := apiCR["type"].(float64)
 
-		if isSecret == true || chatroomType == chatroom.DMChatroomType {
+		if (okSecret && isSecret == true) || (okChatroomType && chatroomType == chatroom.DMChatroomType) {
 			allParticipantIDs, err := getParticipantsInternal(redisClient, headers, chatroomID, isSecret)
 			if allParticipantIDs != nil {
 				response["participants"] = allParticipantIDs
@@ -364,7 +395,13 @@ func getChatroomInternal(redisClient *redis.Client, headers map[string]interface
 	//Parse and generate response
 	apiCR := utils.ValidateClientResponseWithoutContext(respBytes, statusCode, err)
 	if apiCR != nil {
-		chatroomAPICR := apiCR["chatroom"].(map[string]interface{})
+		chatroomAPICR, ok := apiCR["chatroom"].(map[string]interface{})
+		if !ok || chatroomAPICR == nil {
+			err := fmt.Errorf("getChatroomInternal: chatroom key is missing or is not a valid map in apiCR")
+			logging.Error(err)
+			return nil, statusCode, err
+		}
+
 		// Save the fetched chatroom data in the cache
 		if err := saveChatroomInCache(redisClient, chatroomID, chatroomAPICR); err != nil {
 			logging.Error(fmt.Sprintf("Error saving chatroom data to cache: %v", err))
