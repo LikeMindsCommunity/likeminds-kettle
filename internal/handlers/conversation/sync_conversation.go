@@ -54,14 +54,14 @@ func SyncConversation(c *gin.Context) {
 func parseAndPublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, maxTimeStamp, chatroomID string, response map[string]interface{}) {
 	// Check if "community_meta" exists and is a map
 	communityMeta, ok := response["community_meta"].(map[string]interface{})
-	if !ok {
-		logging.Error("community_meta key is missing or is not a valid map in the response")
+	if !ok || communityMeta == nil {
+		logging.Error("parseAndPublishDROnTopicTypeChatroom: community_meta key is missing or is not a valid map in the response")
 		return // Exit the function or handle the error as appropriate
 	}
 	// Proceed to extract the community ID if community_meta is present
 	communityID, ok := communityMeta["id"]
-	if !ok {
-		logging.Error("community ID is missing in community_meta")
+	if !ok || communityID == nil {
+		logging.Error("parseAndPublishDROnTopicTypeChatroom: community ID is missing in community_meta")
 		return // Handle missing community ID as appropriate
 	}
 

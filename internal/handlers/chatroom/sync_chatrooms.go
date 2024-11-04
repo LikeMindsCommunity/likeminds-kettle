@@ -53,20 +53,28 @@ func SyncChatrooms(c *gin.Context) {
 func parseAndPublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, maxTimeStamp string, response map[string]interface{}) {
 	// After returning the response, run a loop around "id" present in "chatrooms:[]"
 	chatrooms, ok := response["chatrooms_data"].([]interface{})
-	if !ok {
+	if !ok || chatrooms == nil {
 		logging.Error("chatrooms_data key is missing or is not a valid slice in the response")
 		return // Exit the function or handle the error as appropriate
 	}
 
 	for _, chatroom := range chatrooms {
 		chatroomMap, ok := chatroom.(map[string]interface{})
-		if !ok {
+		if !ok || chatroomMap == nil {
 			logging.Error("chatroom item is not a valid map in chatrooms_data")
 			continue // Skip this item and continue with the next
 		}
 
 		chatroomID := chatroomMap["id"]
 		communityID := chatroomMap["community_id"]
+		if chatroomID == nil {
+			logging.Error("parseAndPublishDROnTopicTypeChatroom: chatroom ID is missing")
+			return
+		}
+		if communityID == nil {
+			logging.Error("parseAndPublishDROnTopicTypeChatroom: community ID is missing")
+			return
+		}
 
 		// Call PublishDROnTopicTypeChatroom for each "chatroomID"
 		pubsubPublish.PublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, chatroomID, communityID)
