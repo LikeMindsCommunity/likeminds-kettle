@@ -53,16 +53,33 @@ func SyncConversation(c *gin.Context) {
 // parseAndPublishDROnTopicTypeChatroom to publish DR on TopicTypeChatroom
 func parseAndPublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, maxTimeStamp, chatroomID string, response map[string]interface{}) {
 	// Check if "community_meta" exists and is a map
-	communityMeta, ok := response["community_meta"].(map[string]interface{})
-	if !ok || communityMeta == nil {
+	communitiesMeta, ok := response["community_meta"].(map[string]interface{})
+	if !ok || communitiesMeta == nil {
 		logging.Error("parseAndPublishDROnTopicTypeChatroom: community_meta key is missing or is not a valid map in the response")
 		return // Exit the function or handle the error as appropriate
 	}
-	// Proceed to extract the community ID if community_meta is present
-	communityID, ok := communityMeta["id"]
-	if !ok || communityID == nil {
-		logging.Error("parseAndPublishDROnTopicTypeChatroom: community ID is missing in community_meta")
-		return // Handle missing community ID as appropriate
+	var communityID interface{}
+	for _, communityMeta := range communitiesMeta {
+		// Each `communityMeta` should be a map containing "id" and other details
+		communityMetaMap, ok := communityMeta.(map[string]interface{})
+		if !ok {
+			logging.Error("parseAndPublishDROnTopicTypeChatroom: community_meta entry is not a valid map")
+			return // Exit if the entry is not in the expected format
+		}
+
+		// Retrieve "id" from the first valid entry in "community_meta"
+		communityID = communityMetaMap["id"]
+		if communityID == nil {
+			logging.Error("parseAndPublishDROnTopicTypeChatroom: id is missing in the community_meta entry")
+			return // Exit if "id" is missing
+		}
+		break // Exit the loop after processing the first entry
+	}
+
+	// Ensure communityID is valid before proceeding
+	if communityID == nil {
+		logging.Error("parseAndPublishDROnTopicTypeChatroom: no valid community ID found in community_meta")
+		return
 	}
 
 	pubsubPublish.PublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, chatroomID, communityID)
