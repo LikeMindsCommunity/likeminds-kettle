@@ -78,7 +78,7 @@ func parseAndPublishDROnTopicTypeChatroom(headers map[string]interface{}, minTim
 
 	// Ensure communityID is valid before proceeding
 	if communityID == nil {
-		logging.Error("parseAndPublishDROnTopicTypeChatroom: no valid community ID found in community_meta")
+		logging.Debug("parseAndPublishDROnTopicTypeChatroom: no valid community ID found in community_meta")
 		return
 	}
 
