@@ -51,7 +51,7 @@ func PublishConversationOnTopicTypeCommunity(headers map[string]interface{}, res
 		return
 	}
 	// Check if "community" exists within "sdk_client_info" and is of the expected type
-	communityID, ok := sdkClientInfo["community"].(string)
+	communityID, ok := sdkClientInfo["community"].(float64)
 	if !ok {
 		logging.Error("PublishConversationOnTopicTypeCommunity: community key is missing or is not a valid string in sdk_client_info")
 		return
