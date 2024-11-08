@@ -43,6 +43,7 @@ const ParamScrollDirection = "scroll_direction"
 const ParamIncludeConversationId = "include"
 const ParamExcludedConversationStates = "excluded_conversation_states"
 const ParamIsLocalDb = "is_local_db"
+const ParamOrderBy = "order_by"
 
 const (
 	ChatroomParticipantsPage       = "0"
