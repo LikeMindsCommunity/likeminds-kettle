@@ -108,3 +108,7 @@ properties:
             type: integer
           updated_at:
             type: integer
+          impressions_count:
+            type: integer
+          reach_count:
+            type: integer
