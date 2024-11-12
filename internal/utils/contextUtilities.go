@@ -28,7 +28,7 @@ func GetUserIdFromContext(c *gin.Context) string {
 	ltm, ok := c.Get(constants.ParamLTM)
 	if !ok {
 		// If token is not available
-		return userUniqueId
+		return ""
 	}
 
 	userUniqueId = ltm.(*constants.LoginTokenMeta).UserUniqueID

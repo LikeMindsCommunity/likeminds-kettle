@@ -13,6 +13,7 @@ const SingleCommentLikeEndPoint = "/post/%s/comment/%s/like"
 const SingleCommentReplyEndPoint = "/post/%s/comment/%s/comment"
 const FetchUserSavedPostsEndPoint = "/user/%s/save"
 const FetchUserCreatedPostsEndPoint = "/user/%s/post"
+const SingleUserActivityEndPoint = "/user/%s/activity"
 const FetchUserFeedMetaEndPoint = "/user/%s/meta"
 const UserCommentsEndPoint = "/user/%s/comment"
 const CreatePendingPostEndPoint = "/post/pending"
@@ -22,6 +23,15 @@ const RecomputePersonalisedFeedEndPoint = "/personalised/recompute"
 const ReorderPersonalisedFeedEndPoint = "/personalised/reorder"
 const FetchPersonalisedFeedEndPoint = "/personalised"
 const PostSeenEndPoint = "/post/seen"
+
+// GetUserActivityEndPoint | swarm API endpoint for user activity list
+const GetUserActivityEndPoint = "/user/activity"
+
+// GetUserActivityUnreadCountEndPoint | swarm API endpoint for user activity unread count
+const GetUserActivityUnreadCountEndPoint = "/user/%s/activity/unread_count"
+
+// UserActivityMarkReadEndPoint | swarm API endpoint for user activity mark read
+const UserActivityMarkReadEndPoint = "/user/%s/activity/%s/mark_read"
 
 const FetchUniversalFeedEndPoint = "/feed/universal"
 const FeedExploreEndPoint = "/feed/explore"

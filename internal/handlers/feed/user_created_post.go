@@ -27,7 +27,7 @@ func FetchUserCreatedPosts(c *gin.Context) {
 	}
 
 	//Access query params and url generation
-	paramUUID := c.Param("uuid")
+	paramUserId := c.Param("user_id")
 
 	//Fetch member access to view post
 	success, response := user.FetchMemberAccess(c, VIEW_POST_ACTION, userId)
@@ -45,7 +45,7 @@ func FetchUserCreatedPosts(c *gin.Context) {
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
 	//Get user_unique_id from user_id internally
-	user_id, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), paramUUID)
+	user_id, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), paramUserId)
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
 		return

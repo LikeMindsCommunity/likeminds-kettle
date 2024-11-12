@@ -246,44 +246,28 @@ func createConversationInternal(c *gin.Context, userId string, deviceID string) 
 	if apiCR != nil {
 		utils.GenerateResponse(c, apiCR.Response, true)
 		if apiCR.Success == true {
-			//headers with userID and chatroomID
-			headers := utils.CreateHeadersFromToken(c, userId, deviceID)
-			redisClient := utils.GetRedisClientFromContext(c)
-
-			go parseAndPublishConversationOnTopicTypeChatroom(redisClient, headers, createConversationRequest.ChatroomID, apiCR.Response)
-			go parseAndPublishConversationOnTopicTypeCommunity(redisClient, headers, apiCR.Response)
+			go parseAndPublishConversationOnTopicTypeChatroom(c, userId, deviceID, createConversationRequest.ChatroomID, apiCR.Response)
+			go parseAndPublishConversationOnTopicTypeCommunity(c, userId, deviceID, apiCR.Response)
 		}
 	}
 }
 
 // parseAndPublishConversationOnTopicTypeCommunity to publish Conversation on TopicTypeCommunityDynamic
-func parseAndPublishConversationOnTopicTypeChatroom(redisClient *redis.Client, headers map[string]interface{}, chatroomID interface{}, response map[string]interface{}) {
-	if chatroomID == nil {
-		logging.Error("parseAndPublishConversationOnTopicTypeChatroom: chatroom ID is missing")
-		return
-	}
-	if response == nil {
-		logging.Error("parseAndPublishConversationOnTopicTypeChatroom: response is missing")
-		return
-	}
-
+func parseAndPublishConversationOnTopicTypeChatroom(c *gin.Context, userId string, deviceID string, chatroomID interface{}, response map[string]interface{}) {
 	chatroomIDStr := fmt.Sprintf("%v", chatroomID)
+
 	// Get the chatroom data
-	chatroomData, _, err := getChatroomInternal(redisClient, headers, chatroomIDStr)
+	chatroomData, _, err := getChatroomInternal(c, userId, chatroomIDStr)
 	if err != nil {
 		logging.Error(fmt.Sprintf("Error fetching chatroom data for chatroomID %v: %v", chatroomIDStr, err))
 		return
 	}
 
 	// Check if the chatroom is secret or not
-	isSecret, ok := chatroomData["is_secret"].(bool)
-	if !ok {
-		logging.Error("parseAndPublishConversationOnTopicTypeChatroom: is_secret key is missing or is not a valid bool in chatroomData")
-		isSecret = false // Default to false if not specified, or handle as needed
-	}
+	isSecret := chatroomData["is_secret"].(bool)
 
 	// Get total participants count
-	totalParticipantsCount, err := getTotalParticipantsInternal(redisClient, headers, chatroomIDStr, isSecret)
+	totalParticipantsCount, err := getTotalParticipantsInternal(c, userId, chatroomIDStr, isSecret)
 	if err != nil {
 		logging.Error(fmt.Sprintf("Error fetching total participants count for chatroomID %v: %v", chatroomIDStr, err))
 		return
@@ -293,46 +277,27 @@ func parseAndPublishConversationOnTopicTypeChatroom(redisClient *redis.Client, h
 	response["total_participants_count"] = totalParticipantsCount
 
 	// Publish the conversation with updated response
-	pubsubPublish.PublishConversationOnTopicTypeChatroom(headers, chatroomID, response)
+	pubsubPublish.PublishConversationOnTopicTypeChatroom(c, chatroomID, userId, deviceID, response)
 }
 
 // parseAndPublishConversationOnTopicTypeCommunity to publish Conversation on TopicTypeCommunityDynamic
-func parseAndPublishConversationOnTopicTypeCommunity(redisClient *redis.Client, headers map[string]interface{}, response map[string]interface{}) {
-	if response == nil {
-		logging.Error("parseAndPublishConversationOnTopicTypeCommunity: response is missing")
-		return
-	}
-	// Check if "conversation" exists and is a map
-	conversation, ok := response["conversation"].(map[string]interface{})
-	if !ok || conversation == nil {
-		logging.Error("parseAndPublishConversationOnTopicTypeCommunity: conversation key is missing or is not a valid map in response")
-		return // Exit if "conversation" is missing or invalid
-	}
-
-	// Check if "chatroom_id" exists within "conversation"
-	chatroomIDFloat, ok := conversation["chatroom_id"].(float64)
-	if !ok || chatroomIDFloat == 0 {
-		logging.Error("parseAndPublishConversationOnTopicTypeCommunity: chatroom_id key is missing or is not a valid float in conversation")
-		return // Exit if "chatroom_id" is missing or invalid
-	}
-
-	// Convert chatroom_id to string format
-	chatroomID := fmt.Sprintf("%.0f", chatroomIDFloat)
-	apiCR, _, err := getChatroomInternal(redisClient, headers, chatroomID)
+func parseAndPublishConversationOnTopicTypeCommunity(c *gin.Context, userId string, deviceID string, response map[string]interface{}) {
+	chatroomID := fmt.Sprintf("%.0f", response["conversation"].(map[string]interface{})["chatroom_id"].(float64))
+	apiCR, _, err := getChatroomInternal(c, userId, chatroomID)
 	if apiCR != nil {
-		isSecret, okSecret := apiCR["is_secret"].(bool)
-		chatroomType, okChatroomType := apiCR["type"].(float64)
+		isSecret := apiCR["is_secret"].(bool)
+		chatroomType := apiCR["type"].(float64)
 
-		if (okSecret && isSecret == true) || (okChatroomType && chatroomType == chatroom.DMChatroomType) {
-			allParticipantIDs, err := getParticipantsInternal(redisClient, headers, chatroomID, isSecret)
+		if isSecret == true || chatroomType == chatroom.DMChatroomType {
+			allParticipantIDs, err := getParticipantsInternal(c, userId, chatroomID, isSecret)
 			if allParticipantIDs != nil {
 				response["participants"] = allParticipantIDs
-				pubsubPublish.PublishConversationOnTopicTypeCommunity(headers, response)
+				pubsubPublish.PublishConversationOnTopicTypeCommunity(c, userId, deviceID, response)
 			} else {
 				logging.Error(fmt.Sprintf("Error in getting participants data before publishing: %v", err))
 			}
 		} else {
-			pubsubPublish.PublishConversationOnTopicTypeCommunity(headers, response)
+			pubsubPublish.PublishConversationOnTopicTypeCommunity(c, userId, deviceID, response)
 		}
 
 	} else {
@@ -374,17 +339,18 @@ func deleteConversationInternal(c *gin.Context, userId string) {
 	utils.SendRequest(c, utils.CoreService, DeleteConversationEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, deleteConversationRequest)
 }
 
-func getChatroomInternal(redisClient *redis.Client, headers map[string]interface{}, chatroomID string) (map[string]interface{}, int, error) {
+func getChatroomInternal(c *gin.Context, userID string, chatroomID string) (map[string]interface{}, int, error) {
 	// Params to be sent in the api/chatroom/fetch request
 	chatroomParams := map[string]string{
 		ParamChatroomId: chatroomID,
 	}
 
 	//Custom headers since this API will be called after conversation create and headers between these two APIs can have different x-api-version
+	headers := utils.CreateHeadersFromToken(c, userID, chatroomID)
 	headers[utils.HeadersApiVersion] = ChatroomAPIVersion
 
 	// Check if the chatroom is present in the cache first
-	cachedChatroom, err := getChatroomFromCache(redisClient, chatroomID)
+	cachedChatroom, err := getChatroomFromCache(utils.GetRedisClientFromContext(c), chatroomID)
 	if err == nil && cachedChatroom != nil {
 		// Return the cached chatroom data
 		return cachedChatroom, http.StatusOK, nil
@@ -395,14 +361,9 @@ func getChatroomInternal(redisClient *redis.Client, headers map[string]interface
 	//Parse and generate response
 	apiCR := utils.ValidateClientResponseWithoutContext(respBytes, statusCode, err)
 	if apiCR != nil {
-		chatroomAPICR, ok := apiCR["chatroom"].(map[string]interface{})
-		if !ok || chatroomAPICR == nil {
-			err := fmt.Errorf("getChatroomInternal: chatroom key is missing or is not a valid map in apiCR")
-			logging.Error(err)
-			return nil, statusCode, err
-		}
-
+		chatroomAPICR := apiCR["chatroom"].(map[string]interface{})
 		// Save the fetched chatroom data in the cache
+		redisClient := utils.GetRedisClientFromContext(c)
 		if err := saveChatroomInCache(redisClient, chatroomID, chatroomAPICR); err != nil {
 			logging.Error(fmt.Sprintf("Error saving chatroom data to cache: %v", err))
 		}
@@ -456,10 +417,10 @@ func getChatroomFromCache(redisClient *redis.Client, chatroomID string) (map[str
 	return chatroomData, nil
 }
 
-func getParticipantsInternal(redisClient *redis.Client, headers map[string]interface{}, chatroomID string, isSecret bool) ([]string, error) {
-
-	// Check if the participants are already in the Redis cache
+func getParticipantsInternal(c *gin.Context, userID string, chatroomID string, isSecret bool) ([]string, error) {
 	cacheKey := fmt.Sprintf(cache.ChatroomParticipantsKey, chatroomID)
+	// Check if the participants are already in the Redis cache
+	redisClient := utils.GetRedisClientFromContext(c)
 	cachedParticipantIDs, err := getParticipantsFromCache(redisClient, cacheKey)
 	if err != nil {
 		return nil, err
@@ -468,6 +429,7 @@ func getParticipantsInternal(redisClient *redis.Client, headers map[string]inter
 		// If cache exists and is not nil, return the participants from cache
 		logging.Info("Returning participants from Redis cache")
 		return cachedParticipantIDs, nil
+
 	} else {
 		// Initialize parameters for pagination and collection of participants
 		params := map[string]string{
@@ -487,6 +449,7 @@ func getParticipantsInternal(redisClient *redis.Client, headers map[string]inter
 		// Loop to fetch participants until the response is empty
 		for {
 			//Custom headers since this API will be called after conversation create and headers between these two APIs can have different x-api-version
+			headers := utils.CreateHeadersFromToken(c, userID, chatroomID)
 			headers[utils.HeadersPlatformCode] = ChatroomPlatformCode
 			headers[utils.HeadersVersionCode] = ChatroomVersionCode
 			headers[utils.HeadersApiVersion] = ChatroomParticipantsAPIVersion
@@ -583,7 +546,8 @@ func setParticipantsInCache(redisClient *redis.Client, cacheKey string, allParti
 }
 
 // getTotalParticipantsInternal returns the total participants count, fetching the first page if not present in cache.
-func getTotalParticipantsInternal(redisClient *redis.Client, headers map[string]interface{}, chatroomID string, isSecret bool) (int, error) {
+func getTotalParticipantsInternal(c *gin.Context, userID string, chatroomID string, isSecret bool) (int, error) {
+	redisClient := utils.GetRedisClientFromContext(c)
 
 	// Try to get total participants count from the cache
 	totalCount, err := getTotalParticipantsCountFromCache(redisClient, chatroomID)
@@ -607,6 +571,7 @@ func getTotalParticipantsInternal(redisClient *redis.Client, headers map[string]
 	}
 
 	// Custom headers for API call
+	headers := utils.CreateHeadersFromToken(c, userID, chatroomID)
 	headers[utils.HeadersPlatformCode] = ChatroomPlatformCode
 	headers[utils.HeadersVersionCode] = ChatroomVersionCode
 	headers[utils.HeadersApiVersion] = ChatroomParticipantsAPIVersion

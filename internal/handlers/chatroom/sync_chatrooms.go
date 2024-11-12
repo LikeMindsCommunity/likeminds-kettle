@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsubPublish"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
-	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
@@ -40,44 +39,22 @@ func SyncChatrooms(c *gin.Context) {
 	if apiCR != nil {
 		utils.GenerateResponse(c, apiCR.Response, true)
 		if apiCR.Success == true {
-			headers := utils.CreateHeadersFromToken(c, userId, user.GetRequestingUserDeviceId(c))
-			minTimeStamp := c.Query(ParamMinTimeStamp)
-			maxTimeStamp := c.Query(ParamMaxTimeStamp)
-
-			go parseAndPublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, apiCR.Response)
+			go parseAndPublishDROnTopicTypeChatroom(c, userId, apiCR.Response)
 		}
 	}
 }
 
 // parseAndPublishDROnTopicTypeChatroom to publish DR on TopicTypeChatroom
-func parseAndPublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, maxTimeStamp string, response map[string]interface{}) {
+func parseAndPublishDROnTopicTypeChatroom(c *gin.Context, userId string, response map[string]interface{}) {
+	deviceID := user.GetRequestingUserDeviceId(c)
 	// After returning the response, run a loop around "id" present in "chatrooms:[]"
-	chatrooms, ok := response["chatrooms_data"].([]interface{})
-	if !ok || chatrooms == nil {
-		logging.Error("chatrooms_data key is missing or is not a valid slice in the response")
-		return // Exit the function or handle the error as appropriate
-	}
-
+	chatrooms := response["chatrooms_data"].([]interface{})
 	for _, chatroom := range chatrooms {
-		chatroomMap, ok := chatroom.(map[string]interface{})
-		if !ok || chatroomMap == nil {
-			logging.Error("chatroom item is not a valid map in chatrooms_data")
-			continue // Skip this item and continue with the next
-		}
-
+		chatroomMap := chatroom.(map[string]interface{})
 		chatroomID := chatroomMap["id"]
-		communityID := chatroomMap["community_id"]
-		if chatroomID == nil {
-			logging.Error("parseAndPublishDROnTopicTypeChatroom: chatroom ID is missing")
-			return
-		}
-		if communityID == nil {
-			logging.Error("parseAndPublishDROnTopicTypeChatroom: community ID is missing")
-			return
-		}
 
 		// Call PublishDROnTopicTypeChatroom for each "chatroomID"
-		pubsubPublish.PublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, chatroomID, communityID)
+		pubsubPublish.PublishDROnTopicTypeChatroom(c, userId, deviceID, chatroomID)
 	}
 
 }

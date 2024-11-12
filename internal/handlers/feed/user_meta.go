@@ -19,14 +19,14 @@ func GetUserFeedMeta(c *gin.Context) {
 	headers := utils.CreateHeaders(c, userId)
 
 	// Access query params and url generation
-	paramUUID := c.Param("uuid")
+	userID := c.Param("user_id")
 
-	if paramUUID == "" {
+	if userID == "" {
 		utils.GeneralBadRequestError(c, utils.ErrorInvalidUserId)
 	}
 
 	//Get user_unique_id from user_id internally
-	userUUID, err := utility.GetUUIDInternally(headers, paramUUID)
+	userUUID, err := utility.GetUUIDInternally(headers, userID)
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
 		return

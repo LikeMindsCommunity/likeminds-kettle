@@ -80,9 +80,9 @@ func FetchUserUniqueIdsFromAnyUserIds(headers map[string]interface{}, userIds in
 }
 
 // GetUUIDInternally is used to get user_unique_id from user_id
-func GetUUIDInternally(headers map[string]interface{}, uuid string) (string, error) {
+func GetUUIDInternally(headers map[string]interface{}, user_id string) (string, error) {
 
-	member_ids := []string{uuid}
+	member_ids := []string{user_id}
 
 	//Get user_unique_id by calling internal core service
 	user_unique_ids, err := FetchUserUniqueIdsFromAnyUserIds(headers, member_ids)

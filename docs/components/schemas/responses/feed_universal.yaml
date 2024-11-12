@@ -54,7 +54,3 @@ properties:
               type: integer
             user_id:
               type: string
-            impressions_count:
-              type: integer
-            reach_count:
-              type: integer
