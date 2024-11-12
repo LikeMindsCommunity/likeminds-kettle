@@ -55,7 +55,7 @@ post:
                 type: array
                 items:
                   type: string
-                description: UUIDs of the users on whom the action is performed (Users on whose the activity will be shown)
+                description: UUIDs of users whose activity feeds will display the custom activity.
                 example: ["USER_UUID_B", "USER_UUID_C"]
               entity_type:
                 type: string
