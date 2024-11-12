@@ -41,7 +41,7 @@ func SavePost(c *gin.Context, method int) {
 func getSavePostsInternal(c *gin.Context, userId string) {
 
 	//Access query params and url generation
-	paramUserId := c.Param("user_id")
+	paramUUID := c.Param("uuid")
 
 	headers := utils.CreateHeaders(c, userId)
 
@@ -67,7 +67,7 @@ func getSavePostsInternal(c *gin.Context, userId string) {
 	params[ParamUserIsCm] = fmt.Sprint(response.IsCm)
 
 	//Get user_unique_id from user_id internally
-	uuid, err := utility.GetUUIDInternally(headers, paramUserId)
+	uuid, err := utility.GetUUIDInternally(headers, paramUUID)
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
 		return

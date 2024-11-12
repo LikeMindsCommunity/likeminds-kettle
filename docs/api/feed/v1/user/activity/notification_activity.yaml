@@ -21,3 +21,76 @@ get:
         application/json:
           schema:
             $ref: "../../../../../components/schemas/responses/feed_activity_get.yaml"
+
+post:
+  summary: Create Notification Feed Activity
+  description: This API is used to create custom activity for Notification Feed (Admin only API)
+
+  operationId: createUserActivity
+  tags:
+    - Feed - V1
+
+  security:
+    - bearerAuth: []
+
+  requestBody:
+    description: Activity details to be created
+    required: true
+    content:
+      application/json:
+        schema:
+            type: object
+            properties:
+              action:
+                type: string
+                description: Activity action
+                enum:
+                  - custom_activity
+                example: "custom_activity"
+              action_by:
+                type: string
+                description: UUID of the user performing the action
+                example: "USER_UUID_A"
+              action_on:
+                type: array
+                items:
+                  type: string
+                description: UUIDs of users whose activity feeds will display the custom activity.
+                example: ["USER_UUID_B", "USER_UUID_C"]
+              entity_type:
+                type: string
+                description: Entity type on which the activity is performed
+                enum:
+                  - post
+                  - comment
+                  - user
+                example: "post"
+              entity_id:
+                type: string
+                description: The ID of the entity on which the activity is performed (Mandatory if entity_type is post or comment)
+                example: "<post_id>"
+              activity_text:
+                type: string
+                description: Activity text
+                example: "USER_A created a new post in topic XYZ"
+            required:
+              - action
+              - action_by
+              - action_on
+              - entity_type
+              - activity_text
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type : object
+            properties:
+              success:
+                type: boolean
+                example: true
+              error_message:
+                type: string
+                example: "You are not Authorized to perform this action"

@@ -47,7 +47,7 @@ var (
 )
 
 func main() {
-	var AppVersion = "2.47.0"
+	var AppVersion = "2.48.0"
 
 	redisClient = cache.InitRedis()
 
@@ -305,11 +305,11 @@ func setRouterA() {
 	routerA.GET(constants.FeedUserIDSaveRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.GetSavedPosts)
 	routerA.GET(constants.FeedUserIDPostRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.FetchUserCreatedPosts)
 	routerA.GET(constants.FeedUserIDCommentRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.GetUserComments)
-	routerA.GET(constants.FeedUserActivityRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.GetUserActivity)
-	routerA.GET(constants.FeedUserIdActivityRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.FetchUserProfileActivity)
-	routerA.POST(constants.FeedUserIdActivityRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.CreateUserActivity)
-	routerA.GET(constants.FeedUserActivityUnreadCount, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.GetUserActivityUnreadCount)
-	routerA.POST(constants.FeedUserActivityIDMarkReadRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.UserActivityMarkRead)
+	routerA.GET(constants.FeedUserActivityRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.FetchNotificationFeed)
+	routerA.POST(constants.FeedUserActivityRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.CreateActivityForNotificationFeed)
+	routerA.GET(constants.FeedUserActivityUnreadCount, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.FetchNotificationFeedUnreadCount)
+	routerA.POST(constants.FeedUserActivityIDMarkReadRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.NotificationActivityMarkRead)
+	routerA.GET(constants.FeedUUIDActivityRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.FetchUserProfileActivity)
 	routerA.GET(constants.FeedUserIDMetaRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.GetUserFeedMeta)
 	routerA.GET(constants.FeedUserIDPostPendingRoute, middleware.LTMValidationMiddleware(redisClient, false), middleware.RateLimitingMiddleware(redisClient), feed.FetchUserCreatedPendingPosts)
 	routerA.GET(constants.FeedUniversalRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), feed.FetchUniversalFeed)
