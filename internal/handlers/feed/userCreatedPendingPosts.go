@@ -31,10 +31,10 @@ func FetchUserCreatedPendingPosts(c *gin.Context) {
 	}
 
 	//Access query params and url generation
-	user_id := c.Param("user_id")
+	paramUUID := c.Param("uuid")
 
-	//Get user_unique_id from user_id internally
-	user_id, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), user_id)
+	//Get user_unique_id from paramUUID internally
+	uuid, err := utility.GetUUIDInternally(utils.CreateHeaders(c, userId), paramUUID)
 	if err != nil {
 		utils.GeneralAPIError(c, err.Error())
 		return
@@ -53,13 +53,13 @@ func FetchUserCreatedPendingPosts(c *gin.Context) {
 		return
 	}
 
-	if !response.IsCm && userId != user_id {
+	if !response.IsCm && userId != uuid {
 		utils.MemberAccessFailError(c)
 		return
 	}
 
 	//Url generation
-	userCreatedPendingPostsEndPoint := fmt.Sprintf(FetchUserCreatedPendingPostsEndPoint, user_id)
+	userCreatedPendingPostsEndPoint := fmt.Sprintf(FetchUserCreatedPendingPostsEndPoint, uuid)
 
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, userCreatedPendingPostsEndPoint, utils.GETRequest, headers, params, nil)
