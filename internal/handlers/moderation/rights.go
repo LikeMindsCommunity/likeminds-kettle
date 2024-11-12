@@ -1,12 +1,13 @@
 package moderation
 
 import (
-	"fmt"
 	"reflect"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/internal/constants"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/utility"
+	"github.com/nateshr/likeminds-authentication/internal/requests"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
@@ -25,10 +26,6 @@ type RightsRequest struct {
 	CustomTitle *string     `json:"custom_title,omitempty"`
 	Rights      []Right     `json:"rights,omitempty"`
 	IsCM        bool        `json:"is_cm"`
-}
-
-type CreateActivityRequest struct {
-	Action string `json:"action"`
 }
 
 func parseRightsRequest(c *gin.Context) (*RightsRequest, error) {
@@ -161,7 +158,7 @@ func editRightsInternal(c *gin.Context, userId string) {
 
 		//If rights change for FEED, create feed rights activity
 		if reflect.TypeOf(rightsRequest.UserId).Kind() == reflect.String {
-			err := createFeedRightsAcitivity(c, userId, rightsRequest.Rights, rightsRequest.UserId.(string))
+			err := createNotificationFeedActivityForFeedRights(c, userId, rightsRequest.Rights, rightsRequest.UserId.(string))
 			if err {
 				return
 			}
@@ -210,7 +207,7 @@ func updateRightsInternal(c *gin.Context, userId string) {
 			rightsRequest.UUID, _ = utility.GetUUIDInternally(utils.CreateHeaders(c, userId), rightsRequest.UUID)
 		}
 
-		err := createFeedRightsAcitivity(c, userId, rightsRequest.Rights, rightsRequest.UUID)
+		err := createNotificationFeedActivityForFeedRights(c, userId, rightsRequest.Rights, rightsRequest.UUID)
 		if err {
 			return
 		}
@@ -251,18 +248,23 @@ func extractActionFromRights(rights []Right) (string, string) {
 	return postAction, commentAction
 }
 
-// createFeedRightsAcitivity is used to create feed rights activity for members
-func createFeedRightsAcitivity(c *gin.Context, userId string, rights []Right, uuid string) bool {
+// createNotificationFeedActivityForFeedRights is used to create feed rights activity for members
+func createNotificationFeedActivityForFeedRights(c *gin.Context, userId string, rights []Right, uuid string) bool {
 
 	postAction, commentAction := extractActionFromRights(rights)
 
+	createActivityRequest := requests.CreateNotificationActivityRequest{
+		ActionBy:   userId,
+		ActionOn:   []string{uuid},
+		EntityType: constants.UserFeedEntityType,
+	}
+
 	if postAction != "" {
-		createActivityRequest := CreateActivityRequest{
-			Action: postAction,
-		}
+
+		createActivityRequest.Action = postAction
 
 		//Send Request
-		respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, fmt.Sprintf(CreateFeedActivityEndpoint, uuid), utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createActivityRequest)
+		respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, constants.NotificationFeedEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createActivityRequest)
 		if respBytes == nil {
 			return true
 		}
@@ -275,12 +277,10 @@ func createFeedRightsAcitivity(c *gin.Context, userId string, rights []Right, uu
 	}
 
 	if commentAction != "" {
-		createActivityRequest := CreateActivityRequest{
-			Action: commentAction,
-		}
+		createActivityRequest.Action = commentAction
 
 		//Send Request
-		respBytes, _ := utils.GetRequestResponse(c, utils.SwarmService, fmt.Sprintf(CreateFeedActivityEndpoint, uuid), utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createActivityRequest)
+		respBytes, _ := utils.GetRequestResponse(c, utils.SwarmService, constants.NotificationFeedEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createActivityRequest)
 		if respBytes == nil {
 			return true
 		}

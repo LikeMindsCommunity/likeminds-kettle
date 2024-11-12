@@ -172,7 +172,7 @@ const (
 	FeedUserIDPostRoute             = "/feed/user/:user_id/post"
 	FeedUserIDCommentRoute          = "/feed/user/:user_id/comment"
 	FeedUserActivityRoute           = "/feed/user/activity"
-	FeedUserIdActivityRoute         = "/feed/user/:user_id/activity"
+	FeedUUIDActivityRoute           = "/feed/user/:uuid/activity"
 	FeedUserActivityUnreadCount     = "/feed/user/activity/unread_count"
 	FeedUserActivityIDMarkReadRoute = "/feed/user/activity/:activity_id/mark_read"
 	FeedUserIDMetaRoute             = "/feed/user/:user_id/meta"
