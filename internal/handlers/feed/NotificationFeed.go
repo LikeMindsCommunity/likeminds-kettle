@@ -6,17 +6,34 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/constants"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/utility"
 	"github.com/nateshr/likeminds-authentication/internal/requests"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
-func parseCreateNotificationActivityRequest(c *gin.Context) (*requests.CreateNotificationActivityRequest, error) {
+func parseCreateNotificationActivityRequest(c *gin.Context, userId string,
+) (*requests.CreateNotificationActivityRequest, error) {
 
 	//POST body params
 	var cuar requests.CreateNotificationActivityRequest
 	if err := c.ShouldBindJSON(&cuar); err != nil {
 		return nil, err
 	}
+
+	headers := utils.CreateHeaders(c, userId)
+
+	// Fetch LM user_unique_id against uuids
+	UUID, err := utility.GetUUIDInternally(headers, cuar.ActionBy)
+	if err != nil {
+		return nil, err
+	}
+	cuar.ActionBy = UUID
+
+	UUIDs, err := utility.FetchUserUniqueIdsFromAnyUserIds(headers, cuar.ActionOn)
+	if err != nil {
+		return nil, err
+	}
+	cuar.ActionOn = UUIDs
 
 	return &cuar, nil
 }
@@ -31,10 +48,11 @@ func CreateActivityForNotificationFeed(c *gin.Context) {
 	}
 
 	//Body to be sent in the /user/<user_id>/activity POST request
-	createUserActivityRequest, err := parseCreateNotificationActivityRequest(c)
+	createUserActivityRequest, err := parseCreateNotificationActivityRequest(c, userId)
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralBadRequestError(c, err.Error())
+		return
 	}
 
 	//Fetch member access to create post
