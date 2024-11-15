@@ -389,7 +389,7 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 func CustomRecoveryMiddleware(c *gin.Context, err interface{}) {
 
 	// Send Internal server error with error_message
-	utils.GeneralAPIError(c, "Something went wrong")
+	utils.GeneralAPIError(c, utils.ErrorSomethingWentWrong)
 }
 
 func EnableCorsMiddleware() gin.HandlerFunc {
