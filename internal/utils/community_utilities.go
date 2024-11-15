@@ -109,7 +109,7 @@ func getFeedMetaConfig(redisClient *redis.Client, headers map[string]interface{}
 		}
 
 		// Save data to cache
-		go setFeedMetaConfigInCache(redisClient, communityId, feedMetaConfig)
+		SafeGo(func() { setFeedMetaConfigInCache(redisClient, communityId, feedMetaConfig) })
 	}
 
 	return feedMetaConfig, nil
@@ -302,7 +302,7 @@ func fetchCommunitySettings(redisClient *redis.Client, headers map[string]interf
 		}
 
 		// save in cache
-		go saveCommunitySettingsInCache(redisClient, communityId, communitySettings)
+		SafeGo(func() { saveCommunitySettingsInCache(redisClient, communityId, communitySettings) })
 	}
 
 	return communitySettings, nil

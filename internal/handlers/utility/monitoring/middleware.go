@@ -1,8 +1,10 @@
 package monitoring
 
 import (
-	"github.com/gin-gonic/gin"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/internal/logging"
 )
 
 // PrometheusMiddleware created middleware to be used to send metrics
@@ -20,4 +22,14 @@ func PrometheusMiddleware(metricService MetricService) gin.HandlerFunc {
 		metricService.SaveResponseTime(responseTimeMetric)
 		metricService.SaveTotalRequest(NewTotalRequestMetric(c.FullPath(), c.Request.Method, statusCode))
 	}
+}
+
+// getPrometheusMetricService returns prometheus metrics service
+func GetPrometheusMetricService() *PrometheusService {
+	prometheusService, err := NewPrometheusService()
+	if err != nil {
+		logging.Fatal(err.Error())
+		return nil
+	}
+	return prometheusService
 }

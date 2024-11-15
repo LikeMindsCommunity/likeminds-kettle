@@ -82,12 +82,12 @@ func FetchPersonalisedFeed(c *gin.Context) {
 	// Recompute the metrics in background if should_recompute is true
 	if shouldRecompute {
 		// Send request to /personalised/recompute
-		go func() {
+		utils.SafeGo(func() {
 			respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.SwarmService, RecomputePersonalisedFeedEndPoint, utils.POSTRequestRawBody, headers, nil, nil)
 			if err != nil || statusCode != 200 {
 				logging.Error(fmt.Sprintf("Error in recomputee personalised feed API: %v | response %v", err, string(respBytes)))
 			}
-		}()
+		})
 	}
 
 	params := map[string]string{

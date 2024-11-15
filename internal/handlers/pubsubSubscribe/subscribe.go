@@ -4,6 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
+	"net/http"
+	"strings"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/channel"
@@ -12,10 +17,6 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
-	"log"
-	"net/http"
-	"strings"
-	"time"
 )
 
 var upgrader = newUpgrader()
@@ -76,8 +77,8 @@ func Subscribe(c *gin.Context) {
 	logging.Info(WsConnectionEstablished)
 
 	// Handle communication between the client and the websocket server
-	go readFromClientAndWriteToServer(conn, serverConn)
-	go readFromServerAndWriteToClient(conn, serverConn)
+	utils.SafeGo(func() { readFromClientAndWriteToServer(conn, serverConn) })
+	utils.SafeGo(func() { readFromServerAndWriteToClient(conn, serverConn) })
 }
 
 // validateParamsAndHeaders to validate params and headers sent while subscribing to topic
@@ -184,7 +185,8 @@ func readFromClientAndWriteToServer(conn *websocket.Conn, serverConn *websocket.
 		disconnect(serverConn)
 	}()
 
-	go startPingMessageToServer(serverConn)
+	utils.SafeGo(func() { startPingMessageToServer(serverConn) })
+
 	serverConn.SetPongHandler(func(string) error {
 		log.Println(PongReceivedWs)
 		return nil
@@ -213,7 +215,8 @@ func readFromServerAndWriteToClient(conn *websocket.Conn, serverConn *websocket.
 		disconnect(serverConn)
 	}()
 
-	go startPingMessageToClient(conn)
+	utils.SafeGo(func() { startPingMessageToClient(conn) })
+
 	conn.SetPongHandler(func(string) error {
 		log.Println(PongReceivedClient)
 		return nil

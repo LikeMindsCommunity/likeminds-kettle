@@ -48,7 +48,7 @@ func FetchCommunities(c *gin.Context) {
 	resp := utils.Response{}
 	resp.Data = make(map[string]interface{})
 
-	go func() {
+	utils.SafeGo(func() {
 		respBytes, _, err := apiClient.GetRequest(&api_client.GetRequestOptions{
 			Url:           apiClient.CoreServiceBaseURL + CommunitiesEndPoint + page,
 			CustomHeaders: headers,
@@ -65,8 +65,8 @@ func FetchCommunities(c *gin.Context) {
 		}
 		resp.Data.(map[string]interface{})[ResponseMyCommunities] = apiCR.Response
 		wg.Done()
-	}()
-	go func() {
+	})
+	utils.SafeGo(func() {
 		respBytes, _, err := apiClient.GetRequest(&api_client.GetRequestOptions{
 			Url:           apiClient.SubscriptionServiceBaseURL + SubscriptionEndPoint,
 			CustomHeaders: headers,
@@ -83,7 +83,7 @@ func FetchCommunities(c *gin.Context) {
 		}
 		resp.Data.(map[string]interface{})[ResponseSubscriptions] = apiCR.Response[ResponseSubscriptions]
 		wg.Done()
-	}()
+	})
 
 	wg.Wait()
 
