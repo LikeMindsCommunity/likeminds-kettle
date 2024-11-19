@@ -74,7 +74,7 @@ func ChatroomType(c *gin.Context, method int) {
 		//Parse response
 		utils.ParseResponse(c, respBytes, statusCode, false)
 
-		go internalServices.DeleteChatroomCache(c, chatroomTypeRequest.ChatroomID)
+		utils.SafeGo(func() { internalServices.DeleteChatroomCache(c, chatroomTypeRequest.ChatroomID) })
 	}
 }
 

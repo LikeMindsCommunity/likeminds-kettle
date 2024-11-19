@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
@@ -382,6 +383,34 @@ func GuestAccessCheckMiddleware() gin.HandlerFunc {
 		}
 		c.Next()
 	}
+}
+
+// CustomRecoveryMiddleware is a Gin middleware to handle panics
+func CustomRecoveryMiddleware(c *gin.Context, err interface{}) {
+
+	// Send Internal server error with error_message
+	utils.GeneralAPIError(c, utils.ErrorSomethingWentWrong)
+}
+
+func EnableCorsMiddleware() gin.HandlerFunc {
+
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AddAllowHeaders(
+		"x-member-id",
+		"x-platform-code",
+		"x-platform-type",
+		"x-version-code",
+		"x-sdk-source",
+		"x-accept-version",
+		"x-username",
+		"x-password",
+		"x-device-id",
+		"x-api-key",
+		"Authorization",
+	)
+
+	return cors.New(config)
 }
 
 // Method to process API request to log
