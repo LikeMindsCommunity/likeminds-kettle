@@ -45,7 +45,9 @@ func SyncConversation(c *gin.Context) {
 			maxTimeStamp := c.Query(ParamMaxTimeStamp)
 			chatroomID := c.Query(ParamChatroomId)
 
-			go parseAndPublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, chatroomID, apiCR.Response)
+			utils.SafeGo(func() {
+				parseAndPublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, chatroomID, apiCR.Response)
+			})
 		}
 	}
 }

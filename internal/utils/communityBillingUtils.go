@@ -62,7 +62,7 @@ func FetchCommunityBillingData(redisClient *redis.Client, communityId int, heade
 		}
 
 		// Save in cache in background
-		go func() {
+		SafeGo(func() {
 			bytes, err := json.Marshal(billingPlanResp.BillingData)
 			if err != nil {
 				logging.Error(fmt.Sprintf("Error while marshalling communityBillingMeta: %v", err))
@@ -73,7 +73,7 @@ func FetchCommunityBillingData(redisClient *redis.Client, communityId int, heade
 			if err != nil {
 				logging.Error(fmt.Sprintf("Error while setting communityBillingMeta in cache: %v", err))
 			}
-		}()
+		})
 
 	} else {
 

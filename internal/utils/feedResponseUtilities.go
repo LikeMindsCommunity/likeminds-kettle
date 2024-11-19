@@ -105,10 +105,7 @@ func AddUserNameInBlockMenuTitle(dataResponse map[string]interface{}) map[string
 		}
 	} else if value, ok := dataResponse["post"]; ok {
 		if userData, ok := dataResponse["users"].(map[string]MemberMeta); ok {
-			post := value.(interface{})
-			post = addUserNameInPostMenuTitle(post.(map[string]interface{}), userData)
-
-			dataResponse["post"] = post
+			dataResponse["post"] = addUserNameInPostMenuTitle(value.(map[string]interface{}), userData)
 		}
 	}
 

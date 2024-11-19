@@ -103,7 +103,7 @@ func FetchCommunityIdFromApiKey(redisClient *redis.Client, apiKey string) (int, 
 		}
 
 		// Save community_id against apiKey in cache
-		go saveCommunityIdAgainstApiKeyToCache(redisClient, apiKey, communityId)
+		SafeGo(func() { saveCommunityIdAgainstApiKeyToCache(redisClient, apiKey, communityId) })
 	}
 
 	return communityId, nil

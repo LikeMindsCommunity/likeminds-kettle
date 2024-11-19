@@ -7,7 +7,6 @@ import (
 
 	"github.com/nateshr/likeminds-authentication/internal/handlers/deliveryReport"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
@@ -46,8 +45,13 @@ var (
 	redisClient *redis.Client
 )
 
+const (
+	AppVersion      = "2.49.0"
+	RouterAPortAddr = ":8080"
+	RouterBPortAddr = ":8083"
+)
+
 func main() {
-	var AppVersion = "2.48.0"
 
 	redisClient = cache.InitRedis()
 
@@ -57,9 +61,11 @@ func main() {
 	//logging.Fatal(routerA.Run(":8080"))
 
 	routerGroup.Go(func() error {
+		logging.Info(fmt.Sprint("RouterA server running and listening on: ", RouterAPortAddr))
 		return routerAServer().ListenAndServe()
 	})
 	routerGroup.Go(func() error {
+		logging.Info(fmt.Sprint("RouterB server running and listening on: ", RouterBPortAddr))
 		return routerBServer().ListenAndServe()
 	})
 	if err := routerGroup.Wait(); err != nil {
@@ -70,24 +76,20 @@ func main() {
 }
 
 func initRouterA() {
+
 	gin.SetMode(gin.ReleaseMode)
 	routerA = gin.Default()
-	setRouterA()
-}
 
-func initRouterB() {
-	gin.SetMode(gin.ReleaseMode)
-	routerB = gin.Default()
-	setRouterB()
-}
+	// Attach middlewares
 
-func setRouterA() {
-	routerA.Use(cors.New(enableCors()))
+	routerA.Use(middleware.EnableCorsMiddleware())
 	routerA.Use(middleware.AddResponseHeadersMiddleware())
 	routerA.Use(middleware.ApiMiddleware(redisClient))
 	routerA.Use(middleware.LoggingMiddleware())
+	routerA.Use(gin.CustomRecovery(middleware.CustomRecoveryMiddleware))
+
 	//Attach prometheus service as middleware
-	prometheusService := getPrometheusMetricService()
+	prometheusService := monitoring.GetPrometheusMetricService()
 	if prometheusService != nil {
 		routerA.Use(monitoring.PrometheusMiddleware(prometheusService))
 	}
@@ -400,55 +402,35 @@ func setRouterA() {
 	routerA.GET(constants.DeliveryReportRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), deliveryReport.GetDR)
 
 	routerA.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
 }
 
-func enableCors() cors.Config {
-	config := cors.DefaultConfig()
-	config.AllowAllOrigins = true
-	config.AddAllowHeaders(
-		"x-member-id",
-		"x-platform-code",
-		"x-platform-type",
-		"x-version-code",
-		"x-sdk-source",
-		"x-accept-version",
-		"x-username",
-		"x-password",
-		"x-device-id",
-		"x-api-key",
-		"Authorization",
-	)
-	return config
-}
+func initRouterB() {
+	gin.SetMode(gin.ReleaseMode)
+	routerB = gin.Default()
 
-// getPrometheusMetricService returns prometheus metrics service
-func getPrometheusMetricService() *monitoring.PrometheusService {
-	prometheusService, err := monitoring.NewPrometheusService()
-	if err != nil {
-		logging.Fatal(err.Error())
-		return nil
-	}
-	return prometheusService
-}
+	// Add middlewares
+	routerB.Use(middleware.LoggingMiddleware())
+	routerB.Use(gin.CustomRecovery(middleware.CustomRecoveryMiddleware))
 
-func setRouterB() {
 	// health check path '/' on ws router
 	routerB.GET("", web.Home)
 
 	// Pandemonium APIs
 	routerB.GET(constants.SubscribeRoute, middleware.LTMValidationMiddleware(redisClient, true), middleware.RateLimitingMiddleware(redisClient), pubsubSubscribe.Subscribe)
+
 }
 
 func routerAServer() *http.Server {
 	serverA := &http.Server{
-		Addr:    ":8080",
+		Addr:    RouterAPortAddr,
 		Handler: routerA,
 	}
 	return serverA
 }
 func routerBServer() *http.Server {
 	serverB := &http.Server{
-		Addr:    ":8083",
+		Addr:    RouterBPortAddr,
 		Handler: routerB,
 	}
 	return serverB

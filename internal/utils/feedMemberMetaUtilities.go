@@ -104,7 +104,7 @@ func fetchMembersMetaFromAPI(redisClient *redis.Client, communityId int, headers
 
 	// Save fetched members meta to cache in background
 	if redisClient != nil {
-		go saveMembersMetaInCache(redisClient, communityId, membersMeta)
+		SafeGo(func() { saveMembersMetaInCache(redisClient, communityId, membersMeta) })
 	}
 
 	return membersMeta, nil
@@ -208,7 +208,7 @@ func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[s
 				memberMetaMap[userUniqueId] = getAnonymousUserMetaForFeed(redisClient, headers, communityId)
 
 				// save in cache
-				go saveMembersMetaInCache(redisClient, communityId, []MemberMeta{memberMetaMap[userUniqueId]})
+				SafeGo(func() { saveMembersMetaInCache(redisClient, communityId, []MemberMeta{memberMetaMap[userUniqueId]}) })
 			}
 		}
 

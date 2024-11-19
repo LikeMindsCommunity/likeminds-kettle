@@ -2,8 +2,9 @@ package internalServices
 
 import (
 	"fmt"
-	"github.com/go-redis/redis/v7"
 	"strings"
+
+	"github.com/go-redis/redis/v7"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
@@ -61,7 +62,7 @@ func deleteCacheByKeyPatternsInternal(redisClient *redis.Client, keyPatterns []s
 	}
 
 	//To delete chatroom_total_participants_<> key
-	go func() {
+	utils.SafeGo(func() {
 		// Loop through the result map.
 		for keyPattern, keys := range result {
 			// If the key pattern matches chatroom participants, handle total participants cache deletion.
@@ -80,7 +81,8 @@ func deleteCacheByKeyPatternsInternal(redisClient *redis.Client, keyPatterns []s
 				}
 			}
 		}
-	}()
+	})
+
 	return nil
 }
 

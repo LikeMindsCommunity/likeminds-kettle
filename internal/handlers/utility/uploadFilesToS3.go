@@ -107,27 +107,29 @@ func uploadFilesFromDrive(urls []string, filePath string) []FileUploadedResponse
 
 	for i, url := range urls {
 		wg.Add(1)
-		go func(i int, url string) {
-			defer wg.Done()
-			fileResponse := FileUploadedResponse{
-				SourceUrl: url,
-			}
+		utils.SafeGo(func(i int, url string) func() {
+			return func() {
+				defer wg.Done()
+				fileResponse := FileUploadedResponse{
+					SourceUrl: url,
+				}
 
-			// extract file id from url
-			fileID, err := extractFileIdFromDriveUrl(url)
-			if err != nil {
-				fileResponse.Error = err.Error()
-			} else {
-				// upload file to s3
-				s3Url, err := uploadDriveFileToS3(fileID, filePath)
+				// extract file id from url
+				fileID, err := extractFileIdFromDriveUrl(url)
 				if err != nil {
 					fileResponse.Error = err.Error()
 				} else {
-					fileResponse.S3Url = s3Url
+					// upload file to s3
+					s3Url, err := uploadDriveFileToS3(fileID, filePath)
+					if err != nil {
+						fileResponse.Error = err.Error()
+					} else {
+						fileResponse.S3Url = s3Url
+					}
 				}
+				fileUploadedUrls[i] = fileResponse
 			}
-			fileUploadedUrls[i] = fileResponse
-		}(i, url)
+		}(i, url))
 	}
 
 	wg.Wait()

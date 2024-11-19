@@ -94,7 +94,7 @@ func checkTierDataForCommunityId(tierData []utils.TierDataType, communityId int,
 		}
 
 		// Increment and set TTL if it doesn't exist
-		go func() {
+		utils.SafeGo(func() {
 
 			err = cache.Increment(redisClient, rateLimitCurrentValueKey)
 			if err != nil {
@@ -112,8 +112,7 @@ func checkTierDataForCommunityId(tierData []utils.TierDataType, communityId int,
 					logging.Error(fmt.Sprint("Some error occured while setting TTL for key: ", rateLimitCurrentValueKey, " | err: ", err))
 				}
 			}
-		}()
-
+		})
 	}
 
 	return true, nil

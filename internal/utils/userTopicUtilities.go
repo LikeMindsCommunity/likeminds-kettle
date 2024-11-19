@@ -159,10 +159,10 @@ func fetchUserTopicsFromApiAndSaveInCache(headers map[string]interface{}, userUn
 	if redisClient != nil {
 
 		// save user topics to cache
-		go saveUserTopicsToCache(redisClient, communityId, userTopics)
+		SafeGo(func() { saveUserTopicsToCache(redisClient, communityId, userTopics) })
 
 		// save topics meta to cache
-		go func() {
+		SafeGo(func() {
 			topicsData := []TopicMeta{}
 			for _, topic := range topicsFromAPI {
 				topicsData = append(topicsData, topic)
@@ -170,10 +170,10 @@ func fetchUserTopicsFromApiAndSaveInCache(headers map[string]interface{}, userUn
 
 			// save topics to cache
 			saveTopicsInCache(redisClient, communityId, topicsData)
-		}()
+		})
 
 		// save widgets meta to cache
-		go func() {
+		SafeGo(func() {
 			widgetsData := []WidgetResponse{}
 			for _, widget := range widgetsFromAPI {
 				widgetsData = append(widgetsData, widget)
@@ -181,7 +181,7 @@ func fetchUserTopicsFromApiAndSaveInCache(headers map[string]interface{}, userUn
 
 			// save widgets to cache
 			saveWidgetsToCache(redisClient, communityId, widgetsData)
-		}()
+		})
 
 	}
 
