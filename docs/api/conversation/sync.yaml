@@ -12,6 +12,7 @@ get:
     - $ref: "../../components/parameters/query/pageSize.yaml"
     - $ref: "../../components/parameters/query/minTimestamp.yaml"
     - $ref: "../../components/parameters/query/maxTimestamp.yaml"
+    - $ref: "../../components/parameters/query/orderBy.yaml"
     - name: excluded_conversation_states
       in: query
       description: Excluded conversation states

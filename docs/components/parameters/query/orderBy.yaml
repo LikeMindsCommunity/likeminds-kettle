@@ -1,0 +1,7 @@
+name: order_by
+in: query
+description: Ordering of results
+required: false
+schema:
+  type: string
+  enum: ['ASC', 'DESC']
