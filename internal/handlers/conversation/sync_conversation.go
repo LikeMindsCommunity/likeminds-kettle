@@ -27,6 +27,7 @@ func SyncConversation(c *gin.Context) {
 		ParamIsLocalDb:                  c.Query(ParamIsLocalDb),
 		ParamConversationId:             c.Query(ParamConversationId),
 		ParamExcludedConversationStates: c.Query(ParamExcludedConversationStates),
+		ParamOrderBy:                    c.Query(ParamOrderBy),
 	}
 
 	//Get Request response
