@@ -13,7 +13,6 @@ const FetchUserMetaEndPoint = "/api/fetch_user_meta"
 const UserOTPEndpoint = "/api/user/otp"
 const UserSocialLoginEndpoint = "/api/user/social/login"
 const BlockUserEndpoint = "/api/user/%s/block"
-const DashboardUserEndpoint = "/api/user/dashboard"
 
 const ParamIngestCommunities = "ingest_your_communities"
 const ParamAccessType = "access_type"
