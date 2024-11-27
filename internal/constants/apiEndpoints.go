@@ -22,7 +22,7 @@ const (
 	UserOTPVerifyRoute            = "/user/otp/verify"
 	UserSocialLoginRoute          = "/user/social/login"
 	UserBlockRoute                = "/user/:user_uuid/block"
-	UserDashboardRoute            = "/user/dashboard"
+	UserDahsboardkRoute           = "/user/dashboard"
 )
 
 // Home Endpoints
