@@ -45,6 +45,7 @@ const ParamPageSize = "page_size"
 const ParamPlatformtype = "platform_type"
 const ResponseUserExists = "existing_user"
 const ParamMetaInfo = "meta_info"
+const ParamUserData = "user_data"
 
 const (
 	VTM = "vtm"

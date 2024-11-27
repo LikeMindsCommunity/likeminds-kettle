@@ -1,0 +1,20 @@
+type: object
+properties:
+  login_type:
+    type: string
+    enums:
+      - google
+      - apple
+  token:
+    type: string
+    nullable: true
+  user_data:
+    type: object
+    nullable: true
+    properties:
+      name:
+        type: string
+      email:
+        type: string
+      image_url:
+        type: string

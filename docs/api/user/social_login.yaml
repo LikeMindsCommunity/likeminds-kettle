@@ -1,0 +1,31 @@
+get:
+  operationId: userSocialLoginUser
+  tags: 
+    - User social login
+
+  summary: Login user using social apps
+  description: Login user with sign in using social apps
+
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/device.yaml"
+    - $ref: "../../components/parameters/headers/contentType.yaml"
+    - $ref: "../../components/parameters/headers/cookie.yaml"
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/user_social_login.yaml"
+          
+  responses:
+    '200':
+      description: User logged in successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/user_social_login.yaml"
