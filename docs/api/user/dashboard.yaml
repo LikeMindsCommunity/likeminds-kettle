@@ -1,0 +1,30 @@
+patch:
+  operationId: editDashboardUser
+  tags: 
+    - DashboardUser
+
+  summary: Dashboard user
+  description: Edit dashboard user details
+
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/device.yaml"
+    - $ref: "../../components/parameters/headers/contentType.yaml"
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/edit_dashboard_user.yaml"
+          
+  responses:
+    '200':
+      description: User data updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/user_login.yaml"
