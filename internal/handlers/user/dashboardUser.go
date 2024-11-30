@@ -10,6 +10,7 @@ type UpdateDashboardUserRequest struct {
 	ImageURL     string `json:"image_url,omitempty"`
 	EmailID      string `json:"email_id,omitempty"`
 	MobileNumber string `json:"mobile_number,omitempty"`
+	OTP          string `json:"otp,omitempty"`
 }
 
 // EditDashboardUser is used to edit user data in dashboard
