@@ -65,7 +65,9 @@ paths:
     $ref: "./api/user/logout.yaml"
   /user/token:
     $ref: "./api/user/token.yaml"
-  
+  /user/social/login:
+    $ref: "./api/user/social_login.yaml"
+
   /chatroom:
     $ref: "./api/chatroom/chatroom.yaml"
   /chatroom/schedule_follow:

@@ -60,8 +60,10 @@ func Login(c *gin.Context) {
 		loginRequest = extractLoginDetailsFromVTM(verifyTokenMeta.(*constants.VerifyTokenMeta), loginRequest)
 	}
 
+	updatedRequest := updateLoginRequest(loginRequest)
+
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, LoginEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, ""), nil, updateLoginRequest(loginRequest))
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, LoginEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, ""), nil, updatedRequest)
 	if respBytes == nil {
 		return
 	}
@@ -118,7 +120,10 @@ func updateLoginRequest(lr *LoginRequest) interface{} {
 	user[UserImageUrl] = lr.User.ImageUrl
 	user[UserOrganisationName] = lr.User.OrganisationName
 	user[ResponseUserUniqueId] = lr.User.UserUniqueId
-	user[ParamMetaInfo] = lr.User.MetaInfo
+
+	if lr.User.MetaInfo != nil {
+		user[ParamMetaInfo] = lr.User.MetaInfo
+	}
 
 	updatedLr[UserMobileNo] = lr.User.MobileNo
 	updatedLr[UserCountryCode] = lr.User.CountryCode

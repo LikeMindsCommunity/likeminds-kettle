@@ -3,6 +3,10 @@ package conversation
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
@@ -12,9 +16,6 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
-	"net/http"
-	"strconv"
-	"time"
 )
 
 type PollObject struct {
@@ -250,8 +251,12 @@ func createConversationInternal(c *gin.Context, userId string, deviceID string) 
 			headers := utils.CreateHeadersFromToken(c, userId, deviceID)
 			redisClient := utils.GetRedisClientFromContext(c)
 
-			go parseAndPublishConversationOnTopicTypeChatroom(redisClient, headers, createConversationRequest.ChatroomID, apiCR.Response)
-			go parseAndPublishConversationOnTopicTypeCommunity(redisClient, headers, apiCR.Response)
+			utils.SafeGo(func() {
+				parseAndPublishConversationOnTopicTypeChatroom(redisClient, headers, createConversationRequest.ChatroomID, apiCR.Response)
+			})
+			utils.SafeGo(func() {
+				parseAndPublishConversationOnTopicTypeCommunity(redisClient, headers, apiCR.Response)
+			})
 		}
 	}
 }

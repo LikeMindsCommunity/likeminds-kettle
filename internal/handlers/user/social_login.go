@@ -12,6 +12,7 @@ func UserSocialLogin(c *gin.Context) {
 	params := map[string]string{
 		ParamLoginType:        c.Query(ParamLoginType),
 		ParamSocialLoginToken: c.Query(ParamSocialLoginToken),
+		ParamUserData:         c.Query(ParamUserData),
 	}
 
 	// Send Request

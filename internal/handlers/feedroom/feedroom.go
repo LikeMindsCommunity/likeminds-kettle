@@ -2,9 +2,10 @@ package feedroom
 
 import (
 	"fmt"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/internalServices"
 	"reflect"
 	"strconv"
+
+	"github.com/nateshr/likeminds-authentication/internal/handlers/internalServices"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/chatroom"
@@ -213,7 +214,7 @@ func editFeedroomInternal(c *gin.Context, userId string) {
 	//Parse response
 	utils.ParseResponse(c, respBytes, statusCode, false)
 
-	go internalServices.DeleteChatroomCache(c, editChatroomRequest.ChatroomID)
+	utils.SafeGo(func() { internalServices.DeleteChatroomCache(c, editChatroomRequest.ChatroomID) })
 
 }
 

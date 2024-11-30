@@ -158,7 +158,7 @@ func fetchWidgetMetaMapFromWidgetIds(redisClient *redis.Client, headers map[stri
 
 		// set widgets to cache
 		if redisClient != nil {
-			go saveWidgetsToCache(redisClient, communityId, widgets)
+			SafeGo(func() { saveWidgetsToCache(redisClient, communityId, widgets) })
 		}
 	}
 
