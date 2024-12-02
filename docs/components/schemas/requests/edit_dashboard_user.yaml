@@ -8,3 +8,5 @@ properties:
     type: string
   email_id:
     type: string
+  otp:
+    type: string
