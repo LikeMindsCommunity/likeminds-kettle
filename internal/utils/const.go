@@ -97,11 +97,24 @@ const (
 	CommunityConfigurationMediaLimits     = "media_limits"
 	CommunityConfigurationFeedMetadata    = "feed_metadata"
 	CommunityConfigurationProfileMetadata = "profile_metadata"
+	CommunityConfigurationFeedSettings    = "feed_settings"
 )
 
-// profile metadata configurations s| profile metadata types
+// profile metadata configurationss | profile metadata types
 const (
 	ConfigurationsProfileMetaWidgetsEnabled = "widgets_enabled"
+)
+
+// Feed Settings configurations
+const (
+	AutoApprovePostConfigurationKey = "auto_approve_post"
+)
+
+// Auto Approve Post Values
+const (
+	AutoApprovePostEveryone = "everyone"
+	AutoApprovePostOnlyCM   = "only_cm"
+	AutoApprovePostNoOne    = "no_one"
 )
 
 // Params
