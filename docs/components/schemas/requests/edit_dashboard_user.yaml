@@ -1,0 +1,12 @@
+type: object
+properties:
+  name:
+    type: string
+  image_url:
+    type: string
+  mobile_number:
+    type: string
+  email_id:
+    type: string
+  otp:
+    type: string

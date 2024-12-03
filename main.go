@@ -116,6 +116,7 @@ func initRouterA() {
 	routerA.GET(constants.UserSocialLoginRoute, middleware.OTMValidationMiddleware(), user.UserSocialLogin)
 	routerA.PUT(constants.UserBlockRoute, middleware.LTMValidationMiddleware(redisClient, true), user.BlockUnblockUser)
 	routerA.GET(constants.UserBlockRoute, middleware.LTMValidationMiddleware(redisClient, true), user.GetBlockUser)
+	routerA.PATCH(constants.UserDahsboardkRoute, middleware.LTMValidationMiddleware(redisClient, true), user.EditDashboardUser)
 
 	// Home Apis
 	routerA.POST(constants.HomeFetchCommunitiesRoute, middleware.LTMValidationMiddleware(redisClient, true), home.FetchCommunities)

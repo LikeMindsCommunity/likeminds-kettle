@@ -51,6 +51,8 @@ paths:
 
   /user/login:
     $ref: "./api/user/login.yaml"
+  /user/dashbaord:
+    $ref: "./api/user/dashboard.yaml"
   /sdk/initiate:
     $ref: "./api/login/initiate.yaml" 
   /user/refresh:
