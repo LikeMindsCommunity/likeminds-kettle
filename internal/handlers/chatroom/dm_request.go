@@ -7,10 +7,11 @@ import (
 )
 
 type InitiateDMRequest struct {
-	ChatroomID       interface{} `json:"chatroom_id"`
-	ChatRequestState int         `json:"chat_request_state"`
-	Text             string      `json:"text"`
-	MemberID         interface{} `json:"member_id"`
+	ChatroomID                  interface{} `json:"chatroom_id"`
+	ChatRequestState            int         `json:"chat_request_state"`
+	Text                        string      `json:"text"`
+	MemberID                    interface{} `json:"member_id"`
+	ShouldStreamChatbotResponse bool        `json:"should_stream_chatbot_response,omitempty"`
 }
 
 func parseInitiateDMRequest(c *gin.Context) (*InitiateDMRequest, error) {
