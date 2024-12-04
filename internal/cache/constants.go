@@ -10,6 +10,7 @@ const (
 	CommunityConfigurationsCacheKey    = "%s_community_configurations"
 	ProfileMetaConfigurationsCacheKey  = "%d_profile_meta_configurations"  // communityId
 	FeedMetadataConfigurationsCacheKey = "%d_feed_metadata_configurations" // communityId
+	FeedSettingsConfigurationsCacheKey = "%d_feed_settings_configurations" // communityId
 	CommunityIdAgainstApiKeyCacheKey   = "%s_community_id"                 // apiKey
 	CommunitySettingsCacheKey          = "%d_community_settings"           // communityId
 	UserMetaCacheKey                   = "%d_%s_user_meta"                 // communityId userUniqueId

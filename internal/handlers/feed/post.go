@@ -306,7 +306,7 @@ func createPostInternal(c *gin.Context, userId string) {
 	createPostRequest.UUIDs = taggedUsers
 	var createPostEndpoint string
 
-	if !utils.IsPostApprovalNeeded(utils.GetRedisClientFromContext(c), headers) {
+	if !utils.IsPostApprovalNeeded(utils.GetRedisClientFromContext(c), headers, isCm) {
 		createPostEndpoint = CreatePostEndPoint
 	} else {
 		createPostEndpoint = CreatePendingPostEndPoint
