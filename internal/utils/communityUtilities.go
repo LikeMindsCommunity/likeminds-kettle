@@ -115,6 +115,28 @@ func getFeedMetaConfig(redisClient *redis.Client, headers map[string]interface{}
 	return feedMetaConfig, nil
 }
 
+// utility method to fetch feed_settings configurations from Cache and if not, fetch from Core Service and updates cache
+func getFeedSettingsConfig(redisClient *redis.Client, headers map[string]interface{}, communityId int) (*CommunityConfiguration, error) {
+
+	feedSettingsConfig, exists, err := fetchFeedSettingsConfigfromCache(redisClient, communityId)
+	if err != nil {
+		return nil, err
+	}
+
+	if !exists {
+		// Send request to internal service to fetch feed_settings configurations
+		feedSettingsConfig, err = getCommunityConfigurationInternal(headers, CommunityConfigurationFeedSettings)
+		if err != nil || feedSettingsConfig == nil {
+			return nil, err
+		}
+
+		// Save data to cache
+		SafeGo(func() { setFeedSettingsConfigInCache(redisClient, communityId, feedSettingsConfig) })
+	}
+
+	return feedSettingsConfig, nil
+}
+
 // Internal method to fetch a community configuration without context
 func getCommunityConfigurationInternal(headers map[string]interface{}, configurationType string) (*CommunityConfiguration, error) {
 
@@ -183,6 +205,47 @@ func fetchFeedMetaConfigfromCache(redisClient *redis.Client, communityId int) (*
 	}
 
 	return &feedMetaConfigurations, exists, nil
+}
+
+// utility method to fetch feed_settings configurations from Cache
+func fetchFeedSettingsConfigfromCache(redisClient *redis.Client, communityId int) (*CommunityConfiguration, bool, error) {
+
+	cacheKey := fmt.Sprintf(cache.FeedSettingsConfigurationsCacheKey, communityId)
+
+	// Fetch feed_settings configurations from cache
+	feedSettingsValue, exists, err := cache.Get(redisClient, cacheKey)
+	if !exists {
+		logging.Error(fmt.Sprintf("feed_settings configurations not found in cache for community_id: %d", communityId))
+		return nil, exists, err
+	}
+
+	var feedSettingsConfigurations CommunityConfiguration
+	err = json.Unmarshal([]byte(feedSettingsValue), &feedSettingsConfigurations)
+	if err != nil {
+		return nil, exists, err
+	}
+
+	return &feedSettingsConfigurations, exists, nil
+}
+
+// utility method to save feed_settings configurations in Cache
+func setFeedSettingsConfigInCache(redisClient *redis.Client, communityId int, feedSettingsConfigurations *CommunityConfiguration) error {
+
+	cacheKey := fmt.Sprintf(cache.FeedSettingsConfigurationsCacheKey, communityId)
+
+	//Save feed_settings configurations in cache
+	parsedFeedSettings, err := json.Marshal(feedSettingsConfigurations)
+	if err != nil {
+		return err
+	}
+
+	err = cache.Set(redisClient, cacheKey, parsedFeedSettings, cache.ProfileMetaConfigurationsCacheTTL*time.Hour)
+	if err != nil {
+		logging.Error(fmt.Sprintf("Error while Saving feed_settings configurations in cache for communityId: %d", communityId))
+		return err
+	}
+	logging.Info(fmt.Sprintf("Saved feed_settings configurations in cache for community_id: %d", communityId))
+	return nil
 }
 
 // utility method to save profile_meta configurations in Cache
@@ -342,16 +405,44 @@ func UserTopicsConnectionEnabled(redisClient *redis.Client, headers map[string]i
 	return checkCommunitySettingEnabled(communitySettings, UserTopicsConnectionSettingType)
 }
 
-// Exposed method to check if pending post setting is enabled for a community
-func IsPostApprovalNeeded(redisClient *redis.Client, headers map[string]interface{}) bool {
+// Exposed method to check if post approval is required
+func IsPostApprovalNeeded(redisClient *redis.Client, headers map[string]interface{}, isCm bool) bool {
 
-	communitySettings, err := fetchCommunitySettings(redisClient, headers)
+	// Fetch communityId from ApiKey
+	communityId, err := FetchCommunityIdFromApiKey(redisClient, headers[HeadersApiKey].(string))
 	if err != nil {
-		logging.Error(fmt.Sprintf(ErrorFetchCommunitySettingsFailed, err))
+		logging.Error(fmt.Sprintf("Error while fetching communityId from apiKey, err: %v", err))
 		return false
 	}
 
-	return checkCommunitySettingEnabled(communitySettings, PostApprovalNeededSettingType)
+	// Fetch feed_settings configurations
+	feedSettingsConfig, err := getFeedSettingsConfig(redisClient, headers, communityId)
+	if err != nil {
+		logging.Error(fmt.Sprintf("Error while fetching feed settings configurations, err: %v", err))
+		return false
+	}
+
+	autoApprovePost, ok := feedSettingsConfig.Value[AutoApprovePostConfigurationKey].(string)
+	if !ok || autoApprovePost == "" {
+		return false
+	}
+
+	switch autoApprovePost {
+	case AutoApprovePostEveryone:
+		return false
+
+	case AutoApprovePostOnlyCM:
+		if isCm {
+			return false
+		} else {
+			return true
+		}
+
+	case AutoApprovePostNoOne:
+		return true
+	}
+
+	return false
 }
 
 // Exposed method to check if personalised feed setting is enabled for a community
