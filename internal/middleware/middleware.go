@@ -472,7 +472,6 @@ func LoggingMiddleware() gin.HandlerFunc {
 
 			ltm, _ := token.ExtractLTM(c.Request.Header.Get(constants.HeaderAuthorization))
 			if ltm != nil {
-				data["request"].(gin.H)["ltm"] = ltm
 				// Add user unique ID to request headers in data object
 				if ltm.UserUniqueID != "" {
 					data["request"].(gin.H)["headers"].(http.Header)["X-Member-Id"] = []string{ltm.UserUniqueID}
