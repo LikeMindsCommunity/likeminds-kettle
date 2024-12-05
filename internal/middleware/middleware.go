@@ -470,6 +470,15 @@ func LoggingMiddleware() gin.HandlerFunc {
 			// Updating Request Data
 			data["request"] = processRequest(c)
 
+			ltm, _ := token.ExtractLTM(c.Request.Header.Get(constants.HeaderAuthorization))
+			if ltm != nil {
+				data["request"].(gin.H)["ltm"] = ltm
+				// Add user unique ID to request headers in data object
+				if ltm.UserUniqueID != "" {
+					data["request"].(gin.H)["headers"].(http.Header)["X-Member-Id"] = []string{ltm.UserUniqueID}
+				}
+			}
+
 			// Processing request
 			c.Next()
 
@@ -498,15 +507,12 @@ func LoggingMiddleware() gin.HandlerFunc {
 				"client_ip": c.ClientIP(),
 			}
 
-			// Marshalling the final Data
-			marshelledData, _ := json.Marshal(data)
-
 			if statusCode >= http.StatusOK && statusCode < http.StatusBadRequest {
 				// Logging the generated request data as Info
-				log.Info(string(marshelledData))
+				log.InfoWithFields(data)
 			} else {
 				// Logging the generated request data as Error
-				log.Error(string(marshelledData))
+				log.ErrorWithFields(data)
 			}
 
 			c.Next()
