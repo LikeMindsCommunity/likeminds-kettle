@@ -470,6 +470,31 @@ func LoggingMiddleware() gin.HandlerFunc {
 			// Updating Request Data
 			data["request"] = processRequest(c)
 
+			// Remove Authorization header from logged data to avoid exposing sensitive tokens
+			if requestData, ok := data["request"].(gin.H); ok {
+				if headers, ok := requestData["headers"].(http.Header); ok {
+					// Create a copy of headers without Authorization
+					headersCopy := make(http.Header)
+					for key, values := range headers {
+						if key != constants.HeaderAuthorization {
+							headersCopy[key] = values
+						}
+					}
+					requestData["headers"] = headersCopy
+				}
+			}
+
+			ltm, _ := token.ExtractLTM(c.Request.Header.Get(constants.HeaderAuthorization))
+			if ltm != nil {
+				// Add user unique ID to request headers in data object
+				if ltm.UserUniqueID != "" {
+					data["request"].(gin.H)["headers"].(http.Header)["X-Member-Id"] = []string{ltm.UserUniqueID}
+				}
+				if ltm.ApiKey != "" {
+					data["request"].(gin.H)["headers"].(http.Header)["X-Api-Key"] = []string{ltm.ApiKey}
+				}
+			}
+
 			// Processing request
 			c.Next()
 
@@ -498,15 +523,12 @@ func LoggingMiddleware() gin.HandlerFunc {
 				"client_ip": c.ClientIP(),
 			}
 
-			// Marshalling the final Data
-			marshelledData, _ := json.Marshal(data)
-
 			if statusCode >= http.StatusOK && statusCode < http.StatusBadRequest {
 				// Logging the generated request data as Info
-				log.Info(string(marshelledData))
+				log.InfoWithFields(data)
 			} else {
 				// Logging the generated request data as Error
-				log.Error(string(marshelledData))
+				log.ErrorWithFields(data)
 			}
 
 			c.Next()
