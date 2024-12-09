@@ -474,10 +474,12 @@ func LoggingMiddleware() gin.HandlerFunc {
 			if requestData, ok := data["request"].(gin.H); ok {
 				if headers, ok := requestData["headers"].(http.Header); ok {
 					// Create a copy of headers without Authorization
-					headersCopy := make(http.Header)
+					headersCopy := make(map[string]string)
 					for key, values := range headers {
 						if key != constants.HeaderAuthorization {
-							headersCopy[key] = values
+							if len(values) > 0 {
+								headersCopy[key] = values[0]
+							}
 						}
 					}
 					requestData["headers"] = headersCopy
