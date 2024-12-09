@@ -490,10 +490,10 @@ func LoggingMiddleware() gin.HandlerFunc {
 			if ltm != nil {
 				// Add user unique ID to request headers in data object
 				if ltm.UserUniqueID != "" {
-					data["request"].(gin.H)["headers"].(http.Header)["X-Member-Id"] = []string{ltm.UserUniqueID}
+					data["request"].(gin.H)["headers"].(map[string]string)["X-Member-Id"] = ltm.UserUniqueID
 				}
 				if ltm.ApiKey != "" {
-					data["request"].(gin.H)["headers"].(http.Header)["X-Api-Key"] = []string{ltm.ApiKey}
+					data["request"].(gin.H)["headers"].(map[string]string)["X-Api-Key"] = ltm.ApiKey
 				}
 			}
 
