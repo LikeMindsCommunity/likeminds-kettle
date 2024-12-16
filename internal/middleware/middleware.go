@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -456,7 +457,9 @@ func sanitizeRequestHeaders(requestData gin.H) {
 		for key, values := range headers {
 			if key != constants.HeaderAuthorization {
 				if len(values) > 0 {
-					headersCopy[key] = values[0]
+					// Remove hyphens from header keys
+					sanitizedKey := strings.ReplaceAll(key, "-", "_")
+					headersCopy[sanitizedKey] = values[0]
 				}
 			}
 		}
