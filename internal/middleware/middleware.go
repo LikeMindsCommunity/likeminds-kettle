@@ -449,6 +449,35 @@ func (r responseBodyWriter) Write(b []byte) (int, error) {
 	return r.ResponseWriter.Write(b)
 }
 
+// sanitizeRequestHeaders removes sensitive headers and returns a sanitized copy
+func sanitizeRequestHeaders(requestData gin.H) {
+	if headers, ok := requestData["headers"].(http.Header); ok {
+		headersCopy := make(map[string]string)
+		for key, values := range headers {
+			if key != constants.HeaderAuthorization {
+				if len(values) > 0 {
+					headersCopy[key] = values[0]
+				}
+			}
+		}
+		requestData["headers"] = headersCopy
+	}
+}
+
+// addUserContextHeaders adds user-specific headers from LTM token
+func addUserContextHeaders(data gin.H, authHeader string) {
+	ltm, _ := token.ExtractLTM(authHeader)
+	if ltm != nil {
+		headers := data["request"].(gin.H)["headers"].(map[string]string)
+		if ltm.UserUniqueID != "" {
+			headers["X_Member_Id"] = ltm.UserUniqueID
+		}
+		if ltm.ApiKey != "" {
+			headers["X_Api_Key"] = ltm.ApiKey
+		}
+	}
+}
+
 // LoggingMiddleware will log the request and response of API
 func LoggingMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -470,32 +499,8 @@ func LoggingMiddleware() gin.HandlerFunc {
 			// Updating Request Data
 			data["request"] = processRequest(c)
 
-			// Remove Authorization header from logged data to avoid exposing sensitive tokens
-			if requestData, ok := data["request"].(gin.H); ok {
-				if headers, ok := requestData["headers"].(http.Header); ok {
-					// Create a copy of headers without Authorization
-					headersCopy := make(map[string]string)
-					for key, values := range headers {
-						if key != constants.HeaderAuthorization {
-							if len(values) > 0 {
-								headersCopy[key] = values[0]
-							}
-						}
-					}
-					requestData["headers"] = headersCopy
-				}
-			}
-
-			ltm, _ := token.ExtractLTM(c.Request.Header.Get(constants.HeaderAuthorization))
-			if ltm != nil {
-				// Add user unique ID to request headers in data object
-				if ltm.UserUniqueID != "" {
-					data["request"].(gin.H)["headers"].(map[string]string)["X-Member-Id"] = ltm.UserUniqueID
-				}
-				if ltm.ApiKey != "" {
-					data["request"].(gin.H)["headers"].(map[string]string)["X-Api-Key"] = ltm.ApiKey
-				}
-			}
+			sanitizeRequestHeaders(data["request"].(gin.H))
+			addUserContextHeaders(data, c.Request.Header.Get(constants.HeaderAuthorization))
 
 			// Processing request
 			c.Next()
