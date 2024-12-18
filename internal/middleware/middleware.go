@@ -468,7 +468,7 @@ func sanitizeRequestHeaders(requestData gin.H) {
 }
 
 // addUserContextHeaders adds user-specific headers from LTM token
-func addUserContextHeaders(data gin.H, authHeader string) {
+func addUserContextHeadersFromToken(data gin.H, authHeader string) {
 	ltm, _ := token.ExtractLTM(authHeader)
 	if ltm != nil {
 		headers := data["request"].(gin.H)["headers"].(map[string]string)
@@ -478,6 +478,17 @@ func addUserContextHeaders(data gin.H, authHeader string) {
 		if ltm.ApiKey != "" {
 			headers["X_Api_Key"] = ltm.ApiKey
 		}
+	}
+}
+
+// addUserContextHeaders adds user-specific headers from LTM in context
+func addUserContextHeadersFromContext(data gin.H, ltm *constants.LoginTokenMeta) {
+	headers := data["request"].(gin.H)["headers"].(map[string]string)
+	if ltm.UserUniqueID != "" {
+		headers["X_Member_Id"] = ltm.UserUniqueID
+	}
+	if ltm.ApiKey != "" {
+		headers["X_Api_Key"] = ltm.ApiKey
 	}
 }
 
@@ -503,11 +514,20 @@ func LoggingMiddleware() gin.HandlerFunc {
 			data["request"] = processRequest(c)
 
 			sanitizeRequestHeaders(data["request"].(gin.H))
-			addUserContextHeaders(data, c.Request.Header.Get(constants.HeaderAuthorization))
 
 			// Processing request
 			c.Next()
 
+			authToken := c.Request.Header.Get(constants.HeaderAuthorization)
+			if authToken == "" {
+				authToken, _ := c.Get(constants.ParamLTM)
+				if authToken != nil {
+					addUserContextHeadersFromContext(data, authToken.(*constants.LoginTokenMeta))
+				}
+			} else {
+				addUserContextHeadersFromToken(data, authToken)
+			}
+			
 			// End Time
 			endTime := time.Now()
 
