@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -449,6 +450,48 @@ func (r responseBodyWriter) Write(b []byte) (int, error) {
 	return r.ResponseWriter.Write(b)
 }
 
+// sanitizeRequestHeaders removes sensitive headers and returns a sanitized copy
+func sanitizeRequestHeaders(requestData gin.H) {
+	if headers, ok := requestData["headers"].(http.Header); ok {
+		headersCopy := make(map[string]string)
+		for key, values := range headers {
+			if key != constants.HeaderAuthorization {
+				if len(values) > 0 {
+					// Remove hyphens from header keys
+					sanitizedKey := strings.ReplaceAll(key, "-", "_")
+					headersCopy[sanitizedKey] = values[0]
+				}
+			}
+		}
+		requestData["headers"] = headersCopy
+	}
+}
+
+// addUserContextHeaders adds user-specific headers from LTM token
+func addUserContextHeadersFromToken(data gin.H, authHeader string) {
+	ltm, _ := token.ExtractLTM(authHeader)
+	if ltm != nil {
+		headers := data["request"].(gin.H)["headers"].(map[string]string)
+		if ltm.UserUniqueID != "" {
+			headers["X_Member_Id"] = ltm.UserUniqueID
+		}
+		if ltm.ApiKey != "" {
+			headers["X_Api_Key"] = ltm.ApiKey
+		}
+	}
+}
+
+// addUserContextHeaders adds user-specific headers from LTM in context
+func addUserContextHeadersFromContext(data gin.H, ltm *constants.LoginTokenMeta) {
+	headers := data["request"].(gin.H)["headers"].(map[string]string)
+	if ltm.UserUniqueID != "" {
+		headers["X_Member_Id"] = ltm.UserUniqueID
+	}
+	if ltm.ApiKey != "" {
+		headers["X_Api_Key"] = ltm.ApiKey
+	}
+}
+
 // LoggingMiddleware will log the request and response of API
 func LoggingMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -470,9 +513,21 @@ func LoggingMiddleware() gin.HandlerFunc {
 			// Updating Request Data
 			data["request"] = processRequest(c)
 
+			sanitizeRequestHeaders(data["request"].(gin.H))
+
 			// Processing request
 			c.Next()
 
+			authToken := c.Request.Header.Get(constants.HeaderAuthorization)
+			if authToken == "" {
+				authToken, _ := c.Get(constants.ParamLTM)
+				if authToken != nil {
+					addUserContextHeadersFromContext(data, authToken.(*constants.LoginTokenMeta))
+				}
+			} else {
+				addUserContextHeadersFromToken(data, authToken)
+			}
+			
 			// End Time
 			endTime := time.Now()
 
@@ -498,15 +553,12 @@ func LoggingMiddleware() gin.HandlerFunc {
 				"client_ip": c.ClientIP(),
 			}
 
-			// Marshalling the final Data
-			marshelledData, _ := json.Marshal(data)
-
 			if statusCode >= http.StatusOK && statusCode < http.StatusBadRequest {
 				// Logging the generated request data as Info
-				log.Info(string(marshelledData))
+				log.InfoWithFields(data)
 			} else {
 				// Logging the generated request data as Error
-				log.Error(string(marshelledData))
+				log.ErrorWithFields(data)
 			}
 
 			c.Next()
