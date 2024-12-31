@@ -55,6 +55,8 @@ type CreateConversationRequest struct {
 	Polls                       []PollObject             `json:"polls,omitempty"`
 	MultilpleSelectState        *int64                   `json:"multiple_select_state,omitempty"`
 	MultilpleSelectNo           int64                    `json:"multiple_select_no,omitempty"`
+	NoPollsExpiry               bool                     `json:"no_polls_expiry,omitempty"`
+	AllowVoteChange             *bool                    `json:"allow_vote_change,omitempty"`
 	AttachmentCount             int64                    `json:"attachment_count,omitempty"`
 	RepliedConversationId       interface{}              `json:"replied_conversation_id,omitempty"`
 	RepliedChatroomID           string                   `json:"replied_chatroom_id,omitempty"`
