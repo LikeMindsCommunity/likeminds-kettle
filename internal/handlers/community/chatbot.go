@@ -22,14 +22,14 @@ type CreateChatbotMetaRequest struct {
 
 type CreateChatbotRequest struct {
 	UUID        string                   `json:"uuid"`
-	ImageUrl    string                   `json:"imageUrl"`
+	ImageUrl    string                   `json:"image_url"`
 	Name        string                   `json:"name" binding:"required"`
 	ChatbotMeta CreateChatbotMetaRequest `json:"chatbot_meta" binding:"required"`
 }
 
 type UpdateChatbotRequest struct {
 	ChatbotUUID string                   `json:"chatbot_uuid"`
-	ImageUrl    string                   `json:"imageUrl"`
+	ImageUrl    string                   `json:"image_url"`
 	Name        string                   `json:"name"`
 	ChatbotMeta UpdateChatbotMetaRequest `json:"chatbot_meta"`
 }
