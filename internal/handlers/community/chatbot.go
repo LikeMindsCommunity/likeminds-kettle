@@ -29,7 +29,7 @@ type CreateChatbotRequest struct {
 
 type UpdateChatbotRequest struct {
 	ChatbotUUID string                   `json:"chatbot_uuid"`
-	ImageUrl    string                   `json:"imageUrl"`
+	ImageUrl    string                   `json:"image_url"`
 	Name        string                   `json:"name"`
 	ChatbotMeta UpdateChatbotMetaRequest `json:"chatbot_meta"`
 }
