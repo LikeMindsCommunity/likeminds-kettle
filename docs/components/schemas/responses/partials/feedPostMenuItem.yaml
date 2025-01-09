@@ -1,0 +1,8 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: Unique identifier for the menu item
+  title:
+    type: string
+    description: Title or name of the menu item

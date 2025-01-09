@@ -18,7 +18,7 @@ properties:
     description: Is the Post a repost
   is_anonymous:
     type: boolean
-    description: If post is created anonymously 
+    description: If post is created anonymously
   feedroom_id:
     type: string
     description: Feedroom ID of the Post
@@ -93,3 +93,15 @@ properties:
                   type: string
                   nullable: true
                   description: Link URL
+            entity_id:
+              type: string
+              nullable: true
+              description: Entity ID associated with the attachment
+            cover_image_url:
+              type: string
+              nullable: true
+              description: URL of the cover image associated with the attachment
+            title:
+              type: string
+              nullable: true
+              description: Title of the attachment

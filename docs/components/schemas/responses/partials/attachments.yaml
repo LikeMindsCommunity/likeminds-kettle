@@ -1,0 +1,121 @@
+type: array
+description: Attachments on the Post
+items:
+  type: object
+  properties:
+    attachment_type:
+      type: integer
+      enum: [1, 2, 3, 4, 5, 6, 7]
+      description: |
+        Attachment type
+        - 1 - Image
+        - 2 - Video
+        - 3 - Document
+        - 4 - Link
+        - 5 - Custom widget
+        - 6 - Article widget
+        - 7 - Poll widget
+    attachment_meta:
+      type: object
+      properties:
+        url:
+          type: string
+          nullable: true
+          description: URL of the attachment
+        format:
+          type: string
+          nullable: true
+          description: Format of the attachment (pdf, etc.)
+        size:
+          type: integer
+          nullable: true
+          description: Size of the attachment
+        duration:
+          type: integer
+          nullable: true
+          description: Duration of the video (in seconds)
+        height:
+          type: integer
+          nullable: true
+          description: Height of the attachment (if applicable)
+        width:
+          type: integer
+          nullable: true
+          description: Width of the attachment (if applicable)
+        page_count:
+          type: integer
+          nullable: true
+          description: Page count of the file (if applicable)
+        thumbnail_url:
+          type: string
+          nullable: true
+          description: URL of the thumbnail for the attachment
+        og_tags:
+          type: object
+          properties:
+            title:
+              type: string
+              nullable: true
+              description: Title for the Open Graph link
+            image:
+              type: string
+              nullable: true
+              description: Image URL for the Open Graph link
+            description:
+              type: string
+              nullable: true
+              description: Description for the Open Graph link
+            url:
+              type: string
+              nullable: true
+              description: URL for the Open Graph link
+        entity_id:
+          type: string
+          nullable: true
+          description: Entity ID associated with the attachment
+        cover_image_url:
+          type: string
+          nullable: true
+          description: URL of the cover image associated with the attachment
+        title:
+          type: string
+          nullable: true
+          description: Title of the attachment
+        body:
+          type: string
+          nullable: true
+          description: Body/Description of the attachment
+        options:
+          type: array
+          items:
+            type: string
+          nullable: true
+          description: List of options available for the attachment (if applicable)
+        expiry_time:
+          type: integer
+          nullable: true
+          description: Expiry time for the attachment (Unix timestamp)
+        poll_type:
+          type: string
+          nullable: true
+          description: Type of poll (if applicable)
+        multiple_select_state:
+          type: string
+          nullable: true
+          description: State of multiple selection (if applicable)
+        multiple_select_number:
+          type: integer
+          nullable: true
+          description: Number of selections allowed in a multiple selection poll (if applicable)
+        is_anonymous:
+          type: boolean
+          nullable: true
+          description: Whether the attachment is anonymous (if applicable)
+        allow_add_option:
+          type: boolean
+          nullable: true
+          description: Whether new options can be added to the attachment (if applicable)
+        widget_meta:
+          type: object
+          nullable: true
+          description: Additional metadata related to the widget attachment

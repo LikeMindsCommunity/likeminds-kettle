@@ -5,3 +5,98 @@ properties:
   error_message:
     type: string
     nullable: true
+  data:
+    type: object
+    nullable: true
+    properties:
+      post:
+        type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier for the post
+        attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Attachment"
+          description: List of attachments associated with the post
+        commentsCount:
+          type: integer
+          description: Total number of comments on the post
+        communityId:
+          type: integer
+          description: ID of the community where the post belongs
+        createdAt:
+          type: integer
+          description: Unix timestamp when the post was created
+        heading:
+          type: string
+          description: Heading/title of the post
+        isEdited:
+          type: boolean
+          description: Flag indicating if the post has been edited
+        isLiked:
+          type: boolean
+          description: Flag indicating if the post is liked by the current user
+        isPinned:
+          type: boolean
+          description: Flag indicating if the post is pinned in the community
+        isRepost:
+          type: boolean
+          description: Flag indicating if the post is a repost
+        isRepostedByUser:
+          type: boolean
+          description: Flag indicating if the post is reposted by the current user
+        isSaved:
+          type: boolean
+          description: Flag indicating if the post is saved by the current user
+        likesCount:
+          type: integer
+          description: Total number of likes on the post
+        menuItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuItem"
+          description: List of menu items available for the post (e.g., actions like Edit, Delete)
+        repostCount:
+          type: integer
+          description: Total number of times the post has been reposted
+        tempId:
+          type: string
+          nullable: true
+          description: Temporary identifier for the post (used in draft state)
+        text:
+          type: string
+          description: Main content of the post
+        topics:
+          type: array
+          items:
+            type: string
+          description: List of topics associated with the post
+        updatedAt:
+          type: integer
+          description: Unix timestamp when the post was last updated
+        userId:
+          type: string
+          description: ID of the user who created the post
+        uuid:
+          type: string
+          description: Universally unique identifier for the post
+        replies:
+          type: array
+          items:
+            $ref: "#/components/schemas/Reply"
+          nullable: true
+          description: List of replies to the post (if any)
+        commentIds:
+          type: array
+          items:
+            type: string
+          nullable: true
+          description: List of comment IDs associated with the post
+        isAnonymous:
+          type: boolean
+          description: Flag indicating if the post is anonymous
+        isHidden:
+          type: boolean
+          description: Flag indicating if the post is hidden from the public view

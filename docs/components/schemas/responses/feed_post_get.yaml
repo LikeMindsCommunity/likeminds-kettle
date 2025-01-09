@@ -62,7 +62,7 @@ properties:
           is_saved:
             type: boolean
           post_shared_count:
-              type: integer
+            type: integer
           is_edited:
             type: boolean
           user_id:

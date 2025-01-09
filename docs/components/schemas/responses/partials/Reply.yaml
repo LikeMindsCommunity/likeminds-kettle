@@ -1,0 +1,56 @@
+type: object
+properties:
+  id:
+    type: string
+    description: Unique identifier for the reply
+  commentsCount:
+    type: integer
+    description: Total number of comments on the reply
+  communityId:
+    type: integer
+    description: ID of the community where the reply belongs
+  createdAt:
+    type: integer
+    description: Unix timestamp when the reply was created
+  isEdited:
+    type: boolean
+    description: Flag indicating if the reply has been edited
+  isLiked:
+    type: boolean
+    description: Flag indicating if the reply is liked by the current user
+  level:
+    type: integer
+    description: The level of the reply in a comment thread (e.g., root comment or a nested reply)
+  likesCount:
+    type: integer
+    description: Total number of likes on the reply
+  menuItems:
+    type: array
+    items:
+      $ref: "./feedPostMenuItem.yaml"
+    description: List of menu items available for the reply (e.g., actions like Edit, Delete)
+  postId:
+    type: string
+    description: ID of the post to which the reply belongs
+  replies:
+    type: array
+    items:
+      $ref: "#/components/schemas/Reply"
+    description: List of replies to this reply (if any)
+  tempId:
+    type: string
+    description: Temporary identifier for the reply (used in draft state)
+  text:
+    type: string
+    description: Main content of the reply
+  updatedAt:
+    type: integer
+    description: Unix timestamp when the reply was last updated
+  userId:
+    type: string
+    description: ID of the user who created the reply
+  uuid:
+    type: string
+    description: Universally unique identifier for the reply
+  parentComment:
+    $ref: "./Reply"
