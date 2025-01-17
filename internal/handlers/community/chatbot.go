@@ -29,21 +29,21 @@ type CreateChatbotRequest struct {
 
 type UpdateChatbotRequest struct {
 	ChatbotUUID string                   `json:"chatbot_uuid"`
-	ImageUrl    string                   `json:"image_url"`
-	Name        string                   `json:"name"`
+	ImageUrl    *string                  `json:"image_url"`
+	Name        *string                  `json:"name"`
 	ChatbotMeta UpdateChatbotMetaRequest `json:"chatbot_meta"`
 }
 
 type UpdateProviderMeta struct {
-	AssistantId         string `json:"assistant_id"`
-	ThreadContext       int    `json:"thread_context"`
-	MaxPromptTokens     int    `json:"max_prompt_tokens"`
-	MaxCompletionTokens int    `json:"max_completion_tokens"`
-	VisionModel         string `json:"vision_model"`
+	AssistantId         string  `json:"assistant_id"`
+	ThreadContext       int     `json:"thread_context"`
+	MaxPromptTokens     int     `json:"max_prompt_tokens"`
+	MaxCompletionTokens int     `json:"max_completion_tokens"`
+	VisionModel         *string `json:"vision_model"`
 }
 
 type UpdateChatbotMetaRequest struct {
-	DefaultText  string             `json:"default_text"`
+	DefaultText  *string            `json:"default_text"`
 	Provider     string             `json:"provider"`
 	ProviderMeta UpdateProviderMeta `json:"provider_meta"`
 }
