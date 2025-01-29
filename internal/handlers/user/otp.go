@@ -11,15 +11,25 @@ type UserOTPRequest struct {
 	OTPMode     string `json:"otp_mode" binding:"required"`
 	MobileNo    string `json:"mobile_no"`
 	CountryCode int    `json:"country_code"`
-	EmailID     string `json:"email_id"`
+	EmailID     string `json:"email_id" binding:"omitempty,email"`
 	IsRetry     bool   `json:"is_retry"`
 }
 
+type VerifyOTPQuery struct {
+	OTPMode     string `form:"otp_mode" binding:"required"`
+	MobileNo    string `form:"mobile_no"`
+	CountryCode int    `form:"country_code"`
+	EmailID     string `form:"email_id" binding:"omitempty,email"`
+	OTP         string `form:"otp" binding:"required"`
+}
+
 func GenerateUserOTP(c *gin.Context) {
+
 	UserOTP(c, utils.POSTMethod)
 }
 
 func VerifyUserOTP(c *gin.Context) {
+
 	UserOTP(c, utils.GETMethod)
 }
 
@@ -39,6 +49,14 @@ func UserOTP(c *gin.Context, method int) {
 		utils.SendRequest(c, utils.CoreService, UserOTPEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, ""), nil, generateOTPRequest)
 
 	case utils.GETMethod:
+
+		// Performing query param validation
+
+		if err := parseVerifyOTPQuery(c); err != nil {
+			utils.GeneralBadRequestError(c, err.Error())
+			return
+		}
+
 		// Params to be sent in the api/user/otp GET request
 		params := map[string]string{
 			ParamOTPMode:    c.Query(ParamOTPMode),
@@ -56,6 +74,7 @@ func UserOTP(c *gin.Context, method int) {
 
 		// Validate response
 		apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
+
 		if apiCR == nil {
 			return
 		}
@@ -75,7 +94,7 @@ func UserOTP(c *gin.Context, method int) {
 				utils.GeneralAPIError(c, err.Error())
 				return
 			}
-			
+
 			// Set ltm and user_unique_id in context
 			ltm.UserUniqueID = userUniqueID
 			c.Set(constants.ParamLTM, ltm)
@@ -110,4 +129,14 @@ func parseGenerateOTPRequest(c *gin.Context) (*UserOTPRequest, error) {
 	}
 
 	return &uor, nil
+}
+
+func parseVerifyOTPQuery(c *gin.Context) error {
+	var voq VerifyOTPQuery
+
+	if err := c.ShouldBindQuery(&voq); err != nil {
+		return err
+	}
+
+	return nil
 }
