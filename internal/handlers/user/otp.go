@@ -1,8 +1,6 @@
 package user
 
 import (
-	"strings"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/constants"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/token"
@@ -64,7 +62,7 @@ func UserOTP(c *gin.Context, method int) {
 			ParamOTPMode:    c.Query(ParamOTPMode),
 			UserMobileNo:    c.Query(UserMobileNo),
 			UserCountryCode: c.Query(UserCountryCode),
-			ParamEmailID:    strings.ToLower(c.Query(ParamEmailID)),
+			ParamEmailID:    c.Query(ParamEmailID),
 			ParamOTP:        c.Query(ParamOTP),
 		}
 
@@ -129,12 +127,6 @@ func parseGenerateOTPRequest(c *gin.Context) (*UserOTPRequest, error) {
 	if err := c.ShouldBindJSON(&uor); err != nil {
 		return nil, err
 	}
-
-	// For handeling email case insensitivity
-	if uor.EmailID != "" {
-		uor.EmailID = strings.ToLower(uor.EmailID)
-	}
-
 	return &uor, nil
 }
 
