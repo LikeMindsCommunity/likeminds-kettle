@@ -389,6 +389,7 @@ func initRouterA() {
 	// Webhook Apis
 	routerA.POST(constants.WebhookRoute, middleware.LTMValidationMiddleware(redisClient, true, false), middleware.RateLimitingMiddleware(redisClient), webhook.CreateWebhook)
 	routerA.GET(constants.WebhookRoute, middleware.LTMValidationMiddleware(redisClient, true, false), middleware.RateLimitingMiddleware(redisClient), webhook.GetWebhooks)
+	routerA.PATCH(constants.WebhookRoute, middleware.LTMValidationMiddleware(redisClient, true, false), middleware.RateLimitingMiddleware(redisClient), webhook.EditWebhook)
 	routerA.GET(constants.WebhookIdRoute, middleware.LTMValidationMiddleware(redisClient, true, false), middleware.RateLimitingMiddleware(redisClient), webhook.GetWebhook)
 	routerA.PATCH(constants.WebhookIdRoute, middleware.LTMValidationMiddleware(redisClient, true, false), middleware.RateLimitingMiddleware(redisClient), webhook.EditWebhook)
 	routerA.DELETE(constants.WebhookIdRoute, middleware.LTMValidationMiddleware(redisClient, true, false), middleware.RateLimitingMiddleware(redisClient), webhook.DeleteWebhook)
