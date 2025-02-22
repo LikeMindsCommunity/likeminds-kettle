@@ -30,7 +30,7 @@ func GetWidgetIdsFromDataResponse(dataResponse map[string]interface{}) []string 
 
 func ParseAndFetchWidgets(c *gin.Context, userId string, dataResponse map[string]interface{}) map[string]interface{} {
 
-	defer Timer("ParseAndFetchWidgets")
+	defer Timer("ParseAndFetchWidgets")()
 
 	if userId == "" {
 		return dataResponse

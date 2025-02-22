@@ -13,7 +13,7 @@ type MemberAccessResponse struct {
 // FetchMemberAccess | fetch member access for sent action
 func FetchMemberAccess(c *gin.Context, accessType string, userId string) (bool, *MemberAccessResponse) {
 
-	defer utils.Timer("FetchMemberAccess")
+	defer utils.Timer("FetchMemberAccess")()
 
 	//Params to be sent in the api/community_member/fetch_access request
 	params := map[string]string{
