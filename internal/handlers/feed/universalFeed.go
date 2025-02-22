@@ -11,6 +11,8 @@ import (
 // FetchUniversalFeed is used to fetch universal feed by a user
 func FetchUniversalFeed(c *gin.Context) {
 
+	defer utils.Timer("FetchUniversalFeed")
+
 	//Authorize User
 	userId := user.GetRequestingUserId(c)
 	if userId == "" {

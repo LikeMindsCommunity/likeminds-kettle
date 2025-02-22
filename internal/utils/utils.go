@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/nateshr/likeminds-authentication/internal/logging"
 
@@ -186,6 +187,8 @@ func GetRequestResponseWithoutContext(serviceType ServiceType, url string, reque
 
 func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) ([]byte, int) {
 
+	defer Timer(fmt.Sprintf("GetRequestResponse-%s", url))()
+
 	respBytes, statusCode, err := GetRequestResponseWithoutContext(serviceType, url, requestType, headers, params, body)
 	if err != nil {
 		//If API fails or any other error
@@ -219,4 +222,12 @@ func CallExternalAPI(url string, method RequestType, headers map[string]interfac
 	}
 
 	return respBytes, statusCode, err
+}
+
+// defer timer("sum")()
+func Timer(name string) func() {
+	start := time.Now()
+	return func() {
+		fmt.Printf("DEBUG_LOAD_TEST | %s took %v\n", name, time.Since(start).Milliseconds())
+	}
 }

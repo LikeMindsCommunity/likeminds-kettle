@@ -171,6 +171,8 @@ func getAnonymousUserMetaForFeed(redisClient *redis.Client, headers map[string]i
 func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[string]interface{}, userUniqueIds []string,
 ) (map[string]MemberMeta, error) {
 
+	defer Timer("FetchMemberMetaMapForUserUniqueIds")()
+
 	// Fetch communityId from ApiKey
 	communityId, err := FetchCommunityIdFromApiKey(redisClient, headers[HeadersApiKey].(string))
 	if err != nil {
@@ -240,6 +242,8 @@ func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[s
 func GetUsersMetaFromFeedData(redisClient *redis.Client, headers map[string]interface{}, feedDataArray []interface{},
 	dataResponse map[string]interface{},
 ) (map[string]MemberMeta, []string, error) {
+
+	defer Timer("GetUsersMetaFromFeedData")()
 
 	userUniqueIds := []string{}
 

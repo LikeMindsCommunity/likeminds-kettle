@@ -116,6 +116,8 @@ func saveWidgetsToCache(redisClient *redis.Client, communityId int, widgets []Wi
 func fetchWidgetMetaMapFromWidgetIds(redisClient *redis.Client, headers map[string]interface{}, widgetIds []string,
 ) (map[string]WidgetResponse, error) {
 
+	defer Timer("fetchWidgetMetaMapFromWidgetIds")()
+
 	// Fetch communityId from ApiKey
 	communityId, err := FetchCommunityIdFromApiKey(redisClient, headers[HeadersApiKey].(string))
 	if err != nil {

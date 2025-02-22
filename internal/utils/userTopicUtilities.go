@@ -192,6 +192,8 @@ func fetchUserTopicsFromApiAndSaveInCache(headers map[string]interface{}, userUn
 func FetchAndUpdateUserTopicsDataForResponse(redisClient *redis.Client, headers map[string]interface{}, dataResponse map[string]interface{}, userUniqueIds []string,
 ) map[string]interface{} {
 
+	defer Timer("FetchAndUpdateUserTopicsDataForResponse")()
+
 	userTopics, topicsMeta, widgetsMeta := fetchUserTopicsAndWidgetsMeta(redisClient, headers, userUniqueIds)
 
 	// update userTopics in dataResponse

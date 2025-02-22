@@ -115,6 +115,8 @@ func AddUserNameInBlockMenuTitle(dataResponse map[string]interface{}) map[string
 func PopulateDataResponseForFeed(headers map[string]interface{}, redisClient *redis.Client, dataResponse map[string]interface{},
 ) (map[string]interface{}, error) {
 
+	defer Timer("PopulateDataResponseForFeed")()
+
 	if value, ok := dataResponse["posts"]; ok {
 
 		posts := value.([]interface{})
