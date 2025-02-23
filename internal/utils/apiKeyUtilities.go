@@ -83,6 +83,8 @@ func saveCommunityIdAgainstApiKeyToCache(redisClient *redis.Client, apiKey strin
 // Exposed Method to fetch Community ID from API Key (from cache if present else from API)
 func FetchCommunityIdFromApiKey(redisClient *redis.Client, apiKey string) (int, error) {
 
+	defer Timer("FetchCommunityIdFromApiKey")()
+
 	// Fetch community_id from cache
 	communityId := getCommunityIdAgainstApiKeyFromCache(redisClient, apiKey)
 	if communityId == 0 {

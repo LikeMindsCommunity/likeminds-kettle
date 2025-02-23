@@ -40,7 +40,10 @@ type MemberMetaResponse struct {
 	Members      []MemberMeta `json:"members"`
 }
 
-func fetchMembersMetaFromCache(redisClient *redis.Client, communityId int, userUniqueIds []string) ([]MemberMeta, []string, error) {
+func fetchMembersMetaFromCache(redisClient *redis.Client, communityId int, userUniqueIds []string,
+) ([]MemberMeta, []string, error) {
+
+	defer Timer("fetchMembersMetaFromCache")()
 
 	membersMeta := []MemberMeta{}
 	remainingMemberIds := []string{}
@@ -77,7 +80,10 @@ func fetchMembersMetaFromCache(redisClient *redis.Client, communityId int, userU
 	return membersMeta, remainingMemberIds, nil
 }
 
-func fetchMembersMetaFromAPI(redisClient *redis.Client, communityId int, headers map[string]interface{}, userUniqueIds []string) ([]MemberMeta, error) {
+func fetchMembersMetaFromAPI(redisClient *redis.Client, communityId int, headers map[string]interface{}, userUniqueIds []string,
+) ([]MemberMeta, error) {
+
+	defer Timer("fetchMembersMetaFromAPI")()
 
 	//Params to be sent in the api/community_member/fetch_access request
 	params := map[string]string{
@@ -199,10 +205,14 @@ func FetchMemberMetaMapForUserUniqueIds(redisClient *redis.Client, headers map[s
 
 		// update userUniqueIds with remaining userUniqueIds
 		userUniqueIds = remainingMemberIds
+	} else {
+		logging.Error("DEBUG_LOAD_TEST | Redis client is nil")
 	}
 
 	// fetch remaining members meta from api
 	if len(userUniqueIds) > 0 {
+
+		logging.Debug("DEBUG_LOAD_TEST | Fetching members meta from API")
 
 		// Generate anonymous user data if userUniqueIds contains anonymous-user
 		for _, userUniqueId := range userUniqueIds {
