@@ -22,7 +22,6 @@ const (
 	ChatroomParticipantsPrefix         = "chatroom_participants_"
 	ChatroomParticipantsKey            = ChatroomParticipantsPrefix + "%s" // chatroom participants
 	ChatroomKey                        = "chatroom_%s"                     // chatroom
-	ChatroomTotalParticipantsKey       = "chatroom_total_participants_%s"  // chatroom total participants
 )
 
 // Cache TTLs in hours

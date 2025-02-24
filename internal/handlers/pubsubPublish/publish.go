@@ -2,6 +2,7 @@ package pubsubPublish
 
 import (
 	"fmt"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsubCommon"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
@@ -17,9 +18,9 @@ func PublishConversationOnTopicTypeChatroom(headers map[string]interface{}, chat
 		return
 	}
 
-	topicChatroom := fmt.Sprintf(TopicTypeChatroomDynamic, chatroomID)
+	topicChatroom := fmt.Sprintf(pubsubCommon.TopicTypeChatroomDynamic, chatroomID)
 	params := map[string]string{
-		ParamTopicMessageType: TopicMessageTypeConversation,
+		pubsubCommon.ParamTopicMessageType: pubsubCommon.TopicMessageTypeConversation,
 	}
 
 	publishDataOnPandemonium(topicChatroom, headers, params, response)
@@ -57,9 +58,9 @@ func PublishConversationOnTopicTypeCommunity(headers map[string]interface{}, res
 		return
 	}
 
-	topicCommunity := fmt.Sprintf(TopicTypeCommunityDynamic, communityID)
+	topicCommunity := fmt.Sprintf(pubsubCommon.TopicTypeCommunityDynamic, communityID)
 	publishParams := map[string]string{
-		ParamTopicMessageType: TopicMessageTypeConversation,
+		pubsubCommon.ParamTopicMessageType: pubsubCommon.TopicMessageTypeConversation,
 	}
 
 	publishDataOnPandemonium(topicCommunity, headers, publishParams, response)
@@ -76,16 +77,16 @@ func PublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, 
 		return
 	}
 
-	topicChatroom := fmt.Sprintf(TopicTypeChatroomDynamic, chatroomID)
+	topicChatroom := fmt.Sprintf(pubsubCommon.TopicTypeChatroomDynamic, chatroomID)
 	params := map[string]string{
-		ParamTopicMessageType: TopicMessageDR,
+		pubsubCommon.ParamTopicMessageType: pubsubCommon.TopicMessageDR,
 	}
 
 	// Prepare the response (body) for the inactive user case
 	response := map[string]interface{}{
-		ParamMinTimeStamp: minTimeStamp,
-		ParamMaxTimeStamp: maxTimeStamp,
-		ParamCommunityID:  communityID,
+		pubsubCommon.ParamMinTimeStamp: minTimeStamp,
+		pubsubCommon.ParamMaxTimeStamp: maxTimeStamp,
+		pubsubCommon.ParamCommunityID:  communityID,
 	}
 
 	// Call the Pandemonium Publish API using your pre-defined function
@@ -93,7 +94,7 @@ func PublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, 
 }
 
 func publishDataOnPandemonium(topicChatroom string, headers map[string]interface{}, params map[string]string, response map[string]interface{}) {
-	respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.PandemoniumService, fmt.Sprintf(PublishEndPoint, topicChatroom), utils.POSTRequestRawBody, headers, params, response)
+	respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.PandemoniumService, fmt.Sprintf(pubsubCommon.PublishEndPoint, topicChatroom), utils.POSTRequestRawBody, headers, params, response)
 	if err != nil || statusCode != 200 {
 		logging.Error(fmt.Sprintf("Error in publishing data on pandemonium: %v | response %v", err, string(respBytes)))
 	}

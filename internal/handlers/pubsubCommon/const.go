@@ -1,4 +1,4 @@
-package pubsubSubscribe
+package pubsubCommon
 
 import "time"
 
@@ -19,8 +19,19 @@ const (
 )
 
 const (
-	TopicTypeChatroom = "chatroom"
-	ParamTopic        = "topic"
+	TopicTypeChatroom                         = "chatroom"
+	ParamTopic                                = "topic"
+	ParamChatroomId                           = "chatroom_id"
+	ParamPage                                 = "page"
+	ParamPageSize                             = "page_size"
+	ChatroomAPIVersion                        = "1"
+	ChatroomParticipantsAPIPage               = "0"
+	ChatroomParticipantsAPIPageSize           = "100"
+	ChatroomParticipantsAPIVersion            = "1"
+	ChatroomParticipantsAPIPlatformCode       = "an"
+	ChatroomParticipantsAPIVersionCode        = "210"
+	TopicTypeCommunity                        = "community"
+	TopicMessageTypeCreateConversationRequest = "message.create.request"
 )
 
 const (
@@ -40,4 +51,20 @@ const (
 	ErrorUnmarshalErrorJson      = "unmarshal error: %v"
 	ErrorTopicIDMissing          = "topic ID is missing in request"
 	ErrorChatroomResponseInvalid = "invalid channel_details_data key in response"
+	ErrorInvalidJSONFormat       = "invalid JSON format: %v"
+)
+
+const (
+	TopicTypeChatroomDynamic     = "chatroom:%v"
+	TopicTypeCommunityDynamic    = "community:%v"
+	TopicMessageTypeConversation = "conversation"
+	TopicMessageDR               = "delivered_dr"
+)
+
+const (
+	PublishEndPoint       = "/publish/%s"
+	ParamTopicMessageType = "topic_message_type"
+	ParamMinTimeStamp     = "min_timestamp"
+	ParamMaxTimeStamp     = "max_timestamp"
+	ParamCommunityID      = "community_id"
 )

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"github.com/nateshr/likeminds-authentication/internal/cache"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +13,7 @@ import (
 // Exposed utility method to get redis client from context
 func GetRedisClientFromContext(c *gin.Context) *redis.Client {
 
-	redisClient, exists := c.Get(constants.ParamRedisClient)
+	redisClient, exists := c.Get(cache.ParamRedisClient)
 	if !exists {
 		return nil
 	}
