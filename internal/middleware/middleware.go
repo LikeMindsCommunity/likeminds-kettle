@@ -87,8 +87,14 @@ func VTMValidationMiddleware(isMandatory bool) gin.HandlerFunc {
 	}
 }
 
-func LTMValidationMiddleware(redisClient *redis.Client, isGuestAccess bool) gin.HandlerFunc {
+func LTMValidationMiddleware(redisClient *redis.Client, isGuestAccess bool, isWsAPI bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if isWsAPI &&
+			(c.Request.URL.Query().Get(utils.HeadersPlatformCode) == utils.PlatformReact ||
+				c.Request.URL.Query().Get(utils.HeadersPlatformCode) == utils.PlatformReactNative) {
+			setContextHeadersFromQueryParams(c)
+		}
+
 		bearerToken := c.Request.Header.Get(constants.HeaderAuthorization)
 		//Extract LTM from token, internally it checks if token is valid or not
 		ltm, err := token.ExtractLTM(bearerToken)
@@ -135,6 +141,21 @@ func LTMValidationMiddleware(redisClient *redis.Client, isGuestAccess bool) gin.
 		}
 		c.Next()
 	}
+}
+
+func setContextHeadersFromQueryParams(c *gin.Context) {
+	c.Request.Header.Set(constants.HeaderAuthorization, c.Request.URL.Query().Get(constants.HeaderAuthorization))
+	c.Request.Header.Set(utils.HeadersMemberId, c.Request.URL.Query().Get(utils.HeadersMemberId))
+	c.Request.Header.Set(utils.HeadersVersionCode, c.Request.URL.Query().Get(utils.HeadersVersionCode))
+	c.Request.Header.Set(utils.HeadersPlatformCode, c.Request.URL.Query().Get(utils.HeadersPlatformCode))
+	c.Request.Header.Set(utils.HeadersPlatformType, c.Request.URL.Query().Get(utils.HeadersPlatformType))
+	c.Request.Header.Set(utils.HeadersSdkSource, c.Request.URL.Query().Get(utils.HeadersSdkSource))
+	c.Request.Header.Set(utils.HeadersDeviceId, c.Request.URL.Query().Get(utils.HeadersDeviceId))
+	c.Request.Header.Set(utils.HeadersApiKey, c.Request.URL.Query().Get(utils.HeadersApiKey))
+	c.Request.Header.Set(utils.HeadersAcceptVersion, c.Request.URL.Query().Get(utils.HeadersAcceptVersion))
+	c.Request.Header.Set(utils.HeadersApiVersion, c.Request.URL.Query().Get(utils.HeadersApiVersion))
+	c.Request.Header.Set(utils.HeaderMemberRole, c.Request.URL.Query().Get(utils.HeaderMemberRole))
+	c.Request.Header.Set(utils.HeaderContentType, c.Request.URL.Query().Get(utils.HeaderContentType))
 }
 
 func RTMValidationMiddleware(redisClient *redis.Client) gin.HandlerFunc {
@@ -527,7 +548,7 @@ func LoggingMiddleware() gin.HandlerFunc {
 			} else {
 				addUserContextHeadersFromToken(data, authToken)
 			}
-			
+
 			// End Time
 			endTime := time.Now()
 

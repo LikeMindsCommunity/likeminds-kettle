@@ -26,8 +26,9 @@ func parseCreateWebhookRequest(c *gin.Context) (*CreateWebhookRequest, error) {
 }
 
 type EditWebhookRequest struct {
-	URL      string `json:"url,omitempty"`
-	IsActive *bool  `json:"is_active,omitempty"`
+	URL             string          `json:"url,omitempty"`
+	IsActive        *bool           `json:"is_active,omitempty"`
+	WebhookStatuses map[string]bool `json:"webhook_statuses,omitempty"`
 }
 
 func parseEditWebhookRequest(c *gin.Context) (*EditWebhookRequest, error) {
@@ -76,8 +77,12 @@ func Webhook(c *gin.Context, method int) {
 	// Get all webhooks
 	case utils.GETMethod:
 
+		params := map[string]string{
+			PARAM_RESPONSE_TYPE: c.Query(PARAM_RESPONSE_TYPE),
+		}
+
 		// send request to core service
-		utils.SendRequest(c, utils.CoreService, WebhooksEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), nil, nil)
+		utils.SendRequest(c, utils.CoreService, WebhooksEndpoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
 
 	// Create a new webhook
 	case utils.POSTMethod:
@@ -137,8 +142,11 @@ func createWebhookInternal(c *gin.Context, userId string) {
 func editWebhookInternal(c *gin.Context, userId string) {
 
 	webhookId := c.Param("webhook_id")
+	webhookEndpoint := WebhooksEndpoint
 
-	webhookEndpoint := fmt.Sprintf(WebhookEndpoint, webhookId)
+	if webhookId != "" {
+		webhookEndpoint = fmt.Sprintf(WebhookEndpoint, webhookId)
+	}
 
 	// Parse request
 	ewr, err := parseEditWebhookRequest(c)

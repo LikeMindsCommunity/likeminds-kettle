@@ -7,11 +7,13 @@ import (
 )
 
 type InitiateDMRequest struct {
-	ChatroomID                  interface{} `json:"chatroom_id"`
-	ChatRequestState            int         `json:"chat_request_state"`
-	Text                        string      `json:"text"`
-	MemberID                    interface{} `json:"member_id"`
-	ShouldStreamChatbotResponse bool        `json:"should_stream_chatbot_response,omitempty"`
+	ChatroomID                  interface{}            `json:"chatroom_id"`
+	ChatRequestState            int                    `json:"chat_request_state"`
+	Text                        string                 `json:"text"`
+	MemberID                    interface{}            `json:"member_id"`
+	ShouldStreamChatbotResponse bool                   `json:"should_stream_chatbot_response,omitempty"`
+	Metadata                    map[string]interface{} `json:"metadata,omitempty"`
+	TemporaryID                 string                 `json:"temporary_id,omitempty"`
 }
 
 func parseInitiateDMRequest(c *gin.Context) (*InitiateDMRequest, error) {
@@ -48,6 +50,11 @@ func InitiatingDMRequest(c *gin.Context) {
 		return
 	}
 
-	//Send Request
-	utils.SendRequest(c, utils.CoreService, InitiateDMEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, initiateDMRequest)
+	//Get request response
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, InitiateDMEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, initiateDMRequest)
+	if respBytes == nil {
+		return
+	}
+
+	utils.ParseResponse(c, respBytes, statusCode, true)
 }
