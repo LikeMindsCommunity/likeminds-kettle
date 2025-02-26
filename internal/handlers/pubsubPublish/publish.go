@@ -7,65 +7,6 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
-// PublishConversationOnTopicTypeChatroom to publish Conversation on TopicTypeChatroomDynamic
-func PublishConversationOnTopicTypeChatroom(headers map[string]interface{}, chatroomID interface{}, response map[string]interface{}) {
-	if chatroomID == nil {
-		logging.Error("PublishConversationOnTopicTypeChatroom: chatroom ID is missing")
-		return
-	}
-	if response == nil {
-		logging.Error("PublishConversationOnTopicTypeChatroom: response is missing")
-		return
-	}
-
-	topicChatroom := fmt.Sprintf(pubsubCommon.TopicTypeChatroomDynamic, chatroomID)
-	params := map[string]string{
-		pubsubCommon.ParamTopicMessageType: pubsubCommon.TopicMessageTypeConversation,
-	}
-
-	publishDataOnPandemonium(topicChatroom, headers, params, response)
-}
-
-// PublishConversationOnTopicTypeCommunity to publish Conversation on TopicTypeCommunityDynamic
-func PublishConversationOnTopicTypeCommunity(headers map[string]interface{}, response map[string]interface{}) {
-	if response == nil {
-		logging.Error("PublishConversationOnTopicTypeCommunity: response is missing")
-		return
-	}
-
-	// Check if "conversation" exists and is a map
-	conversation, ok := response["conversation"].(map[string]interface{})
-	if !ok {
-		logging.Error("PublishConversationOnTopicTypeCommunity: conversation key is missing or is not a valid map in response")
-		return
-	}
-	// Check if "member" exists within "conversation" and is a map
-	member, ok := conversation["member"].(map[string]interface{})
-	if !ok {
-		logging.Error("PublishConversationOnTopicTypeCommunity: member key is missing or is not a valid map in conversation")
-		return
-	}
-	// Check if "sdk_client_info" exists within "member" and is a map
-	sdkClientInfo, ok := member["sdk_client_info"].(map[string]interface{})
-	if !ok {
-		logging.Error("PublishConversationOnTopicTypeCommunity: sdk_client_info key is missing or is not a valid map in member")
-		return
-	}
-	// Check if "community" exists within "sdk_client_info" and is of the expected type
-	communityID, ok := sdkClientInfo["community"].(float64)
-	if !ok {
-		logging.Error("PublishConversationOnTopicTypeCommunity: community key is missing or is not a valid string in sdk_client_info")
-		return
-	}
-
-	topicCommunity := fmt.Sprintf(pubsubCommon.TopicTypeCommunityDynamic, communityID)
-	publishParams := map[string]string{
-		pubsubCommon.ParamTopicMessageType: pubsubCommon.TopicMessageTypeConversation,
-	}
-
-	publishDataOnPandemonium(topicCommunity, headers, publishParams, response)
-}
-
 // PublishDROnTopicTypeChatroom handles calling the Pandemonium publish API for inactive user flow in delivered report
 func PublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, maxTimeStamp string, chatroomID, communityID interface{}) {
 	if chatroomID == nil {
