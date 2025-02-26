@@ -346,11 +346,11 @@ func getUpdatedMessageRequest(redisClient *redis.Client, headers map[string]inte
 			readMessageFromClientMap[pubsubCommon.ParamTotalParticipantsCountType] = len(allParticipantIDs)
 			return readMessageFromClientMap, nil
 		} else {
-			return nil, fmt.Errorf("error in getting participants data before publishing: %v", err)
+			return nil, err
 		}
 
 	} else {
-		return nil, fmt.Errorf("error in getting chatroom data before publishing: %v", err)
+		return nil, err
 	}
 }
 
@@ -377,14 +377,12 @@ func getChatroomInternal(redisClient *redis.Client, headers map[string]interface
 	if chatroomAPIResponseMap != nil {
 		chatroomResponseMap, ok := chatroomAPIResponseMap["chatroom"].(map[string]interface{})
 		if !ok || chatroomResponseMap == nil {
-			err := fmt.Errorf("getChatroomInternal: chatroom key is missing or is not a valid map in chatroomAPIResponseMap")
-			logging.Error(err)
 			return nil, chatroomAPIStatusCode, err
 		}
 
 		// Save the fetched chatroom data in the cache
 		if err := saveChatroomInCache(redisClient, chatroomID, chatroomResponseMap); err != nil {
-			logging.Error(fmt.Sprintf("Error saving chatroom data to cache: %v", err))
+			return nil, chatroomAPIStatusCode, err
 		}
 
 		return chatroomResponseMap, chatroomAPIStatusCode, err
@@ -403,14 +401,14 @@ func getChatroomFromCache(redisClient *redis.Client, chatroomID string) (map[str
 		return nil, err
 	}
 	if chatroomResponseValue == "" {
-		return nil, fmt.Errorf("no data found in cache for chatroom: %s", chatroomID)
+		return nil, err
 	}
 
 	// Parse the cached data into a map[string]interface{}
 	var chatroomResponseMap map[string]interface{}
 	err = json.Unmarshal([]byte(chatroomResponseValue), &chatroomResponseMap)
 	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal chatroom data: %v", err)
+		return nil, err
 	}
 
 	return chatroomResponseMap, nil
@@ -421,7 +419,7 @@ func saveChatroomInCache(redisClient *redis.Client, chatroomID string, chatroomR
 	// Serialize the chatroom chatroomResponseBytes to JSON
 	chatroomResponseBytes, err := json.Marshal(chatroomResponseMap)
 	if err != nil {
-		return fmt.Errorf("failed to marshal chatroom chatroomResponseBytes: %v", err)
+		return err
 	}
 
 	// Cache key for the chatroom chatroomResponseBytes
@@ -430,7 +428,7 @@ func saveChatroomInCache(redisClient *redis.Client, chatroomID string, chatroomR
 	// Save to Redis with a TTL of 24 hours (can be adjusted as needed)
 	err = cache.Set(redisClient, chatroomResponseKey, chatroomResponseBytes, time.Hour*cache.ChatroomTTL)
 	if err != nil {
-		return fmt.Errorf("error saving chatroom chatroomResponseBytes to cache: %v", err)
+		return err
 	}
 
 	return nil
@@ -445,7 +443,6 @@ func getParticipantsInternal(redisClient *redis.Client, headers map[string]inter
 	}
 	if chatroomParticipantsValue != nil && len(chatroomParticipantsValue) > 0 {
 		// If cache exists and is not nil, return the participants from cache
-		logging.Info("Returning participants from Redis cache")
 		return chatroomParticipantsValue, nil
 	} else {
 		// Initialize parameters for pagination and collection of participants
@@ -539,7 +536,7 @@ func getParticipantsFromCache(redisClient *redis.Client, chatroomParticipantsKey
 	var allParticipantIDs []string
 	err = json.Unmarshal([]byte(chatroomParticipantsValue), &allParticipantIDs)
 	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal cached data: %v", err)
+		return nil, err
 	}
 
 	return allParticipantIDs, nil
@@ -550,13 +547,13 @@ func saveParticipantsInCache(redisClient *redis.Client, chatroomParticipantsKey 
 	// Serialize the value to JSON
 	chatroomParticipantsBytes, err := json.Marshal(allParticipantIDs)
 	if err != nil {
-		return fmt.Errorf("failed to marshal chatroomParticipantsBytes: %v", err)
+		return err
 	}
 
 	// Store the chatroomParticipantsBytes in Redis with an expiration time (e.g., 24 hour)
 	err = cache.Set(redisClient, chatroomParticipantsKey, chatroomParticipantsBytes, time.Hour*cache.ChatroomParticipantsTTL)
 	if err != nil {
-		return fmt.Errorf("error updating Redis cache: %v", err)
+		return err
 	}
 	return nil
 }

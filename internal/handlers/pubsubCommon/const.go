@@ -9,15 +9,15 @@ const (
 	// PingPeriod should be less than PongWait
 	PingPeriod                = (PongWait * 9) / 10
 	WriteWait                 = 10 * time.Second
-	WsConnectionEstablished   = "connected to websocket server"
-	PongReceivedPandemoniumWs = "received pong from pandemonium websocket server"
+	WsConnectionEstablished   = "connected to pandemonium websocket server"
+	PongReceivedPandemoniumWs = "received pong from pandemonium pandemonium websocket server"
 	PongReceivedClient        = "received pong from client"
 	PingReceivedClient        = "received ping from client"
-	PingReceivedWs            = "received ping from websocket server"
+	PingReceivedWs            = "received ping from pandemonium websocket server"
 	PingSendClient            = "sending ping to client"
-	PingSendWs                = "sending ping to websocket server"
+	PingSendWs                = "sending ping to pandemonium websocket server"
 	ReceivedMessageClientWs   = "received message from client having message type as %v"
-	ReceivedMessageServerWs   = "received message from websocket server having message type as %v"
+	ReceivedMessageServerWs   = "received message from pandemonium websocket server having message type as %v"
 	ConnectionClosed          = "connection closed"
 )
 
@@ -27,9 +27,7 @@ const (
 	TopicTypeCommunity                        = "community"
 	TopicMessageTypeCreateConversationRequest = "message.create.request"
 	TopicTypeChatroomDynamic                  = "chatroom:%v"
-	TopicTypeCommunityDynamic                 = "community:%v"
-	TopicMessageTypeConversation              = "conversation"
-	TopicMessageDR                            = "delivered_dr"
+	TopicMessageDeliveredDR                   = "delivered_dr"
 	ParamTopicMessageType                     = "topic_message_type"
 	ParamChatroomId                           = "chatroom_id"
 	ParamPage                                 = "page"
@@ -47,6 +45,7 @@ const (
 	ParamMinTimeStamp                         = "min_timestamp"
 	ParamMaxTimeStamp                         = "max_timestamp"
 	ParamCommunityID                          = "community_id"
+	TopicMessageReadDR                        = "read_dr"
 )
 
 const (
@@ -54,7 +53,7 @@ const (
 	ErrorFailedUpgrader          = "failed to upgrade connection: %v"
 	ErrorFailedDial              = "failed to dial connection: %v"
 	ErrorPingSendClient          = "error sending ping to client: %v"
-	ErrorPingSendWs              = "error sending ping to websocket server: %v"
+	ErrorPingSendWs              = "error sending ping to pandemonium websocket server: %v"
 	ErrorReadClientWs            = "error reading message from client: %v"
 	ErrorWriteClientWs           = "error writing message to client: %v"
 	ErrorReadServerWs            = "error reading message from server: %v"
@@ -67,6 +66,7 @@ const (
 	ErrorTopicIDMissing          = "topic ID is missing in request"
 	ErrorChatroomResponseInvalid = "invalid channel_details_data key in response"
 	ErrorMarshalErrorJson        = "marshal error: %v"
-	ErrorWriteDeadlineWs         = "error while setting WriteDeadline on websocket:"
-	ErrorReadDeadlineWs          = "error while setting ReadDeadline on websocket:"
+	ErrorWriteDeadlineWs         = "error while setting WriteDeadline on pandemonium websocket:"
+	ErrorReadDeadlineWs          = "error while setting ReadDeadline on pandemonium websocket:"
+	ErrorPublishAPI              = "error in call publish API of pandemonium: %v | response %v"
 )

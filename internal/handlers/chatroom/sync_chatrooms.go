@@ -2,6 +2,7 @@ package chatroom
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsubCommon"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsubPublish"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
@@ -31,45 +32,48 @@ func SyncChatrooms(c *gin.Context) {
 	}
 
 	//Get Request response
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, SyncChatroomsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
-	if respBytes == nil {
+	syncChatroomsAPIResponseBytes, syncChatroomsAPIResponseBytesStatusCode := utils.GetRequestResponse(c, utils.CoreService, SyncChatroomsEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	if syncChatroomsAPIResponseBytes == nil {
 		return
 	}
 
 	//Parse and generate response
-	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
-	if apiCR != nil {
-		utils.GenerateResponse(c, apiCR.Response, true)
-		if apiCR.Success == true {
+	syncChatroomsAPIResponse := utils.ValidateClientResponse(c, syncChatroomsAPIResponseBytes, syncChatroomsAPIResponseBytesStatusCode)
+	if syncChatroomsAPIResponse != nil {
+		utils.GenerateResponse(c, syncChatroomsAPIResponse.Response, true)
+		if syncChatroomsAPIResponse.Success == true {
 			headers := utils.CreateHeadersFromToken(c, userId, user.GetRequestingUserDeviceId(c))
+
 			minTimeStamp := c.Query(ParamMinTimeStamp)
 			maxTimeStamp := c.Query(ParamMaxTimeStamp)
 
-			utils.SafeGo(func() { parseAndPublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, apiCR.Response) })
+			utils.SafeGo(func() {
+				parseAndPublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, syncChatroomsAPIResponse.Response)
+			})
 		}
 	}
 }
 
 // parseAndPublishDROnTopicTypeChatroom to publish DR on TopicTypeChatroom
-func parseAndPublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, maxTimeStamp string, response map[string]interface{}) {
-	// After returning the response, run a loop around "id" present in "chatrooms:[]"
-	chatrooms, ok := response["chatrooms_data"].([]interface{})
-	if !ok || chatrooms == nil {
-		logging.Error("chatrooms_data key is missing or is not a valid slice in the response")
+func parseAndPublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, maxTimeStamp string, syncChatroomsAPIResponseMap map[string]interface{}) {
+	// After returning the syncChatroomsAPIResponseMap, run a loop around "id" present in "chatroomsData:[]"
+	chatroomsData, ok := syncChatroomsAPIResponseMap["chatrooms_data"].([]interface{})
+	if !ok || chatroomsData == nil {
+		logging.Error("chatrooms_data key is missing or is not a valid slice in the syncChatroomsAPIResponseMap")
 		return // Exit the function or handle the error as appropriate
 	}
 
-	for _, chatroom := range chatrooms {
-		chatroomMap, ok := chatroom.(map[string]interface{})
+	for _, chatroomData := range chatroomsData {
+		chatroomMap, ok := chatroomData.(map[string]interface{})
 		if !ok || chatroomMap == nil {
-			logging.Error("chatroom item is not a valid map in chatrooms_data")
+			logging.Error("chatroomData item is not a valid map in chatrooms_data")
 			continue // Skip this item and continue with the next
 		}
 
 		chatroomID := chatroomMap["id"]
 		communityID := chatroomMap["community_id"]
 		if chatroomID == nil {
-			logging.Error("parseAndPublishDROnTopicTypeChatroom: chatroom ID is missing")
+			logging.Error("parseAndPublishDROnTopicTypeChatroom: chatroomData ID is missing")
 			return
 		}
 		if communityID == nil {
@@ -78,7 +82,6 @@ func parseAndPublishDROnTopicTypeChatroom(headers map[string]interface{}, minTim
 		}
 
 		// Call PublishDROnTopicTypeChatroom for each "chatroomID"
-		pubsubPublish.PublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, chatroomID, communityID)
+		pubsubPublish.PublishDROnTopicTypeChatroom(pubsubCommon.TopicMessageDeliveredDR, headers, minTimeStamp, maxTimeStamp, chatroomID, communityID)
 	}
-
 }

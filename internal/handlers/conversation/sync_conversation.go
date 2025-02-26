@@ -2,6 +2,7 @@ package conversation
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsubCommon"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsubPublish"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
@@ -31,34 +32,34 @@ func SyncConversation(c *gin.Context) {
 	}
 
 	//Get Request response
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, SyncConversationEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
-	if respBytes == nil {
+	syncConversationsAPIResponseBytes, syncConversationAPIResponseStatusCode := utils.GetRequestResponse(c, utils.CoreService, SyncConversationEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+	if syncConversationsAPIResponseBytes == nil {
 		return
 	}
 
 	//Parse and generate response
-	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
-	if apiCR != nil {
-		utils.GenerateResponse(c, apiCR.Response, true)
-		if apiCR.Success == true {
+	syncConversationsAPIResponse := utils.ValidateClientResponse(c, syncConversationsAPIResponseBytes, syncConversationAPIResponseStatusCode)
+	if syncConversationsAPIResponse != nil {
+		utils.GenerateResponse(c, syncConversationsAPIResponse.Response, true)
+		if syncConversationsAPIResponse.Success == true {
 			headers := utils.CreateHeadersFromToken(c, userId, user.GetRequestingUserDeviceId(c))
 			minTimeStamp := c.Query(ParamMinTimeStamp)
 			maxTimeStamp := c.Query(ParamMaxTimeStamp)
 			chatroomID := c.Query(ParamChatroomId)
 
 			utils.SafeGo(func() {
-				parseAndPublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, chatroomID, apiCR.Response)
+				parseAndPublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, chatroomID, syncConversationsAPIResponse.Response)
 			})
 		}
 	}
 }
 
 // parseAndPublishDROnTopicTypeChatroom to publish DR on TopicTypeChatroom
-func parseAndPublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, maxTimeStamp, chatroomID string, response map[string]interface{}) {
+func parseAndPublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, maxTimeStamp, chatroomID string, syncConversationsAPIResponseMap map[string]interface{}) {
 	// Check if "community_meta" exists and is a map
-	communitiesMeta, ok := response["community_meta"].(map[string]interface{})
+	communitiesMeta, ok := syncConversationsAPIResponseMap["community_meta"].(map[string]interface{})
 	if !ok || communitiesMeta == nil {
-		logging.Error("parseAndPublishDROnTopicTypeChatroom: community_meta key is missing or is not a valid map in the response")
+		logging.Error("parseAndPublishDROnTopicTypeChatroom: community_meta key is missing or is not a valid map in the syncConversationsAPIResponseMap")
 		return // Exit the function or handle the error as appropriate
 	}
 	var communityID interface{}
@@ -85,5 +86,6 @@ func parseAndPublishDROnTopicTypeChatroom(headers map[string]interface{}, minTim
 		return
 	}
 
-	pubsubPublish.PublishDROnTopicTypeChatroom(headers, minTimeStamp, maxTimeStamp, chatroomID, communityID)
+	pubsubPublish.PublishDROnTopicTypeChatroom(pubsubCommon.TopicMessageDeliveredDR, headers, minTimeStamp, maxTimeStamp, chatroomID, communityID)
+	pubsubPublish.PublishDROnTopicTypeChatroom(pubsubCommon.TopicMessageReadDR, headers, minTimeStamp, maxTimeStamp, chatroomID, communityID)
 }

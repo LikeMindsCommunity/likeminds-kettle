@@ -8,7 +8,7 @@ import (
 )
 
 // PublishDROnTopicTypeChatroom handles calling the Pandemonium publish API for inactive user flow in delivered report
-func PublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, maxTimeStamp string, chatroomID, communityID interface{}) {
+func PublishDROnTopicTypeChatroom(publishAPITopicMessageType string, headers map[string]interface{}, minTimeStamp, maxTimeStamp string, chatroomID, communityID interface{}) {
 	if chatroomID == nil {
 		logging.Error("PublishDROnTopicTypeChatroom: chatroom ID is missing")
 		return
@@ -19,24 +19,25 @@ func PublishDROnTopicTypeChatroom(headers map[string]interface{}, minTimeStamp, 
 	}
 
 	topicChatroom := fmt.Sprintf(pubsubCommon.TopicTypeChatroomDynamic, chatroomID)
-	params := map[string]string{
-		pubsubCommon.ParamTopicMessageType: pubsubCommon.TopicMessageDR,
+
+	publishAPIParams := map[string]string{
+		pubsubCommon.ParamTopicMessageType: publishAPITopicMessageType,
 	}
 
-	// Prepare the response (body) for the inactive user case
-	response := map[string]interface{}{
+	// Prepare the publishAPIBodyMap (body) for the inactive user case
+	publishAPIBodyMap := map[string]interface{}{
 		pubsubCommon.ParamMinTimeStamp: minTimeStamp,
 		pubsubCommon.ParamMaxTimeStamp: maxTimeStamp,
 		pubsubCommon.ParamCommunityID:  communityID,
 	}
 
 	// Call the Pandemonium Publish API using your pre-defined function
-	publishDataOnPandemonium(topicChatroom, headers, params, response)
+	publishDataOnPandemonium(topicChatroom, headers, publishAPIParams, publishAPIBodyMap)
 }
 
-func publishDataOnPandemonium(topicChatroom string, headers map[string]interface{}, params map[string]string, response map[string]interface{}) {
-	respBytes, statusCode, err := utils.GetRequestResponseWithoutContext(utils.PandemoniumService, fmt.Sprintf(pubsubCommon.PublishEndPoint, topicChatroom), utils.POSTRequestRawBody, headers, params, response)
-	if err != nil || statusCode != 200 {
-		logging.Error(fmt.Sprintf("Error in publishing data on pandemonium: %v | response %v", err, string(respBytes)))
+func publishDataOnPandemonium(topicChatroom string, headers map[string]interface{}, publishAPIParams map[string]string, publishAPIBodyMap map[string]interface{}) {
+	publishAPIResponseBytes, publishAPIResponseStatusCode, err := utils.GetRequestResponseWithoutContext(utils.PandemoniumService, fmt.Sprintf(pubsubCommon.PublishEndPoint, topicChatroom), utils.POSTRequestRawBody, headers, publishAPIParams, publishAPIBodyMap)
+	if err != nil || publishAPIResponseStatusCode != 200 {
+		logging.Error(fmt.Sprintf(pubsubCommon.ErrorPublishAPI, err, string(publishAPIResponseBytes)))
 	}
 }
