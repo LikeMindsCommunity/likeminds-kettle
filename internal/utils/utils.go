@@ -10,85 +10,24 @@ import (
 	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 )
 
-// Generate Response to be sent on request success
-func GenerateResponse(c *gin.Context, dataResponse map[string]interface{}, parseWidgets bool) {
-	//Generating Response Object
-	response := Response{
-		Success: true,
-	}
+/*
+When calling any internal LM API but don't want any context handling from Kettle to internal API => handling response bytes, status code, error on your own:
+- Call GetRequestResponseWithoutContext to hit API and get response bytes, status code, error
+- Then follow any of the following:
+  - Unmarshall response bytes by custom logic and send response to client
+  - Call ValidateClientResponseWithoutContext to get *api_client.APIClientResponse.Response and send response to client
 
-	// Get widgets data
-	if parseWidgets {
-		ParseAndFetchWidgets(c, GetUserIdFromContext(c), dataResponse)
-	}
+When calling any internal LM API, want context handling of error => handle response bytes on your own except when !(*api_client.APIClientResponse.Success), don't want to handle error except unmarshall
+- Call GetRequestResponse to get response bytes
+- Call ValidateClientResponse to get *api_client.APIClientResponse, send response to client when !(*api_client.APIClientResponse.Success), send error to client when unable to unmarshall
+- Call GenerateResponse to send response to client
 
-	//Removing Blank Data Key
-	if len(dataResponse) > 0 {
-		response.Data = dataResponse
-	}
+When calling any internal LM API, want context handling of response bytes, error
+- Call GetRequestResponse to get response bytes
+- Call ParseResponse to send response to client or send error to client
+*/
 
-	c.JSON(http.StatusOK, response)
-}
-
-func ValidateClientResponse(c *gin.Context, respBytes []byte, statusCode int) *api_client.APIClientResponse {
-	//Parse response
-	var apiCR api_client.APIClientResponse
-	err := api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-
-	if err != nil {
-		//Internal unmarshal error
-		GeneralAPIError(c, err.Error())
-		return nil
-	}
-
-	if !apiCR.Success {
-		//If internal api returns success as false
-		c.JSON(statusCode, apiCR)
-		return nil
-	}
-
-	return &apiCR
-}
-
-// Validate & Parse Response for request sent internally
-func ValidateClientResponseWithoutContext(respBytes []byte, statuscode int, err error) map[string]interface{} {
-
-	//If API fails or any other error
-	if err != nil {
-		logging.Error(fmt.Sprintf("Error Occured : %s", err.Error()))
-		return nil
-	}
-
-	//Parse response
-	var apiCR api_client.APIClientResponse
-	marshal_err := api_client.UnmarshalAPIClientResponse(respBytes, &apiCR)
-
-	if marshal_err != nil {
-		//Internal unmarshal error
-		logging.Error(fmt.Sprintf("Error while Umarshalling: %s", marshal_err.Error()))
-		return nil
-	}
-
-	if !apiCR.Success {
-		//If internal api returns success as false
-		logging.Error(fmt.Sprintf("Error Occured :(%d) %s", statuscode, apiCR.ErrorMessage))
-		return nil
-	}
-
-	return apiCR.Response
-}
-
-// ParseResponse from request sent internally
-func ParseResponse(c *gin.Context, respBytes []byte, statusCode int, parseProfileWidgets bool) {
-
-	apiCR := ValidateClientResponse(c, respBytes, statusCode)
-
-	if apiCR != nil {
-		GenerateResponse(c, apiCR.Response, parseProfileWidgets)
-	}
-}
-
-// Method to Send Request
+// GetRequestResponseWithoutContext used to hit LM API and return response bytes, status code, error
 func GetRequestResponseWithoutContext(serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) ([]byte, int, error) {
 	//Create internal API client
 	client := api_client.NewAPIClient()
@@ -184,39 +123,113 @@ func GetRequestResponseWithoutContext(serviceType ServiceType, url string, reque
 	return respBytes, statusCode, err
 }
 
+// GetRequestResponse used to hit LM API using GetRequestResponseWithoutContext. Return: response bytes, status code. Handle error using *gin.Context: error returned by GetRequestResponseWithoutContext
 func GetRequestResponse(c *gin.Context, serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) ([]byte, int) {
-
-	respBytes, statusCode, err := GetRequestResponseWithoutContext(serviceType, url, requestType, headers, params, body)
+	responseBytes, statusCode, err := GetRequestResponseWithoutContext(serviceType, url, requestType, headers, params, body)
 	if err != nil {
 		//If API fails or any other error
 		GeneralAPIError(c, err.Error())
 		return nil, api_client.DefaultStatusCode
 	}
 
-	return respBytes, statusCode
+	return responseBytes, statusCode
 }
 
+// SendRequest used to hit LM API using GetRequestResponse. Handle response bytes, status code, error internally using *gin.Context: call ParseResponse
 func SendRequest(c *gin.Context, serviceType ServiceType, url string, requestType RequestType, headers map[string]interface{}, params map[string]string, body interface{}) {
-	respBytes, statusCode := GetRequestResponse(c, serviceType, url, requestType, headers, params, body)
-	if respBytes == nil {
+	responseBytes, statusCode := GetRequestResponse(c, serviceType, url, requestType, headers, params, body)
+	if responseBytes == nil {
 		return
 	}
 
 	//Parse response
-	ParseResponse(c, respBytes, statusCode, false)
-
+	ParseResponse(c, responseBytes, statusCode, false)
 }
 
-// Utility function to call external API
+// CallExternalAPI used to hit external API using GetRequestResponseWithoutContext. Return: status code, response bytes, error
 func CallExternalAPI(url string, method RequestType, headers map[string]interface{}, params map[string]string, body interface{},
 ) ([]byte, int, error) {
-
-	respBytes, statusCode, err := GetRequestResponseWithoutContext(ExternalService, url, method, headers, params, body)
+	responseBytes, statusCode, err := GetRequestResponseWithoutContext(ExternalService, url, method, headers, params, body)
 	if err != nil {
 		//If API fails or any other error
 		logging.Error(fmt.Sprintf("Error Occured while calling API: %s | status code: %d | error: %s", url, statusCode, err.Error()))
 		return nil, api_client.DefaultStatusCode, err
 	}
 
-	return respBytes, statusCode, err
+	return responseBytes, statusCode, err
+}
+
+// ValidateClientResponse called after GetRequestResponse to unmarshall response bytes. Return: *api_client.APIClientResponse. Handle error internally using *gin.Context: unmarshall error. Handle response internally using *gin.Context: !(*api_client.APIClientResponse.Success)
+func ValidateClientResponse(c *gin.Context, responseBytes []byte, statusCode int) *api_client.APIClientResponse {
+	//Parse response
+	var apiClientResponse api_client.APIClientResponse
+	err := api_client.UnmarshalAPIClientResponse(responseBytes, &apiClientResponse)
+	if err != nil {
+		//Internal unmarshal error
+		GeneralAPIError(c, err.Error())
+		return nil
+	}
+
+	if !apiClientResponse.Success {
+		//If internal api returns success as false
+		c.JSON(statusCode, apiClientResponse)
+		return nil
+	}
+	return &apiClientResponse
+}
+
+// GenerateResponse called after ValidateClientResponse. Handle response internally using *gin.Context: parse widgets and create new Response
+func GenerateResponse(c *gin.Context, responseMap map[string]interface{}, parseWidgets bool) {
+	//Generating Response Object
+	response := Response{
+		Success: true,
+	}
+
+	// Get widgets data
+	if parseWidgets {
+		ParseAndFetchWidgets(c, GetUserIdFromContext(c), responseMap)
+	}
+
+	//Removing Blank Data Key
+	if len(responseMap) > 0 {
+		response.Data = responseMap
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+// ParseResponse is called after GetRequestResponse to ValidateClientResponse and GenerateResponse
+func ParseResponse(c *gin.Context, responseBytes []byte, statusCode int, parseProfileWidgets bool) {
+	apiClientResponse := ValidateClientResponse(c, responseBytes, statusCode)
+
+	if apiClientResponse != nil {
+		GenerateResponse(c, apiClientResponse.Response, parseProfileWidgets)
+	}
+}
+
+// ValidateClientResponseWithoutContext called after GetRequestResponseWithoutContext to unmarshal response bytes. Return: *api_client.APIClientResponse.Response. Log error internally: unmarshall error, !(*api_client.APIClientResponse.Success)
+func ValidateClientResponseWithoutContext(responseBytes []byte, statusCode int, err error) map[string]interface{} {
+	//If API fails or any other error
+	if err != nil {
+		logging.Error(fmt.Sprintf("Error Occured : %s", err.Error()))
+		return nil
+	}
+
+	//Parse response
+	var apiClientResponse api_client.APIClientResponse
+	err = api_client.UnmarshalAPIClientResponse(responseBytes, &apiClientResponse)
+
+	if err != nil {
+		//Internal unmarshal error
+		logging.Error(fmt.Sprintf("Error while Umarshalling: %s", err.Error()))
+		return nil
+	}
+
+	if !apiClientResponse.Success {
+		//If internal api returns success as false
+		logging.Error(fmt.Sprintf("Error Occured :(%d) %s", statusCode, apiClientResponse.ErrorMessage))
+		return nil
+	}
+
+	return apiClientResponse.Response
 }
