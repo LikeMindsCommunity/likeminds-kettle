@@ -1,4 +1,4 @@
-package pubsubCommon
+package common
 
 import "time"
 
@@ -38,8 +38,8 @@ const (
 	ChatroomParticipantsAPIVersion            = "1"
 	ChatroomParticipantsAPIPlatformCode       = "an"
 	ChatroomParticipantsAPIVersionCode        = "210"
-	ParamTotalParticipantsCountType           = "total_participants_count"
-	ParamParticipantsType                     = "participants"
+	ParamTotalParticipantsCount               = "total_participants_count"
+	ParamParticipants                         = "participants"
 	ParamIsSecret                             = "is_secret"
 	PublishEndPoint                           = "/publish/%s"
 	ParamMinTimeStamp                         = "min_timestamp"

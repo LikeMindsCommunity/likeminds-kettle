@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsubCommon"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/common"
+	"github.com/nateshr/likeminds-authentication/internal/handlers/common/models"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -27,8 +29,8 @@ var upgrader = newUpgrader()
 // newUpgrader creates a new websocket Upgrader
 func newUpgrader() websocket.Upgrader {
 	return websocket.Upgrader{
-		ReadBufferSize:  pubsubCommon.ReadBufferSizeDefault,
-		WriteBufferSize: pubsubCommon.WriteBufferSizeDefault,
+		ReadBufferSize:  common.ReadBufferSizeDefault,
+		WriteBufferSize: common.WriteBufferSizeDefault,
 	}
 }
 
@@ -67,14 +69,14 @@ func Subscribe(c *gin.Context) {
 	}
 
 	// Connect to the websocket server
-	serverConn, err := dialToPandemoniumWs(c.Param(pubsubCommon.ParamTopic), headers)
+	serverConn, err := dialToPandemoniumWs(c.Param(common.ParamTopic), headers)
 	if err != nil {
 		logging.Error(err)
 		utils.GeneralAPIError(c, err.Error())
 		return
 	}
 
-	logging.Info(pubsubCommon.WsConnectionEstablished)
+	logging.Info(common.WsConnectionEstablished)
 
 	// Handle communication between the client and the websocket server
 	redisClient := utils.GetRedisClientFromContext(c)
@@ -85,7 +87,7 @@ func Subscribe(c *gin.Context) {
 // validateParamsAndHeaders to validate params and headers sent while subscribing to topic
 func validateParamsAndHeaders(c *gin.Context) ([]string, map[string]interface{}, error) {
 	//Validate topic
-	topic := c.Param(pubsubCommon.ParamTopic)
+	topic := c.Param(common.ParamTopic)
 	topicSplit, err := getTopicSplit(topic)
 	if err != nil {
 		return nil, nil, err
@@ -96,13 +98,13 @@ func validateParamsAndHeaders(c *gin.Context) ([]string, map[string]interface{},
 	}
 	//If topicID is missing, return error
 	if topicID == "" || topicID == "null" {
-		return nil, nil, errors.New(pubsubCommon.ErrorTopicIDMissing)
+		return nil, nil, errors.New(common.ErrorTopicIDMissing)
 	}
 
 	userID := user.GetRequestingUserId(c)
 	//If userID is missing, return error
 	if userID == "" || userID == "null" {
-		return nil, nil, errors.New(pubsubCommon.ErrorUserUUIDMissing)
+		return nil, nil, errors.New(common.ErrorUserUUIDMissing)
 	}
 
 	deviceID := user.GetRequestingUserDeviceId(c)
@@ -113,12 +115,12 @@ func validateParamsAndHeaders(c *gin.Context) ([]string, map[string]interface{},
 // getTopicSplit will decode topic and return split
 func getTopicSplit(topic string) ([]string, error) {
 	if topic == "" || topic == "null" {
-		return nil, errors.New(pubsubCommon.ErrorTopicMissing)
+		return nil, errors.New(common.ErrorTopicMissing)
 	}
 	topicSplit := strings.Split(topic, ":")
 
 	if len(topicSplit) <= 1 {
-		return nil, errors.New(pubsubCommon.ErrorTopicInvalid)
+		return nil, errors.New(common.ErrorTopicInvalid)
 	}
 
 	return topicSplit, nil
@@ -126,9 +128,9 @@ func getTopicSplit(topic string) ([]string, error) {
 
 func isSubscribeTopicSupported(topicSplit []string) bool {
 	switch topicSplit[0] {
-	case pubsubCommon.TopicTypeChatroom:
+	case common.TopicTypeChatroom:
 		return true
-	case pubsubCommon.TopicTypeCommunity:
+	case common.TopicTypeCommunity:
 		return true
 
 	default:
@@ -139,22 +141,22 @@ func isSubscribeTopicSupported(topicSplit []string) bool {
 // hasAccessToChatroom to check if userID has access to topicID while subscribing to chatroom topic
 func hasAccessToChatroom(topicSplit []string, headers map[string]interface{}) (int, error) {
 	switch topicSplit[0] {
-	case pubsubCommon.TopicTypeChatroom:
+	case common.TopicTypeChatroom:
 		params := map[string]string{
 			channel.ParamChannelId: topicSplit[1],
 		}
 		//Get chatroom details to verify if user has access to any chatroom / cohort based chatroom / secret chatroom
 		accessChatroomResponseBytes, accessChatroomStatusCode, err := utils.GetRequestResponseWithoutContext(utils.CoreService, channel.SyncChannelDetailEndppoint, utils.GETRequest, headers, params, nil)
 		if err != nil || accessChatroomStatusCode != 200 {
-			return accessChatroomStatusCode, errors.New(fmt.Sprintf(pubsubCommon.ErrorUserChatroomAccess, err))
+			return accessChatroomStatusCode, errors.New(fmt.Sprintf(common.ErrorUserChatroomAccess, err))
 		} else {
 			var chatroomDetailParentResponse chatroom.ChatroomDetailParentResponse
 			if err := json.Unmarshal(accessChatroomResponseBytes, &chatroomDetailParentResponse); err != nil {
-				return accessChatroomStatusCode, errors.New(fmt.Sprintf(pubsubCommon.ErrorUnmarshalErrorJson, err))
+				return accessChatroomStatusCode, errors.New(fmt.Sprintf(common.ErrorUnmarshalErrorJson, err))
 			}
 			chatroomDetailArray := chatroomDetailParentResponse.ChatroomDetail
 			if len(chatroomDetailArray) < 1 {
-				return accessChatroomStatusCode, errors.New(pubsubCommon.ErrorChatroomResponseInvalid)
+				return accessChatroomStatusCode, errors.New(common.ErrorChatroomResponseInvalid)
 			}
 
 			//If user has access to secret chatroom
@@ -162,14 +164,14 @@ func hasAccessToChatroom(topicSplit []string, headers map[string]interface{}) (i
 			canAccessSecretChatroom := chatroomDetail.CanAccessSecretChatroom
 			if canAccessSecretChatroom != nil {
 				if *canAccessSecretChatroom == false {
-					return accessChatroomStatusCode, errors.New(pubsubCommon.ErrorUserChatroomAccess)
+					return accessChatroomStatusCode, errors.New(common.ErrorUserChatroomAccess)
 				}
 			}
 			//If user has access to cohort based chatroom
 			cohortAccess := chatroomDetail.CohortAccess
 			if cohortAccess != nil {
 				if *cohortAccess != 200 {
-					return accessChatroomStatusCode, errors.New(pubsubCommon.ErrorUserChatroomAccess)
+					return accessChatroomStatusCode, errors.New(common.ErrorUserChatroomAccess)
 				}
 			}
 		}
@@ -180,7 +182,7 @@ func hasAccessToChatroom(topicSplit []string, headers map[string]interface{}) (i
 // upgraderHTTPToPandemoniumWs to upgrade the incoming HTTP request to a WebSocket connection
 func upgraderHTTPToPandemoniumWs(c *gin.Context) (*websocket.Conn, error) {
 	clientConn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-	return clientConn, fmt.Errorf(pubsubCommon.ErrorFailedUpgrader, err)
+	return clientConn, fmt.Errorf(common.ErrorFailedUpgrader, err)
 }
 
 // dialToPandemoniumWs to dial to websocket server
@@ -188,7 +190,7 @@ func dialToPandemoniumWs(topic string, headers map[string]interface{}) (*websock
 	psURL := api_client.GetPandemoniumServiceWsUrl()
 	updatedPsURL := fmt.Sprintf("%s/subscribe/%s", psURL, topic)
 	serverConn, _, err := websocket.DefaultDialer.Dial(updatedPsURL, createHeaderFromMap(headers))
-	return serverConn, fmt.Errorf(pubsubCommon.ErrorFailedDial, err)
+	return serverConn, fmt.Errorf(common.ErrorFailedDial, err)
 }
 
 // createHeaderFromMap to createHeaderFromMap required for connecting with websocket server
@@ -209,10 +211,10 @@ func readFromClientAndWriteToServer(clientConn *websocket.Conn, serverConn *webs
 
 	updateReadDeadline(clientConn)
 
-	utils.SafeGo(func() { startPingMessageToServer(serverConn) })
+	utils.SafeGo(func() { startPingMessage(serverConn) })
 
 	serverConn.SetPongHandler(func(string) error {
-		logging.Info(pubsubCommon.PongReceivedPandemoniumWs)
+		logging.Info(common.PongReceivedPandemoniumWs)
 		updateReadDeadline(clientConn)
 		return nil
 	})
@@ -220,35 +222,35 @@ func readFromClientAndWriteToServer(clientConn *websocket.Conn, serverConn *webs
 	for {
 		readMessageFromClientType, readMessageFromClientBytes, err := clientConn.ReadMessage()
 		if err != nil {
-			logging.Error(fmt.Sprintf(pubsubCommon.ErrorReadClientWs, err))
+			logging.Error(fmt.Sprintf(common.ErrorReadClientWs, err))
 			return
 		}
-		logging.Info(fmt.Sprintf(pubsubCommon.ReceivedMessageClientWs, readMessageFromClientType))
+		logging.Info(fmt.Sprintf(common.ReceivedMessageClientWs, readMessageFromClientType))
 
-		var readMessageFromClientMap map[string]interface{}
-		err = json.Unmarshal(readMessageFromClientBytes, &readMessageFromClientMap)
+		var psRequest models.PSRequest
+		err = json.Unmarshal(readMessageFromClientBytes, &psRequest)
 		if err != nil {
-			logging.Error(fmt.Sprintf(pubsubCommon.ErrorUnmarshalErrorJson, err))
+			log.Printf(common.ErrorUnmarshalErrorJson, err)
 			return
 		}
 
-		readMessageFromClientTMT := readMessageFromClientMap[pubsubCommon.ParamTopicMessageType]
+		readMessageFromClientTMT := psRequest.TopicMessageType
 
 		switch topicSplit[0] {
-		case pubsubCommon.TopicTypeChatroom:
+		case common.TopicTypeChatroom:
 			switch readMessageFromClientTMT {
-			case pubsubCommon.TopicMessageTypeCreateConversationRequest:
-				updatedMessageRequestMap, err := getUpdatedMessageRequest(redisClient, headers, topicSplit, readMessageFromClientMap)
-				updatedMessageRequestBytes, err := json.Marshal(updatedMessageRequestMap)
+			case common.TopicMessageTypeCreateConversationRequest:
+				updatedPSRequestRawDataMap, err := getUpdatedPSRequestRawDataMap(redisClient, headers, topicSplit, psRequest)
+				updatedPSRequestRawDataBytes, err := json.Marshal(updatedPSRequestRawDataMap)
 				if err != nil {
-					logging.Error(fmt.Sprintf(pubsubCommon.ErrorMarshalErrorJson, err))
+					logging.Error(fmt.Sprintf(common.ErrorMarshalErrorJson, err))
 					return
 				}
 				// Forward the message to the WebSocket server
 				updateWriteDeadline(serverConn)
-				err = serverConn.WriteMessage(readMessageFromClientType, updatedMessageRequestBytes)
+				err = serverConn.WriteMessage(readMessageFromClientType, updatedPSRequestRawDataBytes)
 				if err != nil {
-					logging.Error(fmt.Sprintf(pubsubCommon.ErrorWriteServerWs, err))
+					logging.Error(fmt.Sprintf(common.ErrorWriteServerWs, err))
 					return
 				}
 			default:
@@ -256,7 +258,7 @@ func readFromClientAndWriteToServer(clientConn *websocket.Conn, serverConn *webs
 				updateWriteDeadline(serverConn)
 				err = serverConn.WriteMessage(readMessageFromClientType, readMessageFromClientBytes)
 				if err != nil {
-					logging.Error(fmt.Sprintf(pubsubCommon.ErrorWriteServerWs, err))
+					logging.Error(fmt.Sprintf(common.ErrorWriteServerWs, err))
 					return
 				}
 			}
@@ -272,10 +274,10 @@ func readFromServerAndWriteToClient(clientConn *websocket.Conn, serverConn *webs
 
 	updateReadDeadline(serverConn)
 
-	utils.SafeGo(func() { startPingMessageToClient(clientConn) })
+	utils.SafeGo(func() { startPingMessage(clientConn) })
 
 	clientConn.SetPongHandler(func(string) error {
-		logging.Info(pubsubCommon.PongReceivedClient)
+		logging.Info(common.PongReceivedClient)
 		updateReadDeadline(serverConn)
 		return nil
 	})
@@ -283,68 +285,60 @@ func readFromServerAndWriteToClient(clientConn *websocket.Conn, serverConn *webs
 	for {
 		messageType, msg, err := serverConn.ReadMessage()
 		if err != nil {
-			logging.Error(fmt.Sprintf(pubsubCommon.ErrorReadServerWs, err))
+			logging.Error(fmt.Sprintf(common.ErrorReadServerWs, err))
 			return
 		}
-		logging.Info(fmt.Sprintf(pubsubCommon.ReceivedMessageServerWs, messageType))
+		logging.Info(fmt.Sprintf(common.ReceivedMessageServerWs, messageType))
 
 		// Forward the message to the client
 		updateWriteDeadline(clientConn)
 		err = clientConn.WriteMessage(messageType, msg)
 		if err != nil {
-			logging.Error(fmt.Sprintf(pubsubCommon.ErrorWriteClientWs, err))
+			logging.Error(fmt.Sprintf(common.ErrorWriteClientWs, err))
 			return
 		}
 	}
 }
 
 func disconnect(conn *websocket.Conn) {
-	logging.Info(pubsubCommon.ConnectionClosed)
+	logging.Info(common.ConnectionClosed)
 	err := conn.Close()
 	if err != nil {
-		logging.Error(fmt.Sprintf(pubsubCommon.ErrorUnableToCloseWs, err))
+		logging.Error(fmt.Sprintf(common.ErrorUnableToCloseWs, err))
 		return
 	}
 }
 
-func startPingMessageToClient(clientConn *websocket.Conn) {
+func startPingMessage(conn *websocket.Conn) {
 	// Start a goroutine to send pings periodically to the client
 	for {
-		time.Sleep(pubsubCommon.PingPeriod) // Interval between pings
-		updateWriteDeadline(clientConn)
-		if err := clientConn.WriteMessage(websocket.PingMessage, nil); err != nil {
-			logging.Error(fmt.Sprintf(pubsubCommon.ErrorPingSendClient, err))
+		time.Sleep(common.PingPeriod) // Interval between pings
+		updateWriteDeadline(conn)
+		if err := conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+			logging.Error(fmt.Sprintf(common.ErrorPingSendWs, err))
 			return
 		}
-		logging.Info(pubsubCommon.PingSendClient)
+		logging.Info(common.PingSendWs)
 	}
 }
 
-func startPingMessageToServer(serverConn *websocket.Conn) {
-	// Start a goroutine to send pings periodically to the client
-	for {
-		time.Sleep(pubsubCommon.PingPeriod) // Interval between pings
-		updateWriteDeadline(serverConn)
-		if err := serverConn.WriteMessage(websocket.PingMessage, nil); err != nil {
-			logging.Error(fmt.Sprintf(pubsubCommon.ErrorPingSendWs, err))
-			return
-		}
-		logging.Info(pubsubCommon.PingSendWs)
-	}
-}
-
-// getUpdatedMessageRequest to get updated payload to be sent in case of message.create.request
-func getUpdatedMessageRequest(redisClient *redis.Client, headers map[string]interface{}, topicSplit []string, readMessageFromClientMap map[string]interface{}) (map[string]interface{}, error) {
+// getUpdatedPSRequestRawDataMap to get updated payload to be sent in case of message.create.request
+func getUpdatedPSRequestRawDataMap(redisClient *redis.Client, headers map[string]interface{}, topicSplit []string, psRequest models.PSRequest) (map[string]interface{}, error) {
 	chatroomID := topicSplit[0]
 
 	chatroomInternalMap, _, err := getChatroomInternal(redisClient, headers, chatroomID)
 	if chatroomInternalMap != nil {
-		isSecret, _ := chatroomInternalMap[pubsubCommon.ParamIsSecret].(bool)
+		isSecret, _ := chatroomInternalMap[common.ParamIsSecret].(bool)
 		allParticipantIDs, err := getParticipantsInternal(redisClient, headers, chatroomID, isSecret)
 		if allParticipantIDs != nil {
-			readMessageFromClientMap[pubsubCommon.ParamParticipantsType] = allParticipantIDs
-			readMessageFromClientMap[pubsubCommon.ParamTotalParticipantsCountType] = len(allParticipantIDs)
-			return readMessageFromClientMap, nil
+			var updatedPSRequestRawDataMap map[string]interface{}
+			err := json.Unmarshal(psRequest.RawData, &updatedPSRequestRawDataMap)
+			if err != nil {
+				return nil, err
+			}
+			updatedPSRequestRawDataMap[common.ParamParticipants] = allParticipantIDs
+			updatedPSRequestRawDataMap[common.ParamTotalParticipantsCount] = len(allParticipantIDs)
+			return updatedPSRequestRawDataMap, nil
 		} else {
 			return nil, err
 		}
@@ -357,11 +351,11 @@ func getUpdatedMessageRequest(redisClient *redis.Client, headers map[string]inte
 func getChatroomInternal(redisClient *redis.Client, headers map[string]interface{}, chatroomID string) (map[string]interface{}, int, error) {
 	// Params to be sent in the api/chatroom/fetch request
 	chatroomAPIParams := map[string]string{
-		pubsubCommon.ParamChatroomId: chatroomID,
+		common.ParamChatroomId: chatroomID,
 	}
 
 	//Custom headers since this API will be called after conversation create and headers between these two APIs can have different x-api-version
-	headers[utils.HeadersApiVersion] = pubsubCommon.ChatroomAPIVersion
+	headers[utils.HeadersApiVersion] = common.ChatroomAPIVersion
 
 	// Check if the chatroom is present in the cache first
 	chatroomFromCache, err := getChatroomFromCache(redisClient, chatroomID)
@@ -447,9 +441,9 @@ func getParticipantsInternal(redisClient *redis.Client, headers map[string]inter
 	} else {
 		// Initialize parameters for pagination and collection of participants
 		chatroomParticipantsAPIParams := map[string]string{
-			pubsubCommon.ParamChatroomId: chatroomID,
-			pubsubCommon.ParamPage:       pubsubCommon.ChatroomParticipantsAPIPage,
-			pubsubCommon.ParamPageSize:   pubsubCommon.ChatroomParticipantsAPIPageSize,
+			common.ParamChatroomId: chatroomID,
+			common.ParamPage:       common.ChatroomParticipantsAPIPage,
+			common.ParamPageSize:   common.ChatroomParticipantsAPIPageSize,
 		}
 		var allParticipantIDs []string
 
@@ -463,9 +457,9 @@ func getParticipantsInternal(redisClient *redis.Client, headers map[string]inter
 		// Loop to fetch participants until the response is empty
 		for {
 			//Custom headers since this API will be called after conversation create and headers between these two APIs can have different x-api-version
-			headers[utils.HeadersPlatformCode] = pubsubCommon.ChatroomParticipantsAPIPlatformCode
-			headers[utils.HeadersVersionCode] = pubsubCommon.ChatroomParticipantsAPIVersionCode
-			headers[utils.HeadersApiVersion] = pubsubCommon.ChatroomParticipantsAPIVersion
+			headers[utils.HeadersPlatformCode] = common.ChatroomParticipantsAPIPlatformCode
+			headers[utils.HeadersVersionCode] = common.ChatroomParticipantsAPIVersionCode
+			headers[utils.HeadersApiVersion] = common.ChatroomParticipantsAPIVersion
 			// Make the API call to fetch participants
 			chatroomParticipantsAPIResponseBytes, statusCode, err := utils.GetRequestResponseWithoutContext(
 				utils.CoreService,
@@ -504,8 +498,8 @@ func getParticipantsInternal(redisClient *redis.Client, headers map[string]inter
 			}
 
 			// Increment page for the next request
-			currentPage, _ := strconv.Atoi(chatroomParticipantsAPIParams[pubsubCommon.ParamPage])
-			chatroomParticipantsAPIParams[pubsubCommon.ParamPage] = strconv.Itoa(currentPage + 1)
+			currentPage, _ := strconv.Atoi(chatroomParticipantsAPIParams[common.ParamPage])
+			chatroomParticipantsAPIParams[common.ParamPage] = strconv.Itoa(currentPage + 1)
 		}
 
 		// Update Redis cache with the collected participant IDs if any participants were found
@@ -560,19 +554,19 @@ func saveParticipantsInCache(redisClient *redis.Client, chatroomParticipantsKey 
 
 func updateReadDeadline(conn *websocket.Conn) {
 	//client.conn.SetReadLimit(maxMessageSize)
-	// SetReadDeadline to time.Now() + PongWait (which is < PingPeriod)
-	err := conn.SetReadDeadline(time.Now().Add(pubsubCommon.PongWait))
+	// SetReadDeadline to time.Now() + PongWait
+	err := conn.SetReadDeadline(time.Now().Add(common.PongWait))
 	if err != nil {
-		logging.Info(pubsubCommon.ErrorReadDeadlineWs, err)
+		logging.Info(common.ErrorReadDeadlineWs, err)
 		return
 	}
 }
 
 func updateWriteDeadline(conn *websocket.Conn) {
 	// SetWriteDeadline to time.Now() + WriteWait
-	err := conn.SetWriteDeadline(time.Now().Add(pubsubCommon.WriteWait))
+	err := conn.SetWriteDeadline(time.Now().Add(common.WriteWait))
 	if err != nil {
-		logging.Info(pubsubCommon.ErrorWriteDeadlineWs, err)
+		logging.Info(common.ErrorWriteDeadlineWs, err)
 		return
 	}
 }
