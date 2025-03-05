@@ -3,8 +3,8 @@ package pubsubSubscribe
 import "time"
 
 const (
-	ReadBufferSizeDefault  = 4096
-	WriteBufferSizeDefault = 4096
+	ReadBufferSizeDefault  = 0
+	WriteBufferSizeDefault = 0
 	PingPeriod             = (PongWait * 9) / 10
 	// PongWait Max time till next pong from peer
 	PongWait = 60 * time.Second
