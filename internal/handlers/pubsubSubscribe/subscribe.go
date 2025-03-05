@@ -185,10 +185,19 @@ func readFromClientAndWriteToServer(conn *websocket.Conn, serverConn *websocket.
 		disconnect(serverConn)
 	}()
 
-	utils.SafeGo(func() { startPingMessageToServer(serverConn) })
+	//conn is set to read till PongWait (60 seconds)
+	updateReadDeadline(conn)
 
-	serverConn.SetPongHandler(func(string) error {
-		log.Println(PongReceivedWs)
+	utils.SafeGo(func() {
+		//write PING message to conn after every PingPeriod (54 seconds)
+		startPingMessageToClient(conn)
+	})
+
+	//conn replied with PONG
+	conn.SetPongHandler(func(string) error {
+		log.Println(PongReceivedClient)
+		//serverConn is set to read till PongWait (60 seconds)
+		updateReadDeadline(conn)
 		return nil
 	})
 
@@ -200,6 +209,8 @@ func readFromClientAndWriteToServer(conn *websocket.Conn, serverConn *websocket.
 		}
 		logging.Info(fmt.Sprintf(ReceivedMessageClientWs, messageType))
 
+		//serverConn is set to write till WriteWait (10 seconds)
+		updateWriteDeadline(serverConn)
 		// Forward the message to the WebSocket server
 		err = serverConn.WriteMessage(messageType, msg)
 		if err != nil {
@@ -215,10 +226,19 @@ func readFromServerAndWriteToClient(conn *websocket.Conn, serverConn *websocket.
 		disconnect(serverConn)
 	}()
 
-	utils.SafeGo(func() { startPingMessageToClient(conn) })
+	//serverConn is set to read till PongWait (60 seconds)
+	updateReadDeadline(serverConn)
 
-	conn.SetPongHandler(func(string) error {
-		log.Println(PongReceivedClient)
+	utils.SafeGo(func() {
+		//write PING message to serverConn after PingPeriod (54 seconds)
+		startPingMessageToServer(serverConn)
+	})
+
+	//serverConn replied with PONG
+	serverConn.SetPongHandler(func(string) error {
+		log.Println(PongReceivedWs)
+		//serverConn is set to read till PongWait (60 seconds)
+		updateReadDeadline(serverConn)
 		return nil
 	})
 
@@ -230,6 +250,8 @@ func readFromServerAndWriteToClient(conn *websocket.Conn, serverConn *websocket.
 		}
 		logging.Info(fmt.Sprintf(ReceivedMessageServerWs, messageType))
 
+		//conn is set to write till WriteWait (10 seconds)
+		updateWriteDeadline(conn)
 		// Forward the message to the client
 		err = conn.WriteMessage(messageType, msg)
 		if err != nil {
@@ -252,6 +274,8 @@ func startPingMessageToClient(conn *websocket.Conn) {
 	// Start a goroutine to send pings periodically to the client
 	for {
 		time.Sleep(PingPeriod) // Interval between pings
+		//conn is set to write till WriteWait (10 seconds)
+		updateWriteDeadline(conn)
 		if err := conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 			log.Printf(fmt.Sprintf(ErrorPingSendClient, err))
 			return
@@ -264,10 +288,30 @@ func startPingMessageToServer(conn *websocket.Conn) {
 	// Start a goroutine to send pings periodically to the client
 	for {
 		time.Sleep(PingPeriod) // Interval between pings
+		//conn is set to write till WriteWait (10 seconds)
+		updateWriteDeadline(conn)
 		if err := conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 			log.Printf(fmt.Sprintf(ErrorPingSendWs, err))
 			return
 		}
 		log.Println(PingSendWs)
+	}
+}
+
+func updateReadDeadline(conn *websocket.Conn) {
+	// SetReadDeadline to time.Now() + PongWait
+	err := conn.SetReadDeadline(time.Now().Add(PongWait))
+	if err != nil {
+		logging.Info(ErrorReadDeadlineWs, err)
+		return
+	}
+}
+
+func updateWriteDeadline(conn *websocket.Conn) {
+	// SetWriteDeadline to time.Now() + WriteWait
+	err := conn.SetWriteDeadline(time.Now().Add(WriteWait))
+	if err != nil {
+		logging.Info(ErrorWriteDeadlineWs, err)
+		return
 	}
 }

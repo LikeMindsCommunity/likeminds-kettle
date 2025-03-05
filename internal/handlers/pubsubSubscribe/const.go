@@ -3,9 +3,13 @@ package pubsubSubscribe
 import "time"
 
 const (
-	ReadBufferSizeDefault   = 4096
-	WriteBufferSizeDefault  = 4096
-	PingPeriod              = ((60 * time.Second) * 9) / 10
+	ReadBufferSizeDefault  = 4096
+	WriteBufferSizeDefault = 4096
+	PingPeriod             = (PongWait * 9) / 10
+	// PongWait Max time till next pong from peer
+	PongWait = 60 * time.Second
+	// WriteWait Max wait time when writing message to peer
+	WriteWait               = 10 * time.Second
 	WsConnectionEstablished = "Connected to websocket server"
 	PongReceivedWs          = "Received pong from websocket server"
 	PongReceivedClient      = "Received pong from client"
@@ -40,4 +44,6 @@ const (
 	ErrorUnmarshalErrorJson      = "unmarshal error: %v"
 	ErrorTopicIDMissing          = "topic ID is missing in request"
 	ErrorChatroomResponseInvalid = "invalid channel_details_data key in response"
+	ErrorReadDeadlineWs          = "error while setting ReadDeadline on websocket:"
+	ErrorWriteDeadlineWs         = "error while setting WriteDeadline on websocket:"
 )
