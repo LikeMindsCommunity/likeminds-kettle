@@ -182,7 +182,11 @@ func hasAccessToChatroom(topicSplit []string, headers map[string]interface{}) (i
 // upgraderHTTPToPandemoniumWs to upgrade the incoming HTTP request to a WebSocket connection
 func upgraderHTTPToPandemoniumWs(c *gin.Context) (*websocket.Conn, error) {
 	clientConn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-	return clientConn, fmt.Errorf(common.ErrorFailedUpgrader, err)
+	if err != nil {
+		return nil, fmt.Errorf(common.ErrorFailedUpgrader, err)
+	} else {
+		return clientConn, nil
+	}
 }
 
 // dialToPandemoniumWs to dial to websocket server
@@ -190,7 +194,11 @@ func dialToPandemoniumWs(topic string, headers map[string]interface{}) (*websock
 	psURL := api_client.GetPandemoniumServiceWsUrl()
 	updatedPsURL := fmt.Sprintf("%s/subscribe/%s", psURL, topic)
 	serverConn, _, err := websocket.DefaultDialer.Dial(updatedPsURL, createHeaderFromMap(headers))
-	return serverConn, fmt.Errorf(common.ErrorFailedDial, err)
+	if err != nil {
+		return nil, fmt.Errorf(common.ErrorFailedDial, err)
+	} else {
+		return serverConn, nil
+	}
 }
 
 // createHeaderFromMap to createHeaderFromMap required for connecting with websocket server
