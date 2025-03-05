@@ -237,7 +237,7 @@ func readFromServerAndWriteToClient(conn *websocket.Conn, serverConn *websocket.
 	//serverConn replied with PONG
 	serverConn.SetPongHandler(func(string) error {
 		log.Println(PongReceivedWs)
-		//conn is set to read till PongWait (60 seconds)
+		//serverConn is set to read till PongWait (60 seconds)
 		updateReadDeadline(serverConn)
 		return nil
 	})
