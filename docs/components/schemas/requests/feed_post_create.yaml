@@ -41,7 +41,7 @@ properties:
       properties:
         attachment_type:
           type: integer
-          enum: [1, 2, 3, 4, 5, 6, 7]
+          enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
           description: |
             Attachment type
             - 1 - Image
@@ -49,8 +49,12 @@ properties:
             - 3 - Document
             - 4 - Link
             - 5 - Custom widget
-            - 6 - Article widget
-            - 7 - Poll widget
+            - 6 - Poll widget
+            - 7 - Article widget
+            - 8 - Post widget
+            - 9 - Repost widget
+            - 10 - GIF widget
+            - 11 - Reel
         attachment_meta:
           type: object
           properties:
