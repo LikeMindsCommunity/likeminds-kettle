@@ -18,3 +18,5 @@ properties:
               type: string
             is_join_form_enabled:
               type: boolean
+            gcp_service_account_file:
+              type: object
