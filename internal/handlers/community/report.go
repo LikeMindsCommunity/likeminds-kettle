@@ -177,7 +177,7 @@ func getReportsInternal(c *gin.Context, userId string) {
 	}
 
 	// Send Request to caravan service to fetch reports
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, FetchReportsEndPoint, utils.GETRequest, headers, params, nil)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, constants.CommunityReportV1EndPoint, utils.GETRequest, headers, params, nil)
 	if respBytes == nil {
 		return
 	}
@@ -322,28 +322,36 @@ func extractIdsFromReports(reports []interface{}) ([]string, []string, []string)
 	postIds, pendingPostIds, commentIds := []string{}, []string{}, []string{}
 
 	// Iterate over reports and get post and comment ids
-	for _, report := range reports {
+	for _, groupReportResponse := range reports {
+		groupReportResponseMap := groupReportResponse.(map[string]interface{})
+		groupReport, ok := groupReportResponseMap["reports"].([]interface{})
 
-		typeValue, ok := report.(map[string]interface{})["type"]
-
-		// If type is string, convert it to report type int
-		if reflect.TypeOf(typeValue).Kind() == reflect.String {
-			typeValue = float64(ReportTypeStrintToInt(typeValue.(string)))
+		if !ok {
+			continue
 		}
 
-		if ok {
-			if int(typeValue.(float64)) == feed.POST_REPORT_TYPE {
-				postIds = append(postIds, report.(map[string]interface{})[constants.ResponseKeyEntityId].(string))
+		for _, report := range groupReport {
+			typeValue, ok := report.(map[string]interface{})["type"]
+
+			// If type is string, convert it to report type int
+			if reflect.TypeOf(typeValue).Kind() == reflect.String {
+				typeValue = float64(ReportTypeStrintToInt(typeValue.(string)))
 			}
 
-			if int(typeValue.(float64)) == feed.COMMENT_REPORT_TYPE || int(typeValue.(float64)) == feed.REPLY_REPORT_TYPE {
-				commentIds = append(commentIds, report.(map[string]interface{})[constants.ResponseKeyEntityId].(string))
-			}
+			if ok {
+				if int(typeValue.(float64)) == feed.POST_REPORT_TYPE {
+					postIds = append(postIds, report.(map[string]interface{})[constants.ResponseKeyEntityId].(string))
+				}
 
-			if int(typeValue.(float64)) == feed.PENDING_POST_REPORT_TYPE {
-				pendingPostIds = append(pendingPostIds, report.(map[string]interface{})[constants.ResponseKeyEntityId].(string))
-			}
+				if int(typeValue.(float64)) == feed.COMMENT_REPORT_TYPE || int(typeValue.(float64)) == feed.REPLY_REPORT_TYPE {
+					commentIds = append(commentIds, report.(map[string]interface{})[constants.ResponseKeyEntityId].(string))
+				}
 
+				if int(typeValue.(float64)) == feed.PENDING_POST_REPORT_TYPE {
+					pendingPostIds = append(pendingPostIds, report.(map[string]interface{})[constants.ResponseKeyEntityId].(string))
+				}
+
+			}
 		}
 	}
 
