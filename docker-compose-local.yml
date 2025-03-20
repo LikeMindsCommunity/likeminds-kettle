@@ -1,27 +1,25 @@
 services:
-  redis:
+  auth_redis:
     image: redis
-    container_name: redis
-    hostname: redis
+    container_name: auth_redis
     ports:
       - 6379:6379
-    restart: always
+    restart: unless-stopped
     networks:
-      # Name of the network created
-      - local_auth
+      - likeminds-network
+
   auth:
     container_name: auth
-    hostname: auth
     build:
       dockerfile: ./Dockerfile.kettle-local
     ports:
       - 8080:8080
     restart: always
     networks:
-      # Name of the network created
-      - local_auth
-networks:
-  local_auth:
-    # Use a custom driver
-    driver: bridge
+      - likeminds-network
+    depends_on:
+      - auth_redis
 
+networks:
+  likeminds-network:
+    external: true

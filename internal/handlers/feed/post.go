@@ -454,23 +454,20 @@ func editPostInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	if postUserUniqueId != userId {
-
-		// Fetch member access to edit post
-		success, response := user.FetchMemberAccess(c, EDIT_POST_ACTION, userId)
-		if !success {
-			return
-		}
-
-		// If not access
-		if !response.Access {
-			utils.MemberAccessFailError(c)
-			return
-		}
-
-		// Update user_is_cm in request
-		editPostRequest.UserIsCm = response.IsCm
+	// Fetch member access to edit post
+	success, response := user.FetchMemberAccess(c, EDIT_POST_ACTION, userId)
+	if !success {
+		return
 	}
+
+	// If not post creator and dont have access, return
+	if postUserUniqueId != userId && !response.Access {
+		utils.MemberAccessFailError(c)
+		return
+	}
+
+	// Update user_is_cm in request
+	editPostRequest.UserIsCm = response.IsCm
 
 	//Send Request
 	respBytes, statusCode = utils.GetRequestResponse(c, utils.SwarmService, EditPostEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, editPostRequest)
