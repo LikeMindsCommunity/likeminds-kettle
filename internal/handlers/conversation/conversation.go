@@ -37,7 +37,7 @@ type ConversationAttachment struct {
 	Url          string      `json:"url,omitempty"`
 	Type         string      `json:"type,omitempty"`
 	ThumbnailUrl string      `json:"thumbnail_url,omitempty"`
-	Index        int         `json:"index,omitempty"`
+	Index        int         `json:"index"`
 	Height       int         `json:"height,omitempty"`
 	Width        int         `json:"width,omitempty"`
 	Meta         interface{} `json:"meta,omitempty"`
