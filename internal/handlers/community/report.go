@@ -191,7 +191,7 @@ func getReportsInternal(c *gin.Context, userId string) {
 	dataResponse := apiCR.Response
 
 	// Iterate over reports and check if any of the reports are of type post or comment
-	if reports, ok := dataResponse["reports"]; ok {
+	if reports, ok := dataResponse["reports_data"]; ok {
 
 		redisClient := utils.GetRedisClientFromContext(c)
 
