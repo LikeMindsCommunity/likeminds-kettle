@@ -70,6 +70,9 @@ func CommunitySettings(c *gin.Context, method int) {
 		//Send Request
 		utils.SendRequest(c, utils.CoreService, EditCommunitySettingsEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, editCommunitySettingsRequest)
 
+		// delete cached user feed access rights
+		user.DeleteAllAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c))
+
 	}
 
 }
