@@ -24,8 +24,8 @@ const (
 	ChatroomKey                        = "chatroom_%s"                     // chatroom
 	ChatroomTotalParticipantsKey       = "chatroom_total_participants_%s"  // chatroom total participants
 	FeedMemberAccessKey                = "feed_member_access_%s_%s"        // userId accessType
-	FeedMemberAccessKeyPattern         = "feed_member_access_%s_*"         // userId
-	FeedMemberAccessKeyPrefix          = "feed_member_access_*"
+	FeedMemberAccessKeyPattern         = "feed_member_access_%s_"          // userId
+	FeedMemberAccessKeyPrefix          = "feed_member_access_"
 )
 
 // Cache TTLs in hours
