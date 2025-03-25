@@ -292,6 +292,9 @@ func deleteChatroomInternal(c *gin.Context, userId string) {
 		return
 	}
 
+	// delete cached user feed access rights
+	user.DeleteAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), userId)
+
 	//Parse response
 	utils.ParseResponse(c, respBytes, statusCode, false)
 

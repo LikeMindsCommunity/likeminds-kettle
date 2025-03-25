@@ -76,6 +76,9 @@ func CommunityRights(c *gin.Context, method int) {
 		//Send Request
 		utils.SendRequest(c, utils.CoreService, EditCommunityRightsEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, editCommunityRightsRequest)
 
+		// delete cached user feed access rights
+		user.DeleteAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), userId)
+
 	case utils.PatchMethod:
 		UpdateCommunityRightsInternal(c, userId)
 
@@ -95,5 +98,8 @@ func UpdateCommunityRightsInternal(c *gin.Context, userId string) {
 
 	//Send Request to api/update_community_rights with PATCH method
 	utils.SendRequest(c, utils.CoreService, EditCommunityRightsEndPoint, utils.PATCHRequest, utils.CreateHeaders(c, userId), nil, editCommunityRightsRequest)
+
+	// delete cached user feed access rights
+	user.DeleteAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), userId)
 
 }

@@ -187,6 +187,10 @@ func editMemberInternal(c *gin.Context, userId string) {
 
 	//Send Request
 	utils.SendRequest(c, utils.CoreService, CommunityMemberEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, memberRequest)
+
+	// delete cached user feed access rights
+	user.DeleteAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), memberRequest.UUID)
+
 }
 
 func removeMembersInternal(c *gin.Context, userId string) {
@@ -201,6 +205,10 @@ func removeMembersInternal(c *gin.Context, userId string) {
 
 	//Send Request to internal core service
 	utils.SendRequest(c, utils.CoreService, CommunityMemberEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, memberRequest)
+
+	// delete cached user feed access rights
+	user.DeleteMultipleAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), memberRequest.UUIDs)
+
 }
 
 // Exposed method to leave community
