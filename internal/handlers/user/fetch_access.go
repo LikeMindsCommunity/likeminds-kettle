@@ -185,6 +185,7 @@ func DeleteAccessDataAgainstUserIdAndAccessTypeFromCache(redisClient *redis.Clie
 		logging.Error(fmt.Sprintf("Error deleting access data from cache for key: %s, err: %v", cacheKey, err))
 		return err
 	}
+	logging.Info(fmt.Sprintf("Successfully deleted access data from cache for key: %s", cacheKey))
 	return nil
 }
 
@@ -201,6 +202,7 @@ func DeleteMultipleAccessDataAgainstUserIdAndAccessTypeFromCache(redisClient *re
 		logging.Error(fmt.Sprintf("Error deleting access data from cache for multiple keys: %s, err: %v", keyPatterns, err))
 		return err
 	}
+	logging.Info(fmt.Sprintf("Successfully deleted access data from cache for MULTIPLE keys: %s", keyPatterns))
 	return nil
 }
 
@@ -214,5 +216,6 @@ func DeleteAllAccessDataAgainstUserIdAndAccessTypeFromCache(redisClient *redis.C
 		logging.Error(fmt.Sprintf("Error deleting access data from cache for key: %s, err: %v", cacheKey, err))
 		return err
 	}
+	logging.Info(fmt.Sprintf("Successfully deleted access data from cache for ALL keys: %s", cacheKey))
 	return nil
 }
