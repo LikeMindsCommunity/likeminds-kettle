@@ -12,6 +12,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
+	"github.com/microsoft/ApplicationInsights-Go/appinsights"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
 	"github.com/nateshr/likeminds-authentication/internal/constants"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/token"
@@ -513,6 +514,53 @@ func addUserContextHeadersFromContext(data gin.H, ltm *constants.LoginTokenMeta)
 	}
 }
 
+// logToAppInsights marshals the data to JSON and logs it to Azure Application Insights
+func logToAppInsights(data gin.H) {
+	client := log.GetAppInsightsClient()
+
+	request := appinsights.NewRequestTelemetry(
+		fmt.Sprint(data["request"].(gin.H)["method"]),
+		fmt.Sprint(data["request"].(gin.H)["absolute_uri"]),
+		time.Duration(0), // Duration will be set later
+		fmt.Sprint(data["response"].(gin.H)["http_response_code"]),
+	)
+
+	if meta, ok := data["meta"].(gin.H); ok {
+		if latency, ok := meta["latency"].(time.Duration); ok {
+			request.Duration = latency
+			if clientIP, ok := meta["client_ip"].(string); ok {
+				request.Source = clientIP
+			}
+		}
+	}
+
+	// Add the IST timestamp to request.Properties
+	istLocation, _ := time.LoadLocation("Asia/Kolkata")
+	currentTimeIST := time.Now().In(istLocation)
+	formattedTimeIST := currentTimeIST.Format("2006-01-02 15:04:05")
+	request.Properties["timestamp_IST"] = formattedTimeIST
+
+	// Add all fields from data to request.Properties
+	for key, value := range data {
+		switch v := value.(type) {
+		case gin.H:
+			// Serialize nested maps to JSON
+			nestedJSON, _ := json.Marshal(v)
+			request.Properties[key] = string(nestedJSON)
+		default:
+			// Add other types directly
+			request.Properties[key] = fmt.Sprint(v)
+		}
+	}
+
+	// Set success based on status code
+	if statusCode, ok := data["response"].(gin.H)["http_response_code"].(int); ok {
+		request.Success = statusCode >= 200 && statusCode < 400
+	}
+
+	client.Track(request)
+}
+
 // LoggingMiddleware will log the request and response of API
 func LoggingMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -577,9 +625,11 @@ func LoggingMiddleware() gin.HandlerFunc {
 			if statusCode >= http.StatusOK && statusCode < http.StatusBadRequest {
 				// Logging the generated request data as Info
 				log.InfoWithFields(data)
+				logToAppInsights(data)
 			} else {
 				// Logging the generated request data as Error
 				log.ErrorWithFields(data)
+				logToAppInsights(data)
 			}
 
 			c.Next()

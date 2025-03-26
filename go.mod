@@ -15,6 +15,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.0.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/joho/godotenv v1.4.0
+	github.com/microsoft/ApplicationInsights-Go v0.4.4
 	github.com/myesui/uuid v1.0.0
 	github.com/prometheus/client_golang v1.16.0
 	github.com/sirupsen/logrus v1.9.3
