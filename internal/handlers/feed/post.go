@@ -264,81 +264,136 @@ func GetPostInternal(c *gin.Context, userId string, postId string) map[string]in
 	return dataResponse
 }
 
+// createPostInternal handles the post creation request
+// createPostInternal handles the post creation request
 func createPostInternal(c *gin.Context, userId string) {
-
 	headers := utils.CreateHeaders(c, userId)
 
-	//Body to be sent in the /post POST request
+	// Parse request body
 	createPostRequest, err := parseCreatePostRequest(c)
 	if err != nil {
-		//If POST body params are missing
 		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
-	access, isCm := checkAccessForCreatPost(c, userId, isPollInPostAttachments(createPostRequest.Attachments))
-	if !access {
-		return
-	}
+	// Create channels for concurrent tasks
+	accessChan := make(chan struct {
+		access bool
+		isCm   bool
+	}, 1)
+	taggedUsersChan := make(chan []string, 1)
+	approvalNeededChan := make(chan bool, 1)
+	onBehalfChan := make(chan struct {
+		isCm       bool
+		parsedUUID string
+	}, 1)
 
-	//Update user_is_cm in request
-	createPostRequest.UserIsCm = isCm
+	// Start concurrent tasks
+	go func() {
+		access, isCm := checkAccessForCreatPost(c, userId, isPollInPostAttachments(createPostRequest.Attachments))
+		accessChan <- struct {
+			access bool
+			isCm   bool
+		}{access, isCm}
+		close(accessChan)
+	}()
 
-	if createPostRequest.IsRepost && !utils.FeedRepostSettingsEnabled(utils.GetRedisClientFromContext(c), headers) {
-		utils.GeneralBadRequestError(c, utils.ErrorRepostSettingNotEnabled)
-		return
-	}
+	go func() {
+		taggedUsersChan <- getTaggedUsersFromText(utils.CreateHeaders(c, userId), createPostRequest.Text)
+		close(taggedUsersChan)
+	}()
 
+	go func() {
+		approvalNeededChan <- utils.IsPostApprovalNeeded(utils.GetRedisClientFromContext(c), headers, false)
+		close(approvalNeededChan)
+	}()
+
+	// Handle OnBehalfOfUUID check (only if present)
 	if createPostRequest.OnBehalfOfUUID != "" {
+		go func() {
+			isCm, parsedUUID := validateAndFetchOnBehalfUUID(c, userId, createPostRequest)
+			onBehalfChan <- struct {
+				isCm       bool
+				parsedUUID string
+			}{isCm, parsedUUID}
+			close(onBehalfChan)
+		}()
+	} else {
+		close(onBehalfChan) // Close immediately if not used to prevent blocking
+	}
 
-		isCm, parsedUUID := validateAndFetchOnBehalfUUID(c, userId, createPostRequest)
-		if !isCm {
+	// Collect results from channels
+	accessResult := <-accessChan
+	if !accessResult.access {
+		return
+	}
+
+	taggedUsers := <-taggedUsersChan
+	approvalNeeded := <-approvalNeededChan
+
+	// If OnBehalfOfUUID was present, get the result
+	if createPostRequest.OnBehalfOfUUID != "" {
+		onBehalfResult := <-onBehalfChan
+		if !onBehalfResult.isCm {
 			return
 		}
-
-		createPostRequest.UserIsCm = isCm
-		createPostRequest.OnBehalfOfUUID = parsedUUID
-
+		createPostRequest.UserIsCm = onBehalfResult.isCm
+		createPostRequest.OnBehalfOfUUID = onBehalfResult.parsedUUID
+	} else {
+		createPostRequest.UserIsCm = accessResult.isCm
 	}
 
-	//Get tagged users from text
-	taggedUsers := getTaggedUsersFromText(utils.CreateHeaders(c, userId), createPostRequest.Text)
+	// Update request object with fetched values
 	createPostRequest.UUIDs = taggedUsers
-	var createPostEndpoint string
 
-	if !utils.IsPostApprovalNeeded(utils.GetRedisClientFromContext(c), headers, isCm) {
+	// Determine correct API endpoint
+	var createPostEndpoint string
+	if !approvalNeeded {
 		createPostEndpoint = CreatePostEndPoint
 	} else {
 		createPostEndpoint = CreatePendingPostEndPoint
 	}
 
-	// Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, createPostEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createPostRequest)
+	// Send request to create post
+	respBytes, statusCode := utils.GetRequestResponse(
+		c,
+		utils.SwarmService,
+		createPostEndpoint,
+		utils.POSTRequestRawBody,
+		utils.CreateHeaders(c, userId),
+		nil,
+		createPostRequest,
+	)
 
-	//Validate response
+	// Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
 	if apiCR == nil {
 		return
 	}
 
-	//If flow succeeds
-	dataResponse := apiCR.Response
-	dataResponse = populatePostDataResponse(c, dataResponse)
+	// Process response
+	dataResponse := populatePostDataResponse(c, apiCR.Response)
 
-	//If flow succeeds
+	// Follow chatroom if applicable
 	if createPostRequest.FeedroomID != 0 {
-		//Params to be sent in the api/collabcard_follow request
 		params := map[string]string{
 			chatroom.ParamCollabcardId: strconv.Itoa(createPostRequest.FeedroomID),
 			chatroom.ParamMemberId:     userId,
 			chatroom.ParamValue:        "true",
 		}
 
-		//Send Request to follow the chatroom for the post creator
-		utils.GetRequestResponseWithoutContext(utils.CoreService, chatroom.CollabcardFollowEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		// Run in background as it's not essential for immediate response
+		go utils.GetRequestResponseWithoutContext(
+			utils.CoreService,
+			chatroom.CollabcardFollowEndPoint,
+			utils.GETRequest,
+			utils.CreateHeaders(c, userId),
+			params,
+			nil,
+		)
 	}
 
-	//Generate Response
+	// Generate API response
 	utils.GenerateResponse(c, dataResponse, true)
 }
 
