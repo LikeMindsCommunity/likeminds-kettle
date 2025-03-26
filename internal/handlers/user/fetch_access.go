@@ -3,11 +3,13 @@ package user
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
 	"github.com/nateshr/likeminds-authentication/internal/cache"
+	"github.com/nateshr/likeminds-authentication/internal/environment"
 	"github.com/nateshr/likeminds-authentication/internal/logging"
 	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
@@ -143,6 +145,17 @@ func setAccessDataAgainstUserIdAndAccessTypeFromCache(redisClient *redis.Client,
 	// Create a unique cache key
 	cacheKey := fmt.Sprintf(cache.FeedMemberAccessKey, userId, accessType)
 
+	cacheExpirationTime := environment.GoDotEnvVariable("FEED_MEMBER_ACCESS_CACHE_TTL_IN_MIN")
+
+	if cacheExpirationTime == "" {
+		cacheExpirationTime = "5"
+	}
+	intCacheExpirationTime, err := strconv.Atoi(cacheExpirationTime)
+	if err != nil {
+		logging.Error(fmt.Sprintf("Error converting cache expiration time to int for key: %s, err: %v", cacheKey, err))
+		return err
+	}
+
 	// Convert the response to JSON
 	jsonData, err := json.Marshal(data)
 	if err != nil {
@@ -151,7 +164,7 @@ func setAccessDataAgainstUserIdAndAccessTypeFromCache(redisClient *redis.Client,
 	}
 
 	// Store in Redis with expiration (e.g., 5 minutes)
-	err = cache.Set(redisClient, cacheKey, string(jsonData), time.Minute*5)
+	err = cache.Set(redisClient, cacheKey, string(jsonData), time.Minute*time.Duration(intCacheExpirationTime))
 	if err != nil {
 		logging.Error(fmt.Sprintf("Error setting access data in cache for key: %s, err: %v", cacheKey, err))
 		return err
@@ -170,6 +183,7 @@ func DeleteAccessDataAgainstUserIdAndAccessTypeFromCache(redisClient *redis.Clie
 		logging.Error(fmt.Sprintf("Error deleting access data from cache for key: %s, err: %v", cacheKey, err))
 		return err
 	}
+	logging.Info(fmt.Sprintf("Successfully deleted access data from cache for key: %s", cacheKey))
 	return nil
 }
 
@@ -186,6 +200,7 @@ func DeleteMultipleAccessDataAgainstUserIdAndAccessTypeFromCache(redisClient *re
 		logging.Error(fmt.Sprintf("Error deleting access data from cache for multiple keys: %s, err: %v", keyPatterns, err))
 		return err
 	}
+	logging.Info(fmt.Sprintf("Successfully deleted access data from cache for MULTIPLE keys: %s", keyPatterns))
 	return nil
 }
 
@@ -199,5 +214,6 @@ func DeleteAllAccessDataAgainstUserIdAndAccessTypeFromCache(redisClient *redis.C
 		logging.Error(fmt.Sprintf("Error deleting access data from cache for key: %s, err: %v", cacheKey, err))
 		return err
 	}
+	logging.Info(fmt.Sprintf("Successfully deleted access data from cache for ALL keys: %s", cacheKey))
 	return nil
 }
