@@ -93,7 +93,6 @@ func FetchPersonalisedFeed(c *gin.Context) {
 	params := map[string]string{
 		ParamPage:     c.Query(ParamPage),
 		ParamPageSize: c.Query(ParamPageSize),
-		ParamPostIds:  c.Query(ParamPostIds),
 	}
 
 	// Send request to /feed/personalised
