@@ -24,11 +24,8 @@ func InitRedis() *redis.Client {
 		Addr: dsn,
 	})
 
-	serverEnv := environment.GoDotEnvVariable(environment.EnvServerEnviornment)
-	if serverEnv == "load" {
-		client.Options().Password = password
-		client.Options().TLSConfig = &tls.Config{MinVersion: tls.VersionTLS12}
-	}
+	client.Options().Password = password
+	client.Options().TLSConfig = &tls.Config{MinVersion: tls.VersionTLS12}
 
 	_, err := client.Ping().Result()
 	if err != nil {
