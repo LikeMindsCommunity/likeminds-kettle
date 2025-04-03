@@ -36,20 +36,21 @@ pipeline {
         stage('Download File from Azure Blob') {
             steps {
                 sh '''
-                az storage blob download --account-name $AZURE_STORAGE_ACCOUNT \
-                                         --container-name $AZURE_STORAGE_CONTAINER \
-                                         --name $BLOB_NAME \
-                                         --file $DOWNLOAD_PATH \
-                                         --auth-mode login
+                    az storage blob download --account-name $AZURE_STORAGE_ACCOUNT \
+                    --container-name $AZURE_STORAGE_CONTAINER \
+                    --name $BLOB_NAME \
+                    --file $DOWNLOAD_PATH \
+                    --auth-mode login
                 '''
             }
         }
 
         stage('Login to ACR') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'likeminds-staging-acr-credentials', usernameVariable: 'ACR_USERNAME', passwordVariable: 'ACR_PASSWORD')]) {
-                    sh "echo $ACR_PASSWORD | docker login $ACR_LOGIN_SERVER -u $ACR_USERNAME -p $ACR_PASSWORD"
-                }
+                sh '''
+                    docker login $ACR_LOGIN_SERVER -u "$(jq -r .clientId azure_credentials.json)" \
+                    -p "$(jq -r .clientSecret azure_credentials.json)" -p $ACR_PASSWORD"
+                '''
             }
         }
 
