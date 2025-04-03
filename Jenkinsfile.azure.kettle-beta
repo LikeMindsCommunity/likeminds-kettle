@@ -75,7 +75,7 @@ pipeline {
         
         stage ('Remove Image from jenkins') {
             steps {
-                sh "sudo docker rmi $ACR_LOGIN_SERVER/likeminds-authentication/kettle-staging:kettle-V$BUILD_NUMBER"
+                sh "docker rmi $ACR_LOGIN_SERVER/likeminds-authentication/kettle-staging:kettle-V$BUILD_NUMBER"
             }
         }
 
