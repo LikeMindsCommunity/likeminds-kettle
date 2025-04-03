@@ -49,7 +49,7 @@ pipeline {
             steps {
                 sh '''
                     docker login $ACR_LOGIN_SERVER -u "$(jq -r .clientId azure_credentials.json)" \
-                    -p "$(jq -r .clientSecret azure_credentials.json)"
+                    -p "$(jq -r .clientSecret azure_credentials.json)" -p $ACR_PASSWORD"
                 '''
             }
         }
@@ -58,7 +58,7 @@ pipeline {
         stage ('Build Image') {
             steps {
                 sh '''
-                    docker build -f Dockerfile.kettle-beta -t $ACR_LOGIN_SERVER/likeminds-authentication/kettle-V$BUILD_NUMBER .
+                    docker build -f Dockerfile.kettle-beta -t $ACR_LOGIN_SERVER/likeminds-authentication/kettle-staging:kettle-V$BUILD_NUMBER .
                 '''
             }
         }
@@ -68,14 +68,14 @@ pipeline {
             steps {
                 sh '''
                     az acr login --name $ACR_NAME
-                    docker push $ACR_LOGIN_SERVER/likeminds-authentication/kettle:kettle-V$BUILD_NUMBER
+                    docker push $ACR_LOGIN_SERVER/likeminds-authentication/kettle-staging:kettle-V$BUILD_NUMBER
                 '''
             }
         }
         
         stage ('Remove Image from jenkins') {
             steps {
-                sh "sudo docker rmi $ACR_LOGIN_SERVER/likeminds-authentication/kettle:kettle-V$BUILD_NUMBER"
+                sh "sudo docker rmi $ACR_LOGIN_SERVER/likeminds-authentication/kettle-staging:kettle-V$BUILD_NUMBER"
             }
         }
 
