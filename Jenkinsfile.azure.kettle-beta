@@ -45,11 +45,18 @@ pipeline {
             }
         }
 
+        stage('Login to ACR') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'likeminds-staging-acr-credentials', usernameVariable: 'ACR_USERNAME', passwordVariable: 'ACR_PASSWORD')]) {
+                    sh "echo $ACR_PASSWORD | docker login $ACR_LOGIN_SERVER -u $ACR_USERNAME --password-stdin"
+                }
+            }
+        }
+
         
         stage ('Build Image') {
             steps {
                 sh '''
-                    az acr login --name $ACR_NAME
                     docker build -f Dockerfile.kettle-beta -t $ACR_LOGIN_SERVER/likeminds-authentication/kettle-V$BUILD_NUMBER .
                 '''
             }
