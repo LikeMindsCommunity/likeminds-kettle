@@ -23,8 +23,8 @@ pipeline {
         stage('Login to Azure') {
             steps {
                 withCredentials([string(credentialsId: 'likeminds-staging-service-principal-jenkins-credentials', variable: 'AZURE_CREDENTIALS')]) {          
-                    sh "echo $AZURE_CREDENTIALS > azure_credentials.json"
                     sh '''
+                        echo $AZURE_CREDENTIALS > azure_credentials.json
                         az login --service-principal -u "$(jq -r .clientId azure_credentials.json)" \
                                 -p "$(jq -r .clientSecret azure_credentials.json)" \
                                 --tenant "$(jq -r .tenantId azure_credentials.json)"
