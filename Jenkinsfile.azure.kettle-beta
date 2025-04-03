@@ -49,7 +49,7 @@ pipeline {
             steps {
                 sh '''
                     docker login $ACR_LOGIN_SERVER -u "$(jq -r .clientId azure_credentials.json)" \
-                    -p "$(jq -r .clientSecret azure_credentials.json)" -p $ACR_PASSWORD"
+                    -p "$(jq -r .clientSecret azure_credentials.json)"
                 '''
             }
         }
