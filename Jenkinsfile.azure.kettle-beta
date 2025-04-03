@@ -2,10 +2,15 @@ pipeline {
     agent any
 
     environment {
+        // Azure Blob Storage Credentials
         AZURE_STORAGE_ACCOUNT = 'likemindsstagingstorage'
         AZURE_STORAGE_CONTAINER = 'likeminds-staging-configs'
         BLOB_NAME = 'kettle-beta/kettle-beta-dot-env-private'
         DOWNLOAD_PATH = '.env'
+
+        // Azure Container Registry Credentials
+        ACR_NAME = 'likemindsstagingregistry'
+        ACR_LOGIN_SERVER = 'likemindsstagingregistry.azurecr.io'
     }
 
     stages {
@@ -17,12 +22,12 @@ pipeline {
         
         stage('Login to Azure') {
             steps {
-                withCredentials([string(credentialsId: 'likeminds-staging-service-principal-jenkins-credentials', variable: 'AZURE_CREDENTIALS')]) {
+                withCredentials([string(credentialsId: 'likeminds-staging-service-principal-jenkins-credentials', variable: 'AZURE_CREDENTIALS')]) {          
+                    sh "echo $AZURE_CREDENTIALS > azure_credentials.json"
                     sh '''
-                    echo $AZURE_CREDENTIALS > azure_credentials.json
-                    az login --service-principal -u "$(jq -r .clientId azure_credentials.json)" \
-                            -p "$(jq -r .clientSecret azure_credentials.json)" \
-                            --tenant "$(jq -r .tenantId azure_credentials.json)"
+                        az login --service-principal -u "$(jq -r .clientId azure_credentials.json)" \
+                                -p "$(jq -r .clientSecret azure_credentials.json)" \
+                                --tenant "$(jq -r .tenantId azure_credentials.json)"
                     '''
                 }
             }
@@ -41,24 +46,30 @@ pipeline {
         }
 
         
-        // stage ('Build Image') {
-        //     steps {
-        //         sh "sudo docker build -f Dockerfile.kettle-beta -t 081371230266.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:kettle-V$BUILD_NUMBER ."
-        //     }
-        // }
+        stage ('Build Image') {
+            steps {
+                sh '''
+                    az acr login --name $ACR_NAME
+                    docker build -f Dockerfile.kettle-beta -t $ACR_LOGIN_SERVER/likeminds-authentication/kettle-V$BUILD_NUMBER .
+                '''
+            }
+        }
+
         
-        // stage ('Push Image') {
-        //     steps {
-        //         sh "aws ecr get-login-password --region ap-south-1 | sudo docker login --username AWS --password-stdin 081371230266.dkr.ecr.ap-south-1.amazonaws.com"
-        //         sh "sudo docker push 081371230266.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:kettle-V$BUILD_NUMBER"
-        //     }
-        // }
+        stage ('Push Image') {
+            steps {
+                sh '''
+                    az acr login --name $ACR_NAME
+                    docker push $ACR_LOGIN_SERVER/likeminds-authentication/kettle:kettle-V$BUILD_NUMBER
+                '''
+            }
+        }
         
-        // stage ('Remove Image from jenkins') {
-        //     steps {
-        //         sh "sudo docker rmi 081371230266.dkr.ecr.ap-south-1.amazonaws.com/likeminds-authentication-repo:kettle-V$BUILD_NUMBER"
-        //     }
-        // }
+        stage ('Remove Image from jenkins') {
+            steps {
+                sh "sudo docker rmi $ACR_LOGIN_SERVER/likeminds-authentication/kettle:kettle-V$BUILD_NUMBER"
+            }
+        }
 
         // stage ("Build and Push OpenAPI Spec file to S3") {
         //     steps{
