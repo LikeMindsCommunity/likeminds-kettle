@@ -1,7 +1,6 @@
 package cache
 
 import (
-	"crypto/tls"
 	"fmt"
 	"time"
 
@@ -25,7 +24,9 @@ func InitRedis() *redis.Client {
 	})
 
 	client.Options().Password = password
-	client.Options().TLSConfig = &tls.Config{MinVersion: tls.VersionTLS12}
+
+	// disabling tls config as using private hosted DNS zone in azure
+	// client.Options().TLSConfig = &tls.Config{MinVersion: tls.VersionTLS12}
 
 	_, err := client.Ping().Result()
 	if err != nil {
