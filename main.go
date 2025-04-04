@@ -46,7 +46,7 @@ var (
 )
 
 const (
-	AppVersion      = "2.58.0"
+	AppVersion      = "2.59.0"
 	RouterAPortAddr = ":8080"
 	RouterBPortAddr = ":8083"
 )
