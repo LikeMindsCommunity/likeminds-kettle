@@ -24,10 +24,13 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'likeminds-staging-service-principal-jenkins-credentials', variable: 'AZURE_CREDENTIALS')]) {          
                     sh '''
+                        set +x
                         echo $AZURE_CREDENTIALS > azure_credentials.json
                         az login --service-principal -u "$(jq -r .clientId azure_credentials.json)" \
                                 -p "$(jq -r .clientSecret azure_credentials.json)" \
                                 --tenant "$(jq -r .tenantId azure_credentials.json)"
+                        set -x
+                        echo 'silent login to azure successful'
                     '''
                 }
             }
@@ -48,8 +51,11 @@ pipeline {
         stage('Login to ACR') {
             steps {
                 sh '''
+                    set +x
                     docker login $ACR_LOGIN_SERVER -u "$(jq -r .clientId azure_credentials.json)" \
                     -p "$(jq -r .clientSecret azure_credentials.json)"
+                    set -x
+                    echo 'silent login to ACR successful'
                 '''
             }
         }
