@@ -23,6 +23,7 @@ func FetchUniversalFeed(c *gin.Context) {
 		ParamPageSize:  c.Query(ParamPageSize),
 		ParamTopicIds:  c.Query(ParamTopicIds),
 		ParamWidgetIds: c.Query(ParamWidgetIds),
+		ParamPostIds:   c.Query(ParamPostIds),
 	}
 
 	//Fetch member access to view post
