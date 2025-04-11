@@ -420,6 +420,7 @@ func EnableCorsMiddleware() gin.HandlerFunc {
 	config.AllowAllOrigins = true
 	config.AddAllowHeaders(
 		"x-member-id",
+		"x-api-version",
 		"x-platform-code",
 		"x-platform-type",
 		"x-version-code",
