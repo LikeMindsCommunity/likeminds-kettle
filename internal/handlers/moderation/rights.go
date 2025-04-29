@@ -167,9 +167,6 @@ func editRightsInternal(c *gin.Context, userId string) {
 		//Generate response
 		utils.GenerateResponse(c, apiCR.Response, false)
 
-		// delete cached user feed access rights
-		user.DeleteAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), rightsRequest.UserId.(string))
-
 	} else {
 		//else, call update cm rights api internally
 

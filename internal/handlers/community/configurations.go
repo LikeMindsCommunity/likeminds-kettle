@@ -73,7 +73,4 @@ func UpdateCommunityConfigurations(c *gin.Context) {
 	utils.SendRequest(c, utils.CoreService, CommunityConfigurationsEndpoint, utils.PATCHRequest,
 		utils.CreateHeaders(c, userId), nil, uccr)
 
-	// delete cached user feed access rights
-	user.DeleteAllAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c))
-
 }
