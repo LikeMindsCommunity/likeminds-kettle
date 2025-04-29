@@ -43,9 +43,6 @@ func RemoveCommunityManager(c *gin.Context) {
 	//Send Request
 	utils.SendRequest(c, utils.CoreService, RemoveCMEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeCMRequest)
 
-	// delete cached user feed access rights
-	user.DeleteAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), removeCMRequest.UserId.(string))
-
 }
 
 func parseRemoveCMRequest(c *gin.Context) (*RemoveCommunityManagerRequest, error) {

@@ -238,7 +238,4 @@ func deleteFeedroomInternal(c *gin.Context, userId string) {
 	//Send Request
 	utils.SendRequest(c, utils.CoreService, chatroom.DeleteChatroomEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, deleteChatroomRequest)
 
-	// delete cached user feed access rights
-	user.DeleteAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), userId)
-
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/constants"
@@ -265,7 +266,6 @@ func GetPostInternal(c *gin.Context, userId string, postId string) map[string]in
 }
 
 // createPostInternal handles the post creation request
-// createPostInternal handles the post creation request
 func createPostInternal(c *gin.Context, userId string) {
 	headers := utils.CreateHeaders(c, userId)
 
@@ -276,71 +276,66 @@ func createPostInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	// Create channels for concurrent tasks
-	accessChan := make(chan struct {
-		access bool
-		isCm   bool
-	}, 1)
-	taggedUsersChan := make(chan []string, 1)
-	approvalNeededChan := make(chan bool, 1)
-	onBehalfChan := make(chan struct {
-		isCm       bool
-		parsedUUID string
-	}, 1)
+	// Declare variables to store concurrent results
+	var (
+		access         bool
+		isCm           bool
+		taggedUsers    []string
+		approvalNeeded bool
+		onBehalfIsCm   bool
+		parsedUUID     string
+	)
+
+	var wg sync.WaitGroup
 
 	// Start concurrent tasks
-	go func() {
-		access, isCm := checkAccessForCreatPost(c, userId, isPollInPostAttachments(createPostRequest.Attachments))
-		accessChan <- struct {
-			access bool
-			isCm   bool
-		}{access, isCm}
-		close(accessChan)
-	}()
+	wg.Add(3)
 
-	go func() {
-		taggedUsersChan <- getTaggedUsersFromText(utils.CreateHeaders(c, userId), createPostRequest.Text)
-		close(taggedUsersChan)
-	}()
+	utils.SafeGo(func() {
+		defer wg.Done()
+		// Check access rights
+		access, isCm = checkAccessForCreatPost(c, userId, isPollInPostAttachments(createPostRequest.Attachments))
+	})
 
-	go func() {
-		approvalNeededChan <- utils.IsPostApprovalNeeded(utils.GetRedisClientFromContext(c), headers, false)
-		close(approvalNeededChan)
-	}()
+	utils.SafeGo(func() {
+		defer wg.Done()
+		// Extract tagged users from post text
+		taggedUsers = getTaggedUsersFromText(utils.CreateHeaders(c, userId), createPostRequest.Text)
+	})
+
+	utils.SafeGo(func() {
+		defer wg.Done()
+		// Check if post approval is needed
+		approvalNeeded = utils.IsPostApprovalNeeded(utils.GetRedisClientFromContext(c), headers, false)
+	})
 
 	// Handle OnBehalfOfUUID check (only if present)
 	if createPostRequest.OnBehalfOfUUID != "" {
-		go func() {
-			isCm, parsedUUID := validateAndFetchOnBehalfUUID(c, userId, createPostRequest)
-			onBehalfChan <- struct {
-				isCm       bool
-				parsedUUID string
-			}{isCm, parsedUUID}
-			close(onBehalfChan)
-		}()
-	} else {
-		close(onBehalfChan) // Close immediately if not used to prevent blocking
+		wg.Add(1)
+		utils.SafeGo(func() {
+			defer wg.Done()
+			// Validate OnBehalfOfUUID and fetch corresponding data
+			onBehalfIsCm, parsedUUID = validateAndFetchOnBehalfUUID(c, userId, createPostRequest)
+		})
 	}
 
-	// Collect results from channels
-	accessResult := <-accessChan
-	if !accessResult.access {
+	// Wait for all concurrent tasks to complete
+	wg.Wait()
+
+	// Validate access result
+	if !access {
 		return
 	}
 
-	taggedUsers := <-taggedUsersChan
-	approvalNeeded := <-approvalNeededChan
-
-	// If OnBehalfOfUUID was present, get the result
+	// If OnBehalfOfUUID was present, check its result
 	if createPostRequest.OnBehalfOfUUID != "" {
-		onBehalfResult := <-onBehalfChan
-		if !onBehalfResult.isCm {
+		if !onBehalfIsCm {
 			return
 		}
-		createPostRequest.UserIsCm = onBehalfResult.isCm
-		createPostRequest.OnBehalfOfUUID = onBehalfResult.parsedUUID
+		createPostRequest.UserIsCm = onBehalfIsCm
+		createPostRequest.OnBehalfOfUUID = parsedUUID
 	} else {
-		createPostRequest.UserIsCm = accessResult.isCm
+		createPostRequest.UserIsCm = isCm
 	}
 
 	// Update request object with fetched values

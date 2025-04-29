@@ -167,17 +167,11 @@ func editRightsInternal(c *gin.Context, userId string) {
 		//Generate response
 		utils.GenerateResponse(c, apiCR.Response, false)
 
-		// delete cached user feed access rights
-		user.DeleteAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), rightsRequest.UserId.(string))
-
 	} else {
 		//else, call update cm rights api internally
 
 		//Send Request
 		utils.SendRequest(c, utils.CoreService, UpdateCMRights, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, rightsRequest)
-
-		// delete cached user feed access rights
-		user.DeleteAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), rightsRequest.UUID)
 
 	}
 }
@@ -223,7 +217,7 @@ func updateRightsInternal(c *gin.Context, userId string) {
 		utils.GenerateResponse(c, apiCR.Response, false)
 
 		// delete cached user feed access rights
-		user.DeleteAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), rightsRequest.UUID)
+		// user.DeleteAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), rightsRequest.UUID)
 
 	} else {
 
@@ -231,7 +225,7 @@ func updateRightsInternal(c *gin.Context, userId string) {
 		utils.SendRequest(c, utils.CoreService, UpdateCMRights, utils.PATCHRequest, utils.CreateHeaders(c, userId), nil, rightsRequest)
 
 		// delete cached user feed access rights
-		user.DeleteAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), rightsRequest.UUID)
+		// user.DeleteAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), rightsRequest.UUID)
 	}
 }
 
