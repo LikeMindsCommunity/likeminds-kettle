@@ -45,9 +45,6 @@ func CohortMember(c *gin.Context, method int) {
 		// Send Request
 		utils.SendRequest(c, utils.CoreService, RemoveCohortMemberEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, removeCohortMemberRequest)
 
-		// delete cached user feed access rights
-		user.DeleteAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), removeCohortMemberRequest.UUID)
-
 	}
 }
 

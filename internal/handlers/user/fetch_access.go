@@ -65,7 +65,9 @@ func FetchMemberAccess(c *gin.Context, accessType string, userId string) (bool, 
 	}
 
 	// Store response in Redis for 5 minutes
-	setAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), accessType, userId, response)
+	utils.SafeGo(func() {
+		setAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), accessType, userId, response)
+	})
 
 	return true, response
 }
@@ -113,7 +115,7 @@ func setAccessDataAgainstUserIdAndAccessTypeFromCache(redisClient *redis.Client,
 		return err
 	}
 
-	// Convert the response to JSON
+	// Marshal data to JSON bytes
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		logging.Error(fmt.Sprintf("Error marshaling access data for key: %s, err: %v", cacheKey, err))
