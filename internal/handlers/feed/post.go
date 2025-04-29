@@ -276,58 +276,46 @@ func createPostInternal(c *gin.Context, userId string) {
 		return
 	}
 
-	// Declare variables to store concurrent results
+	// Concurrent result variables
 	var (
-		access         bool
-		isCm           bool
-		taggedUsers    []string
-		approvalNeeded bool
-		onBehalfIsCm   bool
-		parsedUUID     string
+		access       bool
+		isCm         bool
+		taggedUsers  []string
+		onBehalfIsCm bool
+		parsedUUID   string
 	)
 
 	var wg sync.WaitGroup
 
-	// Start concurrent tasks
-	wg.Add(3)
+	wg.Add(2)
 
 	utils.SafeGo(func() {
 		defer wg.Done()
-		// Check access rights
 		access, isCm = checkAccessForCreatPost(c, userId, isPollInPostAttachments(createPostRequest.Attachments))
 	})
 
 	utils.SafeGo(func() {
 		defer wg.Done()
-		// Extract tagged users from post text
-		taggedUsers = getTaggedUsersFromText(utils.CreateHeaders(c, userId), createPostRequest.Text)
+		taggedUsers = getTaggedUsersFromText(headers, createPostRequest.Text)
 	})
 
-	utils.SafeGo(func() {
-		defer wg.Done()
-		// Check if post approval is needed
-		approvalNeeded = utils.IsPostApprovalNeeded(utils.GetRedisClientFromContext(c), headers, false)
-	})
-
-	// Handle OnBehalfOfUUID check (only if present)
+	// If OnBehalfOfUUID is present, validate it
 	if createPostRequest.OnBehalfOfUUID != "" {
 		wg.Add(1)
 		utils.SafeGo(func() {
 			defer wg.Done()
-			// Validate OnBehalfOfUUID and fetch corresponding data
 			onBehalfIsCm, parsedUUID = validateAndFetchOnBehalfUUID(c, userId, createPostRequest)
 		})
 	}
 
-	// Wait for all concurrent tasks to complete
 	wg.Wait()
 
-	// Validate access result
+	// Check access
 	if !access {
 		return
 	}
 
-	// If OnBehalfOfUUID was present, check its result
+	// Handle OnBehalfOfUUID result
 	if createPostRequest.OnBehalfOfUUID != "" {
 		if !onBehalfIsCm {
 			return
@@ -338,10 +326,13 @@ func createPostInternal(c *gin.Context, userId string) {
 		createPostRequest.UserIsCm = isCm
 	}
 
-	// Update request object with fetched values
+	// Assign tagged users
 	createPostRequest.UUIDs = taggedUsers
 
-	// Determine correct API endpoint
+	// compute approvalNeeded using isCm
+	approvalNeeded := utils.IsPostApprovalNeeded(utils.GetRedisClientFromContext(c), headers, isCm)
+
+	// Decide which endpoint to use
 	var createPostEndpoint string
 	if !approvalNeeded {
 		createPostEndpoint = CreatePostEndPoint
@@ -351,13 +342,8 @@ func createPostInternal(c *gin.Context, userId string) {
 
 	// Send request to create post
 	respBytes, statusCode := utils.GetRequestResponse(
-		c,
-		utils.SwarmService,
-		createPostEndpoint,
-		utils.POSTRequestRawBody,
-		utils.CreateHeaders(c, userId),
-		nil,
-		createPostRequest,
+		c, utils.SwarmService, createPostEndpoint,
+		utils.POSTRequestRawBody, headers, nil, createPostRequest,
 	)
 
 	// Validate response
@@ -376,19 +362,13 @@ func createPostInternal(c *gin.Context, userId string) {
 			chatroom.ParamMemberId:     userId,
 			chatroom.ParamValue:        "true",
 		}
-
-		// Run in background as it's not essential for immediate response
-		go utils.GetRequestResponseWithoutContext(
-			utils.CoreService,
-			chatroom.CollabcardFollowEndPoint,
-			utils.GETRequest,
-			utils.CreateHeaders(c, userId),
-			params,
-			nil,
+		utils.GetRequestResponseWithoutContext(
+			utils.CoreService, chatroom.CollabcardFollowEndPoint,
+			utils.GETRequest, headers, params, nil,
 		)
 	}
 
-	// Generate API response
+	// Return final response
 	utils.GenerateResponse(c, dataResponse, true)
 }
 
