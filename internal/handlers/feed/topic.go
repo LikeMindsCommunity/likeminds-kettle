@@ -15,6 +15,7 @@ type CreateTopicRequest struct {
 	ParentId     string                 `json:"parent_id"`
 	IsEnabled    *bool                  `json:"is_enabled"`
 	Metadata     map[string]interface{} `json:"metadata"`
+	Access       string                 `json:"access"`
 }
 
 type CreateTopicsRequest struct {
@@ -32,6 +33,7 @@ type EditTopicRequest struct {
 	Priority     *float32               `json:"priority"`
 	IsSearchable *bool                  `json:"is_searchable"`
 	Metadata     map[string]interface{} `json:"metadata"`
+	Access       string                 `json:"access"`
 }
 
 func parseCreateTopicsRequest(c *gin.Context) (*CreateTopicsRequest, error) {
