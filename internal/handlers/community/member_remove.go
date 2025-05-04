@@ -60,9 +60,6 @@ func RemoveMember(c *gin.Context) {
 	// Send Request to caravan service to remove member
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.CoreService, RemoveMemberEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeMemberRequest)
 
-	// delete cached user feed access rights
-	user.DeleteMultipleAccessDataAgainstUserIdAndAccessTypeFromCache(utils.GetRedisClientFromContext(c), removeMemberRequest.UUIDs.([]string))
-
 	// Validate response and if false then return
 	apiCr := utils.ValidateClientResponse(c, respBytes, statusCode)
 	if apiCr == nil {

@@ -362,10 +362,12 @@ func createPostInternal(c *gin.Context, userId string) {
 			chatroom.ParamMemberId:     userId,
 			chatroom.ParamValue:        "true",
 		}
-		utils.GetRequestResponseWithoutContext(
-			utils.CoreService, chatroom.CollabcardFollowEndPoint,
-			utils.GETRequest, headers, params, nil,
-		)
+		utils.SafeGo(func() {
+			utils.GetRequestResponseWithoutContext(
+				utils.CoreService, chatroom.CollabcardFollowEndPoint,
+				utils.GETRequest, headers, params, nil,
+			)
+		})
 	}
 
 	// Return final response
