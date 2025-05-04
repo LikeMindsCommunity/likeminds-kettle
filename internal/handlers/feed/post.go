@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/constants"
@@ -264,81 +265,110 @@ func GetPostInternal(c *gin.Context, userId string, postId string) map[string]in
 	return dataResponse
 }
 
+// createPostInternal handles the post creation request
 func createPostInternal(c *gin.Context, userId string) {
-
 	headers := utils.CreateHeaders(c, userId)
 
-	//Body to be sent in the /post POST request
+	// Parse request body
 	createPostRequest, err := parseCreatePostRequest(c)
 	if err != nil {
-		//If POST body params are missing
 		utils.GeneralBadRequestError(c, err.Error())
 		return
 	}
 
-	access, isCm := checkAccessForCreatPost(c, userId, isPollInPostAttachments(createPostRequest.Attachments))
+	// Concurrent result variables
+	var (
+		access       bool
+		isCm         bool
+		taggedUsers  []string
+		onBehalfIsCm bool
+		parsedUUID   string
+	)
+
+	var wg sync.WaitGroup
+
+	wg.Add(2)
+
+	utils.SafeGo(func() {
+		defer wg.Done()
+		access, isCm = checkAccessForCreatPost(c, userId, isPollInPostAttachments(createPostRequest.Attachments))
+	})
+
+	utils.SafeGo(func() {
+		defer wg.Done()
+		taggedUsers = getTaggedUsersFromText(headers, createPostRequest.Text)
+	})
+
+	// If OnBehalfOfUUID is present, validate it
+	if createPostRequest.OnBehalfOfUUID != "" {
+		wg.Add(1)
+		utils.SafeGo(func() {
+			defer wg.Done()
+			onBehalfIsCm, parsedUUID = validateAndFetchOnBehalfUUID(c, userId, createPostRequest)
+		})
+	}
+
+	wg.Wait()
+
+	// Check access
 	if !access {
 		return
 	}
 
-	//Update user_is_cm in request
-	createPostRequest.UserIsCm = isCm
-
-	if createPostRequest.IsRepost && !utils.FeedRepostSettingsEnabled(utils.GetRedisClientFromContext(c), headers) {
-		utils.GeneralBadRequestError(c, utils.ErrorRepostSettingNotEnabled)
-		return
-	}
-
+	// Handle OnBehalfOfUUID result
 	if createPostRequest.OnBehalfOfUUID != "" {
-
-		isCm, parsedUUID := validateAndFetchOnBehalfUUID(c, userId, createPostRequest)
-		if !isCm {
+		if !onBehalfIsCm {
 			return
 		}
-
-		createPostRequest.UserIsCm = isCm
+		createPostRequest.UserIsCm = onBehalfIsCm
 		createPostRequest.OnBehalfOfUUID = parsedUUID
-
+	} else {
+		createPostRequest.UserIsCm = isCm
 	}
 
-	//Get tagged users from text
-	taggedUsers := getTaggedUsersFromText(utils.CreateHeaders(c, userId), createPostRequest.Text)
+	// Assign tagged users
 	createPostRequest.UUIDs = taggedUsers
-	var createPostEndpoint string
 
-	if !utils.IsPostApprovalNeeded(utils.GetRedisClientFromContext(c), headers, isCm) {
+	// compute approvalNeeded using isCm
+	approvalNeeded := utils.IsPostApprovalNeeded(utils.GetRedisClientFromContext(c), headers, isCm)
+
+	// Decide which endpoint to use
+	var createPostEndpoint string
+	if !approvalNeeded {
 		createPostEndpoint = CreatePostEndPoint
 	} else {
 		createPostEndpoint = CreatePendingPostEndPoint
 	}
 
-	// Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, createPostEndpoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createPostRequest)
+	// Send request to create post
+	respBytes, statusCode := utils.GetRequestResponse(
+		c, utils.SwarmService, createPostEndpoint,
+		utils.POSTRequestRawBody, headers, nil, createPostRequest,
+	)
 
-	//Validate response
+	// Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
 	if apiCR == nil {
 		return
 	}
 
-	//If flow succeeds
-	dataResponse := apiCR.Response
-	dataResponse = populatePostDataResponse(c, dataResponse)
+	// Process response
+	dataResponse := populatePostDataResponse(c, apiCR.Response)
 
-	//If flow succeeds
+	// Follow chatroom if applicable
 	if createPostRequest.FeedroomID != 0 {
-		//Params to be sent in the api/collabcard_follow request
 		params := map[string]string{
 			chatroom.ParamCollabcardId: strconv.Itoa(createPostRequest.FeedroomID),
 			chatroom.ParamMemberId:     userId,
 			chatroom.ParamValue:        "true",
 		}
-
-		//Send Request to follow the chatroom for the post creator
-		utils.GetRequestResponseWithoutContext(utils.CoreService, chatroom.CollabcardFollowEndPoint, utils.GETRequest, utils.CreateHeaders(c, userId), params, nil)
+		utils.GetRequestResponseWithoutContext(
+			utils.CoreService, chatroom.CollabcardFollowEndPoint,
+			utils.GETRequest, headers, params, nil,
+		)
 	}
 
-	//Generate Response
+	// Return final response
 	utils.GenerateResponse(c, dataResponse, true)
 }
 

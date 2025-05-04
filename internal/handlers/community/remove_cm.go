@@ -42,6 +42,7 @@ func RemoveCommunityManager(c *gin.Context) {
 
 	//Send Request
 	utils.SendRequest(c, utils.CoreService, RemoveCMEndPoint, utils.POSTRequestFormUrlEncodedBody, utils.CreateHeaders(c, userId), nil, removeCMRequest)
+
 }
 
 func parseRemoveCMRequest(c *gin.Context) (*RemoveCommunityManagerRequest, error) {

@@ -187,6 +187,7 @@ func editMemberInternal(c *gin.Context, userId string) {
 
 	//Send Request
 	utils.SendRequest(c, utils.CoreService, CommunityMemberEndPoint, utils.PUTRequest, utils.CreateHeaders(c, userId), nil, memberRequest)
+
 }
 
 func removeMembersInternal(c *gin.Context, userId string) {
@@ -201,6 +202,7 @@ func removeMembersInternal(c *gin.Context, userId string) {
 
 	//Send Request to internal core service
 	utils.SendRequest(c, utils.CoreService, CommunityMemberEndPoint, utils.DELETERequest, utils.CreateHeaders(c, userId), nil, memberRequest)
+
 }
 
 // Exposed method to leave community
