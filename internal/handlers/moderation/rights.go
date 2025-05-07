@@ -172,6 +172,7 @@ func editRightsInternal(c *gin.Context, userId string) {
 
 		//Send Request
 		utils.SendRequest(c, utils.CoreService, UpdateCMRights, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, rightsRequest)
+
 	}
 }
 
@@ -219,6 +220,7 @@ func updateRightsInternal(c *gin.Context, userId string) {
 
 		//Send Request to api/update_community_manager_rights
 		utils.SendRequest(c, utils.CoreService, UpdateCMRights, utils.PATCHRequest, utils.CreateHeaders(c, userId), nil, rightsRequest)
+
 	}
 }
 

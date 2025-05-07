@@ -10,6 +10,7 @@ import (
 )
 
 func GetUserFeedMeta(c *gin.Context) {
+
 	// Authorize User
 	userId := user.GetRequestingUserId(c)
 	if userId == "" {
