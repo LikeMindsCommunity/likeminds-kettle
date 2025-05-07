@@ -2,7 +2,6 @@ package feed
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
@@ -11,9 +10,6 @@ import (
 )
 
 func GetUserFeedMeta(c *gin.Context) {
-
-	timestamp1 := time.Now().Format("2006-01-02 15:04:05")
-	fmt.Println(timestamp1 + " - timestamp1")
 
 	// Authorize User
 	userId := user.GetRequestingUserId(c)
@@ -39,14 +35,8 @@ func GetUserFeedMeta(c *gin.Context) {
 
 	endpoint := fmt.Sprintf(FetchUserFeedMetaEndPoint, userUUID)
 
-	timestamp2 := time.Now().Format("2006-01-02 15:04:05")
-	fmt.Println(timestamp2 + " - timestamp2")
-
 	//Send Request
 	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, endpoint, utils.GETRequest, headers, nil, nil)
-
-	timestamp9 := time.Now().Format("2006-01-02 15:04:05")
-	fmt.Println(timestamp9 + " - timestamp9")
 
 	// Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
@@ -67,16 +57,10 @@ func GetUserFeedMeta(c *gin.Context) {
 		return
 	}
 
-	timestamp10 := time.Now().Format("2006-01-02 15:04:05")
-	fmt.Println(timestamp10 + " - timestamp10")
-
 	dataResponse["users"] = user_data
 
 	// Update user topics data in dataResponse
 	dataResponse = utils.FetchAndUpdateUserTopicsDataForResponse(redisClient, headers, dataResponse, userUniqueIds)
-
-	timestamp11 := time.Now().Format("2006-01-02 15:04:05")
-	fmt.Println(timestamp11 + " - timestamp11")
 
 	//Send response
 	utils.GenerateResponse(c, dataResponse, true)
