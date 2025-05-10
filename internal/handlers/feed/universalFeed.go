@@ -19,11 +19,12 @@ func FetchUniversalFeed(c *gin.Context) {
 
 	//Params to be sent in the /feed/universal request
 	params := map[string]string{
-		ParamPage:      c.Query(ParamPage),
-		ParamPageSize:  c.Query(ParamPageSize),
-		ParamTopicIds:  c.Query(ParamTopicIds),
-		ParamWidgetIds: c.Query(ParamWidgetIds),
-		ParamPostIds:   c.Query(ParamPostIds),
+		ParamPage:            c.Query(ParamPage),
+		ParamPageSize:        c.Query(ParamPageSize),
+		ParamTopicIds:        c.Query(ParamTopicIds),
+		ParamWidgetIds:       c.Query(ParamWidgetIds),
+		ParamPostIds:         c.Query(ParamPostIds),
+		ParamAttachmentTypes: c.Query(ParamAttachmentTypes),
 	}
 
 	//Fetch member access to view post
