@@ -18,3 +18,9 @@ properties:
   metadata:
     type: object
     description: Widget Metadata for the topic
+  access:
+    type: string
+    description: Type of users who has access to this topic
+    enums:
+      - ONLY_CM
+      - EVERYONE
