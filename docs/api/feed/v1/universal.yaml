@@ -13,6 +13,7 @@ get:
 
   parameters:
     - $ref: "../../../components/parameters/query/page.yaml"
+    - $ref: "../../../components/parameters/query/attachmentTypes.yaml"
 
   responses:
     "200":
