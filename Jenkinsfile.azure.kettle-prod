@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Azure Blob Storage Credentials
-        AZURE_STORAGE_ACCOUNT = 'likemindsproductionstorage'
+        AZURE_STORAGE_ACCOUNT = 'likemindsprodstorage'
         AZURE_STORAGE_CONTAINER = 'likeminds-production-configs'
         BLOB_NAME = 'kettle-prod/kettle-prod-dot-env-private'
         DOWNLOAD_PATH = '.env'
