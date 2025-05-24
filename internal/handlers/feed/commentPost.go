@@ -64,6 +64,9 @@ func CommentPost(c *gin.Context) {
 		return
 	}
 
+	// create header for other services api
+	headers := utils.CreateHeaders(c, userId)
+
 	//Access query params and url generation
 	post_id := c.Param("post_id")
 	CommentPostEndPoint := fmt.Sprintf(SinglePostCommentEndPoint, post_id)
@@ -73,6 +76,7 @@ func CommentPost(c *gin.Context) {
 	if err != nil {
 		//If POST body params are missing
 		utils.GeneralBadRequestError(c, err.Error())
+		return
 	}
 
 	//Fetch member access to view post
@@ -91,11 +95,11 @@ func CommentPost(c *gin.Context) {
 	utils.AddMemberRoleToHeaders(c, response.IsCm)
 
 	//Get tagged users from text
-	taggedUsers := getTaggedUsersFromText(utils.CreateHeaders(c, userId), createPostCommentRequest.Text)
+	taggedUsers := getTaggedUsersFromText(headers, createPostCommentRequest.Text)
 	createPostCommentRequest.UUIDs = taggedUsers
 
 	//Send Request
-	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, CommentPostEndPoint, utils.POSTRequestRawBody, utils.CreateHeaders(c, userId), nil, createPostCommentRequest)
+	respBytes, statusCode := utils.GetRequestResponse(c, utils.SwarmService, CommentPostEndPoint, utils.POSTRequestRawBody, headers, nil, createPostCommentRequest)
 
 	//Validate response
 	apiCR := utils.ValidateClientResponse(c, respBytes, statusCode)
