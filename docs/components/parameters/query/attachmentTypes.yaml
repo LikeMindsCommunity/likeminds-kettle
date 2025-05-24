@@ -1,0 +1,22 @@
+name: attachment_types
+in: query
+description: Attachment types
+required: false
+schema:
+  type: array
+  items:
+    type: string
+    enum: [image, video, document, link, custom, poll, article, post, repost, gif, reel]
+    description: |
+        Attachment type
+        - Image
+        - Video
+        - Document
+        - Link
+        - Custom widget
+        - Poll widget
+        - Article widget
+        - Post widget
+        - Repost widget
+        - GIF widget
+        - Reel
