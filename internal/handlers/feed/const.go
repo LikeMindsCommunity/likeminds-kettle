@@ -59,6 +59,7 @@ const ParamUserId = "user_id"
 const ParamUUIDs = "uuids"
 const ParamShouldReorder = "should_reorder"
 const ParamShouldRecompute = "should_recompute"
+const ParamMemberRole = "member_role"
 
 const FeedRepostCommunitySettingType = "feed_repost"
 

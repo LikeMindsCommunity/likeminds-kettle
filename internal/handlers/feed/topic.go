@@ -129,6 +129,7 @@ func GetTopicInternal(c *gin.Context, userId string) {
 		ParamMinPosts:      c.Query(ParamMinPosts),
 		ParamParentIds:     c.Query(ParamParentIds),
 		ParamTopicsOrderBy: c.Query(ParamTopicsOrderBy),
+		ParamMemberRole:    c.Query(ParamMemberRole),
 	}
 
 	//Fetch member access to view topics
