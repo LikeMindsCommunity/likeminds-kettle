@@ -1,0 +1,7 @@
+name: feed_type
+in: query
+description: Feed type
+required: false
+schema:
+  type: string
+  enum: [social_feed, qna_feed, video_feed]
