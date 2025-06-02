@@ -92,7 +92,14 @@ get:
           - created_at_desc
           - number_of_posts_desc
     example: []
-    
+  - name: member_role
+    in: query
+    description: Member role
+    schema:
+      type: string
+      enum:
+        - CM
+        - MEMBER
   responses:
     "200":
       description: OK
