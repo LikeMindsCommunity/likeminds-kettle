@@ -565,9 +565,7 @@ func LoggingMiddleware() gin.HandlerFunc {
 				"content":            response,
 			}
 
-			if statusCode < http.StatusBadRequest {
-				data["response"].(gin.H)["content"] = gin.H{}
-			}
+			// We are logging the response "content" for successful requests as well. Earlier, we were only logged for error responses.
 
 			// Updating Request Meta Data
 			data["meta"] = gin.H{
