@@ -565,8 +565,6 @@ func LoggingMiddleware() gin.HandlerFunc {
 				"content":            response,
 			}
 
-			// We are logging the response "content" for successful requests as well. Earlier, we were only logged for error responses.
-
 			// Updating Request Meta Data
 			data["meta"] = gin.H{
 				"latency":   endTime.Sub(startTime),
