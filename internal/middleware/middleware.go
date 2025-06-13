@@ -565,10 +565,6 @@ func LoggingMiddleware() gin.HandlerFunc {
 				"content":            response,
 			}
 
-			if statusCode < http.StatusBadRequest {
-				data["response"].(gin.H)["content"] = gin.H{}
-			}
-
 			// Updating Request Meta Data
 			data["meta"] = gin.H{
 				"latency":   endTime.Sub(startTime),
