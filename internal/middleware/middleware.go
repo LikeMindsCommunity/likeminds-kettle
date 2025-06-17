@@ -339,6 +339,7 @@ func ApiMiddleware(client *redis.Client) gin.HandlerFunc {
 func AddResponseHeadersMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		addTransportSecurityHeaders(c)
+		addFrameOptionsHeaders(c)
 		addAPIContentResponseHeaders(c)
 		addCacheControlHeaders(c)
 		c.Next()
@@ -347,6 +348,10 @@ func AddResponseHeadersMiddleware() gin.HandlerFunc {
 
 func addTransportSecurityHeaders(c *gin.Context) {
 	c.Header(StrictTransportSecurityHeaderKey, StrictTransportSecurityHeaderValue)
+}
+
+func addFrameOptionsHeaders(c *gin.Context) {
+	c.Header(FrameOptionsHeaderKey, FrameOptionsHeaderValue)
 }
 
 func addAPIContentResponseHeaders(c *gin.Context) {
