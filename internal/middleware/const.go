@@ -17,6 +17,12 @@ const (
 	// FrameOptionsHeaderValue | api frame options header value
 	FrameOptionsHeaderValue = "DENY"
 
+	// ContentSecurityPolicyHeaderKey | api content security policy header key
+	ContentSecurityPolicyHeaderKey = "Content-Security-Policy"
+
+	// ContentSecurityPolicyHeaderValue | api content security policy header value
+	ContentSecurityPolicyHeaderValue = "default-src https:"
+
 	// ContentTypeOptionsHeaderKey | api content type options header key
 	ContentTypeOptionsHeaderKey = "X-Content-Type-Options"
 
