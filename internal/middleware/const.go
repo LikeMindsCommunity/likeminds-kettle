@@ -9,7 +9,13 @@ const (
 	StrictTransportSecurityHeaderKey = "Strict-Transport-Security"
 
 	// StrictTransportSecurityHeaderValue | strict transport security (TLS) header value, max-age (in hours)
-	StrictTransportSecurityHeaderValue = "max-age=720; includeSubDomains"
+	StrictTransportSecurityHeaderValue = "max-age=31536000; includeSubDomains"
+
+	// FrameOptionsHeaderKey | api frame options header key
+	FrameOptionsHeaderKey = "X-Frame-Options"
+
+	// FrameOptionsHeaderValue | api frame options header value
+	FrameOptionsHeaderValue = "DENY"
 
 	// ContentTypeOptionsHeaderKey | api content type options header key
 	ContentTypeOptionsHeaderKey = "X-Content-Type-Options"
@@ -27,6 +33,6 @@ const (
 // Context Headers
 // Go standard library expects you to always use canonicalized (standardized) case for setting headers
 const (
-	ContextApiKeyHeader = "X-Api-Key"
+	ContextApiKeyHeader       = "X-Api-Key"
 	ContextPlatformTypeheader = "X-Platform-Type"
 )
