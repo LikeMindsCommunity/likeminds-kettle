@@ -85,16 +85,12 @@ pipeline {
             }
         }
 
-        stage ("Build and Push OpenAPI Spec file to Azure Blob") {
+        stage ("Build and Push OpenAPI Spec file to S3") {
             steps{
-                sh '''
-                    swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml
-                    az storage blob upload --account-name $AZURE_STORAGE_ACCOUNT \
-                    --container-name api-docs \
-                    --name kettle/v2.yaml \
-                    --file _build/v2.yaml \
-                    --auth-mode login
-                '''
+                sh 'swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml'
+                withAWS(region:"ap-south-1", credentials:"AWS-S3-CREDS"){
+                        s3Upload(file:'_build/v2.yaml', bucket:'beta-likeminds-media', path:'api-docs/v2.yaml', acl:'PublicRead')
+                }
             }
         }
 
