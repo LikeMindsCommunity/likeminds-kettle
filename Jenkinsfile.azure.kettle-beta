@@ -90,8 +90,8 @@ pipeline {
                 sh '''
                     swagger-cli bundle ./docs/v2.yaml --outfile _build/v2.yaml --type yaml
                     az storage blob upload --account-name $AZURE_STORAGE_ACCOUNT \
-                    --container-name $AZURE_STORAGE_CONTAINER \
-                    --name api-docs/v2.yaml \
+                    --container-name api-docs \
+                    --name kettle/v2.yaml \
                     --file _build/v2.yaml \
                     --auth-mode login
                 '''
