@@ -7,3 +7,47 @@ properties:
     properties:
       conversation:
         $ref: "./partials/conversation.yaml"
+example:
+        success: true
+        data:
+          conversation:
+            allow_add_option: false
+            allow_vote_change: true
+            answer: "Hi"
+            attachment_count: 0
+            attachments_uploaded: false
+            chatroom_id: 102952
+            community_id: 50522
+            created_at: "17:55"
+            created_epoch: 1751372716542
+            date: "01 Jul 2025"
+            end_time: 0
+            has_event_recording: false
+            has_files: false
+            id: 461617
+            is_anonymous: false
+            is_edited: false
+            member:
+              id: 216415
+              image_url: ""
+              is_guest: false
+              name: "shobhit-duplicate2"
+              organisation_name: null
+              roles: []
+              sdk_client_info:
+                community: 50522
+                user: 216415
+                user_unique_id: "user_unique_id3"
+                uuid: "user_unique_id3"
+                widget_id: ""
+              updated_at: 1751372673
+              user_unique_id: "50208a54-6279-4f46-b3e1-41acf10c5d20"
+              uuid: "50208a54-6279-4f46-b3e1-41acf10c5d20"
+            member_id: 216415
+            no_poll_expiry: false
+            poll_answer_text: ""
+            reactions: []
+            start_time: 0
+            state: 0
+            widget_id: ""
+        widgets: {}

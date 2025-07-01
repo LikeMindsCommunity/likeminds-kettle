@@ -31,68 +31,47 @@ get:
             success: true
             data:
               community_configurations:
-                - description: "Personalised feed weights metadata for the community"
-                  type: "personalised_feed_weights"
-                  value:
-                    comments_metrics:
-                      description: "Weight and Max threshold (ceiling value for comments count) for comments metrics"
-                      max_threshold: 1000
-                      weight: 10
-                    likes_metrics:
-                      description: "Weight and Max threshold (ceiling value for likes count) for likes metrics"
-                      max_threshold: 1000
-                      weight: 10
-                    post_dampening_metrics:
-                      description: "Reduces the visibility of posts over time by applying a negative score to posts viewed within the past 24 hours."
-                      max_threshold: 100
-                      weight: 10
-                    recency_metrics:
-                      description: "Weight and Max threshold (ceiling value in seconds) for recency metrics"
-                      max_threshold: 180000
-                      weight: 10
-                    user_connection_metrics:
-                      description: "Weight and Max threshold for user connections metrics"
-                      max_threshold: 10
-                      weight: 10
-                    user_groups_metrics:
-                      description: "Weight and Max threshold for user groups metrics"
-                      max_threshold: 10
-                      weight: 10
-                    user_topics_metrics:
-                      description: "Weight and Max threshold for user topics metrics"
-                      max_threshold: 10
-                      weight: 10
-                - description: "Media size upload limit (in Kilobytes) for different file formats"
-                  type: "media_limits"
-                  value:
-                    max_image_size: 5124
-                    max_video_size: 102400
                 - description: "Metadata related to feed and its entity"
                   type: "feed_metadata"
                   value:
-                    comment: "comment"
-                    like_entity_variable:
-                      entity_name: "like"
-                      past_tense_verb: "liked"
-                    post: "post"
+                    comment: "response"
+                    post: "resource"
                     universal_feed:
                       comment_count: 1
-                      comment_sort_order: ""
-                      comment_sort_order_key: ""
-                    anonymous_user_meta:
-                      name: Anonymous User
-                      image_url: ""
+                      comment_sort_order: "desc"
+                      comment_sort_order_key: "likes"
                 - description: "User profiles metadata for the community"
                   type: "profile_metadata"
                   value:
-                    widgets_enabled: false
+                    widgets_enabled: true
                 - description: "NSFW filtering metadata for the community"
                   type: "nsfw_filtering"
                   value:
                     cutoff_score: 0.8
-                    enabled: false
+                    enabled: true
                     error_status: ""
-                    inferdo_api_key: ""
+                    inferdo_api_key: "0d53fddcdbmshde52db8f25ba1e1p137ee4jsn44852708a640"
+                - description: "Media size upload limit (in Kilobytes) for different file formats"
+                  type: "media_limits"
+                  value:
+                    max_image_size: 10240
+                    max_video_size: 102400
+                - description: "Additional Feed settings for the community"
+                  type: "feed_settings"
+                  value:
+                    auto_approve_post: "no_one"
+                    create_feed_poll: "everyone"
+                    menu_items_config:
+                      hide_post: false
+                    notification_feed_actions:
+                      also_commented_on_post_you_commented: true
+                      comment_on_your_comment: true
+                      comment_on_your_post: true
+                      like_on_your_comment: true
+                      like_on_your_post: true
+                      reposted_your_post: true
+                      tagged_you_on_comment_post: true
+                      tagged_you_on_post: true
                 - description: "Widgets metadata for the community"
                   type: "widgets_metadata"
                   value:
@@ -101,16 +80,57 @@ get:
                   type: "guest_flow_metadata"
                   value:
                     guest_users: "SINGLE"
-                - description: "Additional feed settings for the community"
-                  type: "feed_settings"
+                - description: "Personalised feed weights metadata for the community"
+                  type: "personalised_feed_weights"
                   value:
-                    create_feed_poll:
-                      enum:
-                        - everyone
-                        - only_cm
-                        - no_one
-                    menu_items_config:
-                      - hide_post: true
+                    comments_metrics:
+                      max_threshold: 100
+                      weight: 1
+                    likes_metrics:
+                      max_threshold: 100
+                      weight: 1
+                    post_dampening_metrics:
+                      max_threshold: 300
+                      weight: 10
+                    recency_metrics:
+                      max_threshold: 1800000
+                      weight: 10
+                    user_connection_metrics:
+                      max_threshold: 10
+                      weight: 10
+                    user_groups_metrics:
+                      max_threshold: 10
+                      weight: 10
+                    user_topics_metrics:
+                      max_threshold: 10
+                      weight: 10
+                - description: "Chatbot configurations for the community"
+                  type: "chatbot"
+                  value:
+                    api_key: ""
+                    enabled: false
+                    error_message: ""
+                    provider: ""
+                - description: "Chat poll configurations for the community."
+                  type: "chat_poll"
+                  value:
+                    allow_add_option: false
+                    allow_override: true
+                    allow_vote_change: true
+                    is_anonymous: false
+                    multiple_select_no: 1
+                    multiple_select_state: "exactly"
+                    no_poll_expiry: false
+                    poll_type: "instant"
+                - description: "Community configurations for reply privately"
+                  type: "reply_privately"
+                  value:
+                    allowed_scope: "NO_ONE"
+                - description: "Custom app views for different screens for feed or chat"
+                  type: "app_views"
+                  value:
+                    feed:
+                      home: {}
                       
 patch:
   operationId: updateCommunityConfigurations
@@ -237,16 +257,104 @@ patch:
           example:
             success: true
             data:
-              community_configuration:
-                description: "Metadata related to feed and its entity"
-                type: "feed_metadata"
-                value:
-                  post: "post"
-                  comment: "comment"
-                  like_entity_variable:
-                    entity_name: "like"
-                    past_tense_verb: "liked"
-                  anonymous_user_meta:
-                    name: Anonymous User
-                    image_url: ""
-              record_updated: true
+              community_configurations:
+                - description: "Metadata related to feed and its entity"
+                  type: "feed_metadata"
+                  value:
+                    comment: "response"
+                    post: "resource"
+                    universal_feed:
+                      comment_count: 1
+                      comment_sort_order: "desc"
+                      comment_sort_order_key: "likes"
+                - description: "User profiles metadata for the community"
+                  type: "profile_metadata"
+                  value:
+                    widgets_enabled: true
+                - description: "NSFW filtering metadata for the community"
+                  type: "nsfw_filtering"
+                  value:
+                    cutoff_score: 0.8
+                    enabled: true
+                    error_status: ""
+                    inferdo_api_key: "0d53fddcdbmshde52db8f25ba1e1p137ee4jsn44852708a640"
+                - description: "Media size upload limit (in Kilobytes) for different file formats"
+                  type: "media_limits"
+                  value:
+                    max_image_size: 10240
+                    max_video_size: 102400
+                - description: "Additional Feed settings for the community"
+                  type: "feed_settings"
+                  value:
+                    auto_approve_post: "no_one"
+                    create_feed_poll: "everyone"
+                    menu_items_config:
+                      hide_post: false
+                    notification_feed_actions:
+                      also_commented_on_post_you_commented: true
+                      comment_on_your_comment: true
+                      comment_on_your_post: true
+                      like_on_your_comment: true
+                      like_on_your_post: true
+                      reposted_your_post: true
+                      tagged_you_on_comment_post: true
+                      tagged_you_on_post: true
+                - description: "Widgets metadata for the community"
+                  type: "widgets_metadata"
+                  value:
+                    message: false
+                - description: "Community configurations for guest flow"
+                  type: "guest_flow_metadata"
+                  value:
+                    guest_users: "SINGLE"
+                - description: "Personalised feed weights metadata for the community"
+                  type: "personalised_feed_weights"
+                  value:
+                    comments_metrics:
+                      max_threshold: 100
+                      weight: 1
+                    likes_metrics:
+                      max_threshold: 100
+                      weight: 1
+                    post_dampening_metrics:
+                      max_threshold: 300
+                      weight: 10
+                    recency_metrics:
+                      max_threshold: 1800000
+                      weight: 10
+                    user_connection_metrics:
+                      max_threshold: 10
+                      weight: 10
+                    user_groups_metrics:
+                      max_threshold: 10
+                      weight: 10
+                    user_topics_metrics:
+                      max_threshold: 10
+                      weight: 10
+                - description: "Chatbot configurations for the community"
+                  type: "chatbot"
+                  value:
+                    api_key: ""
+                    enabled: false
+                    error_message: ""
+                    provider: ""
+                - description: "Chat poll configurations for the community."
+                  type: "chat_poll"
+                  value:
+                    allow_add_option: false
+                    allow_override: true
+                    allow_vote_change: true
+                    is_anonymous: false
+                    multiple_select_no: 1
+                    multiple_select_state: "exactly"
+                    no_poll_expiry: false
+                    poll_type: "instant"
+                - description: "Community configurations for reply privately"
+                  type: "reply_privately"
+                  value:
+                    allowed_scope: "NO_ONE"
+                - description: "Custom app views for different screens for feed or chat"
+                  type: "app_views"
+                  value:
+                    feed:
+                      home: {}

@@ -67,6 +67,8 @@ paths:
     $ref: "./api/user/token.yaml"
   /user/social/login:
     $ref: "./api/user/social_login.yaml"
+  /user/{uuid}/block:
+    $ref: "./api/user/block.yaml"
 
   /chatroom:
     $ref: "./api/chatroom/chatroom.yaml"
@@ -224,6 +226,8 @@ paths:
     $ref: "./api/community/member/meta.yaml"
   /community/member/join:
     $ref: "./api/community/member/join.yaml"
+  /community/integration:
+    $ref: "./api/community/integration.yaml"
 
   /moderation/rights:
     $ref: "./api/moderation/rights.yaml"
@@ -290,6 +294,12 @@ paths:
     $ref: "./api/feed/v1/post/comment/comment_id/like.yaml"
   /feed/post/{post_id}/share/count:
     $ref: "./api/feed/v1/post/post_share_count.yaml"
+  /feed/post/pending:
+    $ref: "./api/feed/v1/post/post_pending_create.yaml"
+  feed/post/pending/{pending_post_id}:
+    $ref: "./api/feed/v1/post/post_pending.yaml"
+  feed/user/{user_id}/post/pending:
+    $ref: "./api/feed/v1/post/post_pending_user_created.yaml"
   /feed/user/{user_id}/save:
     $ref: "./api/feed/v1/user/save.yaml"
   /feed/user/{user_id}/post:

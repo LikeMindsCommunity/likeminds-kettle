@@ -1,0 +1,85 @@
+type: object
+properties:
+  success:
+    type: boolean
+    example: true
+  data:
+    type: object
+    properties:
+      blocked_users:
+        type: array
+        items:
+          type: object
+          properties:
+            custom_title:
+              type: string
+              nullable: true
+              example: null
+            id:
+              type: integer
+              example: 216414
+            image_url:
+              type: string
+              example: ""
+            is_deleted:
+              type: boolean
+              example: false
+            is_guest:
+              type: boolean
+              example: false
+            name:
+              type: string
+              example: shobhit-duplicate
+            roles:
+              type: array
+              items:
+                type: string
+              example: []
+            sdk_client_info:
+              type: object
+              properties:
+                community:
+                  type: integer
+                  example: 50522
+                user:
+                  type: integer
+                  example: 216414
+                user_unique_id:
+                  type: string
+                  example: user_unique_id2
+                uuid:
+                  type: string
+                  example: user_unique_id2
+                widget_id:
+                  type: string
+                  example: ""
+            state:
+              type: integer
+              example: 4
+            user_unique_id:
+              type: string
+              example: 3851ca79-c008-4b7e-bb63-365981557017
+            uuid:
+              type: string
+              example: 3851ca79-c008-4b7e-bb63-365981557017
+        example:
+          - custom_title: null
+            id: 216414
+            image_url: ""
+            is_deleted: false
+            is_guest: false
+            name: shobhit-duplicate
+            roles: []
+            sdk_client_info:
+              community: 50522
+              user: 216414
+              user_unique_id: user_unique_id2
+              uuid: user_unique_id2
+              widget_id: ""
+            state: 4
+            user_unique_id: 3851ca79-c008-4b7e-bb63-365981557017
+            uuid: 3851ca79-c008-4b7e-bb63-365981557017
+      blocking_users:
+        type: array
+        items: {}
+        example: []

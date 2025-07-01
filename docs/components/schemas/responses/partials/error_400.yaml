@@ -1,0 +1,13 @@
+'404':
+  description: Bad request
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success: 
+            type: boolean
+            description: Indicates whether the request was successful or not.
+          error_message:
+            type: string
+            description: Error message describing the issue with the request.

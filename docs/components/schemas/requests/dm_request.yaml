@@ -6,3 +6,6 @@ properties:
     type: integer
   text:
     type: string
+  widget:
+    type: object
+    description: Widget JSON object for LM meta

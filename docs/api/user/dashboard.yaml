@@ -27,4 +27,4 @@ patch:
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/responses/user_login.yaml"
+            $ref: "../../components/schemas/responses/edit_dashboard_user.yaml"

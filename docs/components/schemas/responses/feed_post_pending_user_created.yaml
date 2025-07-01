@@ -106,27 +106,16 @@ properties:
             type: integer
           updated_at:
             type: integer
+      reposted_posts:
+        type: object
+      topics:
+        type: object
+      total_count:
+        type: object
+      user_topics:
+        type: object
       users:
         type: object
-        additionalProperties:
-          type: object
-          properties:
-            user_id:
-              type: string
-            user:
-              type: object
-              properties:
-                id:
-                  type: integer
-                name:
-                  type: string
-                image_url:
-                  type: string
-                user_unique_id:
-                  type: string
-                uuid:
-                  type: string
-                is_guest:
-                  type: boolean
-                is_deleted:
-                  type: boolean
+      widgets: 
+        type: object
+      

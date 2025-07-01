@@ -1,10 +1,10 @@
-put:
-  operationId: updatePostShareCount
+post:
+  operationId: createPendingPost
   tags:
     - Feed - V1
 
-  summary: Upadte the post share count
-  description: This API updates the post share count.
+  summary: Create a New Pending Post
+  description: This API creates a new pending post.
 
   security:
     - bearerAuth: []
@@ -13,12 +13,13 @@ put:
     - $ref: "../../../../components/parameters/headers/platformCode.yaml"
     - $ref: "../../../../components/parameters/headers/versionCode.yaml"
     - $ref: "../../../../components/parameters/headers/acceptVersion.yaml"
+    
 
   requestBody:
     content:
       application/json:
         schema:
-          $ref: "../../../../components/schemas/requests/feed_post_share_count.yaml"
+          $ref: "../../../../components/schemas/requests/feed_post_create.yaml"
 
   responses:
     "200":
@@ -26,4 +27,4 @@ put:
       content:
         application/json:
           schema:
-            $ref: "../../../../components/schemas/responses/feed_post_share_count.yaml"
+            $ref: "../../../../components/schemas/responses/feed_post_pending_POST.yaml"
