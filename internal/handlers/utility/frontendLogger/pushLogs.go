@@ -35,6 +35,7 @@ func parseLogsRequest(c *gin.Context) (*logsRequest, error) {
 func PushLogs(c *gin.Context) {
 	// Parse request
 	flr, err := parseLogsRequest(c)
+
 	if err != nil {
 		utils.GeneralBadRequestError(c, err.Error())
 		return
@@ -51,13 +52,20 @@ func PushLogs(c *gin.Context) {
 
 	logPlatform := environment.GoDotEnvVariable(environment.EnvLogPlatform)
 
-	if logPlatform == "GCP" {
+	switch logPlatform {
+	case "GCP":
 		pushToGCP(c, headers, flr)
-	} else {
-		// default to cloudwatch
+	case "AWS":
 		err = pushToCloudwatch(platform_code, headers, flr)
 		if err != nil {
-			utils.GeneralAPIError(c, fmt.Sprint("cloudwatch error: ", err))
+			utils.GeneralAPIError(c, fmt.Sprint("Error while sending logs to AWS cloudwatch through api endpoint:", err))
+			return
+		}
+	default:
+		// default to Azure App Insights
+		err = pushToAzureAppInsights(platform_code, headers, flr)
+		if err != nil {
+			utils.GeneralAPIError(c, fmt.Sprint("Error while sending logs to Azure app insights through api endpoint: ", err))
 			return
 		}
 	}
@@ -201,4 +209,55 @@ func createPayloadEntriesCloudwatch(headers map[string]interface{}, logs []logRe
 	}
 
 	return entries
+}
+
+// Send logs to Azure Application Insights
+func pushToAzureAppInsights(platformCode string, headers map[string]interface{}, flr *logsRequest) error {
+
+	if !appInsightsInitialized {
+		initializeApplicationInsights()
+		if !appInsightsInitialized {
+			logging.Error("Application Insights is not initialized, cannot push logs")
+			return nil
+		}
+	}
+
+	entries := createPayloadEntriesAzure(headers, flr.Logs)
+
+	// Log a message to CloudWatch
+	logToAppInsights(entries)
+	return nil
+}
+
+func createPayloadEntriesAzure(headers map[string]interface{}, logs []logRequest) []AzurePalyloadEntry {
+
+	var entries []AzurePalyloadEntry
+
+	// create payload entry for each log
+	for _, lr := range logs {
+
+		payload := map[string]interface{}{
+			"device_details": lr.DeviceMeta,
+			"stack_trace":    lr.StackTrace,
+			"sdk_meta":       lr.SdkMeta,
+			"headers":        headers,
+			"severity":       lr.Severity,
+		}
+
+		timestamp, err := getValidTimestamp(lr.Timestamp)
+		if err != nil {
+			logging.Error(err.Error())
+			continue
+		}
+
+		entry := AzurePalyloadEntry{
+			JsonPayload: payload,
+			Timestamp:   timestamp,
+		}
+
+		entries = append(entries, entry)
+	}
+
+	return entries
+
 }
