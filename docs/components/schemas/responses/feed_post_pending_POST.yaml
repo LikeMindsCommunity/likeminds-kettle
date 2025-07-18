@@ -26,21 +26,27 @@ properties:
                   description: Type of the attachment
                 attachment_meta:
                   type: object
+                  description: Metadata associated with the attachment
                   properties:
                     url:
                       type: string
+                      description: URL of the attachment
                       nullable: true
                     format:
                       type: string
+                      description: Format of the attachment
                       nullable: true
                     size:
                       type: integer
+                      description: Size of the attachment in bytes
                       nullable: true
                     duration:
                       type: integer
+                      description: Duration of the media attachment in seconds
                       nullable: true
                     page_count:
                       type: integer
+                      description: Number of pages in the document attachment
                       nullable: true
                     og_tags:
                       type: object
