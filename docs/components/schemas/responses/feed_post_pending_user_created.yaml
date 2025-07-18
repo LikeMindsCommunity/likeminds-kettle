@@ -13,10 +13,13 @@ properties:
         properties:
           _id:
             type: string
+            description: Unique identifier for the post
           text:
             type: string
+            description: Content of the post
           attachments:
             type: array
+            description: List of attachments associated with the post
             items:
               type: object
               properties:
@@ -57,22 +60,31 @@ properties:
                           nullable: true
           community_id:
             type: integer
+            description: Identifier for the community the post belongs to
           is_pinned:
             type: boolean
+            description: Indicates if the post is pinned
           is_saved:
             type: boolean
+            description: Indicates if the post is saved by the user
           is_edited:
             type: boolean
+            description: Indicates if the post has been edited
           user_id:
             type: string
+            description: Identifier for the user who created the post
           uuid:
             type: string
+            description: Identifier for the user who created the post
           likes_count:
             type: integer
+            description: Number of likes the post has received
           comments_count:
             type: integer
+            description: Number of comments on the post
           menu_items:
             type: array
+            description: List of menu items available for the post
             items:
               type: object
               properties:
@@ -80,23 +92,31 @@ properties:
                   type: string
           replies:
             type: array
+            description: List of replies to the post
             items:
               type: object
               properties:
                 user_id:
                   type: string
+                  description: Identifier for the user who made the reply
                 text:
                   type: string
+                  description: Content of the reply
                 post_id:
                   type: string
+                  description: Identifier for the post being replied to
                 level:
                   type: integer
+                  description: Level of the reply in the thread
                 likes_count:
                   type: integer
+                  description: Number of likes the reply has received
                 replies_count:
                   type: integer
+                  description: Number of replies to this reply
                 menu_items:
                   type: array
+                  description: List of menu items available for the reply
                   items:
                     type: object
                     properties:
@@ -104,18 +124,26 @@ properties:
                         type: string
           created_at:
             type: integer
+            description: Timestamp when the post was created
           updated_at:
             type: integer
+            description: Timestamp when the post was last updated
       reposted_posts:
         type: object
+        description: Details of reposted posts
       topics:
         type: object
+        description: Topics associated with user created posts
       total_count:
         type: object
+        description: Total count of user created posts
       user_topics:
         type: object
+        description: user topics connections
       users:
         type: object
+        description: List of users associated with the posts
       widgets: 
         type: object
+        description: Widgets associated with the posts
       

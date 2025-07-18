@@ -34,98 +34,189 @@ get:
                 - description: "Metadata related to feed and its entity"
                   type: "feed_metadata"
                   value:
-                    comment: "response"
-                    post: "resource"
+                    comment: 
+                      value : "response"
+                      description: "entity name for comment"
+                    post: 
+                      value : "resource"
+                      description: "entity name for post"
                     universal_feed:
-                      comment_count: 1
-                      comment_sort_order: "desc"
-                      comment_sort_order_key: "likes"
+                      comment_count: 
+                        value : 1
+                        description: "Count of comments in the universal feed"
+                      comment_sort_order: 
+                        value : "desc"
+                        description: "Sort order for comments in the universal feed"
+                      comment_sort_order_key: 
+                        value : "likes"
+                        description: "Key to sort comments in the universal feed"
                 - description: "User profiles metadata for the community"
                   type: "profile_metadata"
                   value:
-                    widgets_enabled: true
+                    widgets_enabled: 
+                      value : true
+                      description: "Flag to enable widgets in user profiles"
                 - description: "NSFW filtering metadata for the community"
                   type: "nsfw_filtering"
                   value:
-                    cutoff_score: 0.8
-                    enabled: true
-                    error_status: ""
-                    inferdo_api_key: "0d53fddcdbmshde52db8f25ba1e1p137ee4jsn44852708a640"
+                    cutoff_score: 
+                      value : 0.8
+                      description: "Cutoff score for NSFW filtering"
+                    enabled: 
+                      value : true
+                      description: "Flag to enable NSFW filtering"
+                    error_status: 
+                      value : ""
+                      description: "Error status for NSFW filtering"
+                    inferdo_api_key: 
+                      value : "0d53fddcdbmshde52db8f25***************************"
+                      description: "API key for NSFW filtering service"
                 - description: "Media size upload limit (in Kilobytes) for different file formats"
                   type: "media_limits"
                   value:
-                    max_image_size: 10240
-                    max_video_size: 102400
+                    max_image_size: 
+                      value : 10240
+                      description: "Maximum size for image uploads in Kilobytes"
+                    max_video_size: 
+                      value : 102400
+                      description: "Maximum size for video uploads in Kilobytes"
                 - description: "Additional Feed settings for the community"
                   type: "feed_settings"
                   value:
-                    auto_approve_post: "no_one"
-                    create_feed_poll: "everyone"
+                    auto_approve_post: 
+                      value : "no_one"
+                      description: "Scope for auto approving posts"
+                    create_feed_poll: 
+                      value : "everyone"
+                      description: "Scope for creating feed polls"
                     menu_items_config:
-                      hide_post: false
+                      hide_post: 
+                        value : false
+                        description: "Flag to hide post in menu items"
                     notification_feed_actions:
-                      also_commented_on_post_you_commented: true
-                      comment_on_your_comment: true
-                      comment_on_your_post: true
-                      like_on_your_comment: true
-                      like_on_your_post: true
-                      reposted_your_post: true
-                      tagged_you_on_comment_post: true
-                      tagged_you_on_post: true
+                      also_commented_on_post_you_commented: 
+                        value : true
+                        description: "Notify when someone comments on a post you commented on"
+                      comment_on_your_comment: 
+                        value : true
+                        description: "Notify when someone comments on your comment"
+                      comment_on_your_post: 
+                        value : true
+                        description: "Notify when someone comments on your post"
+                      like_on_your_comment: 
+                        value : true
+                        description: "Notify when someone likes your comment"
+                      like_on_your_post: 
+                        value : true
+                        description: "Notify when someone likes your post"
+                      reposted_your_post: 
+                        value : true
+                        description: "Notify when someone reposts your post"
+                      tagged_you_on_comment_post: 
+                        value : true
+                        description: "Notify when someone tags you on a comment or post"
+                      tagged_you_on_post: 
+                        value : true
+                        description: "Notify when someone tags you on a post"
                 - description: "Widgets metadata for the community"
                   type: "widgets_metadata"
                   value:
-                    message: false
+                    message: 
+                      value : false
+                      description: "Flag to enable message widgets in the community"
                 - description: "Community configurations for guest flow"
                   type: "guest_flow_metadata"
                   value:
-                    guest_users: "SINGLE"
+                    guest_users: 
+                      value : "SINGLE"
+                      enum : ["SINGLE", "MULTIPLE"]
+                      description: "Guest user flow configuration either SINGLE or MULTIPLE"
                 - description: "Personalised feed weights metadata for the community"
                   type: "personalised_feed_weights"
                   value:
                     comments_metrics:
-                      max_threshold: 100
-                      weight: 1
+                      value : 
+                        max_threshold: 100
+                        weight: 1
+                      description: "Weight and Max threshold (ceiling value for comments count) for comments likes_metrics"
                     likes_metrics:
-                      max_threshold: 100
-                      weight: 1
+                      value :
+                        max_threshold: 100
+                        weight: 1
+                      description: "Weight and Max threshold (ceiling value for likes count) for likes metrics"
                     post_dampening_metrics:
-                      max_threshold: 300
-                      weight: 10
+                      value :
+                        max_threshold: 300
+                        weight: 10
+                      description: "Reduces the visibility of posts over time by applying a negative score to posts viewed within the past 24 hours."
                     recency_metrics:
-                      max_threshold: 1800000
-                      weight: 10
+                      value :
+                        max_threshold: 1800000
+                        weight: 10
+                      description: "Weight and Max threshold (ceiling value in milliseconds) for recency metrics"
                     user_connection_metrics:
-                      max_threshold: 10
-                      weight: 10
+                      value : 
+                        max_threshold: 10
+                        weight: 10
+                      description: "Weight and Max threshold for user connections metrics"
                     user_groups_metrics:
-                      max_threshold: 10
-                      weight: 10
+                      value :
+                        max_threshold: 10
+                        weight: 10
+                      description: "Weight and Max threshold for user groups metrics"
                     user_topics_metrics:
-                      max_threshold: 10
-                      weight: 10
+                      value :
+                        max_threshold: 10
+                        weight: 10
+                      description: "Weight and Max threshold for user topics metrics"
                 - description: "Chatbot configurations for the community"
                   type: "chatbot"
                   value:
-                    api_key: ""
-                    enabled: false
-                    error_message: ""
-                    provider: ""
+                    api_key: 
+                      value : ""
+                      description: "API key for chatbot service"
+                    enabled: 
+                      value : false
+                      description: "Flag to enable chatbot in the community"
+                    error_message: 
+                      value : ""
+                      description: "Error message for chatbot service"
+                    provider: 
+                      value : ""
+                      description: "Provider for the chatbot service"
                 - description: "Chat poll configurations for the community."
                   type: "chat_poll"
                   value:
-                    allow_add_option: false
-                    allow_override: true
-                    allow_vote_change: true
-                    is_anonymous: false
-                    multiple_select_no: 1
-                    multiple_select_state: "exactly"
-                    no_poll_expiry: false
-                    poll_type: "instant"
+                    allow_add_option: 
+                      value : false
+                      description: "Flag to allow adding options in chat polls"
+                    allow_override: 
+                      value : true
+                      description: "Flag to allow overriding poll options"
+                    allow_vote_change: 
+                      value : true
+                      description: "Flag to allow changing votes in chat polls"
+                    is_anonymous: 
+                      value : false
+                      description: "Flag to make chat polls anonymous"
+                    multiple_select_no: 
+                      value : 1
+                      description: "Number of options allowed for multiple selection in chat polls"
+                    multiple_select_state: 
+                      value : "exactly"
+                      description: "State for multiple selection in chat polls"
+                    no_poll_expiry: 
+                      value : false
+                      description: "Flag to disable poll expiry"
+                    poll_type: 
+                      value : "instant"
+                      description: "Type of chat poll, e.g., instant or scheduled"
                 - description: "Community configurations for reply privately"
                   type: "reply_privately"
                   value:
-                    allowed_scope: "NO_ONE"
+                    allowed_scope: 
+                      value : "NO_ONE"
+                      description: "Scope for allowing reply privately, e.g., NO_ONE, EVERYONE"
                 - description: "Custom app views for different screens for feed or chat"
                   type: "app_views"
                   value:
@@ -261,98 +352,189 @@ patch:
                 - description: "Metadata related to feed and its entity"
                   type: "feed_metadata"
                   value:
-                    comment: "response"
-                    post: "resource"
+                    comment: 
+                      value : "response"
+                      description: "entity name for comment"
+                    post: 
+                      value : "resource"
+                      description: "entity name for post"
                     universal_feed:
-                      comment_count: 1
-                      comment_sort_order: "desc"
-                      comment_sort_order_key: "likes"
+                      comment_count: 
+                        value : 1
+                        description: "Count of comments in the universal feed"
+                      comment_sort_order: 
+                        value : "desc"
+                        description: "Sort order for comments in the universal feed"
+                      comment_sort_order_key: 
+                        value : "likes"
+                        description: "Key to sort comments in the universal feed"
                 - description: "User profiles metadata for the community"
                   type: "profile_metadata"
                   value:
-                    widgets_enabled: true
+                    widgets_enabled: 
+                      value : true
+                      description: "Flag to enable widgets in user profiles"
                 - description: "NSFW filtering metadata for the community"
                   type: "nsfw_filtering"
                   value:
-                    cutoff_score: 0.8
-                    enabled: true
-                    error_status: ""
-                    inferdo_api_key: "0d53fddcdbmshde52db8f25ba1e1p137ee4jsn44852708a640"
+                    cutoff_score: 
+                      value : 0.8
+                      description: "Cutoff score for NSFW filtering"
+                    enabled: 
+                      value : true
+                      description: "Flag to enable NSFW filtering"
+                    error_status: 
+                      value : ""
+                      description: "Error status for NSFW filtering"
+                    inferdo_api_key: 
+                      value : "0d53fddcdbmshde52db8f25***************************"
+                      description: "API key for NSFW filtering service"
                 - description: "Media size upload limit (in Kilobytes) for different file formats"
                   type: "media_limits"
                   value:
-                    max_image_size: 10240
-                    max_video_size: 102400
+                    max_image_size: 
+                      value : 10240
+                      description: "Maximum size for image uploads in Kilobytes"
+                    max_video_size: 
+                      value : 102400
+                      description: "Maximum size for video uploads in Kilobytes"
                 - description: "Additional Feed settings for the community"
                   type: "feed_settings"
                   value:
-                    auto_approve_post: "no_one"
-                    create_feed_poll: "everyone"
+                    auto_approve_post: 
+                      value : "no_one"
+                      description: "Scope for auto approving posts"
+                    create_feed_poll: 
+                      value : "everyone"
+                      description: "Scope for creating feed polls"
                     menu_items_config:
-                      hide_post: false
+                      hide_post: 
+                        value : false
+                        description: "Flag to hide post in menu items"
                     notification_feed_actions:
-                      also_commented_on_post_you_commented: true
-                      comment_on_your_comment: true
-                      comment_on_your_post: true
-                      like_on_your_comment: true
-                      like_on_your_post: true
-                      reposted_your_post: true
-                      tagged_you_on_comment_post: true
-                      tagged_you_on_post: true
+                      also_commented_on_post_you_commented: 
+                        value : true
+                        description: "Notify when someone comments on a post you commented on"
+                      comment_on_your_comment: 
+                        value : true
+                        description: "Notify when someone comments on your comment"
+                      comment_on_your_post: 
+                        value : true
+                        description: "Notify when someone comments on your post"
+                      like_on_your_comment: 
+                        value : true
+                        description: "Notify when someone likes your comment"
+                      like_on_your_post: 
+                        value : true
+                        description: "Notify when someone likes your post"
+                      reposted_your_post: 
+                        value : true
+                        description: "Notify when someone reposts your post"
+                      tagged_you_on_comment_post: 
+                        value : true
+                        description: "Notify when someone tags you on a comment or post"
+                      tagged_you_on_post: 
+                        value : true
+                        description: "Notify when someone tags you on a post"
                 - description: "Widgets metadata for the community"
                   type: "widgets_metadata"
                   value:
-                    message: false
+                    message: 
+                      value : false
+                      description: "Flag to enable message widgets in the community"
                 - description: "Community configurations for guest flow"
                   type: "guest_flow_metadata"
                   value:
-                    guest_users: "SINGLE"
+                    guest_users: 
+                      value : "SINGLE"
+                      enum : ["SINGLE", "MULTIPLE"]
+                      description: "Guest user flow configuration either SINGLE or MULTIPLE"
                 - description: "Personalised feed weights metadata for the community"
                   type: "personalised_feed_weights"
                   value:
                     comments_metrics:
-                      max_threshold: 100
-                      weight: 1
+                      value : 
+                        max_threshold: 100
+                        weight: 1
+                      description: "Weight and Max threshold (ceiling value for comments count) for comments likes_metrics"
                     likes_metrics:
-                      max_threshold: 100
-                      weight: 1
+                      value :
+                        max_threshold: 100
+                        weight: 1
+                      description: "Weight and Max threshold (ceiling value for likes count) for likes metrics"
                     post_dampening_metrics:
-                      max_threshold: 300
-                      weight: 10
+                      value :
+                        max_threshold: 300
+                        weight: 10
+                      description: "Reduces the visibility of posts over time by applying a negative score to posts viewed within the past 24 hours."
                     recency_metrics:
-                      max_threshold: 1800000
-                      weight: 10
+                      value :
+                        max_threshold: 1800000
+                        weight: 10
+                      description: "Weight and Max threshold (ceiling value in milliseconds) for recency metrics"
                     user_connection_metrics:
-                      max_threshold: 10
-                      weight: 10
+                      value : 
+                        max_threshold: 10
+                        weight: 10
+                      description: "Weight and Max threshold for user connections metrics"
                     user_groups_metrics:
-                      max_threshold: 10
-                      weight: 10
+                      value :
+                        max_threshold: 10
+                        weight: 10
+                      description: "Weight and Max threshold for user groups metrics"
                     user_topics_metrics:
-                      max_threshold: 10
-                      weight: 10
+                      value :
+                        max_threshold: 10
+                        weight: 10
+                      description: "Weight and Max threshold for user topics metrics"
                 - description: "Chatbot configurations for the community"
                   type: "chatbot"
                   value:
-                    api_key: ""
-                    enabled: false
-                    error_message: ""
-                    provider: ""
+                    api_key: 
+                      value : ""
+                      description: "API key for chatbot service"
+                    enabled: 
+                      value : false
+                      description: "Flag to enable chatbot in the community"
+                    error_message: 
+                      value : ""
+                      description: "Error message for chatbot service"
+                    provider: 
+                      value : ""
+                      description: "Provider for the chatbot service"
                 - description: "Chat poll configurations for the community."
                   type: "chat_poll"
                   value:
-                    allow_add_option: false
-                    allow_override: true
-                    allow_vote_change: true
-                    is_anonymous: false
-                    multiple_select_no: 1
-                    multiple_select_state: "exactly"
-                    no_poll_expiry: false
-                    poll_type: "instant"
+                    allow_add_option: 
+                      value : false
+                      description: "Flag to allow adding options in chat polls"
+                    allow_override: 
+                      value : true
+                      description: "Flag to allow overriding poll options"
+                    allow_vote_change: 
+                      value : true
+                      description: "Flag to allow changing votes in chat polls"
+                    is_anonymous: 
+                      value : false
+                      description: "Flag to make chat polls anonymous"
+                    multiple_select_no: 
+                      value : 1
+                      description: "Number of options allowed for multiple selection in chat polls"
+                    multiple_select_state: 
+                      value : "exactly"
+                      description: "State for multiple selection in chat polls"
+                    no_poll_expiry: 
+                      value : false
+                      description: "Flag to disable poll expiry"
+                    poll_type: 
+                      value : "instant"
+                      description: "Type of chat poll, e.g., instant or scheduled"
                 - description: "Community configurations for reply privately"
                   type: "reply_privately"
                   value:
-                    allowed_scope: "NO_ONE"
+                    allowed_scope: 
+                      value : "NO_ONE"
+                      description: "Scope for allowing reply privately, e.g., NO_ONE, EVERYONE"
                 - description: "Custom app views for different screens for feed or chat"
                   type: "app_views"
                   value:
