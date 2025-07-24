@@ -11,43 +11,149 @@ example:
         success: true
         data:
           conversation:
-            allow_add_option: false
-            allow_vote_change: true
-            answer: "Hi"
-            attachment_count: 0
-            attachments_uploaded: false
-            chatroom_id: 102952
-            community_id: 50522
-            created_at: "17:55"
-            created_epoch: 1751372716542
-            date: "01 Jul 2025"
-            end_time: 0
-            has_event_recording: false
-            has_files: false
-            id: 461617
-            is_anonymous: false
-            is_edited: false
+            allow_add_option:
+              type: boolean
+              example: true
+              description: "Indicates if the user can add options to the poll."
+            allow_edit: 
+              type: boolean
+              example: true
+              description: "Indicates if the user can edit."
+            allow_vote_change: 
+              type: boolean
+              example: true
+              description: "Indicates if the user can change their vote."
+            answer: 
+              type: string
+              example: "Option A"
+              description: "The answer provided by the user."
+            attachment_count: 
+              type: integer
+              example: 0
+              description: "The number of attachments in the conversation."
+            attachments_uploaded: 
+              type: boolean
+              example: false
+              description: "Indicates if attachments have been uploaded."
+            chatroom_id: 
+              type: integer
+              example: 906337
+              description: "The ID of the chatroom."
+            community_id: 
+              type: integer
+              example: 50522
+              description: "The ID of the community."
+            created_at: 
+              type: string
+              example: "17:55"
+              description: "The timestamp when the conversation was created."
+            created_epoch: 
+              type: integer
+              example: 1751372716542
+              description: "The epoch time when the conversation was created."
+            date: 
+              type: string
+              example: "01 Jul 2025"
+              description: "The date when the conversation was created."
+            end_time: 
+              type: integer
+              example: 0
+              description: "The end time of the conversation."
+            has_event_recording: 
+              type: boolean
+              example: false
+              description: "Indicates if there is an event recording."
+            has_files: 
+              type: boolean
+              example: false
+              description: "Indicates if there are files associated with the conversation."
+            id: 
+              type: integer
+              example: 401617
+              description: "The unique identifier for the conversation."
+            is_anonymous: 
+              type: boolean
+              example: false
+              description: "Indicates if the conversation is anonymous."
+            is_edited: 
+              type: boolean
+              example: false
+              description: "Indicates if the conversation has been edited."
             member:
-              id: 216415
-              image_url: ""
-              is_guest: false
-              name: "shobhit-duplicate2"
-              organisation_name: null
+              id: 
+                type: integer
+                example: 216415
+                description: "The ID of the member associated with the conversation."
+              image_url: 
+                type: string
+                example: "https://example.com/image.jpg"
+                description: "The URL of the member's image."
+              is_guest: 
+                type: boolean
+                example: false
+                description: "Indicates if the member is a guest."
+              name: 
+                type: string
+                example: "shobhit-duplicate2"
+                description: "The name of the member."
+              organisation_name: 
+                type: string
+                example: "Community Name"
+                description: "The name of the organisation associated with the member."
               roles: []
               sdk_client_info:
-                community: 50522
-                user: 216415
-                user_unique_id: "user_unique_id3"
-                uuid: "user_unique_id3"
-                widget_id: ""
-              updated_at: 1751372673
+                community: 
+                  type : integer
+                  example: 50522
+                  description: "The ID of the community in the SDK client info."
+                user: 
+                  type: integer
+                  example: 216415
+                  description: "The unique
+                user_unique_id: 
+                  type: string
+                  example: "user_unique_id3"
+                  description: "The unique identifier for the user in the SDK client info."
+                uuid: 
+                  type: string
+                  example: "user_unique_id3"
+                  description: "The UUID for the user in the SDK client info."
+                widget_id: 
+                  type: string
+                  example: ""
+                  description: "The widget ID"
+              updated_at: 
+                type: integer
+                example: 1751372673
+                description: "The timestamp when the member was last updated."
               user_unique_id: "50208a54-6279-4f46-b3e1-41acf10c5d20"
               uuid: "50208a54-6279-4f46-b3e1-41acf10c5d20"
-            member_id: 216415
-            no_poll_expiry: false
-            poll_answer_text: ""
-            reactions: []
-            start_time: 0
-            state: 0
-            widget_id: ""
+            member_id: 
+              type: integer
+              example: 216415
+              description: "The ID of the member associated with the conversation."
+            no_poll_expiry: 
+              type: boolean
+              example: false
+              description: "Indicates if the poll has no expiry."
+            poll_answer_text: 
+              type: string
+              example: "Option A"
+              description: "The text of the poll answer."
+            reactions: 
+              type: array
+              example: []
+              description: "List of reactions associated with the conversation."
+            start_time: 
+              type: integer
+              example: 1751372673
+              description: "The start time of the conversation."
+            state: 
+              type: integer
+              example: 0
+              description: "The state of the conversation."
+            widget_id: 
+              type: string
+              example: ""
+              description: "The ID of the widget associated with the conversation."
         widgets: {}

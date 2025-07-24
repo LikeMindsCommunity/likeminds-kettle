@@ -13,32 +13,42 @@ properties:
         properties:
           _id:
             type: string
+            description: Unique identifier for the post
           text:
             type: string
+            description: Content of the post
           attachments:
             type: array
+            description: List of attachments associated with the post
             items:
               type: object
               properties:
                 attachment_type:
                   type: integer
+                  description: Type of the attachment (e.g., image, video)
                 attachment_meta:
                   type: object
+                  description: Metadata for the attachment
                   properties:
                     url:
                       type: string
+                      description: URL of the attachment
                       nullable: true
                     format:
                       type: string
+                      description: Format of the attachment (e.g., jpg, mp4)
                       nullable: true
                     size:
                       type: integer
+                      description: Size of the attachment in bytes
                       nullable: true
                     duration:
                       type: integer
+                      description: Duration of the media in seconds
                       nullable: true
                     page_count:
                       type: integer
+                      description: Number of pages in the document
                       nullable: true
                     og_tags:
                       type: object
@@ -57,22 +67,31 @@ properties:
                           nullable: true
           community_id:
             type: integer
+            description: Identifier for the community the post belongs to
           is_pinned:
             type: boolean
+            description: Indicates if the post is pinned
           is_saved:
             type: boolean
+            description: Indicates if the post is saved by the user
           is_edited:
             type: boolean
+            description: Indicates if the post has been edited
           user_id:
             type: string
+            description: Identifier for the user who created the post
           uuid:
             type: string
+            description: Unique identifier for the post
           likes_count:
             type: integer
+            description: Number of likes on the post
           comments_count:
             type: integer
+            description: Number of comments on the post
           menu_items:
             type: array
+            description: List of menu items available for the post
             items:
               type: object
               properties:
@@ -80,23 +99,31 @@ properties:
                   type: string
           replies:
             type: array
+            description: List of replies to the post
             items:
               type: object
               properties:
                 user_id:
                   type: string
+                  description: Identifier for the user who made the reply
                 text:
                   type: string
+                  description: Content of the reply
                 post_id:
                   type: string
+                  description: Identifier for the post being replied to
                 level:
                   type: integer
+                  description: Level of the reply in the thread
                 likes_count:
                   type: integer
+                  description: Number of likes on the reply
                 replies_count:
                   type: integer
+                  description: Number of replies to the reply
                 menu_items:
                   type: array
+                  description: List of menu items available for the reply
                   items:
                     type: object
                     properties:
@@ -104,8 +131,10 @@ properties:
                         type: string
           created_at:
             type: integer
+            description: Timestamp when the post was created
           updated_at:
             type: integer
+            description: Timestamp when the post was last updated
       users:
         type: object
         additionalProperties:
@@ -113,20 +142,29 @@ properties:
           properties:
             user_id:
               type: string
+              description: Unique identifier for the user
             user:
               type: object
+              description: User details
               properties:
                 id:
                   type: integer
+                  description: Unique identifier for the user
                 name:
                   type: string
+                  description: Name of the user
                 image_url:
                   type: string
+                  description: URL of the user's profile image
                 user_unique_id:
                   type: string
+                  description: Unique identifier for the user
                 uuid:
                   type: string
+                  description: UUID of the user
                 is_guest:
                   type: boolean
+                  description: Indicates if the user is a guest
                 is_deleted:
                   type: boolean
+                  description: Indicates if the user is deleted

@@ -34,95 +34,123 @@ get:
                 - description: "Metadata related to feed and its entity"
                   type: "feed_metadata"
                   value:
-                    comment: 
-                      value : "response"
+                    comment:
+                      type : "string"
                       description: "entity name for comment"
+                      example: "response"
                     post: 
-                      value : "resource"
+                      type: "string"
                       description: "entity name for post"
+                      example: "resource"
                     universal_feed:
                       comment_count: 
-                        value : 1
+                        type: "integer"
                         description: "Count of comments in the universal feed"
+                        example: 1
                       comment_sort_order: 
-                        value : "desc"
+                        type: "string"
+                        enum: ["asc", "desc"]
                         description: "Sort order for comments in the universal feed"
+                        example: "desc"
                       comment_sort_order_key: 
-                        value : "likes"
+                        type: "string"
+                        enum: ["likes", "createdAt"]
                         description: "Key to sort comments in the universal feed"
+                        example: "likes"
                 - description: "User profiles metadata for the community"
                   type: "profile_metadata"
                   value:
                     widgets_enabled: 
                       value : true
+                      type: "boolean"
                       description: "Flag to enable widgets in user profiles"
                 - description: "NSFW filtering metadata for the community"
                   type: "nsfw_filtering"
                   value:
                     cutoff_score: 
-                      value : 0.8
+                      type : "number"
                       description: "Cutoff score for NSFW filtering"
+                      example: 0.8
                     enabled: 
                       value : true
+                      type: "boolean"
                       description: "Flag to enable NSFW filtering"
                     error_status: 
                       value : ""
+                      type: "string"
                       description: "Error status for NSFW filtering"
                     inferdo_api_key: 
-                      value : "0d53fddcdbmshde52db8f25***************************"
+                      type: "string"
                       description: "API key for NSFW filtering service"
+                      example: "0d53fddcdbmshde52db8f25***************************"
                 - description: "Media size upload limit (in Kilobytes) for different file formats"
                   type: "media_limits"
                   value:
                     max_image_size: 
-                      value : 10240
+                      type: "integer"
                       description: "Maximum size for image uploads in Kilobytes"
+                      example : 10240
                     max_video_size: 
-                      value : 102400
+                      type: "integer"
                       description: "Maximum size for video uploads in Kilobytes"
+                      example : 102400
                 - description: "Additional Feed settings for the community"
                   type: "feed_settings"
                   value:
                     auto_approve_post: 
-                      value : "no_one"
+                      type: "string"
+                      enum: ["no_one", "everyone", "admins"]
                       description: "Scope for auto approving posts"
+                      example: "no_one"
                     create_feed_poll: 
-                      value : "everyone"
+                      type: "string"
+                      enum: ["no_one", "everyone", "admins"]
                       description: "Scope for creating feed polls"
+                      example : "everyone"
                     menu_items_config:
                       hide_post: 
                         value : false
+                        type: "boolean"
                         description: "Flag to hide post in menu items"
                     notification_feed_actions:
                       also_commented_on_post_you_commented: 
                         value : true
+                        type: "boolean"
                         description: "Notify when someone comments on a post you commented on"
                       comment_on_your_comment: 
                         value : true
+                        type: "boolean"
                         description: "Notify when someone comments on your comment"
                       comment_on_your_post: 
                         value : true
+                        type: "boolean"
                         description: "Notify when someone comments on your post"
                       like_on_your_comment: 
                         value : true
+                        type: "boolean"
                         description: "Notify when someone likes your comment"
                       like_on_your_post: 
                         value : true
+                        type: "boolean"
                         description: "Notify when someone likes your post"
                       reposted_your_post: 
                         value : true
+                        type: "boolean"
                         description: "Notify when someone reposts your post"
                       tagged_you_on_comment_post: 
                         value : true
+                        type: "boolean"
                         description: "Notify when someone tags you on a comment or post"
                       tagged_you_on_post: 
                         value : true
+                        type: "boolean"
                         description: "Notify when someone tags you on a post"
                 - description: "Widgets metadata for the community"
                   type: "widgets_metadata"
                   value:
                     message: 
                       value : false
+                      type: "boolean"
                       description: "Flag to enable message widgets in the community"
                 - description: "Community configurations for guest flow"
                   type: "guest_flow_metadata"
@@ -136,86 +164,136 @@ get:
                   value:
                     comments_metrics:
                       value : 
-                        max_threshold: 100
-                        weight: 1
-                      description: "Weight and Max threshold (ceiling value for comments count) for comments likes_metrics"
+                        max_threshold: 
+                          type: "integer"
+                          description: "Max threshold (ceiling value for comments count) for comments likes_metrics"
+                          example: 100
+                        weight:
+                          type: "integer"
+                          description: "Weight for comments metrics"
+                          example: 1
                     likes_metrics:
                       value :
-                        max_threshold: 100
-                        weight: 1
-                      description: "Weight and Max threshold (ceiling value for likes count) for likes metrics"
+                        max_threshold:
+                          type: "integer"
+                          description: "Max threshold (ceiling value for likes count) for likes metrics"
+                          example: 100
+                        weight: 
+                          type: "integer"
+                          description: "Weight for likes metrics"
+                          example: 1
                     post_dampening_metrics:
                       value :
-                        max_threshold: 300
-                        weight: 10
-                      description: "Reduces the visibility of posts over time by applying a negative score to posts viewed within the past 24 hours."
+                        max_threshold: 
+                          type: "integer"
+                          description: "Reduces the visibility of posts over time by applying a negative score to posts viewed within the past 24 hours."
+                          example: 300
+                        weight: 
+                          type: "integer"
+                          description: "Weight for post dampening metrics"
+                          example: 10
                     recency_metrics:
                       value :
-                        max_threshold: 1800000
-                        weight: 10
-                      description: "Weight and Max threshold (ceiling value in milliseconds) for recency metrics"
+                        max_threshold: 
+                          type: "integer"
+                          description: "Weight and Max threshold (ceiling value in milliseconds) for recency metrics"
+                          example: 1800000
+                        weight: 
+                          type: "integer"
+                          description: "Weight for recency metrics"
+                          example: 10
                     user_connection_metrics:
                       value : 
-                        max_threshold: 10
-                        weight: 10
-                      description: "Weight and Max threshold for user connections metrics"
+                        max_threshold: 
+                          type: "integer"
+                          description: "Weight and Max threshold for user connections metrics"
+                          example: 10
+                        weight: 
+                          type: "integer"
+                          description: "Weight for user connections metrics"
+                          example: 10
                     user_groups_metrics:
                       value :
-                        max_threshold: 10
-                        weight: 10
-                      description: "Weight and Max threshold for user groups metrics"
+                        max_threshold: 
+                          type: "integer"
+                          description: "Weight and Max threshold for user groups metrics"
+                          example: 10
+                        weight:
+                          type: "integer"
+                          description: "Weight for user groups metrics"
+                          example: 10
                     user_topics_metrics:
                       value :
-                        max_threshold: 10
-                        weight: 10
-                      description: "Weight and Max threshold for user topics metrics"
+                        max_threshold: 
+                          type: "integer"
+                          description: "Weight and Max threshold for user topics metrics"
+                          example: 10
+                        weight: 
+                          type: "integer"
+                          description: "Weight for user topics metrics"
+                          example: 10
                 - description: "Chatbot configurations for the community"
                   type: "chatbot"
                   value:
                     api_key: 
                       value : ""
+                      type: "string"
                       description: "API key for chatbot service"
                     enabled: 
                       value : false
+                      type: "boolean"
                       description: "Flag to enable chatbot in the community"
                     error_message: 
                       value : ""
+                      type: "string"
                       description: "Error message for chatbot service"
                     provider: 
                       value : ""
+                      type: "string"
                       description: "Provider for the chatbot service"
                 - description: "Chat poll configurations for the community."
                   type: "chat_poll"
                   value:
                     allow_add_option: 
                       value : false
+                      type: "boolean"
                       description: "Flag to allow adding options in chat polls"
                     allow_override: 
                       value : true
+                      type: "boolean"
                       description: "Flag to allow overriding poll options"
                     allow_vote_change: 
                       value : true
+                      type: "boolean"
                       description: "Flag to allow changing votes in chat polls"
                     is_anonymous: 
                       value : false
+                      type: "boolean"
                       description: "Flag to make chat polls anonymous"
                     multiple_select_no: 
                       value : 1
+                      type: "integer"
                       description: "Number of options allowed for multiple selection in chat polls"
                     multiple_select_state: 
                       value : "exactly"
+                      type: "string"
                       description: "State for multiple selection in chat polls"
                     no_poll_expiry: 
                       value : false
+                      type: "boolean"
                       description: "Flag to disable poll expiry"
                     poll_type: 
                       value : "instant"
+                      type: "string"
+                      enum: ["instant", "scheduled"]
                       description: "Type of chat poll, e.g., instant or scheduled"
                 - description: "Community configurations for reply privately"
                   type: "reply_privately"
                   value:
                     allowed_scope: 
                       value : "NO_ONE"
+                      type: "string"
+                      enum: ["NO_ONE", "EVERYONE"]
                       description: "Scope for allowing reply privately, e.g., NO_ONE, EVERYONE"
                 - description: "Custom app views for different screens for feed or chat"
                   type: "app_views"
