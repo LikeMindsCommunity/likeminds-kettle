@@ -2,24 +2,31 @@ type: object
 properties:
   success:
     type: boolean
+    description: Indicates if the operation was successful
   error_message:
     type: string
     nullable: true
+    description: Error message if the operation failed
   data:
     type: object
+    description: Data returned from the operation
     properties:
       post:
         type: object
+        description: Details of the post
         properties:
           _id:
             type: string
+            description: Unique identifier for the post
           text:
             type: string
+            description: Text content of the post
           attachments:
             type: array
             description: List of attachments associated with the post
             items:
               type: object
+              description: Attachment details
               properties:
                 attachment_type:
                   type: integer
@@ -100,6 +107,7 @@ properties:
             description: List of replies to the post
             items:
               type: object
+              description: Details of a reply
               properties:
                 user_id:
                   type: string
@@ -127,10 +135,13 @@ properties:
                     properties:
                       title:
                         type: string
+                        description: Title of the menu item
           created_at:
             type: integer
+            description: Timestamp when the post was created
           updated_at:
             type: integer
+            description: Timestamp when the post was last updated
       reposted_posts:
         type: object
         description: Details of reposted posts

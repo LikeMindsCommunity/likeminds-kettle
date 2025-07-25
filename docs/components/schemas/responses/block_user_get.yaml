@@ -3,8 +3,10 @@ properties:
   success:
     type: boolean
     example: true
+    description: Indicates if the request was successful.
   data:
     type: object
+    description: Contains data associated with this api.
     properties:
       blocked_users:
         type: array

@@ -2,14 +2,18 @@ type: object
 properties:
   success:
     type: boolean
+    description: Indicates if the operation was successful
   error_message:
     type: string
     nullable: true
+    description: Error message if the operation failed
   data:
     type: object
+    description: Data returned from the operation
     properties:
       post:
         type: object
+        description: Details of the post
         properties:
           _id:
             type: string
@@ -52,19 +56,24 @@ properties:
                       nullable: true
                     og_tags:
                       type: object
+                      description: Open Graph tags for the attachment
                       properties:
                         title:
                           type: string
+                          description: Title of the attachment
                           nullable: true
                         image:
                           type: string
                           nullable: true
+                          description: Image URL for the attachment
                         description:
                           type: string
+                          description: Description of the attachment
                           nullable: true
                         url:
                           type: string
                           nullable: true
+                          description: URL of the attachment
           community_id:
             type: integer
             description: Identifier for the community the post belongs to
@@ -97,6 +106,7 @@ properties:
               properties:
                 title:
                   type: string
+                  description: Title of the menu item
           replies:
             type: array
             description: List of replies to the post
@@ -129,6 +139,7 @@ properties:
                     properties:
                       title:
                         type: string
+                        description: Title of the menu item
           created_at:
             type: integer
             description: Timestamp when the post was created
