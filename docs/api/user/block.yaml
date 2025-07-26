@@ -1,0 +1,66 @@
+get:
+  operationId: getBlockUser
+  tags: 
+    - BlockedUser
+
+  summary: Blocked user
+  description: Fetch blocked user lists (from feed)
+
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/device.yaml"
+    - $ref: "../../components/parameters/headers/contentType.yaml"
+    - $ref: "../../components/parameters/query/page.yaml"
+    - $ref: "../../components/parameters/query/pageSize.yaml"
+
+  responses:
+    '200':
+      description: Blocked user list fetched successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/block_user_get.yaml"
+
+
+put:
+  operationId: blockUnblockUser
+  tags: 
+    - BlockedUser
+
+  summary: Blocked user
+  description: Block or unblock a user (from feed)
+
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../components/parameters/headers/device.yaml"
+    - $ref: "../../components/parameters/headers/contentType.yaml"
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/requests/block_user_put.yaml"
+          
+  responses:
+    '200':
+      description: User blocked or unblocked successfully based on the request body.
+      content:
+        application/json:
+          type: object
+          properties:
+            success:
+              type: boolean
+  
+    '400':
+      description: Bad request, invalid parameters or request body.
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/partials/error_400.yaml"

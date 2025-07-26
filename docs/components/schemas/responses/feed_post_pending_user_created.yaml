@@ -2,14 +2,18 @@ type: object
 properties:
   success:
     type: boolean
+    description: Indicates if the operation was successful
   error_message:
     type: string
     nullable: true
+    description: Error message if the operation failed
   data:
     type: object
+    description: Data returned from the operation
     properties:
       post:
         type: object
+        description: Details of the post
         properties:
           _id:
             type: string
@@ -25,10 +29,10 @@ properties:
               properties:
                 attachment_type:
                   type: integer
-                  description: Type of the attachment (e.g., image, video)
+                  description: Type of the attachment
                 attachment_meta:
                   type: object
-                  description: Metadata for the attachment
+                  description: Metadata associated with the attachment
                   properties:
                     url:
                       type: string
@@ -36,7 +40,7 @@ properties:
                       nullable: true
                     format:
                       type: string
-                      description: Format of the attachment (e.g., jpg, mp4)
+                      description: Format of the attachment
                       nullable: true
                     size:
                       type: integer
@@ -44,27 +48,32 @@ properties:
                       nullable: true
                     duration:
                       type: integer
-                      description: Duration of the media in seconds
+                      description: Duration of the media attachment in seconds
                       nullable: true
                     page_count:
                       type: integer
-                      description: Number of pages in the document
+                      description: Number of pages in the document attachment
                       nullable: true
                     og_tags:
                       type: object
+                      description: Open Graph tags for the attachment
                       properties:
                         title:
                           type: string
+                          description: Title of the attachment
                           nullable: true
                         image:
                           type: string
                           nullable: true
+                          description: Image URL for the attachment
                         description:
                           type: string
+                          description: Description of the attachment
                           nullable: true
                         url:
                           type: string
                           nullable: true
+                          description: URL of the attachment
           community_id:
             type: integer
             description: Identifier for the community the post belongs to
@@ -82,10 +91,10 @@ properties:
             description: Identifier for the user who created the post
           uuid:
             type: string
-            description: Unique identifier for the post
+            description: Identifier for the user who created the post
           likes_count:
             type: integer
-            description: Number of likes on the post
+            description: Number of likes the post has received
           comments_count:
             type: integer
             description: Number of comments on the post
@@ -97,6 +106,7 @@ properties:
               properties:
                 title:
                   type: string
+                  description: Title of the menu item
           replies:
             type: array
             description: List of replies to the post
@@ -117,10 +127,10 @@ properties:
                   description: Level of the reply in the thread
                 likes_count:
                   type: integer
-                  description: Number of likes on the reply
+                  description: Number of likes the reply has received
                 replies_count:
                   type: integer
-                  description: Number of replies to the reply
+                  description: Number of replies to this reply
                 menu_items:
                   type: array
                   description: List of menu items available for the reply
@@ -129,42 +139,29 @@ properties:
                     properties:
                       title:
                         type: string
+                        description: Title of the menu item
           created_at:
             type: integer
             description: Timestamp when the post was created
           updated_at:
             type: integer
             description: Timestamp when the post was last updated
+      reposted_posts:
+        type: object
+        description: Details of reposted posts
+      topics:
+        type: object
+        description: Topics associated with user created posts
+      total_count:
+        type: object
+        description: Total count of user created posts
+      user_topics:
+        type: object
+        description: user topics connections
       users:
         type: object
-        additionalProperties:
-          type: object
-          properties:
-            user_id:
-              type: string
-              description: Unique identifier for the user
-            user:
-              type: object
-              description: User details
-              properties:
-                id:
-                  type: integer
-                  description: Unique identifier for the user
-                name:
-                  type: string
-                  description: Name of the user
-                image_url:
-                  type: string
-                  description: URL of the user's profile image
-                user_unique_id:
-                  type: string
-                  description: Unique identifier for the user
-                uuid:
-                  type: string
-                  description: UUID of the user
-                is_guest:
-                  type: boolean
-                  description: Indicates if the user is a guest
-                is_deleted:
-                  type: boolean
-                  description: Indicates if the user is deleted
+        description: List of users associated with the posts
+      widgets: 
+        type: object
+        description: Widgets associated with the posts
+      

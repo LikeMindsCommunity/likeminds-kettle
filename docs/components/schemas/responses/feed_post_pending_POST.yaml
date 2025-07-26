@@ -2,33 +2,38 @@ type: object
 properties:
   success:
     type: boolean
+    description: Indicates if the operation was successful
   error_message:
     type: string
     nullable: true
+    description: Error message if the operation failed
   data:
     type: object
+    description: Data returned from the operation
     properties:
       post:
         type: object
+        description: Details of the post
         properties:
           _id:
             type: string
             description: Unique identifier for the post
           text:
             type: string
-            description: Content of the post
+            description: Text content of the post
           attachments:
             type: array
             description: List of attachments associated with the post
             items:
               type: object
+              description: Attachment details
               properties:
                 attachment_type:
                   type: integer
-                  description: Type of the attachment (e.g., image, video)
+                  description: Type of the attachment
                 attachment_meta:
                   type: object
-                  description: Metadata for the attachment
+                  description: Metadata associated with the attachment
                   properties:
                     url:
                       type: string
@@ -36,7 +41,7 @@ properties:
                       nullable: true
                     format:
                       type: string
-                      description: Format of the attachment (e.g., jpg, mp4)
+                      description: Format of the attachment
                       nullable: true
                     size:
                       type: integer
@@ -44,11 +49,11 @@ properties:
                       nullable: true
                     duration:
                       type: integer
-                      description: Duration of the media in seconds
+                      description: Duration of the media attachment in seconds
                       nullable: true
                     page_count:
                       type: integer
-                      description: Number of pages in the document
+                      description: Number of pages in the document attachment
                       nullable: true
                     og_tags:
                       type: object
@@ -73,7 +78,7 @@ properties:
             description: Indicates if the post is pinned
           is_saved:
             type: boolean
-            description: Indicates if the post is saved by the user
+            description: Indicates if the post is saved
           is_edited:
             type: boolean
             description: Indicates if the post has been edited
@@ -82,10 +87,10 @@ properties:
             description: Identifier for the user who created the post
           uuid:
             type: string
-            description: Unique identifier for the post
+            description: Unique identifier for the user who created the post
           likes_count:
             type: integer
-            description: Number of likes on the post
+            description: Number of likes the post has received
           comments_count:
             type: integer
             description: Number of comments on the post
@@ -102,22 +107,23 @@ properties:
             description: List of replies to the post
             items:
               type: object
+              description: Details of a reply
               properties:
                 user_id:
                   type: string
                   description: Identifier for the user who made the reply
                 text:
                   type: string
-                  description: Content of the reply
+                  description: Text of the reply
                 post_id:
                   type: string
-                  description: Identifier for the post being replied to
+                  description: Identifier for the post the reply belongs to
                 level:
                   type: integer
                   description: Level of the reply in the thread
                 likes_count:
                   type: integer
-                  description: Number of likes on the reply
+                  description: Number of likes the reply has received
                 replies_count:
                   type: integer
                   description: Number of replies to the reply
@@ -129,42 +135,20 @@ properties:
                     properties:
                       title:
                         type: string
+                        description: Title of the menu item
           created_at:
             type: integer
             description: Timestamp when the post was created
           updated_at:
             type: integer
             description: Timestamp when the post was last updated
-      users:
+      reposted_posts:
         type: object
-        additionalProperties:
-          type: object
-          properties:
-            user_id:
-              type: string
-              description: Unique identifier for the user
-            user:
-              type: object
-              description: User details
-              properties:
-                id:
-                  type: integer
-                  description: Unique identifier for the user
-                name:
-                  type: string
-                  description: Name of the user
-                image_url:
-                  type: string
-                  description: URL of the user's profile image
-                user_unique_id:
-                  type: string
-                  description: Unique identifier for the user
-                uuid:
-                  type: string
-                  description: UUID of the user
-                is_guest:
-                  type: boolean
-                  description: Indicates if the user is a guest
-                is_deleted:
-                  type: boolean
-                  description: Indicates if the user is deleted
+        description: Details of reposted posts
+      topics:
+        type: object
+        description: Topics associated with user created posts
+      widgets: 
+        type: object
+        description: Widgets associated with the posts
+      
