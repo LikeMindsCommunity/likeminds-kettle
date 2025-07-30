@@ -109,7 +109,7 @@ example:
                 user: 
                   type: integer
                   example: 216415
-                  description: "The unique
+                  description: "The unique identifier for the user"
                 user_unique_id: 
                   type: string
                   example: "user_unique_id3"
