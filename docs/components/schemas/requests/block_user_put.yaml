@@ -1,0 +1,5 @@
+type: object
+properties:
+  should_block:
+    type: boolean
+    description: Indicates whether to block or unblock the user.

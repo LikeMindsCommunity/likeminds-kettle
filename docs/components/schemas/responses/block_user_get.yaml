@@ -1,0 +1,105 @@
+type: object
+properties:
+  success:
+    type: boolean
+    example: true
+    description: Indicates if the request was successful.
+  data:
+    type: object
+    description: Contains data associated with this api.
+    properties:
+      blocked_users:
+        type: array
+        description: List of users that are blocked by the current user.
+        items:
+          type: object
+          properties:
+            custom_title:
+              type: string
+              nullable: true
+              example: null
+              description: Custom title for the user, can be null.
+            id:
+              type: integer
+              example: 216414
+              description: Unique identifier for the user.
+            image_url:
+              type: string
+              example: ""
+              description: URL of the user's image, can be an empty string.
+            is_deleted:
+              type: boolean
+              example: false
+              description: Indicates if the user is deleted.
+            is_guest:
+              type: boolean
+              example: false
+              description: Indicates if the user is a guest.
+            name:
+              type: string
+              example: shobhit-duplicate
+              description: Name of the user.
+            roles:
+              type: array
+              items:
+                type: string
+              example: []
+              description: List of roles assigned to the user.
+            sdk_client_info:
+              type: object
+              description: Information about the SDK client.
+              properties:
+                community:
+                  type: integer
+                  description: ID of the community the user belongs to.
+                  example: 50522
+                user:
+                  type: integer
+                  description: ID of the user.
+                  example: 216414
+                user_unique_id:
+                  type: string
+                  description: Unique identifier for the user.
+                  example: user_unique_id2
+                uuid:
+                  type: string
+                  description: UUUnique identifier for the user.
+                  example: user_unique_id2
+                widget_id:
+                  type: string
+                  description: ID of the widget.
+                  example: ""
+            state:
+              type: integer
+              enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+              example: 4
+              description: State of the user, where 4 typically indicates a specific status.
+            user_unique_id:
+              type: string
+              description: Unique identifier for the user.
+              example: 3851ca79-c008-4b7e-bb63-365981557017
+            uuid:
+              type: string
+              description: Unique identifier for the user.
+              example: 3851ca79-c008-4b7e-bb63-365981557017
+        example:
+          - custom_title: null
+            id: 216414
+            image_url: ""
+            is_deleted: false
+            is_guest: false
+            name: shobhit-duplicate
+            roles: []
+            sdk_client_info:
+              community: 50522
+              user: 216414
+              user_unique_id: user_unique_id2
+              uuid: user_unique_id2
+              widget_id: ""
+            state: 4
+            user_unique_id: 3851ca79-c008-4b7e-bb63-365981557017
+            uuid: 3851ca79-c008-4b7e-bb63-365981557017
+      blocking_users:
+        type: array
+        items: {}
+        example: []

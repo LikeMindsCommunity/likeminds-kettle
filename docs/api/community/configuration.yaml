@@ -28,89 +28,8 @@ get:
           schema:
             $ref: "../../components/schemas/responses/communityConfigurations.yaml"
           example:
-            success: true
-            data:
-              community_configurations:
-                - description: "Personalised feed weights metadata for the community"
-                  type: "personalised_feed_weights"
-                  value:
-                    comments_metrics:
-                      description: "Weight and Max threshold (ceiling value for comments count) for comments metrics"
-                      max_threshold: 1000
-                      weight: 10
-                    likes_metrics:
-                      description: "Weight and Max threshold (ceiling value for likes count) for likes metrics"
-                      max_threshold: 1000
-                      weight: 10
-                    post_dampening_metrics:
-                      description: "Reduces the visibility of posts over time by applying a negative score to posts viewed within the past 24 hours."
-                      max_threshold: 100
-                      weight: 10
-                    recency_metrics:
-                      description: "Weight and Max threshold (ceiling value in seconds) for recency metrics"
-                      max_threshold: 180000
-                      weight: 10
-                    user_connection_metrics:
-                      description: "Weight and Max threshold for user connections metrics"
-                      max_threshold: 10
-                      weight: 10
-                    user_groups_metrics:
-                      description: "Weight and Max threshold for user groups metrics"
-                      max_threshold: 10
-                      weight: 10
-                    user_topics_metrics:
-                      description: "Weight and Max threshold for user topics metrics"
-                      max_threshold: 10
-                      weight: 10
-                - description: "Media size upload limit (in Kilobytes) for different file formats"
-                  type: "media_limits"
-                  value:
-                    max_image_size: 5124
-                    max_video_size: 102400
-                - description: "Metadata related to feed and its entity"
-                  type: "feed_metadata"
-                  value:
-                    comment: "comment"
-                    like_entity_variable:
-                      entity_name: "like"
-                      past_tense_verb: "liked"
-                    post: "post"
-                    universal_feed:
-                      comment_count: 1
-                      comment_sort_order: ""
-                      comment_sort_order_key: ""
-                    anonymous_user_meta:
-                      name: Anonymous User
-                      image_url: ""
-                - description: "User profiles metadata for the community"
-                  type: "profile_metadata"
-                  value:
-                    widgets_enabled: false
-                - description: "NSFW filtering metadata for the community"
-                  type: "nsfw_filtering"
-                  value:
-                    cutoff_score: 0.8
-                    enabled: false
-                    error_status: ""
-                    inferdo_api_key: ""
-                - description: "Widgets metadata for the community"
-                  type: "widgets_metadata"
-                  value:
-                    message: false
-                - description: "Community configurations for guest flow"
-                  type: "guest_flow_metadata"
-                  value:
-                    guest_users: "SINGLE"
-                - description: "Additional feed settings for the community"
-                  type: "feed_settings"
-                  value:
-                    create_feed_poll:
-                      enum:
-                        - everyone
-                        - only_cm
-                        - no_one
-                    menu_items_config:
-                      - hide_post: true
+            $ref: "../../components/schemas/responses/example_community_configurations.yaml"
+            
                       
 patch:
   operationId: updateCommunityConfigurations
@@ -235,18 +154,4 @@ patch:
                           additionalProperties: true
 
           example:
-            success: true
-            data:
-              community_configuration:
-                description: "Metadata related to feed and its entity"
-                type: "feed_metadata"
-                value:
-                  post: "post"
-                  comment: "comment"
-                  like_entity_variable:
-                    entity_name: "like"
-                    past_tense_verb: "liked"
-                  anonymous_user_meta:
-                    name: Anonymous User
-                    image_url: ""
-              record_updated: true
+            $ref: "../../components/schemas/responses/example_community_configurations.yaml"

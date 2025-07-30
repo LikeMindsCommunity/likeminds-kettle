@@ -1,0 +1,120 @@
+post:
+  operationId: createPendingPost
+  tags:
+    - Feed - V1
+
+  summary: Create a New Pending Post
+  description: This API creates a new pending post.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../../components/parameters/headers/acceptVersion.yaml"
+    
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../components/schemas/requests/feed_post_create.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../components/schemas/responses/feed_post_pending_POST.yaml"
+
+put:
+  operationId: editPendingPost
+  tags:
+    - Feed - V1
+
+  summary: Edit Already Created Pending Post
+  description: This API edits an already created pending post.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../../components/parameters/headers/acceptVersion.yaml"
+    - $ref: "../../../../components/parameters/path/post_id.yaml"
+
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../components/schemas/requests/feed_post_create.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../components/schemas/responses/feed_post_create.yaml"
+
+get:
+  operationId: fetchPendingPost
+  tags:
+    - Feed - V1
+
+  summary: Fetches Pending Post
+  description: This API fetches a pending post.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../../components/parameters/headers/acceptVersion.yaml"
+    - $ref: "../../../../components/parameters/path/post_id.yaml"
+
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../components/schemas/responses/feed_post_create.yaml"
+
+delete:
+  operationId: deletePendingPost
+  tags:
+    - Feed - V1
+
+  summary: Delete Pending Post
+  description: This API deletes a pending post.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../../components/parameters/headers/acceptVersion.yaml"
+    - $ref: "../../../../components/parameters/path/post_id.yaml"
+
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../components/schemas/requests/feed_post_create.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../components/schemas/responses/feed_post_pending_DEL.yaml"
