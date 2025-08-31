@@ -15,9 +15,8 @@ properties:
       type: object
       properties:
         attachment_type:
-          type: number
-          description: The type of the attachment
+          type: integer
+          description: The type of the attachment, only 1 (image), 5 (custom widget), 10 (GIF) is supported
           example: 1
         attachment_meta:
-          type: object
-          description: The metadata of the attachment
+          $ref: "./partials/attachment_meta.yaml"

@@ -1,19 +1,39 @@
-type: object
+---
 properties:
   success:
     type: boolean
+    description: Indicates if the request was successful
+    example: true
   data:
     type: object
     properties:
       access_token:
         type: string
+        description: JWT access token
       refresh_token:
         type: string
+        description: JWT refresh token
       community:
         $ref: "./partials/community.yaml"
       user:
         $ref: "./partials/user.yaml"
-      widgets: 
+      widgets:
         type: array
         items:
           $ref: "./partials/widget.yaml"
+      app_access:
+        type: boolean
+        description: Indicates if app access is granted
+      has_answers:
+        type: boolean
+        description: Indicates if answers are present
+    example:
+      access_token: "eyJhbGciOiJIUzI1NiIsIn*****32yTqopVpa3ohvzHp_wqj9OWF2c"
+      refresh_token: "eyJhbGciOiJIUzI1N*****n2Tb73nPKj4wlysQ_cNB96v7YQfVJg0"
+      app_access: true
+      has_answers: true
+      community:
+        $ref: "./partials/community.yaml"
+      user:
+        $ref: "./partials/user.yaml"
+      widgets: []

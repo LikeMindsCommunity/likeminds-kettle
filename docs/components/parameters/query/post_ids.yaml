@@ -1,0 +1,6 @@
+---
+name: post_ids
+in: query
+description: List of post IDs to filter the posts
+schema:
+  type: string

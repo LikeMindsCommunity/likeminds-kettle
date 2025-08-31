@@ -1,0 +1,127 @@
+---
+type: object
+properties:
+  name:
+    type: string
+    description: Name of the attachment
+    example: "Document.pdf"
+    nullable: true
+  url:
+    type: string
+    description: URL of the attachment
+    example: "https://example.com/document.pdf"
+    nullable: true
+  format:
+    type: string
+    description: Format of the attachment (pdf, etc.)
+    example: "pdf"
+    nullable: true
+  size:
+    type: integer
+    description: Size of the attachment in bytes
+    example: 204800
+    nullable: true
+  duration:
+    type: integer
+    description: Duration of the video in seconds
+    example: 120
+    nullable: true
+  width:
+    type: integer
+    description: Width of the attachment
+    example: 1920
+    nullable: true
+  height:
+    type: integer
+    description: Height of the attachment
+    example: 1080
+    nullable: true
+  page_count:
+    type: integer
+    description: Page count of the file
+    example: 10
+    nullable: true
+  thumbnail_url:
+    type: string
+    description: URL of the thumbnail image
+    example: "https://example.com/thumbnail.jpg"
+    nullable: true
+  og_tags:
+    type: object
+    description: Open Graph tags for link previews
+    example: {
+      "title": "Example Link",
+      "image": "https://example.com/image.jpg",
+      "description": "This is an example link description.",
+      "url": "https://example.com"
+    }
+    nullable: true
+  entity_id:
+    type: string
+    description: Entity ID associated with the attachment
+    example: "entity_12345"
+    nullable: true
+  cover_image_url:
+    type: string
+    description: URL of the cover image for videos or articles
+    example: "https://example.com/cover.jpg"
+    nullable: true
+  title:
+    type: string
+    description: Title of the attachment
+    example: "Sample Video"
+    nullable: true
+  body:
+    type: string
+    description: Body or description of the attachment
+    example: "This is a sample video description."
+    nullable: true
+  options:
+    type: array
+    description: Options for poll attachments
+    example: [
+      {"option_id": "opt1", "text": "Option 1"},
+      {"option_id": "opt2", "text": "Option 2"}
+    ]
+    nullable: true
+  expiry_time:
+    type: integer
+    description: Expiry time of the poll in seconds since epoch
+    example: 1700000000
+    nullable: true
+  poll_type:
+    type: integer
+    description: Type of the poll (e.g., 1 for single choice, 2 for multiple choice)
+    example: 1
+    nullable: true
+  multiple_select_state:
+    type: string
+    description: State of multiple selection
+    enum: [exactly, at_max, at_least]
+    example: exactly
+    nullable: true
+  multiple_select_number:
+    type: integer
+    description: Number of selections allowed in multiple select
+    example: 2
+    nullable: true
+  is_anonymous:
+    type: boolean
+    description: Indicates if the poll is anonymous
+    example: true
+    nullable: true
+  allow_add_option:
+    type: boolean
+    description: Indicates if users can add options to the poll
+    example: false
+    nullable: true
+  post_id:
+    type: string
+    description: ID of the post being reposted
+    example: "post_12345"
+    nullable: true
+  widget_meta:
+    type: object
+    description: Metadata for custom widgets
+    example: {"key1": "value1", "key2": "value2"}
+    nullable: true

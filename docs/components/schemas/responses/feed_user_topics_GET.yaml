@@ -1,0 +1,108 @@
+---
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object
+    properties:
+
+      topics:
+        type: array
+        description: List of topics
+        items:
+          type: object
+          properties:
+            _id:
+              type: string
+              description: Topic ID
+            access:
+              type: string
+              description: Access level
+            all_parent_ids:
+              type: array
+              description: List of all parent topic IDs this topic belongs to
+              items:
+                type: string
+            is_enabled:
+              type: boolean
+              description: Whether the topic is enabled
+            is_searchable:
+              type: boolean
+              description: Whether the topic is searchable
+            level:
+              type: integer
+              description: Level of the topic in the hierarchy
+            name:
+              type: string
+              description: Name of the topic
+            number_of_posts:
+              type: integer
+              description: Number of posts in the topic
+            parent_id:
+              type: string
+              description: Parent topic ID
+            parent_name:
+              type: string
+              description: Name of the parent topic
+            priority:
+              type: integer
+              description: Priority of the topic
+            total_child_count:
+              type: integer
+              description: Total number of child topics
+            widget_id:
+              type: string
+              description: Widget ID associated with the topic
+
+      user_topics:
+        type: object
+        description: Mapping of user UUIDs to their followed topic IDs
+        properties:
+          additionalProperties:
+            type: array
+            items:
+              type: string
+              description: Topic ID followed by the user
+        $ref: "./partials/user.yaml"
+
+      widgets:
+        type: object
+        description: Mapping of widget IDs to widget names
+
+    example:
+      topics:
+        64d1fa520a7bda0ea462acd3:
+          _id: "64d1fa520a7bda0ea462acd3"
+          access: ""
+          all_parent_ids: null
+          is_enabled: true
+          is_searchable: true
+          level: 0
+          name: "Cables"
+          parent_id: ""
+          parent_name: ""
+          priority: 0
+          widget_id: ""
+      user_topics:
+        3851ca79-c008-4b7e-bb63-365981557017:
+          - "64d1fa520a7bda0ea462acd3"
+      users:
+        3851ca79-c008-4b7e-bb63-365981557017:
+          id: 216414
+          name: "shobhit-duplicate"
+          image_url: ""
+          user_unique_id: "3851ca79-c008-4b7e-bb63-365981557017"
+          sdk_client_info:
+            community: 50522
+            user: 216414
+            user_unique_id: "user_unique_id2"
+            uuid: "user_unique_id2"
+            widget_id: ""
+          uuid: "3851ca79-c008-4b7e-bb63-365981557017"
+          is_guest: false
+          is_deleted: false
+          custom_title: ""
+          state: 4
+          question_answers: null
+      widgets: {}

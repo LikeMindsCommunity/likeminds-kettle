@@ -1,0 +1,6 @@
+---
+name: topic_ids
+in: query
+description: List of topic IDs to filter the posts
+schema:
+  type: string

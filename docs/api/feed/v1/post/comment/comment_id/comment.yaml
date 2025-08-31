@@ -1,13 +1,14 @@
-put:
-  summary: Edit Comment on Post
+---
+post:
+  summary: Reply a comment in the post
 
-  operationId: editComment
+  operationId: replyComment
 
   tags:
     - Feed - V1
 
   description: |
-    This API edits a user comment on a Post.
+    This API creates a reply on a comment over a Post.
 
   security:
     - bearerAuth: []
@@ -19,7 +20,7 @@ put:
     - $ref: "../../../../../../components/parameters/path/comment_id.yaml"
 
   requestBody:
-    description: The updated text of the comment
+    description: The reply details of the comment
     required: true
     content:
       application/json:
@@ -32,4 +33,4 @@ put:
       content:
         application/json:
           schema:
-            $ref: "../../../../../../components/schemas/responses/feed_comment_edit.yaml"
+            $ref: "../../../../../../components/schemas/responses/feed_comment_create.yaml"

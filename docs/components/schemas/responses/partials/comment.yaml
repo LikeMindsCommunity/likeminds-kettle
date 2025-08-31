@@ -63,3 +63,15 @@ properties:
     type: integer
   user_id:
     type: string
+  attachments:
+    type: array
+    description: List of attachments
+    items:
+      type: object
+      properties:
+        attachment_type:
+          type: integer
+          description: The type of the attachment
+          example: 1
+        attachment_meta:
+          $ref: "./partials/attachment_meta.yaml"

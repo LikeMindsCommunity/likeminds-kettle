@@ -1,31 +1,71 @@
+---
 type: object
 properties:
   id:
     type: integer
+    description: Row no of user info stored in LM's db.
+    example: 216414
   name:
     type: string
+    description: Name of the user.
+    example: shobhit-duplicate
   image_url:
     type: string
+    description: URL of the user's profile image.
+    example: ""
   user_unique_id:
     type: string
+    description: Unique user identifier stored in LM's db.
+    example: 3851ca79-c008-4b7e-bb63-365981557017
   uuid:
     type: string
-  custom_title:
-    type: string
+    description: UUID of the user stored in LM's db.
+    example: 3851ca79-c008-4b7e-bb63-365981557017
   sdk_client_info:
     type: object
+    description: SDK client information related to the user.
     properties:
       community:
         type: integer
+        description: Community identifier.
+        example: 50522
       user:
         type: integer
+        description: User identifier in SDK usually given by client.
+        example: 216414
       user_unique_id:
         type: string
+        description: Unique user identifier in SDK usually given by client.
+        example: user_unique_id2
       uuid:
         type: string
+        description: UUID in SDK usually given by client.
+        example: user_unique_id2
       widget_id:
         type: string
+        description: Id of widget provided, if any.
+        nullable: true
+        example: ""
   is_guest:
     type: boolean
-  is_deleted:
-    type: boolean
+    description: Indicates if the user is a guest.
+    example: false
+  meta_info:
+    type: object
+    description: Additional metadata information about the user.
+    example: {}
+  organisation_name:
+    type: string
+    nullable: true
+    description: Name of the organisation the user belongs to, if any.
+    example: null
+  roles:
+    type: array
+    items:
+      type: string
+    description: List of roles assigned to the user.
+    example: []
+  updated_at:
+    type: integer
+    description: Timestamp of the last update to the user profile.
+    example: 1751278998

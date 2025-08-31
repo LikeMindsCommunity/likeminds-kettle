@@ -1,3 +1,4 @@
+---
 type: object
 properties:
   user_name:
@@ -20,3 +21,86 @@ properties:
     description: User Image Url
     example: "image_url"
     nullable: true
+  device_id:
+    type: string
+    description: Device Id of the client device logging in
+    example: "AAAAAAAA-BBBB-CCCC-1111-222222220000"
+    nullable: true
+  token_expiry_beta:
+    type: integer
+    description: Token expiry time in minutes
+    example: 60
+    nullable: true
+  rtm_token_expiry_beta:
+    type: integer
+    description: Refresh token expiry time in minutes
+    example: 120
+    nullable: true
+  uuid:
+    type: string
+    description: Unique id of user or third party id provided by clients
+    example: "shobhit-l902k"
+    nullable: true
+  question_answers:
+    type: array
+    description: Array of questions and answers for form filling
+    nullable: true
+    items:
+      type: object
+      properties:
+        question_id:
+          type: int
+          description: Id of question asked
+          example: "21"
+        answer:
+          type: string
+          description: Answer provided by user
+          example: "Tommy"
+  shared_by:
+    type: string
+    description: UUID of user who invited the user
+    example: "user_unique_id"
+    nullable: true
+  user:
+    type: object
+    description: User object
+    properties:
+      mobile_no:
+        type: string
+        description: Mobile number of user
+        example: "9876543210"
+        nullable: true
+      country_code:
+        type: string
+        description: Country code of mobile number
+        example: "+91"
+        nullable: true
+      name:
+        type: string
+        description: Name of user
+        example: "user_name"
+        nullable: true
+      email:
+        type: string
+        description: Email of user
+        example: ""
+        nullable: true
+      image_url:
+        type: string
+        description: Image URL of user
+        example: "image_url"
+        nullable: true
+      organisation_name:
+        type: string
+        description: Organisation name of user
+        example: "organisation_name"
+        nullable: true
+      user_unique_id:
+        type: string
+        description: User Unique Id of user
+        example: "user_unique_id"
+        nullable: true
+      meta_info:
+        type: object
+        description: Meta information of user
+        nullable: true

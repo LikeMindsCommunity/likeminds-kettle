@@ -2,62 +2,122 @@ type: object
 properties:
   success:
     type: boolean
-  id:
-    type: integer
-  conversation:
+  data:
     type: object
     properties:
       id:
         type: integer
-      answer:
-        type: string
-      state:
-        type: integer
-      attachments_count:
-        type: integer
-      attachments_uploaded:
-        type: boolean
-      is_edited:
-        type: boolean
-      created_at:
-        type: string
-      has_files:
-        type: boolean
-      chatroom_id:
-        type: integer
-      community_id:
-        type: integer
-      member_id:
-        type: integer
-      date:
-        type: string
-      is_anonymous:
-        type: boolean
-      allow_add_option:
-        type: boolean
-      poll_type:
-        type: integer
-      expiry_time:
-        type: integer
-      polls:
-        type: array
-        items:
-          type: object
-          properties:
-            id:
-              type: integer
-            text:
-              type: string
-            is_selected:
-              type: boolean
-            no_votes:
-              type: integer
-            percentage:
-              type: integer
-      reactions:
-        type: array
-        items: 
-          type: object
-      widget_id:
-        type: string
-        description: Widget ID
+        description: Conversation ID
+      conversation:
+        type: object
+        properties:
+          id:
+            type: integer
+          answer:
+            type: string
+          state:
+            type: integer
+          attachments_count:
+            type: integer
+          attachments_uploaded:
+            type: boolean
+          is_edited:
+            type: boolean
+          created_at:
+            type: string
+          has_files:
+            type: boolean
+          chatroom_id:
+            type: integer
+          community_id:
+            type: integer
+          member_id:
+            type: integer
+          date:
+            type: string
+          is_anonymous:
+            type: boolean
+          allow_add_option:
+            type: boolean
+          poll_type:
+            type: integer
+          expiry_time:
+            type: integer
+          polls:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                text:
+                  type: string
+                is_selected:
+                  type: boolean
+                no_votes:
+                  type: integer
+                percentage:
+                  type: integer
+          reactions:
+            type: array
+            items:
+              type: object
+          widget_id:
+            type: string
+            description: Widget ID
+      widgets:
+        $ref: "../partials/widget.yaml"
+
+    example:
+      conversation:
+        allow_add_option: false
+        allow_vote_change: true
+        answer: "testing by Shobhit at : 1756652424"
+        attachment_count: 0
+        attachments_uploaded: false
+        chatroom_id: 102950
+        community_id: 50522
+        created_at: "20:30"
+        created_epoch: 1756652424102
+        date: "31 Aug 2025"
+        end_time: 0
+        has_event_recording: false
+        has_files: false
+        id: 461708
+        is_anonymous: false
+        is_edited: false
+        member:
+          id: 216414
+          image_url: ""
+          is_guest: false
+          name: "shobhit-duplicate"
+          organisation_name: null
+          roles: []
+          sdk_client_info:
+            community: 50522
+            user: 216414
+            user_unique_id: "user_unique_id2"
+            uuid: "user_unique_id2"
+            widget_id: ""
+          updated_at: 1751278998
+          user_unique_id: "3851ca79-c008-4b7*****365981557017"
+          uuid: "3851ca79-c008-4b7e****365981557017"
+        member_id: 216414
+        no_poll_expiry: false
+        poll_answer_text: ""
+        reactions: []
+        start_time: 0
+        state: 0
+        widget_id: "68b4638874eab106220f39bd"
+      id: 461708
+      widgets:
+        "68b4638874eab106220f39bd":
+          _id: "68b4638874eab106220f39bd"
+          parent_entity_id: "461708"
+          parent_entity_type: "message"
+          metadata:
+            key1: "value1"
+            key2: "value2"
+          _lm_meta: null
+          created_at: 1756652424334
+          updated_at: 1756652424334

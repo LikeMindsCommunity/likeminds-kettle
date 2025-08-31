@@ -28,3 +28,63 @@ put:
         application/json:
           schema:
             $ref: "../../../../../components/schemas/responses/feed_comment_edit.yaml"
+
+get:
+  summary: get a comment on a post
+
+  operationId: getCommentOnPost
+
+  tags:
+    - Feed - V1
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../../components/parameters/path/post_id.yaml"
+    - $ref: "../../../../../components/parameters/path/comment_id.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../../components/schemas/responses/feed_comment_edit.yaml"
+
+delete:
+  summary: Delete a comment on a post
+
+  operationId: deleteCommentOnPost
+
+  tags:
+    - Feed - V1
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: "../../../../../components/parameters/path/post_id.yaml"
+    - $ref: "../../../../../components/parameters/path/comment_id.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+    "404":
+      description: Not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error_message:
+                type: string

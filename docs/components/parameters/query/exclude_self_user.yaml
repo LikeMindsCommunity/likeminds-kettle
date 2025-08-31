@@ -1,0 +1,6 @@
+name: exclude_self_user
+in: query
+description: Whether or not exclude self user from response
+schema:
+  type: boolean
+  default: false
