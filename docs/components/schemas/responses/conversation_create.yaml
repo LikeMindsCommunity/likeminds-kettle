@@ -2,122 +2,119 @@ type: object
 properties:
   success:
     type: boolean
+    description: Whether the API request was successful
+    example: true
   data:
     type: object
+    description: Contains the main response payload
     properties:
       id:
         type: integer
-        description: Conversation ID
+        description: Unique identifier for the conversation
+        example: 461708
       conversation:
         type: object
+        description: Details of the conversation object
         properties:
           id:
             type: integer
+            description: Unique ID of the conversation
+            example: 461708
           answer:
             type: string
+            description: The answer or message text in the conversation
+            example: "testing by Shobhit at : 1756652424"
           state:
             type: integer
+            description: Current state of the conversation (e.g., draft, published)
+            example: 0
           attachments_count:
             type: integer
+            description: Number of attachments in the conversation
+            example: 0
           attachments_uploaded:
             type: boolean
+            description: Whether attachments have been uploaded
+            example: false
           is_edited:
             type: boolean
+            description: Indicates if the conversation has been edited
+            example: false
           created_at:
             type: string
+            description: Time when the conversation was created
+            example: "20:30"
           has_files:
             type: boolean
+            description: Whether the conversation contains files
+            example: false
           chatroom_id:
             type: integer
+            description: Identifier of the chatroom where the conversation belongs
+            example: 102950
           community_id:
             type: integer
+            description: Identifier of the community associated with the conversation
+            example: 50522
           member_id:
             type: integer
+            description: Identifier of the member who created the conversation
+            example: 216414
           date:
             type: string
+            description: Date of the conversation in human-readable format
+            example: "31 Aug 2025"
           is_anonymous:
             type: boolean
+            description: Whether the conversation was posted anonymously
+            example: false
           allow_add_option:
             type: boolean
+            description: Whether members are allowed to add new options (for polls)
+            example: false
           poll_type:
             type: integer
+            description: Type of poll (if applicable)
           expiry_time:
             type: integer
+            description: Poll expiry time in epoch (if polls are enabled)
+            example: 1757333048
           polls:
             type: array
+            description: List of poll options associated with the conversation
             items:
               type: object
               properties:
                 id:
                   type: integer
+                  description: Unique identifier for the poll option
+                  example: 1
                 text:
                   type: string
+                  description: Text of the poll option
+                  example: "Option A"
                 is_selected:
                   type: boolean
+                  description: Whether the option is selected by the user
+                  example: false
                 no_votes:
                   type: integer
+                  description: Number of votes received by the poll option
+                  example: 10
                 percentage:
                   type: integer
+                  description: Percentage of total votes for this option
+                  example: 25
           reactions:
             type: array
+            description: List of reactions to the conversation
             items:
               type: object
+              description: A reaction object
           widget_id:
             type: string
-            description: Widget ID
+            description: Widget ID associated with the conversation
+            example: "68b4638874eab106220f39bd"
       widgets:
         $ref: "../partials/widget.yaml"
-
-    example:
-      conversation:
-        allow_add_option: false
-        allow_vote_change: true
-        answer: "testing by Shobhit at : 1756652424"
-        attachment_count: 0
-        attachments_uploaded: false
-        chatroom_id: 102950
-        community_id: 50522
-        created_at: "20:30"
-        created_epoch: 1756652424102
-        date: "31 Aug 2025"
-        end_time: 0
-        has_event_recording: false
-        has_files: false
-        id: 461708
-        is_anonymous: false
-        is_edited: false
-        member:
-          id: 216414
-          image_url: ""
-          is_guest: false
-          name: "shobhit-duplicate"
-          organisation_name: null
-          roles: []
-          sdk_client_info:
-            community: 50522
-            user: 216414
-            user_unique_id: "user_unique_id2"
-            uuid: "user_unique_id2"
-            widget_id: ""
-          updated_at: 1751278998
-          user_unique_id: "3851ca79-c008-4b7*****365981557017"
-          uuid: "3851ca79-c008-4b7e****365981557017"
-        member_id: 216414
-        no_poll_expiry: false
-        poll_answer_text: ""
-        reactions: []
-        start_time: 0
-        state: 0
-        widget_id: "68b4638874eab106220f39bd"
-      id: 461708
-      widgets:
-        "68b4638874eab106220f39bd":
-          _id: "68b4638874eab106220f39bd"
-          parent_entity_id: "461708"
-          parent_entity_type: "message"
-          metadata:
-            key1: "value1"
-            key2: "value2"
-          _lm_meta: null
-          created_at: 1756652424334
-          updated_at: 1756652424334
+        description: Metadata and details about widgets related to the conversation

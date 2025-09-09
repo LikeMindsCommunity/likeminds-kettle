@@ -17,6 +17,7 @@ properties:
         attachment_type:
           type: integer
           description: The type of the attachment, only 1 (image), 5 (custom widget), 10 (GIF) is supported
+          enum: [1, 4, 5]
           example: 1
         attachment_meta:
           $ref: "./partials/attachment_meta.yaml"

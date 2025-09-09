@@ -12,7 +12,7 @@ items:
     all_parent_ids:
       type: array
       description: All parent ids of the topic
-      example: []
+      default: []
     is_enabled:
       type: boolean
       description: Indicates if the topic is enabled

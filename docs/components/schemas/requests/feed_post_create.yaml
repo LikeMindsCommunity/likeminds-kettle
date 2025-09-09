@@ -15,12 +15,12 @@ properties:
       items:
         type: string
   is_repost:
-    type: boolean
-    description: |
-      Is the Post a repost.
-      If true, an additional object must be included in the attachments array with:
-        - attachment_type: 8
-        - attachment_meta.entity_id: ID of the post to be reposted
+  type: boolean
+  description: |
+    Indicates if the post is a repost.
+    If true, the attachments array must include an object with:
+      - `attachment_type`: 8 (Post widget)
+      - `attachment_meta.entity_id`: ID of the post to be reposted
   is_anonymous:
     type: boolean
     description: If post is created anonymously

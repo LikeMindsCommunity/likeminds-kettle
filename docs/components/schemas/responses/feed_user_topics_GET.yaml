@@ -3,6 +3,7 @@ type: object
 properties:
   success:
     type: boolean
+    example: true
   data:
     type: object
     properties:
@@ -16,44 +17,55 @@ properties:
             _id:
               type: string
               description: Topic ID
+              example: "64d1fa520a7bda0ea462acd3"
             access:
               type: string
               description: Access level
+              example: ""
             all_parent_ids:
               type: array
               description: List of all parent topic IDs this topic belongs to
               items:
                 type: string
+              example: null
             is_enabled:
               type: boolean
               description: Whether the topic is enabled
+              example: true
             is_searchable:
               type: boolean
               description: Whether the topic is searchable
+              example: true
             level:
               type: integer
               description: Level of the topic in the hierarchy
+              example: 0
             name:
               type: string
               description: Name of the topic
+              example: "Cables"
             number_of_posts:
               type: integer
               description: Number of posts in the topic
             parent_id:
               type: string
               description: Parent topic ID
+              example: ""
             parent_name:
               type: string
               description: Name of the parent topic
+              example: ""
             priority:
               type: integer
               description: Priority of the topic
+              example: 0
             total_child_count:
               type: integer
               description: Total number of child topics
             widget_id:
               type: string
               description: Widget ID associated with the topic
+              example: ""
 
       user_topics:
         type: object
@@ -64,45 +76,14 @@ properties:
             items:
               type: string
               description: Topic ID followed by the user
+              example: "64d1fa520a7bda0ea462acd3"
+        example:
+          3851ca79-c008-4b7e-bb63-365981557017:
+            - "64d1fa520a7bda0ea462acd3"
+      users:
         $ref: "./partials/user.yaml"
 
       widgets:
         type: object
         description: Mapping of widget IDs to widget names
-
-    example:
-      topics:
-        64d1fa520a7bda0ea462acd3:
-          _id: "64d1fa520a7bda0ea462acd3"
-          access: ""
-          all_parent_ids: null
-          is_enabled: true
-          is_searchable: true
-          level: 0
-          name: "Cables"
-          parent_id: ""
-          parent_name: ""
-          priority: 0
-          widget_id: ""
-      user_topics:
-        3851ca79-c008-4b7e-bb63-365981557017:
-          - "64d1fa520a7bda0ea462acd3"
-      users:
-        3851ca79-c008-4b7e-bb63-365981557017:
-          id: 216414
-          name: "shobhit-duplicate"
-          image_url: ""
-          user_unique_id: "3851ca79-c008-4b7e-bb63-365981557017"
-          sdk_client_info:
-            community: 50522
-            user: 216414
-            user_unique_id: "user_unique_id2"
-            uuid: "user_unique_id2"
-            widget_id: ""
-          uuid: "3851ca79-c008-4b7e-bb63-365981557017"
-          is_guest: false
-          is_deleted: false
-          custom_title: ""
-          state: 4
-          question_answers: null
-      widgets: {}
+        default: {}

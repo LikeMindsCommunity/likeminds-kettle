@@ -3,8 +3,11 @@ type: object
 properties:
   success:
     type: boolean
+    description: Whether the API request was successful
+    example: true
   data:
     type: object
+    description: Contains the main response payload
     properties:
       child_topics:
         type: array
@@ -15,44 +18,57 @@ properties:
             _id:
               type: string
               description: Topic ID
+              example: "68aef47974eab106220f39b6"
             access:
               type: string
               description: Access level
+              example: ""
             all_parent_ids:
               type: array
               description: List of all parent topic IDs this topic belongs to
               items:
                 type: string
+                example: "64d1fb340a7bda0ea462acea"
             is_enabled:
               type: boolean
               description: Whether the topic is enabled
+              example: true
             is_searchable:
               type: boolean
               description: Whether the topic is searchable
+              example: true
             level:
               type: integer
               description: Level of the topic in the hierarchy
+              example: 1
             name:
               type: string
               description: Name of the topic
+              example: "model 6"
             number_of_posts:
               type: integer
               description: Number of posts in the topic
+              example: 0
             parent_id:
               type: string
               description: Parent topic ID
+              example: "64d1fb340a7bda0ea462acea"
             parent_name:
               type: string
               description: Name of the parent topic
+              example: "Airpods 1st gen"
             priority:
               type: integer
               description: Priority of the topic
+              example: 0
             total_child_count:
               type: integer
               description: Total number of child topics
+              example: 0
             widget_id:
               type: string
               description: Widget ID associated with the topic
+              example: ""
       topics:
         type: array
         description: List of topics
@@ -62,78 +78,58 @@ properties:
             _id:
               type: string
               description: Topic ID
+              example: "64d1fb340a7bda0ea462acea"
             access:
               type: string
               description: Access level
+              example: ""
             all_parent_ids:
               type: array
               description: List of all parent topic IDs this topic belongs to
               items:
                 type: string
+              example: null
             is_enabled:
               type: boolean
               description: Whether the topic is enabled
+              example: false
             is_searchable:
               type: boolean
               description: Whether the topic is searchable
+              example: true
             level:
               type: integer
               description: Level of the topic in the hierarchy
+              example: 0
             name:
               type: string
               description: Name of the topic
+              example: "Airpods 1st gen"
             number_of_posts:
               type: integer
               description: Number of posts in the topic
+              example: 0
             parent_id:
               type: string
               description: Parent topic ID
+              example: ""
             parent_name:
               type: string
               description: Name of the parent topic
+              example: ""
             priority:
               type: integer
               description: Priority of the topic
+              example: 0
             total_child_count:
               type: integer
               description: Total number of child topics
+              example: 1
             widget_id:
               type: string
               description: Widget ID associated with the topic
+              example: ""
       widgets:
         type: object
         description: Mapping of widget IDs to widget names
-  example:
-    success: true
-    data:
-      child_topics:
-        64d1fb340a7bda0ea462acea:
-          - _id: "68aef47974eab106220f39b6"
-            access: ""
-            all_parent_ids:
-              - 64d1fb340a7bda0ea462acea
-            is_enabled: true
-            is_searchable: true
-            level: 1
-            name: "model 6"
-            number_of_posts: 0
-            parent_id: "64d1fb340a7bda0ea462acea"
-            parent_name: "Airpods 1st gen"
-            priority: 0
-            total_child_count: 0
-            widget_id: ""
-      topics:
-        - _id: "64d1fb340a7bda0ea462acea"
-          access: ""
-          all_parent_ids: null
-          is_enabled: false
-          is_searchable: true
-          level: 0
-          name: "Airpods 1st gen"
-          number_of_posts: 0
-          parent_id: ""
-          parent_name: ""
-          priority: 0
-          total_child_count: 1
-          widget_id: ""
-      widgets: {}
+        example: {}

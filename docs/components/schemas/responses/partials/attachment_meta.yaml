@@ -1,5 +1,7 @@
 ---
 type: object
+description: Metadata of the attachment
+nullable: true
 properties:
   name:
     type: string
@@ -49,13 +51,28 @@ properties:
   og_tags:
     type: object
     description: Open Graph tags for link previews
-    example: {
-      "title": "Example Link",
-      "image": "https://example.com/image.jpg",
-      "description": "This is an example link description.",
-      "url": "https://example.com"
-    }
     nullable: true
+    properties: 
+      title:
+        type: string
+        description: Title of the link
+        example: "Read this article"
+        nullable: true
+      image:
+        type: string
+        description: Image URL for the link preview
+        example: "https://example.com/image.jpg"
+        nullable: true
+      description:
+        type: string
+        description: Description of the link
+        example: "Dollar crash amid tensions between US and China."
+        nullable: true
+      url:
+        type: string
+        description: URL of the link
+        example: "https://example.com/news/article/12"
+        nullable: true
   entity_id:
     type: string
     description: Entity ID associated with the attachment
@@ -76,29 +93,21 @@ properties:
     description: Body or description of the attachment
     example: "This is a sample video description."
     nullable: true
-  options:
-    type: array
-    description: Options for poll attachments
-    example: [
-      {"option_id": "opt1", "text": "Option 1"},
-      {"option_id": "opt2", "text": "Option 2"}
-    ]
-    nullable: true
   expiry_time:
     type: integer
     description: Expiry time of the poll in seconds since epoch
     example: 1700000000
     nullable: true
   poll_type:
-    type: integer
-    description: Type of the poll (e.g., 1 for single choice, 2 for multiple choice)
-    example: 1
+    type: string
+    description: Type of the poll (e.g., "single_choice", "multiple_choice")
+    example: "single_choice"
     nullable: true
   multiple_select_state:
     type: string
     description: State of multiple selection
     enum: [exactly, at_max, at_least]
-    example: exactly
+    example: "exactly"
     nullable: true
   multiple_select_number:
     type: integer
@@ -115,13 +124,9 @@ properties:
     description: Indicates if users can add options to the poll
     example: false
     nullable: true
-  post_id:
-    type: string
-    description: ID of the post being reposted
-    example: "post_12345"
-    nullable: true
-  widget_meta:
-    type: object
-    description: Metadata for custom widgets
-    example: {"key1": "value1", "key2": "value2"}
+  nsfw_score:
+    type: number
+    format: float
+    description: NSFW (Not Safe For Work) score of the attachment
+    example: 0.85
     nullable: true

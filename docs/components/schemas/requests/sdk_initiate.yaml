@@ -15,11 +15,11 @@ properties:
     type: boolean
     description: If user is a guest user
     nullable: true
-    example: false
+    default: false
   image_url:
     type: string
     description: User Image Url
-    example: "image_url"
+    example: "www.googleimage.com/fdsfsd/32.png"
     nullable: true
   device_id:
     type: string
@@ -29,12 +29,12 @@ properties:
   token_expiry_beta:
     type: integer
     description: Token expiry time in minutes
-    example: 60
+    default: 60
     nullable: true
   rtm_token_expiry_beta:
     type: integer
     description: Refresh token expiry time in minutes
-    example: 120
+    default: 120
     nullable: true
   uuid:
     type: string
@@ -73,7 +73,7 @@ properties:
       country_code:
         type: string
         description: Country code of mobile number
-        example: "+91"
+        default: "+91"
         nullable: true
       name:
         type: string

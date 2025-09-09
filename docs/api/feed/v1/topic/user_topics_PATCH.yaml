@@ -23,7 +23,7 @@ patch:
               type: object
               description: Id of topics to be followed/unfollowed
               properties:
-                {topic_id}:
+                additionalProperties:
                   type: boolean
                   description: key is topic_id and value is true (to follow), false (to unfollow)
 

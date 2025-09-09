@@ -53,18 +53,18 @@ properties:
   meta_info:
     type: object
     description: Additional metadata information about the user.
-    example: {}
+    default: {}
   organisation_name:
     type: string
     nullable: true
     description: Name of the organisation the user belongs to, if any.
-    example: null
+    default: null
   roles:
     type: array
     items:
       type: string
     description: List of roles assigned to the user.
-    example: []
+    default: []
   updated_at:
     type: integer
     description: Timestamp of the last update to the user profile.

@@ -10,9 +10,11 @@ properties:
       access_token:
         type: string
         description: JWT access token
+        example: "eyJhbGciOiJIUzI1NiIsIn*****32yTqopVpa3ohvzHp_wqj9OWF2c"
       refresh_token:
         type: string
         description: JWT refresh token
+        example: "eyJhbGciOiJIUzI1N*****n2Tb73nPKj4wlysQ_cNB96v7YQfVJg0"
       community:
         $ref: "./partials/community.yaml"
       user:
@@ -24,16 +26,8 @@ properties:
       app_access:
         type: boolean
         description: Indicates if app access is granted
+        example: true
       has_answers:
         type: boolean
         description: Indicates if answers are present
-    example:
-      access_token: "eyJhbGciOiJIUzI1NiIsIn*****32yTqopVpa3ohvzHp_wqj9OWF2c"
-      refresh_token: "eyJhbGciOiJIUzI1N*****n2Tb73nPKj4wlysQ_cNB96v7YQfVJg0"
-      app_access: true
-      has_answers: true
-      community:
-        $ref: "./partials/community.yaml"
-      user:
-        $ref: "./partials/user.yaml"
-      widgets: []
+        example: true
