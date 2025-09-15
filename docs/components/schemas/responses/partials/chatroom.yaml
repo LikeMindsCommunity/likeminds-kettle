@@ -199,3 +199,6 @@ properties:
   videos:
     type: array
     items: {}
+  event_kind:
+    type: string
+    enum: [partner_event, ""]

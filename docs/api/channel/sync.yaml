@@ -1,0 +1,18 @@
+---
+get:
+  summary: Sync User Channel
+  operationId: syncUserChannel
+  tags:
+    - Channel
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/query/channel_action_types.yaml"
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/responses/channel_settings_get.yaml"

@@ -1,3 +1,4 @@
+---
 type: object
 properties:
   text:
@@ -14,11 +15,15 @@ properties:
       items:
         type: string
   is_repost:
-    type: boolean
-    description: Is the Post a repost
+  type: boolean
+  description: |
+    Indicates if the post is a repost.
+    If true, the attachments array must include an object with:
+      - `attachment_type`: 8 (Post widget)
+      - `attachment_meta.entity_id`: ID of the post to be reposted
   is_anonymous:
     type: boolean
-    description: If post is created anonymously 
+    description: If post is created anonymously
   feedroom_id:
     type: string
     description: Feedroom ID of the Post
@@ -56,44 +61,4 @@ properties:
             - 10 - GIF widget
             - 11 - Reel
         attachment_meta:
-          type: object
-          properties:
-            url:
-              type: string
-              nullable: true
-              description: URL of the attachment
-            format:
-              type: string
-              nullable: true
-              description: Format of the attachment (pdf, etc.)
-            size:
-              type: integer
-              nullable: true
-              description: Size of the attachment
-            duration:
-              type: integer
-              nullable: true
-              description: Duration of the video
-            page_count:
-              type: integer
-              nullable: true
-              description: Page count of the file
-            og_tags:
-              type: object
-              properties:
-                title:
-                  type: string
-                  nullable: true
-                  description: Link Title
-                image:
-                  type: string
-                  nullable: true
-                  description: Link Image URL
-                description:
-                  type: string
-                  nullable: true
-                  description: Link description
-                url:
-                  type: string
-                  nullable: true
-                  description: Link URL
+          $ref: "./partials/attachment_meta.yaml"

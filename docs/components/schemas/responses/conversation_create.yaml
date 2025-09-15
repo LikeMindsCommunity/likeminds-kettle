@@ -2,62 +2,119 @@ type: object
 properties:
   success:
     type: boolean
-  id:
-    type: integer
-  conversation:
+    description: Whether the API request was successful
+    example: true
+  data:
     type: object
+    description: Contains the main response payload
     properties:
       id:
         type: integer
-      answer:
-        type: string
-      state:
-        type: integer
-      attachments_count:
-        type: integer
-      attachments_uploaded:
-        type: boolean
-      is_edited:
-        type: boolean
-      created_at:
-        type: string
-      has_files:
-        type: boolean
-      chatroom_id:
-        type: integer
-      community_id:
-        type: integer
-      member_id:
-        type: integer
-      date:
-        type: string
-      is_anonymous:
-        type: boolean
-      allow_add_option:
-        type: boolean
-      poll_type:
-        type: integer
-      expiry_time:
-        type: integer
-      polls:
-        type: array
-        items:
-          type: object
-          properties:
-            id:
-              type: integer
-            text:
-              type: string
-            is_selected:
-              type: boolean
-            no_votes:
-              type: integer
-            percentage:
-              type: integer
-      reactions:
-        type: array
-        items: 
-          type: object
-      widget_id:
-        type: string
-        description: Widget ID
+        description: Unique identifier for the conversation
+        example: 461708
+      conversation:
+        type: object
+        description: Details of the conversation object
+        properties:
+          id:
+            type: integer
+            description: Unique ID of the conversation
+            example: 461708
+          answer:
+            type: string
+            description: The answer or message text in the conversation
+            example: "testing by Shobhit at : 1756652424"
+          state:
+            type: integer
+            description: Current state of the conversation (e.g., draft, published)
+            example: 0
+          attachments_count:
+            type: integer
+            description: Number of attachments in the conversation
+            example: 0
+          attachments_uploaded:
+            type: boolean
+            description: Whether attachments have been uploaded
+            example: false
+          is_edited:
+            type: boolean
+            description: Indicates if the conversation has been edited
+            example: false
+          created_at:
+            type: string
+            description: Time when the conversation was created
+            example: "20:30"
+          has_files:
+            type: boolean
+            description: Whether the conversation contains files
+            example: false
+          chatroom_id:
+            type: integer
+            description: Identifier of the chatroom where the conversation belongs
+            example: 102950
+          community_id:
+            type: integer
+            description: Identifier of the community associated with the conversation
+            example: 50522
+          member_id:
+            type: integer
+            description: Identifier of the member who created the conversation
+            example: 216414
+          date:
+            type: string
+            description: Date of the conversation in human-readable format
+            example: "31 Aug 2025"
+          is_anonymous:
+            type: boolean
+            description: Whether the conversation was posted anonymously
+            example: false
+          allow_add_option:
+            type: boolean
+            description: Whether members are allowed to add new options (for polls)
+            example: false
+          poll_type:
+            type: integer
+            description: Type of poll (if applicable)
+          expiry_time:
+            type: integer
+            description: Poll expiry time in epoch (if polls are enabled)
+            example: 1757333048
+          polls:
+            type: array
+            description: List of poll options associated with the conversation
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: Unique identifier for the poll option
+                  example: 1
+                text:
+                  type: string
+                  description: Text of the poll option
+                  example: "Option A"
+                is_selected:
+                  type: boolean
+                  description: Whether the option is selected by the user
+                  example: false
+                no_votes:
+                  type: integer
+                  description: Number of votes received by the poll option
+                  example: 10
+                percentage:
+                  type: integer
+                  description: Percentage of total votes for this option
+                  example: 25
+          reactions:
+            type: array
+            description: List of reactions to the conversation
+            items:
+              type: object
+              description: A reaction object
+          widget_id:
+            type: string
+            description: Widget ID associated with the conversation
+            example: "68b4638874eab106220f39bd"
+      widgets:
+        $ref: "../partials/widget.yaml"
+        description: Metadata and details about widgets related to the conversation

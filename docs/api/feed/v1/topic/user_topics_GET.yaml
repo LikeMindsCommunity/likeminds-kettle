@@ -1,0 +1,30 @@
+---
+get:
+  operationId: fetchUserTopics
+
+  summary: Fetch user topics
+  description: This API is used to fetch user topics
+
+  tags:
+    - Feed - V1
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - name: uuids
+      in: query
+      description: users uuid following the topics
+      schema:
+        type: array
+        items:
+          type: string
+        example: ["user_unique_id", "shobhit-duplicate"]
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../components/schemas/responses/feed_user_topics_GET.yaml"

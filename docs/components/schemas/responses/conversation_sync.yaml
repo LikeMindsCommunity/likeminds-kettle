@@ -119,6 +119,9 @@ properties:
               type: integer
             user_id:
               type: integer
+            event_kind:
+              type: string
+              enum: [partner_event, ""]
       chatroom_reactions_meta:
         type: object
       community_meta:

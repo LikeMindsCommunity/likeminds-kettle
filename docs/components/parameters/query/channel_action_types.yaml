@@ -1,0 +1,23 @@
+---
+name: channel_action_types
+in: query
+description: List of channel actions that needed in API response
+schema:
+  type: string
+  description: Comma separated list of channel actions. Possible values and their descriptions are as follows.
+
+    - mute_unmute | String | Mute/Unmute action according to user setting
+    - view_profile | String | View profile action
+    - view_community | String | View community action
+    - block_unblock_member | String | Block/Unblock member action
+    - rename_channel | String | Rename channel action
+    - view_participants | String | View participants action
+    - invite_member | String | Invite member action
+    - share | String | Share invite link action
+    - join_channel | String | Join channel action
+    - leave_channel | String | Leave channel action
+    - delete_channel | String | Delete channel action
+    - report_spam_abuse | String | Report spam or abuse action
+    - add_all_members | String | Add all members in a channel action
+    - channel_settings | String | Channel settings action
+  example: [mute_unmute, view_profile, view_community, block_unblock_member]

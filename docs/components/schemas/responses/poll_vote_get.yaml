@@ -1,11 +1,53 @@
+---
 type: object
 properties:
   success:
     type: boolean
+
   data:
     type: object
     properties:
       votes:
         type: array
         items:
-          type: string
+          type: object
+          properties:
+            _id:
+              type: string
+              description: ID of the option voted for
+              example: "44685173-e48c-481c-b0f6-fce2868fd22b"
+            users:
+              type: array
+              description: List of user IDs who voted for this option
+              items:
+                type: string
+                example: "3851ca79-c008-4b7e-bb63-365981557017"
+
+      users:
+        type: object
+        description: Mapping of user UUIDs to user details
+        additionalProperties:
+          $ref: "./partials/user.yaml"
+
+      topics:
+        type: object
+        description: Mapping of topic IDs to topic details
+        additionalProperties:
+          $ref: "./partials/topic.yaml"
+      user_topics:
+        type: object
+        description: Mapping of user UUIDs to their followed topic IDs
+        additionalProperties:
+          type: array
+          items:
+            type: string
+            description: Topic ID followed by the user
+            example: "64d1fa520a7bda0ea462acd3"
+        example:
+          "3851ca79-c008-4b7e-bb63-365981557017":
+            - "64d1fa520a7bda0ea462acd3"
+
+      widgets:
+        type: object
+        description: Mapping of widget IDs to widget details
+        default: {}
