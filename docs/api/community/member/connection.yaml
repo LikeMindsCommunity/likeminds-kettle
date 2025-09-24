@@ -1,0 +1,112 @@
+---
+get:
+  operationId: getCommunityMemberConnection
+  tags:
+    - Member
+
+  summary: Fetch Community Member Connections
+  description: This API fetches connection details or status of a community member with other members
+
+  parameters:
+    - $ref: "../../../components/parameters/headers/platformCode.yaml"
+    - $ref: "../../../components/parameters/headers/versionCode.yaml"
+    - $ref: "../../../components/parameters/headers/platformType.yaml"
+    - $ref: "../../../components/parameters/headers/apiKey.yaml"
+    - $ref: "../../../components/parameters/query/page.yaml"
+    - $ref: "../../../components/parameters/query/page_size.yaml"
+    - name: status
+      in: query
+      description: status of connection to be fetched.
+      required: false
+      schema:
+        type: string
+        enum:
+          - "accepted"
+          - "pending"
+    
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../../../components/schemas/responses/community_member_connection_get.yaml"
+
+post:
+  operationId: sendCommunityMemberConnectionRequest
+  tags:
+      - Member
+
+  summary: Send Feed Connection Request to community member
+  description: This API sends a feed connection request to a community member
+    
+  requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              connection_type:
+                type: string
+                description: Type of Connection
+                enum:
+                  - "one_way"
+                  - "two_way"
+                example: "two_way"
+              connection_request_auto_accepted:
+                type: boolean
+                description: Whether the connection request is auto-accepted
+  responses:
+      '200':
+        description: Successful response
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  description: Indicates if the request was successful
+
+patch:
+  operationId: actionOnCommunityMemberConnectionRequest
+  tags:
+        - Member
+
+  summary: Perform action on Feed Connection Request to community member
+  description: This API performs an action (accept/reject) on a feed connection request to
+
+  requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              action:
+                type: string
+                description: Action to Perform
+                enum:
+                  - "accept"
+                  - "reject"
+                example: "accept"
+              connection_type:
+                type: string
+                description: Type of connection
+                enum:
+                  - "one_way"
+                  - "two_way"
+                example: "two_way"
+
+  responses:
+      '200':
+        description: Successful response
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  description: Indicates if the request was successful

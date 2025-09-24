@@ -1,0 +1,95 @@
+type: object
+properties:
+  success:
+    type: boolean
+    description: Indicates if the request was successful
+    example: true
+  data:
+    type: object
+    properties:
+      connections:
+        type: array
+        description: List of connection between community members
+        items:
+          type: object
+          properties:
+            created_at:
+              type: integer
+              description: Timestamp when the connection was created
+              example: 1756723232613
+            updated_at:
+              type: integer
+              description: Timestamp when the connection was last updated
+              example: 1756723232613
+            user1_uuid:
+              type: string
+              description: UUID of the first user in the connection
+              example: "a3a65ccf-44a9-42cd-b058-46b6ab764309"
+            user2_uuid:
+              type: string
+              description: UUID of the second user in the connection
+              example: "3851ca79-c008-4b7e-bb63-365981557017"
+      users:
+        $ref: "./partials/user.yaml"
+
+example:
+  success: true
+  data:
+    connections:
+      - created_at: 1756723232613
+        updated_at: 1756723232613
+        user1_uuid: "a3a65ccf-44a9-42cd-b058-46b6ab764309"
+        user2_uuid: "3851ca79-c008-4b7e-bb63-365981557017"
+      - created_at: 1756723354140
+        updated_at: 1756723354140
+        user1_uuid: "a3a65ccf-44a9-42cd-b058-46b6ab764309"
+        user2_uuid: "50208a54-6279-4f46-b3e1-41acf10c5d20"
+    users:
+      "3851ca79-c008-4b7e-bb63-365981557017":
+        id: 216414
+        image_url: ""
+        is_guest: false
+        name: "shobhit-duplicate"
+        organisation_name: null
+        roles: []
+        sdk_client_info:
+          community: 50522
+          user: 216414
+          user_unique_id: "user_unique_id2"
+          uuid: "user_unique_id2"
+          widget_id: ""
+        updated_at: 1751278998
+        user_unique_id: "3851ca79-c008-4b7e-bb63-365981557017"
+        uuid: "3851ca79-c008-4b7e-bb63-365981557017"
+      "50208a54-6279-4f46-b3e1-41acf10c5d20":
+        id: 216415
+        image_url: ""
+        is_guest: false
+        name: "shobhit-duplicate2"
+        organisation_name: null
+        roles: []
+        sdk_client_info:
+          community: 50522
+          user: 216415
+          user_unique_id: "user_unique_id3"
+          uuid: "user_unique_id3"
+          widget_id: ""
+        updated_at: 1751372673
+        user_unique_id: "50208a54-6279-4f46-b3e1-41acf10c5d20"
+        uuid: "50208a54-6279-4f46-b3e1-41acf10c5d20"
+      "a3a65ccf-44a9-42cd-b058-46b6ab764309":
+        id: 92950
+        image_url: "https://static.vecteezy.com/packs/media/components/home/unlock-vecteezy/img/find-your-path*****5c6a13.jpg"
+        is_guest: false
+        name: "Anurag 1"
+        organisation_name: null
+        roles: []
+        sdk_client_info:
+          community: 50522
+          user: 92950
+          user_unique_id: "user_unique_id"
+          uuid: "user_unique_id"
+          widget_id: ""
+        updated_at: 1698735557
+        user_unique_id: "a3a65ccf-44a9-42cd-b058-46b6ab764309"
+        uuid: "a3a65ccf-44a9-42cd-b058-46b6ab764309"

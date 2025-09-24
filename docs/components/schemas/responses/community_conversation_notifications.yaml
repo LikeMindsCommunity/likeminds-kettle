@@ -1,0 +1,28 @@
+---
+type: object
+properties:
+  success:
+    type: boolean
+    description: Indicates if the request was successful
+    example: true
+  data:
+    type: object
+    properties:
+      community_notification_settings:
+        type: object
+        properties:
+          community:
+            description : community id
+            example : 50431x
+          created_at:
+            description : timestamp in milliseconds
+            example : 1671440379363
+          id:
+            description : unique id
+            example : "8c13fd69-2603-4a79-9a15-20389a03f2bb"
+          noti_state:
+            description : notification state (0 -> off, 1 -> mentions only, 2 -> all messages)
+            example : 2
+          updated_at:
+            description : timestamp in milliseconds
+            example : 1677658346213
