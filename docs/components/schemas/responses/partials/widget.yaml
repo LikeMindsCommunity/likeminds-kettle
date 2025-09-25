@@ -1,24 +1,43 @@
+
 type: object
-description: Widget object
 properties:
   _id:
     type: string
-    description: Widget ID
-  _lm_meta:
-    type: object
-    description: Internal LM meta
-  created_at:
-    type: integer
-    description: Widget creation timestamp
-  updated_at:
-    type: integer
-    description: Widget update timestamp
+    description: Widget unique id
+    example: "65f8173cf1a0bed3eff3b472"
   parent_entity_id:
     type: string
-    description: Parent entity ID
+    description: Id of the parent entity (usually user uuid)
+    example: "9d459beb-83b2-4975-bce1-ab0fed071e1a"
   parent_entity_type:
     type: string
-    description: Parent entity type
+    description: Type of the parent entity (user/community)
+    example: "user"
   metadata:
     type: object
-    description: Widget metadata
+    properties:
+      bio:
+        type: string
+        description: Short bio text for the widget owner
+        example: ""
+      description:
+        type: string
+        description: Longer description text for the widget
+        example: ""
+      username:
+        type: string
+        description: Username associated with the widget
+        example: "anurag"
+  _lm_meta:
+    nullable: true
+    type: object
+    description: Internal LikeMinds metadata for the widget
+    example: null
+  created_at:
+    type: integer
+    description: Creation timestamp in milliseconds
+    example: 1710757692570
+  updated_at:
+    type: integer
+    description: Last updated timestamp in milliseconds
+    example: 1710757692570

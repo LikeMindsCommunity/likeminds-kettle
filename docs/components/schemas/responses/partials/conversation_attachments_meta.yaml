@@ -1,0 +1,74 @@
+type: object
+properties:
+  answer_id:
+    type: integer
+    description: ID of the answer/conversation this attachment belongs to
+    example: 331006
+  created_at:
+    type: integer
+    description: Epoch milliseconds when the attachment was created
+    example: 1720435145000
+  dimensions:
+    nullable: true
+    type: object
+    description: Optional dimensions object for the attachment
+    example: null
+  file_url:
+    type: string
+    format: uri
+    description: Public URL of the attached file
+    example: "https://s3.ap-south-1.amazonaws.com/beta-likeminds-media/files/collabcard/83299/conversation/331006/gif_Happy_Fun_GIF_by_Pen_Pals.gif_1720435144937.gif"
+  height:
+    type: integer
+    description: Height in pixels of the media (if applicable)
+    example: 200
+  id:
+    type: integer
+    description: Unique attachment id
+    example: 20802
+  index:
+    type: integer
+    description: Ordering index of this attachment in the conversation
+    example: 1
+  location_lat:
+    nullable: true
+    type: number
+    description: Latitude of an attached location (if present)
+    example: null
+  location_long:
+    nullable: true
+    type: number
+    description: Longitude of an attached location (if present)
+    example: null
+  location_name:
+    nullable: true
+    type: string
+    description: Human-readable location name (if present)
+    example: null
+  meta:
+    type: object
+    properties:
+      size:
+        type: integer
+        description: File size in bytes
+        example: 306138
+    description: Additional metadata about the file
+    example:
+      size: 306138
+  name:
+    type: string
+    description: Original filename of the attachment
+    example: "Happy_Fun_GIF_by_Pen_Pals.gif"
+  thumbnail_url:
+    nullable: true
+    type: string
+    description: URL to a thumbnail image for the attachment
+    example: null
+  type:
+    type: string
+    description: Media type of the attachment (image, gif, video, file)
+    example: "gif"
+  width:
+    type: integer
+    description: Width in pixels of the media (if applicable)
+    example: 200

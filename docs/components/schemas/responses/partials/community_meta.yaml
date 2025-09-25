@@ -1,0 +1,32 @@
+---
+type: object
+description: Key is community ID, value is community details
+properties:
+  id:
+    type: integer
+    description: Community ID
+    example: 50522
+  image_url:
+    type: string
+    description: Community image URL
+    example: "www.example.com/image.png"
+  is_paid:
+    type: boolean
+    description: Whether the community is paid or not
+    example: false
+  name:
+    type: string
+    description: Community name
+    example: "Flutter Testing Team"
+  purpose:
+    type: string
+    description: Community purpose
+    example: "We will send all the announcements here on this chatroom."
+  sub_type:
+    type: integer
+    description: Community sub type
+    example: 1111
+  type:
+    type: integer
+    description: Community type
+    example: 1111

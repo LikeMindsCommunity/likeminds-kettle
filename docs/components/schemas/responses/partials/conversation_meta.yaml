@@ -1,0 +1,229 @@
+---
+type: object
+description: Map of conversation id to conversation metadata
+additionalProperties:
+  type: object
+  properties:
+    allow_add_option:
+      type: boolean
+      description: Whether new poll options can be added
+      example: false
+    allow_vote_change:
+      type: boolean
+      description: Whether users can change their votes
+      example: true
+    answer:
+      type: string
+      description: Text content of the conversation item
+      example: "Www.likeminds.community edited"
+    api_version:
+      type: integer
+      description: API version used for this conversation payload
+      example: 1
+    attachment_count:
+      type: integer
+      description: Number of attachments linked to the conversation
+      example: 1
+    attachments_uploaded:
+      type: boolean
+      description: Whether attachments are fully uploaded
+      example: true
+    card_id:
+      type: integer
+      description: Card id associated with this conversation
+      example: 83299
+    co_hosts:
+      nullable: true
+      type: array
+      items: {}
+      description: List of co-hosts if applicable
+      example: null
+    community_id:
+      type: integer
+      description: ID of the community where the conversation belongs
+      example: 50522
+    created_at:
+      type: string
+      description: Readable creation time string
+      example: "16:09"
+    created_epoch:
+      type: integer
+      description: Creation timestamp in milliseconds since epoch
+      example: 1720435144876
+    date:
+      type: string
+      description: Human-readable creation date
+      example: "08 Jul 2024"
+    deleted_by_user_id:
+      nullable: true
+      type: integer
+      description: If deleted, id of the user who deleted
+      example: null
+    device_id:
+      type: string
+      description: Device identifier string (if provided)
+      example: ""
+    end_time:
+      type: integer
+      description: End time for polls or events
+      example: 0
+    expiry_time:
+      nullable: true
+      type: integer
+      description: Expiry timestamp for polls (if any)
+      example: null
+    has_files:
+      type: boolean
+      description: Whether the conversation contains files
+      example: true
+    has_reactions:
+      type: boolean
+      description: Whether the conversation has reactions
+      example: false
+    header:
+      nullable: true
+      type: string
+      description: Optional header text for the conversation
+      example: null
+    id:
+      type: integer
+      description: Conversation id
+      example: 331006
+    internal_link:
+      nullable: true
+      type: string
+      description: Internal deep-link if available
+      example: null
+    is_anonymous:
+      type: boolean
+      description: Whether the conversation was posted anonymously
+      example: false
+    is_edited:
+      type: boolean
+      description: Whether the conversation text was edited
+      example: false
+    last_updated:
+      type: integer
+      description: Last updated epoch milliseconds
+      example: 1720435145793
+    location:
+      nullable: true
+      type: string
+      description: Human-readable location text
+      example: null
+    location_lat:
+      nullable: true
+      type: number
+      description: Latitude for conversation location
+      example: null
+    location_long:
+      nullable: true
+      type: number
+      description: Longitude for conversation location
+      example: null
+    multiple_select_no:
+      nullable: true
+      type: integer
+      description: Number of selections allowed in multi-select polls
+      example: null
+    multiple_select_state:
+      nullable: true
+      type: string
+      description: State value for multi-select polls
+      example: null
+    no_poll_expiry:
+      type: boolean
+      description: Whether poll has no expiry
+      example: false
+    og_tags:
+      nullable: true
+      type: object
+      properties:
+        description:
+          type: string
+          description: Open Graph description
+          example: "LikeMinds helps brands in launching an in-app community via real-time SDK in under 15 mins."
+        image:
+          type: string
+          description: Open Graph image URL
+          example: "https://cdn.prod.website-files.com/64e4e******10d41db7617c232f5ef_hero_top-1.png"
+        title:
+          type: string
+          description: Open Graph title
+          example: "LikeMinds Community: Launch In-app Community Via SDK In 15 Mins"
+        url:
+          type: string
+          description: Open Graph URL
+          example: "Www.likeminds.community"
+    online_link_enable_before:
+      type: integer
+      description: Time window (ms) when online link is enabled before start
+      example: 900000
+    poll_answer_text:
+      type: string
+      description: Text shown for poll answer (if any)
+      example: ""
+    poll_type:
+      nullable: true
+      type: string
+      description: Poll type identifier
+      example: null
+    poll_type_text:
+      nullable: true
+      type: string
+      description: Human readable poll type
+      example: null
+    preview_chatroom_id:
+      nullable: true
+      type: integer
+      description: Chatroom id used for previews
+      example: null
+    preview_community_id:
+      nullable: true
+      type: integer
+      description: Community id used for previews
+      example: null
+    preview_type:
+      type: string
+      description: Preview type string
+      example: ""
+    reply_chatroom_id:
+      nullable: true
+      type: integer
+      description: Chatroom id of the replied-to conversation
+      example: null
+    reply_id:
+      nullable: true
+      type: integer
+      description: ID of the replied-to conversation
+      example: null
+    start_time:
+      type: integer
+      description: Start time of poll/event in epoch ms
+      example: 0
+    state:
+      type: integer
+      description: Conversation state code
+      example: 0
+    submit_type_text:
+      nullable: true
+      type: string
+      description: Submit type textual description
+      example: null
+    temporary_id:
+      nullable: true
+      type: string
+      description: Temporary client-generated id for the conversation
+      example: "F3829F2F-D233-41DF-A764-799C5A19DEF4"
+    to_show_results:
+      type: boolean
+      description: Whether poll results should be shown
+      example: false
+    user_id:
+      type: integer
+      description: ID of the user who posted the conversation
+      example: 94371
+    widget_id:
+      type: string
+      description: Optional widget id associated with the post
+      example: ""

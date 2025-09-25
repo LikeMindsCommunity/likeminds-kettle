@@ -28,6 +28,12 @@ get:
       required: true
       schema:
         type: integer
+    - name : chatroom_id
+      in: query
+      description: Specific chatroom ID to sync
+      required: false
+      schema:
+        type: string
   responses:
     "200":
       description: OK
