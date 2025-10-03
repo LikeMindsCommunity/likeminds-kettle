@@ -20,4 +20,4 @@ properties:
           enum: [1, 4, 5]
           example: 1
         attachment_meta:
-          $ref: "./partials/attachment_meta.yaml"
+          $ref: "../responses/partials/attachment_meta.yaml"

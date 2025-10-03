@@ -13,7 +13,7 @@ get:
     - $ref: "../../../components/parameters/headers/platformType.yaml"
     - $ref: "../../../components/parameters/headers/apiKey.yaml"
     - $ref: "../../../components/parameters/query/page.yaml"
-    - $ref: "../../../components/parameters/query/page_size.yaml"
+    - $ref: "../../../components/parameters/query/pageSize.yaml"
     - name: status
       in: query
       description: status of connection to be fetched.

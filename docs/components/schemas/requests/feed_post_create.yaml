@@ -61,4 +61,4 @@ properties:
             - 10 - GIF widget
             - 11 - Reel
         attachment_meta:
-          $ref: "./partials/attachment_meta.yaml"
+          $ref: "../responses/partials/attachment_meta.yaml"

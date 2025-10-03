@@ -116,5 +116,5 @@ properties:
             description: Widget ID associated with the conversation
             example: "68b4638874eab106220f39bd"
       widgets:
-        $ref: "../partials/widget.yaml"
+        $ref: "./partials/widget.yaml"
         description: Metadata and details about widgets related to the conversation
