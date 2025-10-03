@@ -21,6 +21,19 @@ get:
         items:
           type: integer
       required: false
+    - name: conversation_id
+      in: query
+      description: Specific conversation ID
+      schema:
+        type: string
+      required: false
+    - name: is_local_db
+      in: query
+      description: Whether to use local database
+      schema:
+        type: boolean
+      required: false
+      
   responses:
     "200":
       description: OK

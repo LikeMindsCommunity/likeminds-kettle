@@ -228,6 +228,8 @@ paths:
     $ref: "./api/community/member/join.yaml"
   /community/integration:
     $ref: "./api/community/integration.yaml"
+  /community/member/{user_id}/connection:
+    $ref: "./api/community/member/connection.yaml"
 
   /moderation/rights:
     $ref: "./api/moderation/rights.yaml"
@@ -322,6 +324,10 @@ paths:
     $ref: "./api/feed/v1/topic/topic.yaml"
   /feed/topic/{topic_id}:
     $ref: "./api/feed/v1/topic/topic_id.yaml"
+  /feed/user/topics:
+    $ref: "./api/feed/v1/topic/user_topics_GET.yaml"
+  /feed/user/{user_id}/topics:
+    $ref: "./api/feed/v1/topic/user_topics_PATCH.yaml"
 
   /poll/{poll_id}:
     $ref: "./api/poll/poll.yaml"
@@ -408,6 +414,8 @@ paths:
     $ref: "./api/channel/invite.yaml"
   /channel/{channel_id}/settings/member/{uuid}:
     $ref: "./api/channel/settings.yaml"
+  /channel/{channel_id}/sync:
+    $ref: "./api/channel/sync.yaml"
 
   /widget:
     $ref: "./api/widget/widget.yaml"

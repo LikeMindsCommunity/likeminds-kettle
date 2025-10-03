@@ -5,130 +5,31 @@ properties:
   data:
     type: object
     properties:
-      chatroom_meta:
-        type: object
-        additionalProperties:
-          type: object
-          properties:
-            about:
-              type: string
-            access:
-              type: string
-            access_without_subscription:
-              type: boolean
-            attachment_count:
-              type: integer
-            attachments_uploaded:
-              type: boolean
-            attending_status:
-              type: boolean
-            auto_follow_done:
-              type: boolean
-            card_id:
-              type: integer
-            chat_request_created_at:
-              type: string
-            chat_request_state:
-              type: string
-            chat_requested_by_id:
-              type: string
-            chatroom_image_url:
-              type: string
-              format: uri
-            chatroom_with_user_id:
-              type: string
-            co_hosts:
-              type: string
-            community_id:
-              type: integer
-            created_at:
-              type: integer
-            custom_tag:
-              type: string
-            date:
-              type: string
-            date_epoch:
-              type: integer
-            date_time:
-              type: integer
-            deleted_by_user_id:
-              type: integer
-            device_id:
-              type: integer
-            expiry_time:
-              type: integer
-            external_seen:
-              type: boolean
-            follow_status:
-              type: boolean
-            has_been_named:
-              type: boolean
-            has_files:
-              type: boolean
-            has_reactions:
-              type: boolean
-            header:
-              type: string
-            id:
-              type: integer
-            internal_link:
-              type: string
-            is_edited:
-              type: boolean
-            is_paid:
-              type: boolean
-            is_pending:
-              type: boolean
-            is_private:
-              type: boolean
-            is_private_member:
-              type: boolean
-            is_secret:
-              type: boolean
-            is_tagged:
-              type: boolean
-            last_seen_conversation_id:
-              type: integer
-            member_can_message:
-              type: boolean
-            mute_status:
-              type: boolean
-            og_tags:
-              type: object
-            online_link:
-              type: string
-            online_link_type:
-              type: string
-            secret_chatroom_left:
-              type: boolean
-            secret_chatroom_participants:
-              type: array
-              items:
-                type: integer
-            share_link:
-              type: string
-            state:
-              type: integer
-            title:
-              type: string
-            topic_id:
-              type: integer
-            type:
-              type: integer
-            updated_at:
-              type: integer
-            user_id:
-              type: integer
+
+
       chatroom_reactions_meta:
         type: object
+      
       community_meta:
         type: object
+        properties:
+          additional_properties:
+            $ref: "./partials/community_meta.yaml"
+
       conv_attachments_meta:
         type: object
+        description: Map of conversation ID to list of attachments metadata
+        additionalProperties:
+          type: array
+          items:
+            $ref: "./partials/conversation_attachments_meta.yaml"
+
       conv_polls_meta:
         type: object
+        
       conv_reactions_meta:
         type: object
+
       conversations_data:
         type: array
         items:
@@ -222,5 +123,17 @@ properties:
               type: boolean
             user_id:
               type: integer
+            
       user_meta:
         type: object
+        description: Map of user id to user metadata
+        additionalProperties:
+          $ref: "./partials/user.yaml"
+
+      widgets:
+        type: object
+        description: Map of widget id to widget metadata
+        additionalProperties:
+          ref: "./partials/widget.yaml"
+
+

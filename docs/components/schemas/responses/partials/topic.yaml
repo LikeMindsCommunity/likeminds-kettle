@@ -1,0 +1,47 @@
+---
+type: array
+description: An array of topic objects
+items:
+  type: object
+  description: The topic object
+  properties:
+    _id:
+      type: string
+      description: The unique identifier of the topic
+      example: "66687aba82401e6e6bbfa165"
+    all_parent_ids:
+      type: array
+      description: All parent ids of the topic
+      default: []
+    is_enabled:
+      type: boolean
+      description: Indicates if the topic is enabled
+      example: true
+    is_searchable:
+      type: boolean
+      description: Indicates if the topic is searchable
+      example: true
+    level:
+      type: integer
+      description: The level of the topic
+      example: 0
+    name:
+      type: string
+      description: The name of the topic
+      example: "Topic Name"
+    parent_id:
+      type: string
+      description: The parent id of the topic
+      example: "96687aba82401e6e6bbfa169"
+    parent_name:
+      type: string
+      description: The parent name of the topic
+      example: "Parent Topic name"
+    priority:
+      type: integer
+      description: The priority of the topic
+      example: 0
+    widget_id:
+      type: string
+      description: The widget id of the topic
+      example: "16687aba82401e6e6bbfa162"

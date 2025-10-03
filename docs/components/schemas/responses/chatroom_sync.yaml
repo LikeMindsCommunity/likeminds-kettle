@@ -5,10 +5,41 @@ properties:
   data:
     type: object
     properties:
-      chatrooms:
+      chatrooms_data:
         type: array
         items:
           $ref: "./partials/chatroom.yaml"
+
+      card_attachments_meta:
+        type: object
+        description: Map of community ID to list of attachments metadata
+
+      community_meta:
+      type: object
+      properties:
+        additional_properties:
+          $ref: "./partials/community_meta.yaml"
+
+      conv_attachments_meta:
+        type: object
+        description: Map of conversation ID to list of attachments metadata
+        additionalProperties:
+          type: array
+          items:
+            $ref: "./partials/conversation_attachments_meta.yaml"
+              
+
+      conv_polls_meta:
+        type: object
+        description: Map of conversation id to polls metadata (empty in example)
+        example: {}
+
+      conversation_meta:
+        type: object
+        description: Map of conversation ID to conversation metadata
+        additionalProperties:
+          $ref: "./partials/conversation_meta.yaml"
+
       sync_meta:
         type: object
         description: This will be coming in response in `x-api-version >= 1`
@@ -16,12 +47,27 @@ properties:
           key: 
             type: string
             description: Chatroom ID
+            example: "83300"
           value:
             type: object
             properties:
               unseen_count:
                 type: integer
                 description: Unseen count of the the chatroom
+                example: 5
               last_conversation_id:
                 type: integer
                 description: Last conversation ID of the the chatroom
+                example: 461640
+
+      user_meta:
+        type: object
+        description: Map of user id to user metadata
+        additionalProperties:
+          $ref: "./partials/user.yaml"
+
+      widgets:
+        type: object
+        description: Map of widget id to widget metadata
+        additionalProperties:
+          ref: "./partials/widget.yaml"

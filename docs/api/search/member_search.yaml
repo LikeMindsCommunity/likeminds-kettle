@@ -17,6 +17,7 @@ get:
     - $ref: "../../components/parameters/query/pageSize.yaml"
     - $ref: "../../components/parameters/query/orderType.yaml"
     - $ref: "../../components/parameters/query/questionAnswerVersions.yaml"
+    - $ref: "../../components/parameters/query/exclude_self_user.yaml"
     - name: member_states
       in: query
       description: State of member to filter on

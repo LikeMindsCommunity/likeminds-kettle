@@ -1,0 +1,40 @@
+---
+patch:
+  operationId: updateUserTopics
+
+  summary: Update user topic(s)
+  description: This API is used to update user topic(s)
+
+  tags:
+    - Feed - V1
+
+  security:
+    - bearerAuth: []
+
+  requestBody:
+    description: User topic id to be updated
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            topic_ids:
+              type: object
+              description: Id of topics to be followed/unfollowed
+              properties:
+                additionalProperties:
+                  type: boolean
+                  description: key is topic_id and value is true (to follow), false (to unfollow)
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                description: Indicates if the operation was successful

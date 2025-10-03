@@ -1,3 +1,4 @@
+---
 type: object
 properties:
   success:
@@ -7,5 +8,9 @@ properties:
     properties:
       access_token:
         type: string
+        description: JWT access token
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiT0kzd29LVEdNSWZpMUFJa3ZxVnR0WDlsbG9ZQkdhb1BzQlpPaStxUkxORDJtY0VEU2tBMXFWc2hpbzdhN0ZiNWIrT3Q5SDZ3aEJmdzJGdnc3K1BrQ0dhdUNJWk1yekNhWEtRTWEwdks4czVKZG5zZG1kTlN3SDVlZVM4OWZ3QmNlYlV6dkNzTldaSFFpZ1A4bG5CQ1V6bUI0RFptbzJGQkswR3B6cXRKY0JqU1RKcXlWR2pWaFgvZUQ2YkxtRCt2M0gyditncjZXQURudzNqcjBaVkNFRUFkMDEvZXFwQlJ5ZWsyK1Ewb2FuQXlOOFFwNmtIaEMrZHJad1ZpYmk4VEwyczdFdmswYkRudnB4blg1NWphNGFTNUF1SVgzMEFTejNwcSIsImV4cCI6MTc1NjQ2MDI1NX0.SPEbovxzS_ThK4tP4l-5JW5CS2ZzPRJtymgdIDsKNuA,
       refresh_token:
         type: string
+        description: JWT refresh token
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiWERrcHNLR2pTazJDTmFDOWd5bEVpdC9RclJDV1o0eUlIWEEyTXY1cXFFVjVRRVdFV1I5L3pLM0JmbnZrdkkwQXJVMUwvN1dRLzhteG4xc2xLRnBGbWVZSWozZUlpWlNmVk1UaXdZWElZV0tCTWszNmVidHZ0NHBObFQ5Zkt5ZG80RzVZSWsvYjlsVXh0Zjh2Sk5EWDdranVicWdXdndWNW0vZlMvaENFQ2ZSbzVEVG9Za0NoRXZvUTFScDhVeDBQejM1OVFtVmFqWHJjOUQ4bEJDN0dWQWVCY1RlMlVoaHZoNmI0c0FMcFpFRS9jSGE2bCtKaU8rb04vdSsrVWRBbm5Ha0tFN2llODRSVEZCSXB2V0xFR0VVZitJem1GajVlZmpSdUZBPT0iLCJleHAiOjE3NTkxMzc4MDd9.fguYCXHBAmcHOEuBknHJ19_iwbWYnEWDdZdF6DhyGQ8

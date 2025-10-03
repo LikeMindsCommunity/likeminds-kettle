@@ -1,0 +1,132 @@
+---
+type: object
+description: Metadata of the attachment
+nullable: true
+properties:
+  name:
+    type: string
+    description: Name of the attachment
+    example: "Document.pdf"
+    nullable: true
+  url:
+    type: string
+    description: URL of the attachment
+    example: "https://example.com/document.pdf"
+    nullable: true
+  format:
+    type: string
+    description: Format of the attachment (e.g., pdf, docx, jpg, png, mp4, mp3, xlsx, pptx, txt, csv, zip, gif, webp, mov, avi, wav, json, html, xml, svg, etc.)
+    example: "pdf"
+    nullable: true
+  size:
+    type: integer
+    description: Size of the attachment in bytes
+    example: 204800
+    nullable: true
+  duration:
+    type: integer
+    description: Duration of the video in seconds
+    example: 120
+    nullable: true
+  width:
+    type: integer
+    description: Width of the attachment
+    example: 1920
+    nullable: true
+  height:
+    type: integer
+    description: Height of the attachment
+    example: 1080
+    nullable: true
+  page_count:
+    type: integer
+    description: Page count of the file
+    example: 10
+    nullable: true
+  thumbnail_url:
+    type: string
+    description: URL of the thumbnail image
+    example: "https://example.com/thumbnail.jpg"
+    nullable: true
+  og_tags:
+    type: object
+    description: Open Graph tags for link previews
+    nullable: true
+    properties: 
+      title:
+        type: string
+        description: Title of the link
+        example: "Read this article"
+        nullable: true
+      image:
+        type: string
+        description: Image URL for the link preview
+        example: "https://example.com/image.jpg"
+        nullable: true
+      description:
+        type: string
+        description: Description of the link
+        example: "Dollar crash amid tensions between US and China."
+        nullable: true
+      url:
+        type: string
+        description: URL of the link
+        example: "https://example.com/news/article/12"
+        nullable: true
+  entity_id:
+    type: string
+    description: Entity ID associated with the attachment
+    example: "entity_12345"
+    nullable: true
+  cover_image_url:
+    type: string
+    description: URL of the cover image for videos or articles
+    example: "https://example.com/cover.jpg"
+    nullable: true
+  title:
+    type: string
+    description: Title of the attachment
+    example: "Sample Video"
+    nullable: true
+  body:
+    type: string
+    description: Body or description of the attachment
+    example: "This is a sample video description."
+    nullable: true
+  expiry_time:
+    type: integer
+    description: Expiry time of the poll in seconds since epoch
+    example: 1700000000
+    nullable: true
+  poll_type:
+    type: string
+    description: Type of the poll (e.g., "single_choice", "multiple_choice")
+    example: "single_choice"
+    nullable: true
+  multiple_select_state:
+    type: string
+    description: State of multiple selection
+    enum: [exactly, at_max, at_least]
+    example: "exactly"
+    nullable: true
+  multiple_select_number:
+    type: integer
+    description: Number of selections allowed in multiple select
+    example: 2
+    nullable: true
+  is_anonymous:
+    type: boolean
+    description: Indicates if the poll is anonymous
+    example: true
+    nullable: true
+  allow_add_option:
+    type: boolean
+    description: Indicates if users can add options to the poll
+    example: false
+    nullable: true
+  nsfw_score:
+    type: number
+    format: float
+    description: NSFW (Not Safe For Work) score of the attachment
+    example: 0.85
+    nullable: true

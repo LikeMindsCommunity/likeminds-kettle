@@ -1,3 +1,4 @@
+---
 type: object
 properties:
   auto_approval:
@@ -36,6 +37,8 @@ properties:
           type: string
         sub_title:
           type: string
+  community_settings:
+    $ref: "./community_settings_get.yaml"
   fee_event:
     type: integer
   fee_membership:
