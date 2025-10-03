@@ -74,4 +74,4 @@ properties:
           description: The type of the attachment
           example: 1
         attachment_meta:
-          $ref: "./partials/attachment_meta.yaml"
+          $ref: "./attachment_meta.yaml"
