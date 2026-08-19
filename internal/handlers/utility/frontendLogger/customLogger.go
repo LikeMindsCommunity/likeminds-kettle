@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"cloud.google.com/go/logging"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/environment"
+	log "github.com/LikeMindsCommunity/likeminds-kettle/internal/logging"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/environment"
-	log "github.com/nateshr/likeminds-authentication/internal/logging"
 )
 
 var (

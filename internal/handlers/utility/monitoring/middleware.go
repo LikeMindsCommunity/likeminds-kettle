@@ -3,8 +3,8 @@ package monitoring
 import (
 	"strconv"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/logging"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/logging"
 )
 
 // PrometheusMiddleware created middleware to be used to send metrics

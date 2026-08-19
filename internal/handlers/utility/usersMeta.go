@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/nateshr/likeminds-authentication/internal/utils"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
 )
 
 type UserInfo struct {

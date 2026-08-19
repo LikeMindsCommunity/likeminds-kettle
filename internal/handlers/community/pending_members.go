@@ -3,8 +3,8 @@ package community
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/user"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
 )
 
 func GetPendingCommunityMembers(c *gin.Context) {

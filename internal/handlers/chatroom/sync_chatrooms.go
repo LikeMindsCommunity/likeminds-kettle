@@ -1,11 +1,11 @@
 package chatroom
 
 import (
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/pubsubPublish"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/user"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/logging"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsubPublish"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
-	"github.com/nateshr/likeminds-authentication/internal/logging"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 // SyncChatrooms is used to fetch data for chatroom syncing

@@ -1,9 +1,9 @@
 package conversation
 
 import (
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/user"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 // FetchPreviewUnreadMessagesCount is used to fetch count of unread preview messages

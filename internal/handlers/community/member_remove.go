@@ -3,14 +3,14 @@ package community
 import (
 	"fmt"
 
-	log "github.com/nateshr/likeminds-authentication/internal/logging"
+	log "github.com/LikeMindsCommunity/likeminds-kettle/internal/logging"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/feed"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/user"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/utility"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils/api_client"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/feed"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/utility"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
-	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 )
 
 type RemoveMemberRequest struct {

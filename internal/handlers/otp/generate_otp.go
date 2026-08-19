@@ -1,8 +1,8 @@
 package otp
 
 import (
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 // GenerateOTP is used to generate otp

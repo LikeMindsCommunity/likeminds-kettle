@@ -3,11 +3,11 @@ package user
 import (
 	"fmt"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/constants"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/logging"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils/api_client"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/constants"
-	"github.com/nateshr/likeminds-authentication/internal/logging"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
-	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 )
 
 // GetRequestingUserId returns the User Unique ID of user based on request
@@ -66,8 +66,8 @@ func GetBotId(c *gin.Context) string {
 }
 
 func GetUserBot(c *gin.Context) *utils.Response {
-	
-	respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.CoreService, BotEndpoint, utils.GETRequest,  utils.CreateHeaders(c, ""), nil, nil)
+
+	respBytes, _, err := utils.GetRequestResponseWithoutContext(utils.CoreService, BotEndpoint, utils.GETRequest, utils.CreateHeaders(c, ""), nil, nil)
 	if err != nil {
 		//If API fails or any other error
 		logging.Error(fmt.Sprintf("Error in getting bot data : %v", err))

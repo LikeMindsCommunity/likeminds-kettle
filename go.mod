@@ -1,4 +1,4 @@
-module github.com/nateshr/likeminds-authentication
+module github.com/LikeMindsCommunity/likeminds-kettle
 
 go 1.16
 

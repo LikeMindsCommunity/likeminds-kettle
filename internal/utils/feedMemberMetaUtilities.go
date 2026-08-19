@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/cache"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/constants"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/logging"
 	"github.com/go-redis/redis/v7"
-	"github.com/nateshr/likeminds-authentication/internal/cache"
-	"github.com/nateshr/likeminds-authentication/internal/constants"
-	"github.com/nateshr/likeminds-authentication/internal/logging"
 )
 
 type SdkClientInfo struct {
