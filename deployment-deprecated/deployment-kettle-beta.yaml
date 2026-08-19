@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: "likeminds-authentication-1"
-        image: "asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/nateshr/likeminds-authentication/kettle:80886b3"
+        image: "asia.gcr.io/likeminds-nonprod-prj-24e1/github.com/LikeMindsCommunity/likeminds-kettle/kettle:80886b3"
         resources:
           requests:
             memory: "1000Mi"
