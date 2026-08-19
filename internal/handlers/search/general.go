@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/chatroom"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/community"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/conversation"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/feed"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/user"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils/api_client"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/chatroom"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/community"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/conversation"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/feed"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
-	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 )
 
 // GeneralSearch is used to perform search on the content

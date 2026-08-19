@@ -9,16 +9,16 @@ import (
 	"strings"
 	"time"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/cache"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/constants"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/token"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/user"
+	log "github.com/LikeMindsCommunity/likeminds-kettle/internal/logging"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils/api_client"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
-	"github.com/nateshr/likeminds-authentication/internal/cache"
-	"github.com/nateshr/likeminds-authentication/internal/constants"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/token"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
-	log "github.com/nateshr/likeminds-authentication/internal/logging"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
-	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 )
 
 func OTMValidationMiddleware() gin.HandlerFunc {

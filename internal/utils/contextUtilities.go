@@ -3,10 +3,10 @@ package utils
 import (
 	"net/http"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/constants"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils/api_client"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
-	"github.com/nateshr/likeminds-authentication/internal/constants"
-	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 )
 
 // Exposed utility method to get redis client from context

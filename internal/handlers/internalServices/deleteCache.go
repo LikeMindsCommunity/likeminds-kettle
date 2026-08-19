@@ -6,10 +6,10 @@ import (
 
 	"github.com/go-redis/redis/v7"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/cache"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/logging"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/cache"
-	"github.com/nateshr/likeminds-authentication/internal/logging"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 type deleteCacheRequest struct {

@@ -1,11 +1,11 @@
 package user
 
 import (
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/cache"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/constants"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
-	"github.com/nateshr/likeminds-authentication/internal/cache"
-	"github.com/nateshr/likeminds-authentication/internal/constants"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 type LogoutRequest struct {

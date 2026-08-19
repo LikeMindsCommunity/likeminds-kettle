@@ -7,11 +7,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/constants"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/environment"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/myesui/uuid"
-	"github.com/nateshr/likeminds-authentication/internal/constants"
-	"github.com/nateshr/likeminds-authentication/internal/environment"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 func CreateOTM(apiKey string, platformType string) (*constants.OnboardingTokenMeta, error) {
@@ -213,9 +213,9 @@ func ExtractOTM(bearerToken string) (*constants.OnboardingTokenMeta, error) {
 			if platformType != string(utils.PlatformDashboard) {
 				return nil, errors.New(utils.ErrorPlatformTypeInHeader)
 			}
-			
+
 			return &constants.OnboardingTokenMeta{
-				AccessUuid: accessUuid,
+				AccessUuid:   accessUuid,
 				PlatformType: platformType,
 			}, nil
 		}
@@ -260,10 +260,10 @@ func ExtractVTM(bearerToken string) (*constants.VerifyTokenMeta, error) {
 			}
 
 			return &constants.VerifyTokenMeta{
-				AccessUuid:  accessUuid,
-				EmailID:     emailId,
-				MobileNo:    mobileNo,
-				CountryCode: countryCode,
+				AccessUuid:   accessUuid,
+				EmailID:      emailId,
+				MobileNo:     mobileNo,
+				CountryCode:  countryCode,
 				PlatformType: platformType,
 			}, nil
 		}

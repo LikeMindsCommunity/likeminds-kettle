@@ -3,8 +3,8 @@ package web
 import (
 	"net/http"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 // Home is used to validate health check and host / path

@@ -7,15 +7,15 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/cache"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/chatroom"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/community"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/pubsubPublish"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/user"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/logging"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
-	"github.com/nateshr/likeminds-authentication/internal/cache"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/chatroom"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/community"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/pubsubPublish"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
-	"github.com/nateshr/likeminds-authentication/internal/logging"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 type PollObject struct {

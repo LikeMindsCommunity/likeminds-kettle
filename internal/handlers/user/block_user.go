@@ -3,8 +3,8 @@ package user
 import (
 	"fmt"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 type BlockUnblockUserRequest struct {

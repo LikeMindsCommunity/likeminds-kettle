@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/environment"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/logging"
 	"github.com/microsoft/ApplicationInsights-Go/appinsights"
-	"github.com/nateshr/likeminds-authentication/internal/environment"
-	"github.com/nateshr/likeminds-authentication/internal/logging"
 )
 
 type AzurePalyloadEntry struct {

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/nateshr/likeminds-authentication/internal/constants"
-	"github.com/nateshr/likeminds-authentication/internal/logging"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/constants"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/logging"
 )
 
 type OGTags struct {

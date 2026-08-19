@@ -6,10 +6,10 @@ import (
 	"regexp"
 	"sync"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/environment"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/user"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/environment"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 // PUT Request structure for uploading files to S3

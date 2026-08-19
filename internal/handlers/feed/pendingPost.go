@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/constants"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/user"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/logging"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/requests"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/constants"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
-	"github.com/nateshr/likeminds-authentication/internal/logging"
-	"github.com/nateshr/likeminds-authentication/internal/requests"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 type EditPendingPostRequest struct {

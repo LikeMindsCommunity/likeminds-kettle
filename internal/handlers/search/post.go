@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/community"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/feed"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/handlers/user"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/community"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/feed"
-	"github.com/nateshr/likeminds-authentication/internal/handlers/user"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 // PostSearch is used to perform search on the posts

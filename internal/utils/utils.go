@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/nateshr/likeminds-authentication/internal/logging"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/logging"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils/api_client"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 )
 
 // Generate Response to be sent on request success

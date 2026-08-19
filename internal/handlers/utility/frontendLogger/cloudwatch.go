@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/environment"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/logging"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs/types"
-	"github.com/nateshr/likeminds-authentication/internal/environment"
-	"github.com/nateshr/likeminds-authentication/internal/logging"
 )
 
 type CloudwatchPayloadEntry struct {

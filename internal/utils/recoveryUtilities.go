@@ -3,7 +3,7 @@ package utils
 import (
 	"runtime/debug"
 
-	"github.com/nateshr/likeminds-authentication/internal/logging"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/logging"
 )
 
 // SafeGo starts a new goroutine with panic recovery

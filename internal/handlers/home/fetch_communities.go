@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/constants"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils/api_client"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/constants"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
-	"github.com/nateshr/likeminds-authentication/internal/utils/api_client"
 )
 
 type FetchCommunitiesResponse struct {

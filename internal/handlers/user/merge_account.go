@@ -1,8 +1,8 @@
 package user
 
 import (
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
 )
 
 // MergeAccount used when user wants to merge account and generate login and refresh tokens

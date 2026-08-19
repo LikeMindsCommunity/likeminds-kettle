@@ -2,8 +2,8 @@ package pubsubPublish
 
 import (
 	"fmt"
-	"github.com/nateshr/likeminds-authentication/internal/logging"
-	"github.com/nateshr/likeminds-authentication/internal/utils"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/logging"
+	"github.com/LikeMindsCommunity/likeminds-kettle/internal/utils"
 )
 
 // PublishConversationOnTopicTypeChatroom to publish Conversation on TopicTypeChatroomDynamic
